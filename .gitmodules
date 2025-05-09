@@ -1,0 +1,12 @@
+[submodule "modules/juce"]
+	path = modules/juce
+	url = https://github.com/boherm/JUCE
+	branch = develop-local
+[submodule "modules/juce_organicui"]
+	path = modules/juce_organicui
+	url = git@github.com:boherm/juce_organicui.git
+	branch = master
+[submodule "modules/juce_simpleweb"]
+	path = modules/juce_simpleweb
+	url = https://github.com/boherm/juce_simpleweb
+	branch = develop-local

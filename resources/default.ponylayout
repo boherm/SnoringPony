@@ -1,0 +1,135 @@
+{
+  "mainLayout": {
+    "type": 1,
+    "width": 1353,
+    "height": 780,
+    "direction": 2,
+    "shifters": [
+      {
+        "type": 1,
+        "width": 1353,
+        "height": 780,
+        "direction": 2,
+        "shifters": [
+          {
+            "type": 1,
+            "width": 1353,
+            "height": 466,
+            "direction": 1,
+            "shifters": [
+              {
+                "type": 1,
+                "width": 307,
+                "height": 466,
+                "direction": 2,
+                "shifters": [
+                  {
+                    "type": 0,
+                    "width": 307,
+                    "height": 240,
+                    "currentContent": "Modules",
+                    "tabs": [
+                      {
+                        "name": "Modules"
+                      }
+                    ]
+                  },
+                  {
+                    "type": 0,
+                    "width": 307,
+                    "height": 220,
+                    "currentContent": "Custom Variables",
+                    "tabs": [
+                      {
+                        "name": "Custom Variables"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": 0,
+                "width": 606,
+                "height": 466,
+                "currentContent": "State Machine",
+                "tabs": [
+                  {
+                    "name": "State Machine"
+                  },
+                  {
+                    "name": "Dashboard"
+                  },
+                  {
+                    "name": "Module Router"
+                  },
+                  {
+                    "name": "Morpher"
+                  }
+                ]
+              },
+              {
+                "type": 0,
+                "width": 428,
+                "height": 466,
+                "currentContent": "Inspector",
+                "tabs": [
+                  {
+                    "name": "Inspector"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": 1,
+            "width": 1353,
+            "height": 308,
+            "direction": 1,
+            "shifters": [
+              {
+                "type": 0,
+                "width": 178,
+                "height": 308,
+                "currentContent": "Sequences",
+                "tabs": [
+                  {
+                    "name": "Sequences"
+                  }
+                ]
+              },
+              {
+                "type": 0,
+                "width": 689,
+                "height": 308,
+                "currentContent": "Sequence Editor",
+                "tabs": [
+                  {
+                    "name": "Sequence Editor"
+                  }
+                ]
+              },
+              {
+                "type": 0,
+                "width": 474,
+                "height": 308,
+                "currentContent": "Logger",
+                "tabs": [
+                  {
+                    "name": "Help"
+                  },
+                  {
+                    "name": "Logger"
+                  },
+                  {
+                    "name": "Warnings"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "windows": null
+}
