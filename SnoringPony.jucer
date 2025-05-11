@@ -3,7 +3,8 @@
 <JUCERPROJECT id="yG6FOt" name="SnoringPony" projectType="guiapp" jucerFormatVersion="1"
               version="1.0.0b1" projectLineFeed="&#10;" companyName="boherm"
               companyCopyright="Boris Hermans" companyWebsite="https://snoringpony.app"
-              companyEmail="dev@snoringpony.app" defines="VST_LOGGING=0" headerPath="../../src&#10;../../external/asio&#10;../../external/asiodriver&#10;../../external/servus/include">
+              companyEmail="dev@snoringpony.app" defines="VST_LOGGING=0" headerPath="../../src&#10;../../external/asio&#10;../../external/asiodriver&#10;../../external/servus/include"
+              bundleIdentifier="boherm.SnoringPony">
   <MAINGROUP id="QuL8Eu" name="SnoringPony">
     <GROUP id="{33CB39F8-43C1-5EE5-E27D-0A9CD562E541}" name="resources">
       <FILE id="TBBD6Q" name="about.png" compile="0" resource="1" file="resources/about.png"/>

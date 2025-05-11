@@ -1,0 +1,14 @@
+[Desktop Entry]
+Name=SnoringPony
+Exec=SnoringPony
+Icon=snoringpony
+Type=Application
+Categories=AudioVideo;Art;
+Comment=Musics and sounds for theater
+Comment[fr]=Applications musiques et sons pour théâtre
+MimeType=text/snoringpony;
+Name[en]=SnoringPony
+Terminal=false
+StartupNotify=true
+NoDisplay=false
+Name[en_US]=SnoringPony

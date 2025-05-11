@@ -92,7 +92,7 @@
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>../../external/servus/lib/win/x64/debug;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MDd;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalDependencies>Servus.lib;ssl.lib;crypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Servus.lib;libssl.lib;libcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/HEAP:0x400000,0x10000 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Bscmake>
@@ -100,7 +100,7 @@
       <OutputFile>$(IntDir)\SnoringPony.bsc</OutputFile>
     </Bscmake>
     <Lib>
-      <AdditionalDependencies>Servus.lib;ssl.lib;crypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Servus.lib;libssl.lib;libcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../external/servus/lib/win/x64/debug;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MDd;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
@@ -144,7 +144,7 @@
       <AdditionalLibraryDirectories>../../external/servus/lib/win/x64/release;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MD;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <LargeAddressAware>true</LargeAddressAware>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-      <AdditionalDependencies>Servus.lib;ssl.lib;crypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Servus.lib;libssl.lib;libcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/HEAP:0x400000,0x10000 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Bscmake>
@@ -152,7 +152,7 @@
       <OutputFile>$(IntDir)\SnoringPony.bsc</OutputFile>
     </Bscmake>
     <Lib>
-      <AdditionalDependencies>Servus.lib;ssl.lib;crypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Servus.lib;libssl.lib;libcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../external/servus/lib/win/x64/release;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MD;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>

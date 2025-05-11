@@ -13,7 +13,7 @@
     <key>CFBundleIconFile</key>
     <string>Icon.icns</string>
     <key>CFBundleIdentifier</key>
-    <string>com.boherm.SnoringPony</string>
+    <string>boherm.SnoringPony</string>
     <key>CFBundleName</key>
     <string>SnoringPony</string>
     <key>CFBundleDisplayName</key>
