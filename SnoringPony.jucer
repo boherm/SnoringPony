@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="yG6FOt" name="SnoringPony" projectType="guiapp" jucerFormatVersion="1"
+              version="1.0.0b1" projectLineFeed="&#10;" companyName="boherm"
+              companyCopyright="Boris Hermans" companyWebsite="https://snoringpony.app"
+              companyEmail="dev@snoringpony.app" defines="VST_LOGGING=0" headerPath="../../src&#10;../../external/asio&#10;../../external/asiodriver&#10;../../external/servus/include">
+  <MAINGROUP id="QuL8Eu" name="SnoringPony">
+    <GROUP id="{33CB39F8-43C1-5EE5-E27D-0A9CD562E541}" name="resources">
+      <FILE id="TBBD6Q" name="about.png" compile="0" resource="1" file="resources/about.png"/>
+      <FILE id="WhxZqQ" name="crash.png" compile="0" resource="1" file="resources/crash.png"/>
+      <FILE id="PpOxIR" name="default.ponylayout" compile="0" resource="1"
+            file="resources/default.ponylayout"/>
+      <FILE id="LR50Nt" name="icon.png" compile="0" resource="1" file="resources/icon.png"/>
+      <FILE id="BgHvX4" name="tray_icon.png" compile="0" resource="1" file="resources/tray_icon.png"/>
+    </GROUP>
+    <GROUP id="{72D7B173-FD6A-E831-8382-81700F33CF69}" name="Source">
+      <GROUP id="{EF871B6A-5B4C-AA4B-6777-DCDFF6A14C82}" name="ui">
+        <FILE id="o733S0" name="AboutWindow.cpp" compile="1" resource="0" file="src/ui/AboutWindow.cpp"/>
+        <FILE id="IwOBqF" name="AboutWindow.h" compile="0" resource="0" file="src/ui/AboutWindow.h"/>
+        <FILE id="uc1jRw" name="SPAssetManager.cpp" compile="1" resource="0"
+              file="src/ui/SPAssetManager.cpp"/>
+        <FILE id="fh4VOw" name="SPAssetManager.h" compile="0" resource="0"
+              file="src/ui/SPAssetManager.h"/>
+      </GROUP>
+      <FILE id="pZKegw" name="Main.cpp" compile="1" resource="0" file="src/Main.cpp"/>
+      <FILE id="LBIUQs" name="Main.h" compile="0" resource="0" file="src/Main.h"/>
+      <FILE id="rzo81q" name="MainComponent.cpp" compile="1" resource="0"
+            file="src/MainComponent.cpp"/>
+      <FILE id="kOtLrJ" name="MainComponent.h" compile="0" resource="0" file="src/MainComponent.h"/>
+      <FILE id="dT3NqI" name="MainComponentCommands.cpp" compile="1" resource="0"
+            file="src/MainComponentCommands.cpp"/>
+      <FILE id="ryaHqV" name="MainIncludes.cpp" compile="1" resource="0"
+            file="src/MainIncludes.cpp"/>
+      <FILE id="A3V8aI" name="MainIncludes.h" compile="0" resource="0" file="src/MainIncludes.h"/>
+      <FILE id="rP9IQH" name="PonyEngine.cpp" compile="1" resource="0" file="src/PonyEngine.cpp"/>
+      <FILE id="BVChMh" name="PonyEngine.h" compile="0" resource="0" file="src/PonyEngine.h"/>
+    </GROUP>
+  </MAINGROUP>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_organicui" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_osc" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_simpleweb" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_JACK="1" JUCE_ASIO="1"
+               JUCE_WASAPI="1" JUCE_USE_MP3AUDIOFORMAT="1" JUCE_USE_LAME_AUDIO_FORMAT="1"
+               JUCE_USE_WINDOWS_MEDIA_FORMAT="1" JUCE_FLOAT_COLOURS="1" JUCE_USE_WIN_WEBVIEW2="1"
+               JUCE_ALLOW_SPECIAL_CHARS_IN_ADDRESS="1" JUCE_ENABLE_BROADCAST_BY_DEFAULT="1"
+               JUCE_EXCLUSIVE_BINDING_BY_DEFAULT="1" JUCE_IP_AND_PORT_DETECTION="1"
+               ORGANICUI_USE_SERVUS="1" ORGANICUI_USE_WEBSERVER="1"/>
+  <EXPORTFORMATS>
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" extraDefs="LINK_PLATFORM_LINUX=1&#10;GDK_BACKEND=x11"
+                extraCompilerFlags="-Wno-multichar" extraLinkerFlags="-Wl,-rpath,&quot;lib&quot;&#10;-Wl,--as-needed&#10;-Wl,--export-dynamic&#10;-fvisibility=default"
+                externalLibraries="Servus&#10;curl" smallIcon="LR50Nt" bigIcon="LR50Nt">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="SnoringPony" libraryPath="../../external/servus/lib/linux&#10;/usr/lib/x86_64-linux-gnu/"
+                       optimisation="3" linuxArchitecture="-m64"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="SnoringPony" libraryPath="../../external/servus/lib/linux&#10;/usr/lib/x86_64-linux-gnu/"
+                       optimisation="3" linuxArchitecture="-m64"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_core" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_cryptography" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_data_structures" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_dsp" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_events" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_graphics" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_opengl" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_osc" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_organicui" path="modules"/>
+        <MODULEPATH id="juce_simpleweb" path="modules"/>
+      </MODULEPATHS>
+    </LINUX_MAKE>
+    <VS2022 targetFolder="Builds/VisualStudio2022_CI" extraDefs="LINK_PLATFORM_WINDOWS=1&#10;BLE_SUPPORT=0"
+            extraCompilerFlags="/Zm1000 /bigobj" extraLinkerFlags="/HEAP:0x400000,0x10000"
+            externalLibraries="Servus.lib" smallIcon="LR50Nt" bigIcon="LR50Nt">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" winArchitecture="x64" libraryPath="../../external/servus/lib/win/x64/debug"
+                       binaryPath="Binaries/CI"/>
+        <CONFIGURATION isDebug="0" name="Release" libraryPath="../../external/servus/lib/win/x64/release"
+                       winArchitecture="x64" binaryPath="Binaries/CI"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_core" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_cryptography" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_data_structures" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_dsp" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_events" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_graphics" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_opengl" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_osc" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_organicui" path="modules"/>
+        <MODULEPATH id="juce_simpleweb" path="modules"/>
+      </MODULEPATHS>
+    </VS2022>
+    <XCODE_MAC targetFolder="Builds/MacOSX" extraDefs="JUCE_SUPPORT_CARBON=0&#10;JUCE_COREGRAPHICS_DRAW_ASYNC=1&#10;LINK_PLATFORM_MACOSX=1"
+               externalLibraries="Servus" smallIcon="LR50Nt" bigIcon="LR50Nt"
+               documentExtensions="indy" xcodeValidArchs="arm64,x86_64" customPList="&lt;plist&gt;&#10;&lt;dict&gt;&#10;&lt;key&gt;NSAppTransportSecurity&lt;/key&gt;&#10;&#9;&lt;dict&gt;&#10;&#9;&#9;&lt;key&gt;NSAllowsArbitraryLoads&lt;/key&gt;&#10;&#9;&#9;&lt;true/&gt;&#10;&#9;&lt;/dict&gt;&#10;&lt;/dict&gt;&#10;&lt;/plist&gt;">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="SnoringPony" libraryPath="../../external/servus/lib/osx/debug"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="SnoringPony" libraryPath="../../external/servus/lib/osx/release"/>
+        <CONFIGURATION isDebug="1" name="DebugSilicon" targetName="SnoringPony" libraryPath="../../external/servus/lib/silicon/debug"/>
+        <CONFIGURATION isDebug="0" name="ReleaseSilicon" targetName="SnoringPony" libraryPath="../../external/servus/lib/silicon/release"/>
+        <CONFIGURATION isDebug="0"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_core" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_cryptography" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_data_structures" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_dsp" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_events" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_graphics" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_opengl" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_osc" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_organicui" path="modules"/>
+        <MODULEPATH id="juce_simpleweb" path="modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+    <XCODE_MAC targetFolder="Builds/MacOSX_CI" extraDefs="JUCE_SUPPORT_CARBON=0&#10;JUCE_COREGRAPHICS_DRAW_ASYNC=1&#10;LINK_PLATFORM_MACOSX=1"
+               externalLibraries="Servus" smallIcon="LR50Nt" bigIcon="LR50Nt"
+               documentExtensions="indy" xcodeValidArchs="arm64,x86_64" customPList="&lt;plist&gt;&#10;&lt;dict&gt;&#10;&lt;key&gt;NSAppTransportSecurity&lt;/key&gt;&#10;&#9;&lt;dict&gt;&#10;&#9;&#9;&lt;key&gt;NSAllowsArbitraryLoads&lt;/key&gt;&#10;&#9;&#9;&lt;true/&gt;&#10;&#9;&lt;/dict&gt;&#10;&lt;/dict&gt;&#10;&lt;/plist&gt;"
+               extraFrameworks="IOBluetooth, ForceFeedback, IOKit">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="0" name="Release" binaryPath="Release" libraryPath="../../external/servus/lib/osx/release"
+                       macOSDeploymentTarget="10.10" osxCompatibility="10.10 SDK"/>
+        <CONFIGURATION isDebug="0" name="ReleaseSilicon" binaryPath="Release" libraryPath="../../external/servus/lib/silicon/release"
+                       macOSDeploymentTarget="10.10" osxCompatibility="10.10 SDK"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_core" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_cryptography" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_data_structures" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_dsp" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_events" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_graphics" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_opengl" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_organicui" path="modules"/>
+        <MODULEPATH id="juce_osc" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_simpleweb" path="modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+    <VS2022 targetFolder="Builds/VisualStudio2022_Win7CI" extraDefs="BLE_SUPPORT=0&#10;PING_SUPPORT=0&#10;OS_SYSINFO_SUPPORT=0"
+            extraCompilerFlags="/Zm1000 /bigobj" extraLinkerFlags="/HEAP:0x400000,0x10000"
+            externalLibraries="Servus.lib" smallIcon="LR50Nt" bigIcon="LR50Nt">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" binaryPath="Binaries/CI" libraryPath="../../external/servus/lib/win/x64/debug"
+                       winArchitecture="x64"/>
+        <CONFIGURATION isDebug="0" name="Release" binaryPath="Binaries/CI" libraryPath="../../external/servus/lib/win/x64/release"
+                       winArchitecture="x64"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_core" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_cryptography" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_data_structures" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_dsp" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_events" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_graphics" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_opengl" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_organicui" path="modules"/>
+        <MODULEPATH id="juce_osc" path="modules/juce/modules"/>
+        <MODULEPATH id="juce_simpleweb" path="modules"/>
+      </MODULEPATHS>
+    </VS2022>
+  </EXPORTFORMATS>
+</JUCERPROJECT>
