@@ -1,0 +1,35 @@
+//
+// Created by Boris Hermans on 17/09/2025.
+//
+
+#pragma once
+
+#include "../../MainIncludes.h"
+
+class ShowControlUI : public ShapeShifterContent {
+public:
+    ShowControlUI(const String &contentName);
+    ~ShowControlUI();
+
+    static ShowControlUI *create(const String &name) { return new ShowControlUI(name); }
+};
+
+class ShowControl :
+    public ControllableContainer,
+    public Component
+{
+public:
+    juce_DeclareSingleton(ShowControl, true);
+    ShowControl();
+    ~ShowControl() override;
+
+    Trigger* paramGo; TriggerButtonUI* btnGo;
+    Trigger* paramPanic; TriggerButtonUI* btnPanic;
+
+    void paint (Graphics&) override;
+    void resized() override;
+    void triggerTriggered(Trigger* t) override;
+
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ShowControl)
+};
