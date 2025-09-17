@@ -1,5 +1,6 @@
 #include "MainIncludes.h"
 #include "PonyEngine.h"
+#include "UserInputManager.h"
 
 ControllableContainer* getAppSettings();
 String getAppVersion();
@@ -17,6 +18,8 @@ PonyEngine::PonyEngine() :
 	GlobalSettings::getInstance()->getControllableContainerByName("oscRemoteControl")
 	->getControllableContainerByName("manualOSCSend")->editorIsCollapsed = true;
 	GlobalSettings::getInstance()->getControllableContainerByName("launchArguments")->editorIsCollapsed = true;
+
+	OSCRemoteControl::getInstance()->addRemoteControlListener(UserInputManager::getInstance());
 }
 
 PonyEngine::~PonyEngine()
