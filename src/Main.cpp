@@ -1,3 +1,13 @@
+/*
+  ==============================================================================
+
+    Main.cpp
+    Created: 19 Sep 2025 12:15:00am
+    Author:  boherm
+
+  ==============================================================================
+*/
+
 #include "Main.h"
 #include "PonyEngine.h"
 #include "MainComponent.h"
@@ -14,7 +24,6 @@ SnoringPonyApplication::SnoringPonyApplication() :
 	crashSent(false)
 {
 }
-
 
 void SnoringPonyApplication::initialiseInternal(const String &)
 {

@@ -1,5 +1,14 @@
+/*
+  ==============================================================================
+
+    Clock.cpp
+    Created: 19 Sep 2025 12:15:00am
+    Author:  boherm
+
+  ==============================================================================
+*/
+
 #include "Clock.h"
-#include "../../MainIncludes.h"
 
 //==============================================================================
 ClockUI::ClockUI(const String& contentName):
@@ -20,7 +29,6 @@ Clock::Clock()
     hms.setJustificationType(Justification::centred);
     fillText();
     Clock::resized();
-    // startTimerHz(10);
     startTimer(250);
 }
 

@@ -1,14 +1,13 @@
 /*
   ==============================================================================
 
-    AssetManager.cpp
-    Created: 4 May 2025 5:23:47pm
-    Author:  Boris Hermans
+    SPAssetManager.cpp
+    Created: 19 Sep 2025 12:15:00am
+    Author:  boherm
 
   ==============================================================================
 */
 
-#include "../MainIncludes.h"
 #include "SPAssetManager.h"
 
 juce_ImplementSingleton(SPAssetManager);

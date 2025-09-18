@@ -1,5 +1,14 @@
+/*
+  ==============================================================================
+
+    ShowControl.cpp
+    Created: 19 Sep 2025 12:15:00am
+    Author:  boherm
+
+  ==============================================================================
+*/
+
 #include "ShowControl.h"
-#include "../../MainIncludes.h"
 
 //==============================================================================
 ShowControlUI::ShowControlUI(const String &contentName): ShapeShifterContent(ShowControl::getInstance(), contentName) {

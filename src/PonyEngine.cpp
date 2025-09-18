@@ -1,3 +1,14 @@
+/*
+  ==============================================================================
+
+    PonyEngine.cpp
+    Created: 19 Sep 2025 12:15:00am
+    Author:  boherm
+
+  ==============================================================================
+*/
+
+#include "CueList/CueListManager.h"
 #include "MainIncludes.h"
 #include "PonyEngine.h"
 #include "UserInputManager.h"
@@ -11,6 +22,7 @@ PonyEngine::PonyEngine() :
 {
 	//init here
 	Engine::mainEngine = this;
+	addChildControllableContainer(CueListManager::getInstance());
 	
 	// Clean
 	getAppSettings()->hideInEditor = true;
@@ -18,6 +30,7 @@ PonyEngine::PonyEngine() :
 	GlobalSettings::getInstance()->getControllableContainerByName("oscRemoteControl")
 	->getControllableContainerByName("manualOSCSend")->editorIsCollapsed = true;
 	GlobalSettings::getInstance()->getControllableContainerByName("launchArguments")->editorIsCollapsed = true;
+    GlobalSettings::getInstance()->askBeforeRemovingItems->setValue(true);
 
 	OSCRemoteControl::getInstance()->addRemoteControlListener(UserInputManager::getInstance());
 }
@@ -28,6 +41,8 @@ PonyEngine::~PonyEngine()
 	//delete singletons here
 
 	isClearing = true;
+
+	CueListManager::deleteInstance();
 }
 
 void PonyEngine::clearInternal()
@@ -39,11 +54,15 @@ void PonyEngine::clearInternal()
 	//ModuleRouterManager::getInstance()->clear();
 	//ModuleManager::getInstance()->clear();
 	//CVGroupManager::getInstance()->clear();
+	CueListManager::getInstance()->clear();
 }
 
 var PonyEngine::getJSONData(bool includeNonOverriden)
 {
 	var data = Engine::getJSONData(includeNonOverriden);
+
+	var clData = CueListManager::getInstance()->getJSONData();
+	if (!clData.isVoid() && clData.getDynamicObject()->getProperties().size() > 0) data.getDynamicObject()->setProperty(CueListManager::getInstance()->shortName, clData);
 
 	/*var mData = ModuleManager::getInstance()->getJSONData();
 	if (!mData.isVoid() && mData.getDynamicObject()->getProperties().size() > 0) data.getDynamicObject()->setProperty(ModuleManager::getInstance()->shortName, mData);
@@ -65,6 +84,13 @@ var PonyEngine::getJSONData(bool includeNonOverriden)
 
 void PonyEngine::loadJSONDataInternalEngine(var data, ProgressTask* loadingTask)
 {
+	ProgressTask* clTask = loadingTask->addTask("CueLists");
+	clTask->start();
+	var clData = data.getProperty(CueListManager::getInstance()->shortName, var());
+	CueListManager::getInstance()->loadJSONData(clData);
+	clTask->setProgress(1);
+	clTask->end();
+
 	/*
 	ProgressTask* moduleTask = loadingTask->addTask("Modules");
 	ProgressTask* cvTask = loadingTask->addTask("Custom Variables");
@@ -118,7 +144,6 @@ void PonyEngine::handleAsyncUpdate()
 
 void PonyEngine::importSelection(File f)
 {
-	/*
 	if (!f.existsAsFile())
 	{
 		FileChooser* fc(new FileChooser("Load a LilNut", File::getCurrentWorkingDirectory(), "*.lilnut"));
@@ -136,25 +161,15 @@ void PonyEngine::importSelection(File f)
 	var data = JSON::parse(f);
 	if (!data.isObject()) return;
 
-	ModuleManager::getInstance()->addItemsFromData(data.getProperty(ModuleManager::getInstance()->shortName, var()));
-	CVGroupManager::getInstance()->addItemsFromData(data.getProperty(CVGroupManager::getInstance()->shortName, var()));
-	StateManager::getInstance()->addItemsFromData(data.getProperty(StateManager::getInstance()->shortName, var()));
-	ChataigneSequenceManager::getInstance()->addItemsFromData(data.getProperty(ChataigneSequenceManager::getInstance()->shortName, var()));
-	ModuleRouterManager::getInstance()->addItemsFromData(data.getProperty(ModuleRouterManager::getInstance()->shortName, var()));
-	 */
+	CueListManager::getInstance()->addItemsFromData(data.getProperty(CueListManager::getInstance()->shortName, var()));
 }
 
 void PonyEngine::exportSelection()
 {
-	/*
 	var data(new DynamicObject());
 
-	data.getDynamicObject()->setProperty(ModuleManager::getInstance()->shortName, ModuleManager::getInstance()->getExportSelectionData());
-	data.getDynamicObject()->setProperty(CVGroupManager::getInstance()->shortName, CVGroupManager::getInstance()->getExportSelectionData());
-	data.getDynamicObject()->setProperty(StateManager::getInstance()->shortName, StateManager::getInstance()->getExportSelectionData());
-	data.getDynamicObject()->setProperty(ChataigneSequenceManager::getInstance()->shortName, ChataigneSequenceManager::getInstance()->getExportSelectionData());
-	data.getDynamicObject()->setProperty(ModuleRouterManager::getInstance()->shortName, ModuleRouterManager::getInstance()->getExportSelectionData());
-
+	data.getDynamicObject()->setProperty(CueListManager::getInstance()->shortName, CueListManager::getInstance()->getExportSelectionData());
+	
 	String s = JSON::toString(data);
 
 	FileChooser* fc(new FileChooser("Save a LilNut", File::getCurrentWorkingDirectory(), "*.lilnut"));
@@ -166,10 +181,9 @@ void PonyEngine::exportSelection()
 			f.replaceWithText(s);
 		}
 	);
-	 */
 }
 
 String PonyEngine::getMinimumRequiredFileVersion()
 {
-	return "1.0.0a";
+	return "1.0.0b1";
 }

@@ -2,13 +2,12 @@
   ==============================================================================
 
     MainComponentCommands.cpp
-    Created: 3 May 2025 7:20:39pm
-    Author:  Boris Hermans
+    Created: 19 Sep 2025 12:15:00am
+    Author:  boherm
 
   ==============================================================================
 */
 
-#include "MainIncludes.h"
 #include "MainComponent.h"
 #include "PonyEngine.h"
 #include "ui/AboutWindow.h"

@@ -1,14 +1,16 @@
 /*
   ==============================================================================
 
-    AssetManager.h
-    Created: 4 May 2025 5:23:47pm
-    Author:  Boris Hermans
+    SPAssetManager.h
+    Created: 19 Sep 2025 12:15:00am
+    Author:  boherm
 
   ==============================================================================
 */
 
 #pragma once
+
+#include "../MainIncludes.h"
 
 class SPAssetManager
 {

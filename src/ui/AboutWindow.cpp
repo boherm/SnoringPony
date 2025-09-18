@@ -2,13 +2,12 @@
   ==============================================================================
 
     AboutWindow.cpp
-    Created: 4 May 2025 3:33:10pm
-    Author:  Boris Hermans
+    Created: 19 Sep 2025 12:15:00am
+    Author:  boherm
 
   ==============================================================================
 */
 
-#include "../MainIncludes.h"
 #include "AboutWindow.h"
 #include "SPAssetManager.h"
 

@@ -1,6 +1,12 @@
-//
-// Created by Boris Hermans on 17/09/2025.
-//
+/*
+  ==============================================================================
+
+    UserInputManager.cpp
+    Created: 19 Sep 2025 12:15:00am
+    Author:  boherm
+
+  ==============================================================================
+*/
 
 #include "UserInputManager.h"
 #include "MainIncludes.h"
