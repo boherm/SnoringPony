@@ -1,2 +1,5 @@
+.cache
+.vscode
 .idea
 cmake-build-*
+build
