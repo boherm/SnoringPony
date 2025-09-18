@@ -18,4 +18,6 @@ class CueListUI :
 public:
   CueListUI(CueList *item);
   ~CueListUI();
+
+  void paint(Graphics &g) override;
 };
