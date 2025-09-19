@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    CueListUI.h
+    CueListManagerItemUI.h
     Created: 19 Sep 2025 12:15:00am
     Author:  boherm
 
@@ -12,12 +12,12 @@
 
 #include "../CueList.h"
 
-class CueListUI :
+class CueListManagerItemUI :
 	public BaseItemUI<CueList>
 {
 public:
-  CueListUI(CueList *item);
-  ~CueListUI();
+CueListManagerItemUI(CueList *item);
+  ~CueListManagerItemUI();
 
   void paint(Graphics &g) override;
 };

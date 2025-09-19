@@ -1,27 +1,27 @@
 /*
   ==============================================================================
 
-    CueListUI.cpp
+    CueListManagerItemUI.cpp
     Created: 19 Sep 2025 12:15:00am
     Author:  boherm
 
   ==============================================================================
 */
 
-#include "CueListUI.h"
+#include "CueListManagerItemUI.h"
 #include "juce_graphics/juce_graphics.h"
 
-CueListUI::CueListUI(CueList *item) : 
+CueListManagerItemUI::CueListManagerItemUI(CueList *item) : 
   BaseItemUI(item)
 {
 
 }
 
-CueListUI::~CueListUI()
+CueListManagerItemUI::~CueListManagerItemUI()
 {
 }
 
-void CueListUI::paint(Graphics &g)
+void CueListManagerItemUI::paint(Graphics &g)
 {
   BaseItemUI::paint(g);
 

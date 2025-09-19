@@ -11,10 +11,10 @@
 #pragma once
 
 #include "../CueListManager.h"
-#include "CueListUI.h"
+#include "CueListManagerItemUI.h"
 
 class CueListManagerUI:
-	public BaseManagerShapeShifterUI<CueListManager, CueList, CueListUI>
+	public BaseManagerShapeShifterUI<CueListManager, CueList, CueListManagerItemUI>
 {
 public:
   CueListManagerUI(const String &contentName);
