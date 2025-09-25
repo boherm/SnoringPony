@@ -9,6 +9,7 @@
 */
 
 #include "Main.h"
+#include "MainMenuBarComponent.h"
 #include "PonyEngine.h"
 #include "MainComponent.h"
 
@@ -49,6 +50,11 @@ void SnoringPonyApplication::afterInit()
 	// Download dashboard server
 	// DashboardManager::getInstance()->setupDownloadURL("https://webhook.site/7fb6eddc-aebf-4783-bdc3-e9e3e0b80da2");
 	DashboardManager::getInstance()->setupDownloadURL("http://benjamin.kuperberg.fr/download/dashboard/dashboard.php?folder=dashboard");
+	
+	if (mainWindow != nullptr)
+	{
+		mainWindow->setMenuBarComponent(new MainMenuBarComponent((MainContentComponent*)mainComponent.get(), (PonyEngine*)engine.get()));
+	}
 }
 
 void SnoringPonyApplication::shutdown()

@@ -1,0 +1,32 @@
+/*
+  ==============================================================================
+
+    MainMenuBarComponent.cpp
+    Created: 25 Sep 2025 01:43:00pm
+    Author:  boherm
+
+  ==============================================================================
+*/
+
+#pragma once
+
+#include "MainIncludes.h"
+#include "PonyEngine.h"
+#include "MainComponent.h"
+
+class MainMenuBarComponent :
+	public Component,
+	public ParameterListener
+{
+public:
+	MainMenuBarComponent(MainContentComponent* mainComp, PonyEngine* engine);
+	~MainMenuBarComponent();
+
+#if !JUCE_MAC
+	MenuBarComponent menuBarComp;
+#endif
+	
+	void parameterValueChanged(Parameter* parameter) override;
+	void paint(Graphics& g) override;
+	void resized() override;
+};
