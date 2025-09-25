@@ -12,6 +12,8 @@
 #include "MainIncludes.h"
 #include "PonyEngine.h"
 #include "UserInputManager.h"
+#include "Show/ShowProperties.h"
+#include "Show/DecksSettings.h"
 
 ControllableContainer* getAppSettings();
 String getAppVersion();
@@ -33,6 +35,13 @@ PonyEngine::PonyEngine() :
     GlobalSettings::getInstance()->askBeforeRemovingItems->setValue(true);
 
 	OSCRemoteControl::getInstance()->addRemoteControlListener(UserInputManager::getInstance());
+
+    // Set projects settings
+    ProjectSettings::getInstance()->addChildControllableContainer(ShowProperties::getInstance());
+    ProjectSettings::getInstance()->addChildControllableContainer(DecksSettings::getInstance());
+    ProjectSettings::getInstance()->customValuesCC.hideInEditor = true;
+    ProjectSettings::getInstance()->dashboardCC.editorIsCollapsed = true;
+
 }
 
 PonyEngine::~PonyEngine()
@@ -43,6 +52,9 @@ PonyEngine::~PonyEngine()
 	isClearing = true;
 
 	CueListManager::deleteInstance();
+
+	ShowProperties::deleteInstance();
+    DecksSettings::deleteInstance();
 }
 
 void PonyEngine::clearInternal()
@@ -55,6 +67,15 @@ void PonyEngine::clearInternal()
 	//ModuleManager::getInstance()->clear();
 	//CVGroupManager::getInstance()->clear();
 	CueListManager::getInstance()->clear();
+
+	ShowProperties::getInstance()->clear();
+    DecksSettings::getInstance()->clear();
+
+    // ShowProperties::getInstance()->reset();
+    // Reset value of all parameters in showProperties
+    // for (int i = 0; i < showProperties.getAllParameters().size(); i++) {
+		// showProperties.getAllParameters()[i]->resetValue();
+	// }
 }
 
 var PonyEngine::getJSONData(bool includeNonOverriden)
