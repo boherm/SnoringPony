@@ -9,7 +9,7 @@
 */
 
 #include "DecksSettings.h"
-#include "../CueList/CueListManager.h"
+#include "../Cuelist/CuelistManager.h"
 #include "juce_organicui/controllable/parameter/TargetParameter.h"
 
 juce_ImplementSingleton(DecksSettings)
@@ -25,13 +25,13 @@ DecksSettings::DecksSettings() :
     hideInRemoteControl = true;
     defaultHideInRemoteControl = true;
 
-    deckA = addTargetParameter("Deck A", "Cue list for deck A", CueListManager::getInstance());
+    deckA = addTargetParameter("Deck A", "Cue list for deck A", CuelistManager::getInstance());
     deckA->targetType = TargetParameter::CONTAINER;
-    deckB = addTargetParameter("Deck B", "Cue list for deck B", CueListManager::getInstance());
+    deckB = addTargetParameter("Deck B", "Cue list for deck B", CuelistManager::getInstance());
     deckB->targetType = TargetParameter::CONTAINER;
-    deckC = addTargetParameter("Deck C", "Cue list for deck C", CueListManager::getInstance());
+    deckC = addTargetParameter("Deck C", "Cue list for deck C", CuelistManager::getInstance());
     deckC->targetType = TargetParameter::CONTAINER;
-    deckD = addTargetParameter("Deck D", "Cue list for deck D", CueListManager::getInstance());
+    deckD = addTargetParameter("Deck D", "Cue list for deck D", CuelistManager::getInstance());
     deckD->targetType = TargetParameter::CONTAINER;
 }
 

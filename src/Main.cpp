@@ -59,6 +59,7 @@ void SnoringPonyApplication::afterInit()
 
 void SnoringPonyApplication::shutdown()
 {
+	if (isInitialising()) return;
 	OrganicApplication::shutdown();
 	AppUpdater::deleteInstance();
 }

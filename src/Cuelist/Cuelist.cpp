@@ -1,17 +1,17 @@
 /*
   ==============================================================================
 
-    CueList.cpp
+    Cuelist.cpp
     Created: 19 Sep 2025 12:15:00am
     Author:  boherm
 
   ==============================================================================
 */
 
-#include "CueList.h"
+#include "Cuelist.h"
 
-CueList::CueList() :
-    BaseItem("CueList")
+Cuelist::Cuelist() :
+    BaseItem("Cuelist")
 {
   askConfirmationBeforeRemove = true;
   setCanBeDisabled(false);
@@ -19,6 +19,6 @@ CueList::CueList() :
 	itemColor->setDefaultValue(BG_COLOR.brighter(.2f));
 }
 
-CueList::~CueList()
+Cuelist::~Cuelist()
 {
 }

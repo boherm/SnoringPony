@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    CueListFactory.h
+    CuelistFactory.h
     Created: 19 Sep 2025 12:15:00am
     Author:  boherm
 
@@ -11,18 +11,18 @@
 #pragma once
 
 #include "../MainIncludes.h"
-#include "CueList.h"
+#include "Cuelist.h"
 
-class CueListFactory :
-    public Factory<CueList>
+class CuelistFactory :
+    public Factory<Cuelist>
 {
 public:
-    juce_DeclareSingleton(CueListFactory, true)
+    juce_DeclareSingleton(CuelistFactory, true)
 
-    CueListFactory();
-    ~CueListFactory() {}
+    CuelistFactory();
+    ~CuelistFactory() {}
 
     void buildPopupMenu(int startOffset = 0) override;
-    void showCreateMenu(std::function<void(CueList *)> returnFunc) override;
-    CueList * createFromMenuResult(int result) override;
+    void showCreateMenu(std::function<void(Cuelist *)> returnFunc) override;
+    Cuelist * createFromMenuResult(int result) override;
 };

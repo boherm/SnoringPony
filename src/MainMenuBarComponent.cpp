@@ -9,7 +9,7 @@
 */
 
 #include "MainMenuBarComponent.h"
-#include "Show/ShowProperties.h"
+#include "ProjectSettings/ShowProperties.h"
 #include "juce_graphics/juce_graphics.h"
 
 MainMenuBarComponent::MainMenuBarComponent(MainContentComponent* mainComp, PonyEngine* engine) :

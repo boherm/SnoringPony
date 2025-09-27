@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    CueListManager.h
+    CuelistManagerItemUI.h
     Created: 19 Sep 2025 12:15:00am
     Author:  boherm
 
@@ -10,15 +10,14 @@
 
 #pragma once
 
-#include "../MainIncludes.h"
-#include "CueList.h"
+#include "../Cuelist.h"
 
-class CueListManager :
-    public BaseManager<CueList>
+class CuelistManagerItemUI :
+	public BaseItemUI<Cuelist>
 {
 public:
-    juce_DeclareSingleton(CueListManager, true);
+  CuelistManagerItemUI(Cuelist *item);
+  ~CuelistManagerItemUI();
 
-    CueListManager();
-    ~CueListManager();
+  void paint(Graphics &g) override;
 };

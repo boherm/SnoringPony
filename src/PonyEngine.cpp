@@ -8,12 +8,12 @@
   ==============================================================================
 */
 
-#include "CueList/CueListManager.h"
+#include "Cuelist/CuelistManager.h"
 #include "MainIncludes.h"
 #include "PonyEngine.h"
 #include "UserInputManager.h"
-#include "Show/ShowProperties.h"
-#include "Show/DecksSettings.h"
+#include "ProjectSettings/ShowProperties.h"
+#include "ProjectSettings/DecksSettings.h"
 
 ControllableContainer* getAppSettings();
 String getAppVersion();
@@ -24,7 +24,7 @@ PonyEngine::PonyEngine() :
 {
 	//init here
 	Engine::mainEngine = this;
-	addChildControllableContainer(CueListManager::getInstance());
+	addChildControllableContainer(CuelistManager::getInstance());
 	
 	// Clean
 	getAppSettings()->hideInEditor = true;
@@ -51,10 +51,14 @@ PonyEngine::~PonyEngine()
 
 	isClearing = true;
 
-	CueListManager::deleteInstance();
+	// Supprimer les listeners avant de supprimer les singletons
+	if (OSCRemoteControl::getInstance() != nullptr)
+		OSCRemoteControl::getInstance()->removeRemoteControlListener(UserInputManager::getInstance());
 
-	ShowProperties::deleteInstance();
-    DecksSettings::deleteInstance();
+	CuelistManager::deleteInstance();
+
+	// ShowProperties::deleteInstance();
+    // DecksSettings::deleteInstance();
 }
 
 void PonyEngine::clearInternal()
@@ -66,7 +70,7 @@ void PonyEngine::clearInternal()
 	//ModuleRouterManager::getInstance()->clear();
 	//ModuleManager::getInstance()->clear();
 	//CVGroupManager::getInstance()->clear();
-	CueListManager::getInstance()->clear();
+	CuelistManager::getInstance()->clear();
 
 	ShowProperties::getInstance()->clear();
     DecksSettings::getInstance()->clear();
@@ -82,8 +86,8 @@ var PonyEngine::getJSONData(bool includeNonOverriden)
 {
 	var data = Engine::getJSONData(includeNonOverriden);
 
-	var clData = CueListManager::getInstance()->getJSONData();
-	if (!clData.isVoid() && clData.getDynamicObject()->getProperties().size() > 0) data.getDynamicObject()->setProperty(CueListManager::getInstance()->shortName, clData);
+	var clData = CuelistManager::getInstance()->getJSONData();
+	if (!clData.isVoid() && clData.getDynamicObject()->getProperties().size() > 0) data.getDynamicObject()->setProperty(CuelistManager::getInstance()->shortName, clData);
 
 	/*var mData = ModuleManager::getInstance()->getJSONData();
 	if (!mData.isVoid() && mData.getDynamicObject()->getProperties().size() > 0) data.getDynamicObject()->setProperty(ModuleManager::getInstance()->shortName, mData);
@@ -107,8 +111,8 @@ void PonyEngine::loadJSONDataInternalEngine(var data, ProgressTask* loadingTask)
 {
 	ProgressTask* clTask = loadingTask->addTask("CueLists");
 	clTask->start();
-	var clData = data.getProperty(CueListManager::getInstance()->shortName, var());
-	CueListManager::getInstance()->loadJSONData(clData);
+	var clData = data.getProperty(CuelistManager::getInstance()->shortName, var());
+	CuelistManager::getInstance()->loadJSONData(clData);
 	clTask->setProgress(1);
 	clTask->end();
 
@@ -182,14 +186,14 @@ void PonyEngine::importSelection(File f)
 	var data = JSON::parse(f);
 	if (!data.isObject()) return;
 
-	CueListManager::getInstance()->addItemsFromData(data.getProperty(CueListManager::getInstance()->shortName, var()));
+	CuelistManager::getInstance()->addItemsFromData(data.getProperty(CuelistManager::getInstance()->shortName, var()));
 }
 
 void PonyEngine::exportSelection()
 {
 	var data(new DynamicObject());
 
-	data.getDynamicObject()->setProperty(CueListManager::getInstance()->shortName, CueListManager::getInstance()->getExportSelectionData());
+	data.getDynamicObject()->setProperty(CuelistManager::getInstance()->shortName, CuelistManager::getInstance()->getExportSelectionData());
 	
 	String s = JSON::toString(data);
 
