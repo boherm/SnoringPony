@@ -21,4 +21,6 @@ class DeckUI :
         static DeckUI *create(const String &name) {
             return new DeckUI(name);
         }
+    private:
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DeckUI)
 };
