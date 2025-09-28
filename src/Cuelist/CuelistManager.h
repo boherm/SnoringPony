@@ -21,4 +21,6 @@ public:
 
     CuelistManager();
     ~CuelistManager();
+
+    PopupMenu getItemsMenuWithTickedItem(int startID, Cuelist* currentCuelist);
 };

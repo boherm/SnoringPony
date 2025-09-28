@@ -14,7 +14,6 @@
 DeckUI::DeckUI(const String &contentName) :
     ShapeShifterContent(new DeckViewUI(contentName), contentName)
 {
-    Logger::writeToLog("DeckUI created: " + contentName);
 }
 
 DeckUI::~DeckUI()

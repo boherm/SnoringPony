@@ -22,4 +22,18 @@ CuelistManager::~CuelistManager()
 {
 }
 
+PopupMenu CuelistManager::getItemsMenuWithTickedItem(int startID, Cuelist* currentCuelist)
+{
+    PopupMenu m;
+    int i = 0;
+    for (auto item : items) {
+        if (item == currentCuelist)
+            m.addItem(i + startID, item->niceName, true, true);
+        else
+            m.addItem(i + startID, item->niceName);
+        i++;
+    }
+    return m;
+}
+
 juce_ImplementSingleton(CuelistManager);
