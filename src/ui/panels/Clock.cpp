@@ -39,6 +39,7 @@ Clock::~Clock()
 
 void Clock::paint (juce::Graphics& g)
 {
+    g.fillAll(BG_COLOR);
 }
 
 void Clock::resized()

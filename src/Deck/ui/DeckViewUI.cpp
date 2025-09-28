@@ -21,6 +21,7 @@ DeckViewUI::~DeckViewUI()
 
 void DeckViewUI::paint (Graphics& g)
 {
+    g.fillAll(BG_COLOR);
     g.setColour(Colours::white);
     g.drawText("DeckViewUI " + deckName, getLocalBounds(), Justification::centred, true);
 }
