@@ -12,8 +12,6 @@
 #include "../Cuelist/CuelistManager.h"
 #include "juce_organicui/controllable/parameter/TargetParameter.h"
 
-juce_ImplementSingleton(DecksSettings)
-
 DecksSettings::DecksSettings() :
     ControllableContainer("Decks Settings"),
     deckA(nullptr),
@@ -33,14 +31,6 @@ DecksSettings::DecksSettings() :
     deckC->targetType = TargetParameter::CONTAINER;
     deckD = addTargetParameter("Deck D", "Cue list for deck D", CuelistManager::getInstance());
     deckD->targetType = TargetParameter::CONTAINER;
-}
-
-DecksSettings::~DecksSettings()
-{
-    delete deckA;
-    delete deckB;
-    delete deckC;
-    delete deckD;
 }
 
 void DecksSettings::clear()

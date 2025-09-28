@@ -17,9 +17,7 @@ class DecksSettings :
 	public ControllableContainer
 {
 public:
-	juce_DeclareSingleton(DecksSettings, true);
 	DecksSettings();
-	~DecksSettings() override;
 
     TargetParameter* deckA;
     TargetParameter* deckB;

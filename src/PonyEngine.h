@@ -10,11 +10,18 @@
 
 #pragma once
 
+#include "MainIncludes.h"
+#include "ProjectSettings/ShowProperties.h"
+#include "ProjectSettings/DecksSettings.h"
+
 class PonyEngine : public Engine
 {
 public:
 	PonyEngine();
 	~PonyEngine();
+
+    ShowProperties showProperties;
+    DecksSettings decksSettings;
 
 	void clearInternal() override;
 

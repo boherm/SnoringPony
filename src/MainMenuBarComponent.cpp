@@ -11,6 +11,7 @@
 #include "MainMenuBarComponent.h"
 #include "ProjectSettings/ShowProperties.h"
 #include "juce_graphics/juce_graphics.h"
+#include "juce_organicui/settings/ProjectSettings.h"
 
 MainMenuBarComponent::MainMenuBarComponent(MainContentComponent* mainComp, PonyEngine* engine) :
 	Component("Menu Bar")
@@ -22,14 +23,17 @@ MainMenuBarComponent::MainMenuBarComponent(MainContentComponent* mainComp, PonyE
 	addAndMakeVisible(menuBarComp);
 #endif
 
-    ShowProperties::getInstance()->projectName->addParameterListener(this);
-    ShowProperties::getInstance()->companyName->addParameterListener(this);
-    ShowProperties::getInstance()->showFileVersion->addParameterListener(this);
+    this->showProperties = &engine->showProperties;
+    this->showProperties->projectName->addParameterListener(this);
+    this->showProperties->companyName->addParameterListener(this);
+    this->showProperties->showFileVersion->addParameterListener(this);
 }
 
 MainMenuBarComponent::~MainMenuBarComponent()
 {
-    ShowProperties::getInstance()->projectName->removeParameterListener(this);
+    this->showProperties->projectName->removeParameterListener(this);
+    this->showProperties->companyName->removeParameterListener(this);
+    this->showProperties->showFileVersion->removeParameterListener(this);
 }
 
 void MainMenuBarComponent::paint(Graphics& g)
@@ -37,12 +41,16 @@ void MainMenuBarComponent::paint(Graphics& g)
 	g.fillAll(BG_COLOR);
     g.setColour(TEXTNAME_COLOR);
     
+    Rectangle<int> *r = new Rectangle<int>(
+            getLocalBounds().getX() + 5,
+            getLocalBounds().getY(),
+            getLocalBounds().getWidth() - 10,
+            getLocalBounds().getHeight()
+    );
 
-    Rectangle<int> *r = new Rectangle<int>(getLocalBounds().getX() + 5, getLocalBounds().getY(), getLocalBounds().getWidth() - 10, getLocalBounds().getHeight());
-
-    String title = ShowProperties::getInstance()->companyName->stringValue() + " - " + 
-        ShowProperties::getInstance()->projectName->stringValue() + " - " + 
-        ShowProperties::getInstance()->showFileVersion->stringValue();
+    String title = this->showProperties->companyName->stringValue() + " - " +
+        this->showProperties->projectName->stringValue() + " - " +
+        this->showProperties->showFileVersion->stringValue();
     
     g.drawText(title, *r, Justification::centred, 1);
     

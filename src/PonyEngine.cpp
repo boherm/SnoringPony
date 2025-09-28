@@ -8,18 +8,25 @@
   ==============================================================================
 */
 
+#include "Cuelist/CuelistFactory.h"
 #include "Cuelist/CuelistManager.h"
 #include "MainIncludes.h"
 #include "PonyEngine.h"
 #include "UserInputManager.h"
 #include "ProjectSettings/ShowProperties.h"
 #include "ProjectSettings/DecksSettings.h"
+#include "ui/AboutWindow.h"
+#include "ui/SPAssetManager.h"
+#include "ui/panels/Clock.h"
+#include "ui/panels/ShowControl.h"
 
 ControllableContainer* getAppSettings();
 String getAppVersion();
 
 PonyEngine::PonyEngine() :
-	Engine("SnoringPony", ".indy")
+	Engine("SnoringPony", ".indy"),
+    showProperties(),
+    decksSettings()
 	//ossiaDevice(nullptr)
 {
 	//init here
@@ -37,8 +44,8 @@ PonyEngine::PonyEngine() :
 	OSCRemoteControl::getInstance()->addRemoteControlListener(UserInputManager::getInstance());
 
     // Set projects settings
-    ProjectSettings::getInstance()->addChildControllableContainer(ShowProperties::getInstance());
-    ProjectSettings::getInstance()->addChildControllableContainer(DecksSettings::getInstance());
+    ProjectSettings::getInstance()->addChildControllableContainer(&showProperties);
+    ProjectSettings::getInstance()->addChildControllableContainer(&decksSettings);
     ProjectSettings::getInstance()->customValuesCC.hideInEditor = true;
     ProjectSettings::getInstance()->dashboardCC.editorIsCollapsed = true;
 
@@ -51,14 +58,14 @@ PonyEngine::~PonyEngine()
 
 	isClearing = true;
 
-	// Supprimer les listeners avant de supprimer les singletons
-	if (OSCRemoteControl::getInstance() != nullptr)
-		OSCRemoteControl::getInstance()->removeRemoteControlListener(UserInputManager::getInstance());
-
 	CuelistManager::deleteInstance();
+    CuelistFactory::deleteInstance();
 
-	// ShowProperties::deleteInstance();
-    // DecksSettings::deleteInstance();
+    Clock::deleteInstance();
+    ShowControl::deleteInstance();
+
+    SPAssetManager::deleteInstance();
+    UserInputManager::deleteInstance();
 }
 
 void PonyEngine::clearInternal()
@@ -72,14 +79,8 @@ void PonyEngine::clearInternal()
 	//CVGroupManager::getInstance()->clear();
 	CuelistManager::getInstance()->clear();
 
-	ShowProperties::getInstance()->clear();
-    DecksSettings::getInstance()->clear();
-
-    // ShowProperties::getInstance()->reset();
-    // Reset value of all parameters in showProperties
-    // for (int i = 0; i < showProperties.getAllParameters().size(); i++) {
-		// showProperties.getAllParameters()[i]->resetValue();
-	// }
+    showProperties.clear();
+    decksSettings.clear();
 }
 
 var PonyEngine::getJSONData(bool includeNonOverriden)

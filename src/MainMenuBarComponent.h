@@ -25,7 +25,9 @@ public:
 #if !JUCE_MAC
 	MenuBarComponent menuBarComp;
 #endif
-	
+
+    ShowProperties* showProperties;
+
 	void parameterValueChanged(Parameter* parameter) override;
 	void paint(Graphics& g) override;
 	void resized() override;

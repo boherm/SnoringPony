@@ -16,9 +16,7 @@ class ShowProperties :
 	public ControllableContainer
 {
 public:
-	juce_DeclareSingleton(ShowProperties, true);
 	ShowProperties();
-	~ShowProperties() override;
 
 	StringParameter* projectName;
     StringParameter* companyName;
