@@ -12,6 +12,7 @@
 
 #include "../../MainIncludes.h"
 #include "../../Cuelist/Cuelist.h"
+#include "CuesTableUI.h"
 
 class DeckViewUI :
     public Component,
@@ -21,12 +22,14 @@ public:
     DeckViewUI(const String &deckName);
     ~DeckViewUI() override;
 
+    CuesTableUI* cuesTable;
+
     String deckName;
     Cuelist* currentCuelist;
 
     void setCurrentCuelist(Cuelist* cl);
     void paint (Graphics&) override;
-    // void resized() override;
+    void resized() override;
     void parameterValueChanged(Parameter* parameter) override;
     void mouseDown(const MouseEvent& event);
 
@@ -35,4 +38,3 @@ public:
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DeckViewUI)
 };
-

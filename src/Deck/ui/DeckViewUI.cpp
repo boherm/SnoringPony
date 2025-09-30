@@ -11,12 +11,12 @@
 #include "../../MainIncludes.h"
 #include "DeckViewUI.h"
 #include "../../PonyEngine.h"
+#include "CuesTableUI.h"
 #include "juce_core/juce_core.h"
 #include "../../Cuelist/CuelistManager.h"
-#include "juce_organicui/help/HelpBox.h"
-#include "juce_organicui/help/HelpPanel.h"
+#include "CuesTableUI.h"
 
-DeckViewUI::DeckViewUI(const String &deckName) 
+DeckViewUI::DeckViewUI(const String &deckName)
 {
     this->deckName = deckName;
 
@@ -31,14 +31,31 @@ DeckViewUI::~DeckViewUI()
 {
     TargetParameter* tp = getAssociatedTargetParameter();
 
-    if (tp) {
+    if (tp)
         tp->removeParameterListener(this);
-    }
+
+    if (cuesTable != nullptr)
+        delete cuesTable;
 }
 
 void DeckViewUI::setCurrentCuelist(Cuelist* cl)
 {
     currentCuelist = cl;
+
+    if (cl != nullptr) {
+        if (cuesTable != nullptr)
+            delete cuesTable;
+
+        cuesTable = new CuesTableUI();
+        addAndMakeVisible(cuesTable);
+    } else {
+        if (cuesTable != nullptr) {
+            delete cuesTable;
+            cuesTable = nullptr;
+        }
+    }
+
+    resized();
     repaint();
 }
 
@@ -53,18 +70,21 @@ void DeckViewUI::parameterValueChanged(Parameter* parameter)
 
 void DeckViewUI::paint(Graphics& g)
 {
+    g.fillAll(BG_COLOR);
+    g.setColour(Colours::white.withAlpha(0.5f));
+
     if (currentCuelist != nullptr) {
-        g.fillAll(BG_COLOR);
-        g.setColour(BG_COLOR.darker());
-        g.fillRect(0, 0, getWidth(), 30);
-        g.setColour(NORMAL_COLOR);
         g.drawText(currentCuelist->niceName, 0, 0, getWidth(), 30, Justification::centred, true);
     } else {
-        g.fillAll(BG_COLOR);
-        g.setColour(Colours::white.withAlpha(0.5f));
         g.drawFittedText("You can manage and operate your cuelists in decks.\nPress the right mouse button to assign a cuelist to this desk.", 2, 0, getWidth(), getHeight(), Justification::centred, true);
         ;
     }
+}
+
+void DeckViewUI::resized()
+{
+    if (cuesTable != nullptr)
+        cuesTable->setBounds(0, 30, getWidth(), getHeight() - 30);
 }
 
 TargetParameter* DeckViewUI::getAssociatedTargetParameter()
