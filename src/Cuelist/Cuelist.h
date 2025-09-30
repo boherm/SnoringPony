@@ -18,6 +18,9 @@ class Cuelist :
     Cuelist();
     ~Cuelist();
 
+    Trigger* goBtn;
+    Trigger* stopBtn;
+
     juce::String getTypeString() const override { return "Cuelist"; }
     static Cuelist *create(juce::var) { return new Cuelist(); }
 };

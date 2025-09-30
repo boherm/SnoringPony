@@ -13,10 +13,13 @@
 Cuelist::Cuelist() :
     BaseItem("Cuelist")
 {
-  askConfirmationBeforeRemove = true;
-  setCanBeDisabled(false);
-  setHasCustomColor(true);
+    askConfirmationBeforeRemove = true;
+    setCanBeDisabled(false);
+    setHasCustomColor(true);
 	itemColor->setDefaultValue(BG_COLOR.brighter(.2f));
+
+    goBtn = addTrigger("GO", "Trigger next cue");
+    stopBtn = addTrigger("STOP", "Stop current cue");
 }
 
 Cuelist::~Cuelist()
