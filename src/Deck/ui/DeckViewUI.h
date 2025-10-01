@@ -16,13 +16,15 @@
 
 class DeckViewUI :
     public Component,
-    public ParameterListener
+    public ParameterListener,
+    public Button::Listener
 {
 public:
     DeckViewUI(const String &deckName);
     ~DeckViewUI() override;
 
     std::unique_ptr<CuesTableUI> cuesTable;
+    std::unique_ptr<juce::ImageButton> addItemBT;
 
     String deckName;
     Cuelist* currentCuelist;
@@ -34,6 +36,8 @@ public:
     void mouseDown(const MouseEvent& event);
 
     TargetParameter* getAssociatedTargetParameter();
+
+    void buttonClicked(Button* button) override;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DeckViewUI)

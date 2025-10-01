@@ -25,6 +25,7 @@ DeckViewUI::DeckViewUI(const String &deckName)
     if (tp) {
         tp->addParameterListener(this);
     }
+
 }
 
 DeckViewUI::~DeckViewUI()
@@ -42,12 +43,22 @@ void DeckViewUI::setCurrentCuelist(Cuelist* cl)
     if (cl != nullptr) {
         if (cuesTable)
             cuesTable.reset();
+        if (addItemBT)
+            addItemBT.reset();
 
         cuesTable = std::make_unique<CuesTableUI>();
         addAndMakeVisible(cuesTable.get());
+
+        addItemBT.reset(AssetManager::getInstance()->getAddBT());
+        addItemBT->setWantsKeyboardFocus(false);
+        addItemBT->setTooltip("Add a new Cue");
+        addAndMakeVisible(addItemBT.get());
+        addItemBT->addListener(this);
     } else {
         if (cuesTable)
             cuesTable.reset();
+        if (addItemBT)
+            addItemBT.reset();
     }
 
     resized();
@@ -66,13 +77,15 @@ void DeckViewUI::parameterValueChanged(Parameter* parameter)
 void DeckViewUI::paint(Graphics& g)
 {
     g.fillAll(BG_COLOR);
-    g.setColour(Colours::white.withAlpha(0.5f));
-
     if (currentCuelist != nullptr) {
+        g.setColour(BG_COLOR.darker(0.5f));
+        g.fillRect(0, 0, getWidth(), 30);
+        g.setColour(Colours::white);
+        g.setFont (Font (15, Font::bold));
         g.drawText(currentCuelist->niceName, 0, 0, getWidth(), 30, Justification::centred, true);
     } else {
+        g.setColour(Colours::white.withAlpha(0.4f));
         g.drawFittedText("You can manage and operate your cuelists in decks.\nPress the right mouse button to assign a cuelist to this desk.", 2, 0, getWidth(), getHeight(), Justification::centred, true);
-        ;
     }
 }
 
@@ -80,6 +93,9 @@ void DeckViewUI::resized()
 {
     if (cuesTable)
         cuesTable->setBounds(0, 30, getWidth(), getHeight() - 30);
+
+    if (addItemBT)
+        addItemBT->setBounds(getWidth() - 24, 4, 20, 20);
 }
 
 TargetParameter* DeckViewUI::getAssociatedTargetParameter()
@@ -128,5 +144,19 @@ void DeckViewUI::mouseDown(const MouseEvent& event)
                 }
             }
         );
+    }
+}
+
+void DeckViewUI::buttonClicked(Button* button)
+{
+    if (button == addItemBT.get())
+    {
+        Logger::writeToLog("DeckViewUI::buttonClicked: addItemBT");
+        // if (currentCuelist != nullptr)
+        // {
+        //     currentCuelist->addNewCue("New Cue", 0, "", false);
+        //     if (cuesTable)
+        //         cuesTable->fillText();
+        // }
     }
 }
