@@ -22,7 +22,7 @@ public:
     DeckViewUI(const String &deckName);
     ~DeckViewUI() override;
 
-    CuesTableUI* cuesTable;
+    std::unique_ptr<CuesTableUI> cuesTable;
 
     String deckName;
     Cuelist* currentCuelist;

@@ -33,9 +33,6 @@ DeckViewUI::~DeckViewUI()
 
     if (tp)
         tp->removeParameterListener(this);
-
-    if (cuesTable != nullptr)
-        delete cuesTable;
 }
 
 void DeckViewUI::setCurrentCuelist(Cuelist* cl)
@@ -43,16 +40,14 @@ void DeckViewUI::setCurrentCuelist(Cuelist* cl)
     currentCuelist = cl;
 
     if (cl != nullptr) {
-        if (cuesTable != nullptr)
-            delete cuesTable;
+        if (cuesTable)
+            cuesTable.reset();
 
-        cuesTable = new CuesTableUI();
-        addAndMakeVisible(cuesTable);
+        cuesTable = std::make_unique<CuesTableUI>();
+        addAndMakeVisible(cuesTable.get());
     } else {
-        if (cuesTable != nullptr) {
-            delete cuesTable;
-            cuesTable = nullptr;
-        }
+        if (cuesTable)
+            cuesTable.reset();
     }
 
     resized();
@@ -83,7 +78,7 @@ void DeckViewUI::paint(Graphics& g)
 
 void DeckViewUI::resized()
 {
-    if (cuesTable != nullptr)
+    if (cuesTable)
         cuesTable->setBounds(0, 30, getWidth(), getHeight() - 30);
 }
 
