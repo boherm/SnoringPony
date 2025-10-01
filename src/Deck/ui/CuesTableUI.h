@@ -12,6 +12,7 @@
 
 #include "../../MainIncludes.h"
 #include "CuesTableModel.h"
+#include "../../ui/LookAndFeelTable.h"
 
 class CuesTableUI :
     public Component
@@ -22,6 +23,7 @@ public:
 
     TableListBox tableListBox;
     std::unique_ptr<CuesTableModel> tableModel;
+    std::unique_ptr<LookAndFeelTable> lafTable;
 
     void paint (Graphics&) override;
     void resized() override;

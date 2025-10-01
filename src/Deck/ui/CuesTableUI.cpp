@@ -9,6 +9,7 @@
 */
 
 #include "CuesTableUI.h"
+#include "juce_graphics/juce_graphics.h"
 
 enum ColumnIds
 {
@@ -21,6 +22,9 @@ enum ColumnIds
 CuesTableUI::CuesTableUI()
 {
     tableModel = std::make_unique<CuesTableModel>();
+    lafTable = std::make_unique<LookAndFeelTable>();
+
+    tableListBox.setLookAndFeel(lafTable.get());
 
     tableListBox.setAutoSizeMenuOptionShown(false);
     tableListBox.setModel(tableModel.get());
@@ -39,9 +43,11 @@ CuesTableUI::CuesTableUI()
 
 CuesTableUI::~CuesTableUI()
 {
+    tableListBox.setLookAndFeel(nullptr);
+    lafTable.reset();
 }
 
-void CuesTableUI::paint(juce::Graphics& g)
+void CuesTableUI::paint(Graphics& g)
 {
     g.fillAll(Colours::aliceblue);
 }

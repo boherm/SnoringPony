@@ -21,7 +21,6 @@ enum ColumnIds
 CuesTableModel::CuesTableModel()
 {
     generateTestData();
-    LookAndFeel::getDefaultLookAndFeel().setColour(TableListBox::backgroundColourId, BG_COLOR);
 }
 
 CuesTableModel::~CuesTableModel()
