@@ -9,12 +9,15 @@
 */
 
 #include "../../MainIncludes.h"
+#include "../../Cuelist/Cuelist.h"
 
 class CuesTableModel : public TableListBoxModel
 {
 public:
-    CuesTableModel();
+    CuesTableModel(Cuelist* cl);
     ~CuesTableModel() override;
+
+    Cuelist* cl = nullptr;
 
     int getNumRows() override;
     void paintRowBackground(Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override;

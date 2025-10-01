@@ -13,13 +13,16 @@
 #include "../../MainIncludes.h"
 #include "CuesTableModel.h"
 #include "../../ui/LookAndFeelTable.h"
+#include "../../Cuelist/Cuelist.h"
 
 class CuesTableUI :
     public Component
 {
 public:
-    CuesTableUI();
+    CuesTableUI(Cuelist* cl);
     ~CuesTableUI() override;
+
+    Cuelist* cl = nullptr;
 
     TableListBox tableListBox;
     std::unique_ptr<CuesTableModel> tableModel;

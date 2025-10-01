@@ -18,8 +18,13 @@ enum ColumnIds
     ActiveColumn = 4
 };
 
-CuesTableModel::CuesTableModel()
+CuesTableModel::CuesTableModel(Cuelist* cl)
 {
+    this->cl = cl;
+
+    if (cl == nullptr) {
+        return;
+    }
     generateTestData();
 }
 
@@ -29,7 +34,8 @@ CuesTableModel::~CuesTableModel()
 
 int CuesTableModel::getNumRows()
 {
-    return cueData.size();
+    return cl->cues.items.size();
+    // return cueData.size();
 }
 
 void CuesTableModel::paintRowBackground(Graphics& g, int rowNumber, int width, int height, bool rowIsSelected)
@@ -108,7 +114,7 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
         return;
     }
 
-    Logger::writeToLog("CueListTableModel::cellClicked: rowNumber: " + String(rowNumber) + ", columnId: " + String(columnId));
+    // Logger::writeToLog("CueListTableModel::cellClicked: rowNumber: " + String(rowNumber) + ", columnId: " + String(columnId));
 
     // auto inspect =
     //     ShapeShifterManager::getInstance()->getContentForName("Inspector");

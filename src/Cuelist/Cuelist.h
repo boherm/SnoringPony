@@ -11,12 +11,15 @@
 #pragma once
 
 #include "../MainIncludes.h"
+#include "../Cue/CueManager.h"
 
-class Cuelist : 
+class Cuelist :
   public BaseItem {
   public:
     Cuelist();
     ~Cuelist();
+
+    CueManager cues;
 
     Trigger* goBtn;
     Trigger* stopBtn;

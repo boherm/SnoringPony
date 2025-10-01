@@ -15,6 +15,7 @@
 #include "juce_core/juce_core.h"
 #include "../../Cuelist/CuelistManager.h"
 #include "CuesTableUI.h"
+#include "../../Cue/Cue.h"
 
 DeckViewUI::DeckViewUI(const String &deckName)
 {
@@ -46,7 +47,7 @@ void DeckViewUI::setCurrentCuelist(Cuelist* cl)
         if (addItemBT)
             addItemBT.reset();
 
-        cuesTable = std::make_unique<CuesTableUI>();
+        cuesTable = std::make_unique<CuesTableUI>(cl);
         addAndMakeVisible(cuesTable.get());
 
         addItemBT.reset(AssetManager::getInstance()->getAddBT());
@@ -151,12 +152,15 @@ void DeckViewUI::buttonClicked(Button* button)
 {
     if (button == addItemBT.get())
     {
+        if (currentCuelist == nullptr) return;
+
+        Cue* c = new Cue();
+        var data = var();
+        // data.getDynamicObject()->setProperty("name", "New Cue");
+        currentCuelist->cues.addItem(c, data);
+        cuesTable.get()->fillText();
+
         Logger::writeToLog("DeckViewUI::buttonClicked: addItemBT");
-        // if (currentCuelist != nullptr)
-        // {
-        //     currentCuelist->addNewCue("New Cue", 0, "", false);
-        //     if (cuesTable)
-        //         cuesTable->fillText();
-        // }
+        Logger::writeToLog("size: " + (String)(currentCuelist->cues.items.size()));
     }
 }

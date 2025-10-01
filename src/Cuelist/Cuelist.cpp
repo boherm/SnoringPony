@@ -11,8 +11,12 @@
 #include "Cuelist.h"
 
 Cuelist::Cuelist() :
-    BaseItem("Cuelist")
+    BaseItem("Cuelist"),
+    cues()
 {
+    // cues = new CueManager();
+    // cues.parentCuelist = this;
+
     askConfirmationBeforeRemove = true;
     setCanBeDisabled(false);
     setHasCustomColor(true);
@@ -24,4 +28,8 @@ Cuelist::Cuelist() :
 
 Cuelist::~Cuelist()
 {
+    // if (cues) {
+    //     delete cues;
+    //     cues = nullptr;
+    // }
 }
