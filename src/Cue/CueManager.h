@@ -13,6 +13,8 @@
 #include "Cue.h"
 #include "../MainIncludes.h"
 
+class Cuelist;
+
 class CueManager :
     public BaseManager<Cue>
 {
@@ -20,8 +22,9 @@ public:
     CueManager();
     ~CueManager();
 
-    // Cuelist* parentCuelist = nullptr;
+    Cuelist* parentCuelist;
 
-    void addItemInternal(Cue* c, var data);
-    void removeItemInternal(Cue*) override;
+    // void addItemInternal(Cue* c, var data);
+    // void removeItemInternal(Cue*) override;
+    // var getJSONData(bool includeNonOverriden = false) override;
 };

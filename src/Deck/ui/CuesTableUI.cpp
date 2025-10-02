@@ -42,6 +42,8 @@ CuesTableUI::CuesTableUI(Cuelist* cl)
     // tableListBox.getHeader().addColumn("Actif", ActiveColumn, 200, 50, 1000, flags);
 
     addAndMakeVisible(tableListBox);
+    // cl->cues.addControllableContainerListener(this);
+    cl->cues.addBaseManagerListener(this);
 
     fillText();
     resized();
@@ -49,21 +51,25 @@ CuesTableUI::CuesTableUI(Cuelist* cl)
 
 CuesTableUI::~CuesTableUI()
 {
+    // cl->cues.removeControllableContainerListener(this);
+    cl->cues.removeBaseManagerListener(this);
     tableListBox.setLookAndFeel(nullptr);
     lafTable.reset();
 }
 
 void CuesTableUI::paint(Graphics& g)
 {
-    g.fillAll(Colours::aliceblue);
 }
 
 void CuesTableUI::resized()
 {
+    int width = getWidth();
+    width -= tableListBox.getViewport()->getScrollBarThickness();
+
     tableListBox.setBounds(getLocalBounds());
-    tableListBox.getHeader().setColumnWidth(1, getWidth() * (1.0/12));
-    tableListBox.getHeader().setColumnWidth(2, getWidth() * (2.0/12));
-    tableListBox.getHeader().setColumnWidth(3, getWidth() * (9.0/12));
+    tableListBox.getHeader().setColumnWidth(1, width * (1.0/12));
+    tableListBox.getHeader().setColumnWidth(2, width * (2.0/12));
+    tableListBox.getHeader().setColumnWidth(3, width * (9.0/12));
     // tableListBox.getHeader().setColumnWidth(4, getWidth() * (1.0/12));
 }
 

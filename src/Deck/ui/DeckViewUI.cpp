@@ -79,7 +79,8 @@ void DeckViewUI::paint(Graphics& g)
 {
     g.fillAll(BG_COLOR);
     if (currentCuelist != nullptr) {
-        g.setColour(BG_COLOR.darker(0.5f));
+        // g.setColour(BG_COLOR.darker(0.5f));
+        g.setColour(currentCuelist->itemColor->getColor());
         g.fillRect(0, 0, getWidth(), 30);
         g.setColour(Colours::white);
         g.setFont (Font (15, Font::bold));
@@ -158,9 +159,8 @@ void DeckViewUI::buttonClicked(Button* button)
         var data = var();
         // data.getDynamicObject()->setProperty("name", "New Cue");
         currentCuelist->cues.addItem(c, data);
-        cuesTable.get()->fillText();
 
-        Logger::writeToLog("DeckViewUI::buttonClicked: addItemBT");
-        Logger::writeToLog("size: " + (String)(currentCuelist->cues.items.size()));
+        // Logger::writeToLog("DeckViewUI::buttonClicked: addItemBT");
+        // Logger::writeToLog("size: " + (String)(currentCuelist->cues.items.size()));
     }
 }

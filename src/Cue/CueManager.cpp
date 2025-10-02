@@ -11,29 +11,50 @@
 #include "CueManager.h"
 
 CueManager::CueManager() :
-    BaseManager("Cues")
+    BaseManager<Cue>("Cues")
 {
-    itemDataType = "Cue";
-    selectItemWhenCreated = false;
+    // selectItemWhenCreated = true;
+    // hideInEditor = true;
+
+
 }
 
 CueManager::~CueManager()
 {
 }
 
-void CueManager::addItemInternal(Cue* c, var data) {
-    float maxId = 0;
-    for (Cue* cue : items) {
-        if (c != cue) maxId = jmax(maxId, cue->id->floatValue());
-    }
-    if (maxId != 0 && c->id->floatValue() == 1) {
-        c->id->setValue(floor(maxId+1));
-    }
-    //reorderItems();
-    //correctCueIds();
-    // parentCuelist->sendChangeMessage();
-}
+//void CueManager::addItemInternal(Cue* c, var data) {
+//    float maxId = 0;
+//    for (Cue* cue : items) {
+//        if (c != cue) maxId = jmax(maxId, cue->id->floatValue());
+//    }
+//    if (maxId != 0 && c->id->floatValue() == 1) {
+//        c->id->setValue(floor(maxId+1));
+//    }
+//    DBG("CueManager::addItemInternal, cue id: " << c->id->floatValue());
+//    //reorderItems();
+//    //correctCueIds();
+//    // parentCuelist->sendChangeMessage();
+//    DBG(getJSONData().toString());
+//}
 
-void CueManager::removeItemInternal(Cue* c)
-{
-}
+//void CueManager::removeItemInternal(Cue* c)
+//{
+//    DBG("CueManager::removeItemInternal, cue id: " << c->id->floatValue());
+//}
+
+// var CueManager::getJSONData(bool includeNonOverriden)
+// {
+//     Logger::writeToLog("CueManager::getJSONData");
+//     var v = BaseManager<Cue>::getJSONData(includeNonOverriden);
+
+//     Array<var> cuesArray;
+
+//     for (Cue* c : items) {
+//         cuesArray.add(c->getJSONData(includeNonOverriden));
+//     }
+
+//     v.getDynamicObject()->setProperty("cues", cuesArray);
+
+//     return v;
+// }

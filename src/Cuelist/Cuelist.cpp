@@ -10,12 +10,15 @@
 
 #include "Cuelist.h"
 
-Cuelist::Cuelist() :
+Cuelist::Cuelist(var params) :
     BaseItem("Cuelist"),
+    objectType(params.getProperty("type", "Cuelist").toString()),
+	objectData(params),
     cues()
 {
-    // cues = new CueManager();
-    // cues.parentCuelist = this;
+    cues.parentCuelist = this;
+
+    saveAndLoadRecursiveData = true;
 
     askConfirmationBeforeRemove = true;
     setCanBeDisabled(false);
@@ -24,6 +27,8 @@ Cuelist::Cuelist() :
 
     goBtn = addTrigger("GO", "Trigger next cue");
     stopBtn = addTrigger("STOP", "Stop current cue");
+
+    addChildControllableContainer(&cues);
 }
 
 Cuelist::~Cuelist()
@@ -33,3 +38,11 @@ Cuelist::~Cuelist()
     //     cues = nullptr;
     // }
 }
+
+// juce::var Cuelist::getJSONData(bool includeNonOverriden)
+// {
+//     Logger::writeToLog("Cuelist::getJSONData");
+//     juce::var v = BaseItem::getJSONData(includeNonOverriden);
+//     v.getDynamicObject()->setProperty("cues", "toto2");
+//     return v;
+// }

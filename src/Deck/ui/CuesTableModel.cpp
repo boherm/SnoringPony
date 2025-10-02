@@ -9,6 +9,7 @@
 */
 
 #include "CuesTableModel.h"
+#include "../../Cuelist/CuelistManager.h"
 
 enum ColumnIds
 {
@@ -42,7 +43,7 @@ void CuesTableModel::paintRowBackground(Graphics& g, int rowNumber, int width, i
 {
     if (rowIsSelected)
     {
-        g.fillAll(BG_COLOR.brighter(0.2f));
+        g.fillAll(BG_COLOR.brighter(0.1f));
     }
     else if (rowNumber % 2 == 0)
     {
@@ -50,7 +51,7 @@ void CuesTableModel::paintRowBackground(Graphics& g, int rowNumber, int width, i
     }
     else
     {
-        g.fillAll(BG_COLOR.brighter(0.1f));
+        g.fillAll(BG_COLOR.brighter(0.05f));
     }
 }
 
@@ -116,21 +117,13 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
 
     // Logger::writeToLog("CueListTableModel::cellClicked: rowNumber: " + String(rowNumber) + ", columnId: " + String(columnId));
 
-    // auto inspect =
-    //     ShapeShifterManager::getInstance()->getContentForName("Inspector");
-    // if (inspect == nullptr)
-    //   return;
-    // InspectorUI *inspectorUI =
-    //     dynamic_cast<InspectorUI *>(inspect->contentComponent);
-    // // multi fixture edition disabled organic ui update
-    // Array<Inspectable *> newSel;
-    // if (CuelistManager::getInstance()->items.size() == 0) {
-    //   return;
-    // }
-    // if (!newSel.contains(CuelistManager::getInstance()->items[0])) {
-    //   newSel.insert(0, CuelistManager::getInstance()->items[0]);
-		// }
-		// inspectorUI->inspector->setCurrentInspectables(newSel);
+    auto inspect = ShapeShifterManager::getInstance()->getContentForName("Inspector");
+    if (inspect == nullptr)
+        return;
+    InspectorUI *inspectorUI = dynamic_cast<InspectorUI *>(inspect->contentComponent);
+
+    inspectorUI->inspector->setCurrentInspectables(cl->cues.items[rowNumber]);
+    inspectorUI->repaint();
 }
 
 int CuesTableModel::getColumnAutoSizeWidth(int columnId)
@@ -158,12 +151,22 @@ void CuesTableModel::generateTestData()
 {
     cueData.clear();
 
-    cueData.add({"Cue 1", "00:01:30", "Introduction", true});
-    cueData.add({"Cue 2", "00:02:45", "Verse 1", false});
-    cueData.add({"Cue 3", "00:04:12", "Chorus", true});
-    cueData.add({"Cue 4", "00:05:30", "Verse 2", false});
-    cueData.add({"Cue 5", "00:07:00", "Bridge", true});
-    cueData.add({"Cue 6", "00:08:15", "Final Chorus", false});
-    cueData.add({"Cue 7", "00:09:45", "Outro", true});
-    cueData.add({"Cue 8", "00:11:00", "Applause", false});
+    for (auto& cue : cl->cues.items) {
+        CueData cd;
+        cd.name = cue->niceName;
+        cd.time = "00:01:30";
+        cd.description = cue->description->getValue();
+        cd.isActive = true;
+
+        cueData.add(cd);
+    }
+
+    // cueData.add({"Cue 1", "00:01:30", "Introduction", true});
+    // cueData.add({"Cue 2", "00:02:45", "Verse 1", false});
+    // cueData.add({"Cue 3", "00:04:12", "Chorus", true});
+    // cueData.add({"Cue 4", "00:05:30", "Verse 2", false});
+    // cueData.add({"Cue 5", "00:07:00", "Bridge", true});
+    // cueData.add({"Cue 6", "00:08:15", "Final Chorus", false});
+    // cueData.add({"Cue 7", "00:09:45", "Outro", true});
+    // cueData.add({"Cue 8", "00:11:00", "Applause", false});
 }

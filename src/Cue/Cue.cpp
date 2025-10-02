@@ -10,10 +10,13 @@
 
 #include "Cue.h"
 
-Cue::Cue(var params) : BaseItem(params.getProperty("name", "Cue 1"))
+Cue::Cue(var params) :
+    BaseItem(params.getProperty("name", "Cue 1")),
+    objectType(params.getProperty("type", "Cue").toString()),
+	objectData(params)
+
 {
 	canBeDisabled = false;
-	saveAndLoadRecursiveData = true;
 	editorIsCollapsed = false;
 	itemDataType = "Cue";
 
@@ -24,3 +27,16 @@ Cue::Cue(var params) : BaseItem(params.getProperty("name", "Cue 1"))
 Cue::~Cue()
 {
 }
+
+// var Cue::getJSONData(bool includeNonOverriden)
+// {
+//     Logger::writeToLog("Cue::getJSONData");
+//     var v = var(new DynamicObject());
+//     v.getDynamicObject()->setProperty("id", id->floatValue());
+//     v.getDynamicObject()->setProperty("description", description->stringValue());
+//     return v;
+//     // var v = BaseItem::getJSONData(includeNonOverriden);
+//     // v.getDynamicObject()->setProperty("id", id->floatValue());
+//     // v.getDynamicObject()->setProperty("description", description->stringValue());
+//     // return v;
+// }

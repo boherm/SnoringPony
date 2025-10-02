@@ -14,16 +14,21 @@
 #include "../Cue/CueManager.h"
 
 class Cuelist :
-  public BaseItem {
-  public:
-    Cuelist();
-    ~Cuelist();
+    public BaseItem ,
+    public ChangeBroadcaster
+{
+    public:
+        Cuelist(var params = var());
+        virtual ~Cuelist();
 
-    CueManager cues;
+        String objectType;
+        var objectData;
 
-    Trigger* goBtn;
-    Trigger* stopBtn;
+        CueManager cues;
 
-    juce::String getTypeString() const override { return "Cuelist"; }
-    static Cuelist *create(juce::var) { return new Cuelist(); }
+        Trigger* goBtn;
+        Trigger* stopBtn;
+
+        juce::String getTypeString() const override { return "Cuelist"; }
+        static Cuelist *create(var params) { return new Cuelist(params); }
 };

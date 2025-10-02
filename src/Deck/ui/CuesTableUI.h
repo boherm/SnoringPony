@@ -14,9 +14,12 @@
 #include "CuesTableModel.h"
 #include "../../ui/LookAndFeelTable.h"
 #include "../../Cuelist/Cuelist.h"
+#include "juce_organicui/manager/BaseManagerListener.h"
+#include "../../Cue/Cue.h"
 
 class CuesTableUI :
-    public Component
+    public Component,
+    public BaseManagerListener<Cue>
 {
 public:
     CuesTableUI(Cuelist* cl);
@@ -31,6 +34,10 @@ public:
     void paint (Graphics&) override;
     void resized() override;
     void fillText();
+
+    void itemAdded(Cue*) { fillText(); }
+	void itemRemoved(Cue*) { fillText(); }
+	void itemsReordered() { fillText(); }
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CuesTableUI)

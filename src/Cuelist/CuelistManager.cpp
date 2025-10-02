@@ -14,8 +14,10 @@
 CuelistManager::CuelistManager() :
     BaseManager<Cuelist>("Cuelists")
 {
-    selectItemWhenCreated = true;
-    managerFactory = CuelistFactory::getInstance();
+    itemDataType = "Cuelist";
+    // selectItemWhenCreated = true;
+    // saveAndLoadRecursiveData = true;
+    // managerFactory = CuelistFactory::getInstance();
 }
 
 CuelistManager::~CuelistManager()
