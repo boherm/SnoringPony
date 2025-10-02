@@ -32,7 +32,7 @@ PonyEngine::PonyEngine() :
 	//init here
 	Engine::mainEngine = this;
 	addChildControllableContainer(CuelistManager::getInstance());
-	
+
 	// Clean
 	getAppSettings()->hideInEditor = true;
 	GlobalSettings::getInstance()->getControllableContainerByName("editing")->hideInEditor = true;
@@ -87,7 +87,7 @@ var PonyEngine::getJSONData(bool includeNonOverriden)
 {
 	var data = Engine::getJSONData(includeNonOverriden);
 
-	var clData = CuelistManager::getInstance()->getJSONData();
+	var clData = CuelistManager::getInstance()->getJSONData(includeNonOverriden);
 	if (!clData.isVoid() && clData.getDynamicObject()->getProperties().size() > 0) data.getDynamicObject()->setProperty(CuelistManager::getInstance()->shortName, clData);
 
 	/*var mData = ModuleManager::getInstance()->getJSONData();
@@ -195,7 +195,7 @@ void PonyEngine::exportSelection()
 	var data(new DynamicObject());
 
 	data.getDynamicObject()->setProperty(CuelistManager::getInstance()->shortName, CuelistManager::getInstance()->getExportSelectionData());
-	
+
 	String s = JSON::toString(data);
 
 	FileChooser* fc(new FileChooser("Save a LilNut", File::getCurrentWorkingDirectory(), "*.lilnut"));
