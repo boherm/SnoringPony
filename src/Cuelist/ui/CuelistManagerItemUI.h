@@ -13,11 +13,15 @@
 #include "../Cuelist.h"
 
 class CuelistManagerItemUI :
-	public BaseItemUI<Cuelist>
+	public BaseItemUI<Cuelist>,
+    public BaseManagerListener<Cue>
 {
-public:
-  CuelistManagerItemUI(Cuelist *item);
-  ~CuelistManagerItemUI();
+    public:
+        CuelistManagerItemUI(Cuelist *item);
+        ~CuelistManagerItemUI();
 
-  void paint(Graphics &g) override;
+        void paint(Graphics &g) override;
+
+        void itemAdded(Cue*) { repaint(); }
+        void itemRemoved(Cue*) { repaint(); }
 };

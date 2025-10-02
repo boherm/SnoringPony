@@ -11,14 +11,15 @@
 #include "CuelistManagerItemUI.h"
 #include "juce_graphics/juce_graphics.h"
 
-CuelistManagerItemUI::CuelistManagerItemUI(Cuelist *item) : 
+CuelistManagerItemUI::CuelistManagerItemUI(Cuelist *item) :
   BaseItemUI(item)
 {
-
+    item->cues.addBaseManagerListener(this);
 }
 
 CuelistManagerItemUI::~CuelistManagerItemUI()
 {
+    item->cues.removeBaseManagerListener(this);
 }
 
 void CuelistManagerItemUI::paint(Graphics &g)
@@ -34,6 +35,6 @@ void CuelistManagerItemUI::paint(Graphics &g)
     g.setColour(Colours::white);
     g.setFont(11.0f);
     g.setOpacity(0.5f);
-    g.drawText("9999", textArea, Justification::centredRight);
+    g.drawText((String)(item->cues.items.size()), textArea, Justification::centredRight);
   }
 }
