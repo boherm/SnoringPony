@@ -9,7 +9,9 @@
 */
 
 #include "LookAndFeelTable.h"
+#include "juce_graphics/juce_graphics.h"
 #include "juce_organicui/ui/LookAndFeelOO.h"
+#include "juce_organicui/ui/Style.h"
 
 LookAndFeelTable::LookAndFeelTable() : LookAndFeelOO()
 {
@@ -20,9 +22,10 @@ void LookAndFeelTable::drawTableHeaderColumn(Graphics & g, TableHeaderComponent 
 {
  juce::Rectangle<int> area(width, height);
 
-    Colour c = BG_COLOR.brighter(0.2f);
+    g.fillAll(BG_COLOR);
+    Colour c = BG_COLOR.brighter(0.1f);
 	g.setColour(c);
-    g.fillRect(area.reduced(1).toFloat());
+    g.fillRect(area.getX() + 0.5f, area.getY() + 1.0f, area.getWidth() - 1.0f, area.getHeight() - 2.0f);
 
     area.reduce (4, 0);
 
@@ -40,4 +43,15 @@ void LookAndFeelTable::drawTableHeaderColumn(Graphics & g, TableHeaderComponent 
     g.setColour (FRONT_COLOR.withAlpha(0.8f));
     g.setFont (Font (height * 0.5f, Font::bold));
     g.drawFittedText (columnName, area, Justification::centred, 1);
+}
+
+void LookAndFeelTable::drawTableHeaderBackground (Graphics& g, TableHeaderComponent& header)
+{
+	juce::Rectangle<int> area (header.getLocalBounds());
+    area.removeFromTop (area.getHeight() / 2);
+
+	g.fillAll(BG_COLOR.darker(0.05f));
+
+    // g.setColour(BG_COLOR);
+    // g.drawLine(0.0f, 0.0f, header.getWidth(), 0.0f, 1.0f);
 }

@@ -19,4 +19,5 @@ class LookAndFeelTable : public LookAndFeelOO
 
         void drawTableHeaderColumn(Graphics & g, TableHeaderComponent &, const String & columnName, int columnId, int width, int height, bool isMouseOver, bool isMouseDown, int columnFlags);
 
+        void drawTableHeaderBackground(Graphics&, TableHeaderComponent&) override;
 };
