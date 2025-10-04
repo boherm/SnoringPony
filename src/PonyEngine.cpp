@@ -26,6 +26,7 @@ String getAppVersion();
 PonyEngine::PonyEngine() :
 	Engine("SnoringPony", ".indy"),
     showProperties(),
+    colorPresets(),
     decksSettings()
 	//ossiaDevice(nullptr)
 {
@@ -45,6 +46,7 @@ PonyEngine::PonyEngine() :
 
     // Set projects settings
     ProjectSettings::getInstance()->addChildControllableContainer(&showProperties);
+    ProjectSettings::getInstance()->addChildControllableContainer(&colorPresets);;
     ProjectSettings::getInstance()->addChildControllableContainer(&decksSettings);
     ProjectSettings::getInstance()->customValuesCC.hideInEditor = true;
     ProjectSettings::getInstance()->dashboardCC.editorIsCollapsed = true;
