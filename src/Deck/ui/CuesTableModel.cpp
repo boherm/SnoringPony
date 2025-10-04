@@ -107,16 +107,52 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
     if (event.mods.isPopupMenu())
     {
         PopupMenu p;
-        p.addItem(1, "Edit");
+        p.addItem(1, "Edit this cue");
+        p.addItem(2, "Delete this cue");
         p.addSeparator();
-        p.addItem(2, "Delete");
-        p.showMenuAsync(PopupMenu::Options());
-        // Logger::writeToLog("CueListTableModel::cellClicked: popup menu");
+        p.addItem(3, "Add new cue after");
+        p.addItem(4, "Add new cue before");
+
+        p.showMenuAsync(PopupMenu::Options(), [this, rowNumber](int result) {
+            if (result == 1) {
+                // Edit action
+                if (rowNumber < cl->cues.items.size()) {
+                    inspectCue(rowNumber);
+                }
+            } else if (result == 2) {
+                // Delete action
+                if (rowNumber < cl->cues.items.size()) {
+                    Cue* item = cl->cues.items[rowNumber];
+
+                    if (item->askConfirmationBeforeRemove && GlobalSettings::getInstance()->askBeforeRemovingItems->boolValue())
+                    {
+                        AlertWindow::showAsync(
+                            MessageBoxOptions().withIconType(AlertWindow::QuestionIcon)
+                                .withTitle("Delete " + item->niceName)
+                                .withMessage("Are you sure you want to delete this ?")
+                                .withButton("Delete")
+                                .withButton("Cancel"),
+                                [item](int result)
+                                {
+                                    if (result != 0) item->remove();
+                                }
+                        );
+                    }
+                    else cl->cues.askForRemoveBaseItem(item);
+                }
+            }
+        });
         return;
     }
+}
 
-    // Logger::writeToLog("CueListTableModel::cellClicked: rowNumber: " + String(rowNumber) + ", columnId: " + String(columnId));
+void CuesTableModel::cellDoubleClicked(int rowNumber, int columnId, const MouseEvent& event)
+{
+    inspectCue(rowNumber);
+}
 
+void CuesTableModel::inspectCue(int rowNumber)
+{
     auto inspect = ShapeShifterManager::getInstance()->getContentForName("Inspector");
     if (inspect == nullptr)
         return;

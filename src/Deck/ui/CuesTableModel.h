@@ -27,6 +27,9 @@ public:
     void sortOrderChanged(int newSortColumnId, bool isForwards) override;
     void cellClicked(int rowNumber, int columnId, const MouseEvent& event) override;
 
+    void inspectCue(int rowNumber);
+    void cellDoubleClicked(int rowNumber, int columnId, const MouseEvent& event) override;
+
 private:
     struct CueData
     {
