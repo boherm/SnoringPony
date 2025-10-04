@@ -35,13 +35,21 @@ DeckViewUI::~DeckViewUI()
 
     if (tp)
         tp->removeParameterListener(this);
+
+    if (currentCuelist)
+        currentCuelist->removeAsyncContainerListener(this);
 }
 
 void DeckViewUI::setCurrentCuelist(Cuelist* cl)
 {
+    if (currentCuelist != nullptr) {
+        currentCuelist->removeAsyncContainerListener(this);
+    }
+
     currentCuelist = cl;
 
     if (cl != nullptr) {
+        currentCuelist->addAsyncContainerListener(this);
         if (cuesTable)
             cuesTable.reset();
         if (addItemBT)
@@ -163,4 +171,11 @@ void DeckViewUI::buttonClicked(Button* button)
         // Logger::writeToLog("DeckViewUI::buttonClicked: addItemBT");
         // Logger::writeToLog("size: " + (String)(currentCuelist->cues.items.size()));
     }
+}
+
+
+void DeckViewUI::newMessage(const ContainerAsyncEvent& e)
+{
+    if (e.targetControllable == currentCuelist->itemColor)
+        repaint();
 }

@@ -9,6 +9,8 @@
 */
 
 #include "Cuelist.h"
+#include "../ProjectSettings/ColorPresets.h"
+#include "CuelistManager.h"
 
 Cuelist::Cuelist(var params) :
     BaseItem("Cuelist"),
@@ -23,6 +25,7 @@ Cuelist::Cuelist(var params) :
     askConfirmationBeforeRemove = true;
     setCanBeDisabled(false);
     setHasCustomColor(true);
+    itemColor->hideInEditor = false;
 	itemColor->setDefaultValue(BG_COLOR.brighter(.2f));
 
     goBtn = addTrigger("GO", "Trigger next cue");

@@ -17,7 +17,8 @@
 class DeckViewUI :
     public Component,
     public ParameterListener,
-    public Button::Listener
+    public Button::Listener,
+	public ContainerAsyncListener
 {
 public:
     DeckViewUI(const String &deckName);
@@ -38,6 +39,8 @@ public:
     TargetParameter* getAssociatedTargetParameter();
 
     void buttonClicked(Button* button) override;
+
+	 void newMessage(const ContainerAsyncEvent& e) override;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DeckViewUI)
