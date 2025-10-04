@@ -18,6 +18,20 @@ ColorPresets::ColorPresets() :
     defaultHideInRemoteControl = true;
     userCanAddControllables = true;
     userAddControllablesFilters.add(ColorParameter::getTypeStringStatic());
+    userAddControllablesFilters.add(StringParameter::getTypeStringStatic());
+    customUserCreateControllableFunc = &ColorPresets::createItem;
 }
 
-juce_ImplementSingleton(ColorPresets);
+void ColorPresets::createItem(ControllableContainer* cc)
+{
+    ColorParameter* cp = new ColorParameter("Color", "", NORMAL_COLOR);
+    cp->userCanChangeName = true;
+    cp->isRemovableByUser = true;
+	cp->saveValueOnly = false;
+    cc->addControllable(cp);
+}
+
+void ColorPresets::clear()
+{
+    controllables.clear();
+}

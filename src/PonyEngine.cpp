@@ -82,6 +82,7 @@ void PonyEngine::clearInternal()
 	CuelistManager::getInstance()->clear();
 
     showProperties.clear();
+    colorPresets.clear();
     decksSettings.clear();
 }
 

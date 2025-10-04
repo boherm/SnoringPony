@@ -15,7 +15,10 @@
 class ColorPresets :
     public ControllableContainer
 {
-    public:
-        juce_DeclareSingleton(ColorPresets, true);
-        ColorPresets();
+public:
+    ColorPresets();
+
+    static void createItem(ControllableContainer* cc);
+
+    void clear();
 };
