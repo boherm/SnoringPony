@@ -15,7 +15,6 @@
 #include "juce_core/juce_core.h"
 #include "../../Cuelist/CuelistManager.h"
 #include "CuesTableUI.h"
-#include "../../Cue/Cue.h"
 
 DeckViewUI::DeckViewUI(const String &deckName)
 {
@@ -35,39 +34,28 @@ DeckViewUI::~DeckViewUI()
 
     if (tp)
         tp->removeParameterListener(this);
-
-    if (currentCuelist)
-        currentCuelist->removeAsyncContainerListener(this);
 }
 
 void DeckViewUI::setCurrentCuelist(Cuelist* cl)
 {
-    if (currentCuelist != nullptr) {
-        currentCuelist->removeAsyncContainerListener(this);
-    }
-
     currentCuelist = cl;
 
     if (cl != nullptr) {
-        currentCuelist->addAsyncContainerListener(this);
         if (cuesTable)
             cuesTable.reset();
-        if (addItemBT)
-            addItemBT.reset();
+        if (headerUI)
+            headerUI.reset();
 
+        headerUI = std::make_unique<DeckViewHeaderUI>(cl);
+        headerUI->setParent(this);
+        addAndMakeVisible(headerUI.get());
         cuesTable = std::make_unique<CuesTableUI>(cl);
         addAndMakeVisible(cuesTable.get());
-
-        addItemBT.reset(AssetManager::getInstance()->getAddBT());
-        addItemBT->setWantsKeyboardFocus(false);
-        addItemBT->setTooltip("Add a new Cue");
-        addAndMakeVisible(addItemBT.get());
-        addItemBT->addListener(this);
     } else {
         if (cuesTable)
             cuesTable.reset();
-        if (addItemBT)
-            addItemBT.reset();
+        if (headerUI)
+            headerUI.reset();
     }
 
     resized();
@@ -86,17 +74,8 @@ void DeckViewUI::parameterValueChanged(Parameter* parameter)
 void DeckViewUI::paint(Graphics& g)
 {
     g.fillAll(BG_COLOR);
-    if (currentCuelist != nullptr) {
-        // g.setColour(BG_COLOR.darker(0.5f));
-        g.setColour(currentCuelist->itemColor->getColor());
-        g.fillRect(0, 0, getWidth(), 30);
-        g.setColour(Colours::white);
-        g.setFont (Font (15, Font::bold));
-        g.drawText(currentCuelist->niceName, 0, 0, getWidth(), 30, Justification::centred, true);
-    } else {
-        g.setColour(Colours::white.withAlpha(0.4f));
-        g.drawFittedText("You can manage and operate your cuelists in decks.\nPress the right mouse button to assign a cuelist to this desk.", 2, 0, getWidth(), getHeight(), Justification::centred, true);
-    }
+    g.setColour(Colours::white.withAlpha(0.4f));
+    g.drawFittedText("You can manage and operate your cuelists in decks.\nPress the right mouse button to assign a cuelist to this desk.", 2, 0, getWidth(), getHeight(), Justification::centred, true);
 }
 
 void DeckViewUI::resized()
@@ -104,8 +83,8 @@ void DeckViewUI::resized()
     if (cuesTable)
         cuesTable->setBounds(0, 30, getWidth(), getHeight() - 30);
 
-    if (addItemBT)
-        addItemBT->setBounds(getWidth() - 24, 4, 20, 20);
+    if (headerUI)
+        headerUI->setBounds(0, 0, getWidth(), 30);
 }
 
 TargetParameter* DeckViewUI::getAssociatedTargetParameter()
@@ -155,27 +134,4 @@ void DeckViewUI::mouseDown(const MouseEvent& event)
             }
         );
     }
-}
-
-void DeckViewUI::buttonClicked(Button* button)
-{
-    if (button == addItemBT.get())
-    {
-        if (currentCuelist == nullptr) return;
-
-        Cue* c = new Cue();
-        var data = var();
-        // data.getDynamicObject()->setProperty("name", "New Cue");
-        currentCuelist->cues.addItem(c, data);
-
-        // Logger::writeToLog("DeckViewUI::buttonClicked: addItemBT");
-        // Logger::writeToLog("size: " + (String)(currentCuelist->cues.items.size()));
-    }
-}
-
-
-void DeckViewUI::newMessage(const ContainerAsyncEvent& e)
-{
-    if (e.targetControllable == currentCuelist->itemColor)
-        repaint();
 }
