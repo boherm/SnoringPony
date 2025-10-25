@@ -19,6 +19,7 @@
 #include "ui/SPAssetManager.h"
 #include "ui/panels/Clock.h"
 #include "ui/panels/ShowControl.h"
+#include "Interface/InterfaceManager.h"
 
 ControllableContainer* getAppSettings();
 String getAppVersion();
@@ -60,6 +61,7 @@ PonyEngine::~PonyEngine()
 
 	isClearing = true;
 
+    InterfaceManager::deleteInstance();
 	CuelistManager::deleteInstance();
     CuelistFactory::deleteInstance();
 
@@ -79,6 +81,7 @@ void PonyEngine::clearInternal()
 	//ModuleRouterManager::getInstance()->clear();
 	//ModuleManager::getInstance()->clear();
 	//CVGroupManager::getInstance()->clear();
+    InterfaceManager::getInstance()->clear();
 	CuelistManager::getInstance()->clear();
 
     showProperties.clear();
@@ -89,6 +92,9 @@ void PonyEngine::clearInternal()
 var PonyEngine::getJSONData(bool includeNonOverriden)
 {
 	var data = Engine::getJSONData(includeNonOverriden);
+
+    var inData = InterfaceManager::getInstance()->getJSONData(includeNonOverriden);
+    if (!inData.isVoid() && inData.getDynamicObject()->getProperties().size() > 0) data.getDynamicObject()->setProperty(InterfaceManager::getInstance()->shortName, inData);
 
 	var clData = CuelistManager::getInstance()->getJSONData(includeNonOverriden);
 	if (!clData.isVoid() && clData.getDynamicObject()->getProperties().size() > 0) data.getDynamicObject()->setProperty(CuelistManager::getInstance()->shortName, clData);
@@ -113,6 +119,13 @@ var PonyEngine::getJSONData(bool includeNonOverriden)
 
 void PonyEngine::loadJSONDataInternalEngine(var data, ProgressTask* loadingTask)
 {
+	ProgressTask* inTask = loadingTask->addTask("Interfaces");
+	inTask->start();
+	var inData = data.getProperty(InterfaceManager::getInstance()->shortName, var());
+	InterfaceManager::getInstance()->loadJSONData(inData);
+	inTask->setProgress(1);
+	inTask->end();
+
 	ProgressTask* clTask = loadingTask->addTask("CueLists");
 	clTask->start();
 	var clData = data.getProperty(CuelistManager::getInstance()->shortName, var());

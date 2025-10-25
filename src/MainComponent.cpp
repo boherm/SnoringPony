@@ -10,10 +10,12 @@
 
 #include "MainIncludes.h"
 #include "MainComponent.h"
+#include "juce_organicui/ui/shapeshifter/ShapeShifterFactory.h"
 #include "ui/panels/Clock.h"
 #include "ui/panels/ShowControl.h"
 #include "Cuelist/ui/CuelistManagerUI.h"
 #include "Deck/ui/DeckUI.h"
+#include "Interface/ui/InterfaceManagerUI.h"
 
 using namespace std::placeholders;
 
@@ -31,6 +33,7 @@ MainContentComponent::~MainContentComponent()
 void MainContentComponent::init()
 {
     // ShapeShifters registration --
+    ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Interfaces", &InterfaceManagerUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Clock", &ClockUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Show Control", &ShowControlUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Cuelists", &CuelistManagerUI::create));
