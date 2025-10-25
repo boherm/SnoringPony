@@ -18,7 +18,6 @@ ColorPresets::ColorPresets() :
     defaultHideInRemoteControl = true;
     userCanAddControllables = true;
     userAddControllablesFilters.add(ColorParameter::getTypeStringStatic());
-    userAddControllablesFilters.add(StringParameter::getTypeStringStatic());
     customUserCreateControllableFunc = &ColorPresets::createItem;
 }
 
