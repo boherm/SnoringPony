@@ -10,13 +10,15 @@
 
 #include "../../MainIncludes.h"
 #include "../../Cuelist/Cuelist.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
 class CuesTableModel : public TableListBoxModel
 {
 public:
-    CuesTableModel(Cuelist* cl);
+    CuesTableModel(TableListBox* tlb, Cuelist* cl);
     ~CuesTableModel() override;
 
+    TableListBox* tlb = nullptr;
     Cuelist* cl = nullptr;
 
     int getNumRows() override;
@@ -26,6 +28,7 @@ public:
     int getColumnAutoSizeWidth(int columnId) override;
     void sortOrderChanged(int newSortColumnId, bool isForwards) override;
     void cellClicked(int rowNumber, int columnId, const MouseEvent& event) override;
+    void backgroundClicked(const MouseEvent& event) override;
 
     void inspectCue(int rowNumber);
     void cellDoubleClicked(int rowNumber, int columnId, const MouseEvent& event) override;

@@ -20,23 +20,33 @@ Cue::Cue(var params) :
 	editorIsCollapsed = false;
 	itemDataType = "Cue";
 
-    id = addFloatParameter("ID", "Id of this cue", 1, 0);
-	description = addStringParameter("Description", "Description of the cue", "");
+    id = addFloatParameter("ID", "ID of this cue", params.getProperty("id", 1.0));
+    id->lockManualControlMode = true;
+
+	notes = addStringParameter("Notes", "Notes of the cue", params.getProperty("notes", ""));
+    notes->lockManualControlMode = true;
+    notes->multiline = true;
+
+    formatManager.registerBasicFormats();
+    deviceManager.initialise(2, 2, nullptr, true);
+    deviceManager.addAudioCallback(&sourcePlayer);
+
+    sourcePlayer.setSource(&transportSource);
 }
 
 Cue::~Cue()
 {
+    transportSource.stop();
+    transportSource.setSource(nullptr);
+    deviceManager.removeAudioCallback(&sourcePlayer);
+    sourcePlayer.setSource(nullptr);
 }
 
-// var Cue::getJSONData(bool includeNonOverriden)
-// {
-//     Logger::writeToLog("Cue::getJSONData");
-//     var v = var(new DynamicObject());
-//     v.getDynamicObject()->setProperty("id", id->floatValue());
-//     v.getDynamicObject()->setProperty("description", description->stringValue());
-//     return v;
-//     // var v = BaseItem::getJSONData(includeNonOverriden);
-//     // v.getDynamicObject()->setProperty("id", id->floatValue());
-//     // v.getDynamicObject()->setProperty("description", description->stringValue());
-//     // return v;
-// }
+CueEditor* Cue::getEditorInternal(bool isRoot, Array<Inspectable*> inspectables)
+{
+    return new CueEditor(this, isRoot);
+}
+
+void Cue::play()
+{
+}

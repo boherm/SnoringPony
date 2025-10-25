@@ -27,11 +27,12 @@ CuesTableUI::CuesTableUI(Cuelist* cl)
         return;
     }
 
-    tableModel = std::make_unique<CuesTableModel>(cl);
+    tableModel = std::make_unique<CuesTableModel>(&tableListBox, cl);
     lafTable = std::make_unique<LookAndFeelTable>();
 
     tableListBox.setLookAndFeel(lafTable.get());
 
+    tableListBox.setMultipleSelectionEnabled(true);
     tableListBox.setAutoSizeMenuOptionShown(false);
     tableListBox.setModel(tableModel.get());
     tableListBox.setRowHeight(30);

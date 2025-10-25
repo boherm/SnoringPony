@@ -10,6 +10,7 @@
 
 #include "CuesTableModel.h"
 #include "../../Cuelist/CuelistManager.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
 enum ColumnIds
 {
@@ -19,9 +20,10 @@ enum ColumnIds
     ActiveColumn = 4
 };
 
-CuesTableModel::CuesTableModel(Cuelist* cl)
+CuesTableModel::CuesTableModel(TableListBox* tlb, Cuelist* cl)
 {
     this->cl = cl;
+    this->tlb = tlb;
 
     if (cl == nullptr) {
         return;
@@ -106,14 +108,24 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
 {
     if (event.mods.isPopupMenu())
     {
+        Logger::writeToLog("CuesTableModel::cellClicked: " + String(tlb->getSelectedRows().size()));
         PopupMenu p;
-        p.addItem(1, "Edit this cue");
-        p.addItem(2, "Delete this cue");
+        // p.addCustomItem(0, "Cue " + String(rowNumber + 1), false, false);
+        p.addItem(-1, "Play this cue");
+        p.addItem(1, "Edit this cue", tlb->getSelectedRows().size() == 1);
+        p.addItem(2, tlb->getSelectedRows().size() > 1 ? "Delete selected cues" : "Delete this cue");
         p.addSeparator();
         p.addItem(3, "Add new cue after");
         p.addItem(4, "Add new cue before");
 
         p.showMenuAsync(PopupMenu::Options(), [this, rowNumber](int result) {
+            if (result == -1){
+                // Play action
+                if (rowNumber < cl->cues.items.size()) {
+                    Cue* item = cl->cues.items[rowNumber];
+                    item->play();
+                }
+            }
             if (result == 1) {
                 // Edit action
                 if (rowNumber < cl->cues.items.size()) {
@@ -121,7 +133,7 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
                 }
             } else if (result == 2) {
                 // Delete action
-                if (rowNumber < cl->cues.items.size()) {
+                if (rowNumber < cl->cues.items.size() && tlb->getSelectedRows().size() == 1) {
                     Cue* item = cl->cues.items[rowNumber];
 
                     if (item->askConfirmationBeforeRemove && GlobalSettings::getInstance()->askBeforeRemovingItems->boolValue())
@@ -144,6 +156,17 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
         });
         return;
     }
+}
+
+void CuesTableModel::backgroundClicked(const MouseEvent& event)
+{
+    // if (event.mods.isPopupMenu())
+    // {
+    //     PopupMenu p;
+    //     p.addItem(1, "Add new cue");
+    //     p.showMenuAsync(PopupMenu::Options());
+    //     return;
+    // }
 }
 
 void CuesTableModel::cellDoubleClicked(int rowNumber, int columnId, const MouseEvent& event)
@@ -191,7 +214,7 @@ void CuesTableModel::generateTestData()
         CueData cd;
         cd.name = cue->niceName;
         cd.time = "00:01:30";
-        cd.description = cue->description->getValue();
+        cd.description = cue->notes->getValue();
         cd.isActive = true;
 
         cueData.add(cd);

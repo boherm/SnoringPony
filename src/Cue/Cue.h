@@ -11,12 +11,11 @@
 #pragma once
 
 #include "../MainIncludes.h"
-// #include "../Cuelist/Cuelist.h"
-
-// class Cuelist: ChangeBroadcaster{};
+#include "editor/CueEditor.h"
 
 class Cue:
     public BaseItem
+    // public ParameterListener
 {
 public:
     Cue(var params = var());
@@ -25,13 +24,23 @@ public:
     String objectType;
     var objectData;
 
-    FloatParameter* id;
-
     // Cuelist* parentCuelist;
 
-    StringParameter* description;
+    FloatParameter* id;
+    StringParameter* notes;
 
-    juce::String getTypeString() const override { return "Cue"; }
+    String getTypeString() const override { return "Cue"; }
     static Cue* create(var params) { return new Cue(params); }
-    // var getJSONData(bool includeNonOverriden = false) override;
+    // void parameterValueChanged(Parameter* parameter) override;
+    CueEditor* getEditorInternal(bool isRoot, Array<Inspectable*> inspectables);
+
+    virtual void play();
+
+private:
+    AudioFormatManager formatManager;
+    std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
+    AudioTransportSource transportSource;
+    AudioSourcePlayer sourcePlayer;
+    AudioDeviceManager deviceManager;
+
 };

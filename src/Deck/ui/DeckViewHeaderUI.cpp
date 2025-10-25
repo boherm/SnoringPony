@@ -9,6 +9,7 @@
 */
 
 #include "DeckViewHeaderUI.h"
+#include "../../Cue/music/MusicCue.h"
 
 DeckViewHeaderUI::DeckViewHeaderUI(Cuelist* cl) :
     currentCuelist(cl)
@@ -52,7 +53,7 @@ void DeckViewHeaderUI::buttonClicked(Button* button)
 {
     if (button == addItemBT.get() && currentCuelist)
     {
-        currentCuelist->cues.addItem(new Cue(), var());
+        currentCuelist->cues.addItem(new MusicCue(), var());
     }
 }
 

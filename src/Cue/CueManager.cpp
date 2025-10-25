@@ -23,20 +23,20 @@ CueManager::~CueManager()
 {
 }
 
-//void CueManager::addItemInternal(Cue* c, var data) {
-//    float maxId = 0;
-//    for (Cue* cue : items) {
-//        if (c != cue) maxId = jmax(maxId, cue->id->floatValue());
-//    }
-//    if (maxId != 0 && c->id->floatValue() == 1) {
-//        c->id->setValue(floor(maxId+1));
-//    }
-//    DBG("CueManager::addItemInternal, cue id: " << c->id->floatValue());
-//    //reorderItems();
-//    //correctCueIds();
-//    // parentCuelist->sendChangeMessage();
-//    DBG(getJSONData().toString());
-//}
+void CueManager::addItemInternal(Cue* c, var data) {
+    float maxId = 0;
+    for (Cue* cue : items) {
+        if (c != cue) maxId = jmax(maxId, cue->id->floatValue());
+    }
+    if (maxId != 0 && c->id->floatValue() == 1) {
+        c->id->setValue(floor(maxId+1));
+    }
+    // DBG("CueManager::addItemInternal, cue id: " << c->id->floatValue());
+    //reorderItems();
+    //correctCueIds();
+    // parentCuelist->sendChangeMessage();
+    // DBG(getJSONData().toString());
+}
 
 //void CueManager::removeItemInternal(Cue* c)
 //{

@@ -15,19 +15,19 @@ CuelistFactory::CuelistFactory()
     defs.add(Factory<Cuelist>::Definition::createDef("", "Cuelist", &Cuelist::create));
 }
 
-void CuelistFactory::buildPopupMenu(int startOffset)
-{
-    Factory<Cuelist>::buildPopupMenu(startOffset);
-}
+// void CuelistFactory::buildPopupMenu(int startOffset)
+// {
+//     Factory<Cuelist>::buildPopupMenu(startOffset);
+// }
 
-void CuelistFactory::showCreateMenu(std::function<void(Cuelist *)> returnFunc)
-{
-    Factory<Cuelist>::showCreateMenu(returnFunc);
-}
+// void CuelistFactory::showCreateMenu(std::function<void(Cuelist *)> returnFunc)
+// {
+//     Factory<Cuelist>::showCreateMenu(returnFunc);
+// }
 
-Cuelist * CuelistFactory::createFromMenuResult(int result)
-{
-    return Factory<Cuelist>::createFromMenuResult(result);
-}
+// Cuelist * CuelistFactory::createFromMenuResult(int result)
+// {
+//     return Factory<Cuelist>::createFromMenuResult(result);
+// }
 
 juce_ImplementSingleton(CuelistFactory);
