@@ -20,4 +20,5 @@ public:
 	//virtual ~SPAssetManager();
 
 	Image getAboutImage();
+    Image getInterfaceIcon(String type);
 };

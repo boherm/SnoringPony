@@ -16,3 +16,22 @@ Image SPAssetManager::getAboutImage()
 {
 	return ImageCache::getFromMemory(BinaryData::about_png, BinaryData::about_pngSize);
 }
+
+Image SPAssetManager::getInterfaceIcon(String type)
+{
+    if (type == "MIDI") {
+        return ImageCache::getFromMemory(BinaryData::midi_interface_png, BinaryData::midi_interface_pngSize);
+    }
+    else if (type == "Audio") {
+        return ImageCache::getFromMemory(BinaryData::audio_interface_png, BinaryData::audio_interface_pngSize);
+    }
+    else if (type == "OSC") {
+        return ImageCache::getFromMemory(BinaryData::network_interface_png, BinaryData::network_interface_pngSize);
+    }
+    else if (type == "Mixer") {
+        return ImageCache::getFromMemory(BinaryData::mixer_interface_png, BinaryData::mixer_interface_pngSize);
+    }
+    else {
+        return ImageCache::getFromMemory(BinaryData::noicon_png, BinaryData::noicon_pngSize);
+    }
+}
