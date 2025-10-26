@@ -23,4 +23,7 @@ public:
     // InterfaceUI* createUIForItem(Interface* item) override;
 
     static InterfaceManagerUI* create(const String& name) { return new InterfaceManagerUI(name); }
+
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(InterfaceManagerUI)
 };
