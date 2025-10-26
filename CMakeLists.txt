@@ -54,7 +54,7 @@ target_compile_definitions("${PROJECT_NAME}"  PRIVATE
     ORGANICUI_USE_SERVUS=1
 )
 
-file(GLOB_RECURSE ResourcesFiles CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/resources/*.*")
+file(GLOB_RECURSE ResourcesFiles CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/resources/*.png" "${CMAKE_CURRENT_SOURCE_DIR}/resources/*.ponylayout")
 juce_add_binary_data(BinaryData SOURCES ${ResourcesFiles})
 
 juce_add_module(modules/juce_organicui)
