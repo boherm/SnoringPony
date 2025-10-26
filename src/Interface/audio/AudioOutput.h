@@ -22,19 +22,34 @@ public:
     virtual ~AudioOutput();
 
     AudioInterface* audioInterface = nullptr;
+    AudioDeviceManager am;
 
     EnumParameter* outputType;
     EnumParameter* chan1;
     EnumParameter* chan2;
 
+    Trigger* testTrigger;
+
     int savedChan1 = 0;
     int savedChan2 = 0;
+
+    void initAudioSetup();
 
 	void onContainerParameterChangedInternal(Parameter *) override;
 
     void resolveWarning() override;
 
     void refreshChannelOptions();
+
+    void setupAudioOutputs();
+    void playTestSound();
+
+    void onContainerTriggerTriggered(Trigger* t);
+
+    InspectableEditor* getEditorInternal(bool isRoot, Array<Inspectable*> inspectables) override;
+
+    var getJSONData(bool includeNonOverriden = false) override;
+    void loadJSONDataInternal(var data) override;
 
     String getTypeString() const override { return "AudioOutput"; }
     static AudioOutput *create(var params) { return new AudioOutput(params); }

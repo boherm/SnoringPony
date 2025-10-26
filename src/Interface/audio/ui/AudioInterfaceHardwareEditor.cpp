@@ -13,7 +13,7 @@
 AudioInterfaceHardwareEditor::AudioInterfaceHardwareEditor(AudioModuleHardwareSettings* hs, bool isRoot) :
 	GenericControllableContainerEditor(hs, isRoot),
 	hs(hs),
-	selector(*hs->am, 0, 0, 0, 64, false, false, false, true)
+	selector(*hs->am, 0, 0, 0, 64, false, false, false, false)
 {
 	selector.setSize(100, 300);
 	selector.setVisible(!container->editorIsCollapsed);

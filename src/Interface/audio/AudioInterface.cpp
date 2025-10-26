@@ -18,6 +18,7 @@ AudioModuleHardwareSettings::AudioModuleHardwareSettings(AudioDeviceManager* am)
 	am(am)
 {
     includeInRecursiveSave = false;
+    hideEditorHeader = true;
 }
 
 InspectableEditor* AudioModuleHardwareSettings::getEditorInternal(bool isRoot, Array<Inspectable*> inspectables)
@@ -36,6 +37,7 @@ AudioInterface::AudioInterface() :
     addChildControllableContainer(&hs);
     addChildControllableContainer(&outputs);
     initSetup();
+    // updateAudioSetup();
 }
 
 AudioInterface::~AudioInterface()
@@ -109,6 +111,7 @@ void AudioInterface::loadJSONDataInternal(var data)
 	am.getAudioDeviceSetup(setup);
 	if (setup.outputDeviceName.isEmpty()) setWarningMessage("This interface isn't connected to an audio output");
 	else clearWarning();
+    outputs.refreshAllOutputsChannelOptions();
 }
 
 void AudioInterface::changeListenerCallback(ChangeBroadcaster*)

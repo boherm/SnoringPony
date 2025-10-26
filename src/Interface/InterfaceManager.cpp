@@ -22,9 +22,9 @@ InterfaceManager::InterfaceManager() :
     managerFactory = &factory;
 
     factory.defs.add(Factory<Interface>::Definition::createDef("", "Audio", &AudioInterface::create));
-    factory.defs.add(Factory<Interface>::Definition::createDef("", "MIDI", &MIDIInterface::create));
-    factory.defs.add(Factory<Interface>::Definition::createDef("", "OSC", &OSCInterface::create));
-    factory.defs.add(Factory<Interface>::Definition::createDef("", "Mixer", &MixerInterface::create));
+    // factory.defs.add(Factory<Interface>::Definition::createDef("", "MIDI", &MIDIInterface::create));
+    // factory.defs.add(Factory<Interface>::Definition::createDef("", "OSC", &OSCInterface::create));
+    // factory.defs.add(Factory<Interface>::Definition::createDef("", "Mixer", &MixerInterface::create));
 }
 
 InterfaceManager::~InterfaceManager()

@@ -50,6 +50,6 @@ public:
 
     void changeListenerCallback(ChangeBroadcaster*) override;
 
-    String getTypeString() const override { return "AudioInterface"; }
+    String getTypeString() const override { return "Audio"; }
     static AudioInterface* create(var params) { return new AudioInterface(); };
 };
