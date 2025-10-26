@@ -19,4 +19,11 @@ class InterfaceUI :
 public:
     InterfaceUI(Interface* item);
     virtual ~InterfaceUI();
+
+    ImageComponent iconUI;
+
+    void resizedHeader(Rectangle<int>& r);
+
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(InterfaceUI)
 };
