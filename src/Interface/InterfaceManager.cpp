@@ -11,6 +11,7 @@
 #include "InterfaceManager.h"
 #include "Interface.h"
 
+#include "audio/AudioOutput.h"
 #include "midi/MIDIInterface.h"
 #include "osc/OSCInterface.h"
 #include "audio/AudioInterface.h"
@@ -22,7 +23,7 @@ InterfaceManager::InterfaceManager() :
     managerFactory = &factory;
 
     factory.defs.add(Factory<Interface>::Definition::createDef("", "Audio", &AudioInterface::create));
-    // factory.defs.add(Factory<Interface>::Definition::createDef("", "MIDI", &MIDIInterface::create));
+    factory.defs.add(Factory<Interface>::Definition::createDef("", "MIDI", &MIDIInterface::create));
     // factory.defs.add(Factory<Interface>::Definition::createDef("", "OSC", &OSCInterface::create));
     // factory.defs.add(Factory<Interface>::Definition::createDef("", "Mixer", &MixerInterface::create));
 }

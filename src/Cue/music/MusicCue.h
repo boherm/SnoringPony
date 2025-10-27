@@ -21,6 +21,7 @@ public:
     virtual ~MusicCue();
 
     FileParameter* audioFile;
+    TargetParameter* targetAudioInterface;
 
     String getTypeString() const override { return "MusicCue"; }
     static MusicCue* create(var params) { return new MusicCue(params); }

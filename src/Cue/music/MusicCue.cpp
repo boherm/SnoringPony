@@ -9,12 +9,16 @@
 */
 
 #include "MusicCue.h"
+#include "../../Interface/InterfaceManager.h"
 
 MusicCue::MusicCue(var params)
 {
     objectType = "MusicCue";
 
     audioFile = addFileParameter("Audio File", "Audio file to play for this cue", params.getProperty("audioFile", ""));
+    targetAudioInterface = addTargetParameter("Audio Interface", "Audio interface to play this cue through", InterfaceManager::getInstance());
+    targetAudioInterface->targetType = TargetParameter::CONTAINER;
+    targetAudioInterface->customGetTargetContainerFunc = &InterfaceManager::showMenuForTargetAudioOutput;
 }
 
 MusicCue::~MusicCue()
