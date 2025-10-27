@@ -53,7 +53,14 @@ void DeckViewHeaderUI::buttonClicked(Button* button)
 {
     if (button == addItemBT.get() && currentCuelist)
     {
-        currentCuelist->cues.addItem(new MusicCue(), var());
+		currentCuelist->cues.factory.showCreateMenu([this](Cue* item)
+			{
+				if (item != nullptr)
+				{
+					this->currentCuelist->cues.addItem(item);
+				}
+			}
+		);
     }
 }
 

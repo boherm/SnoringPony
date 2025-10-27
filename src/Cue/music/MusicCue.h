@@ -23,7 +23,8 @@ public:
     FileParameter* audioFile;
     TargetParameter* targetAudioInterface;
 
-    String getTypeString() const override { return "MusicCue"; }
+    String getTypeString() const override { return "Music"; }
+    String getCueType() const override { return "Music"; }
     static MusicCue* create(var params) { return new MusicCue(params); }
 
     void play();

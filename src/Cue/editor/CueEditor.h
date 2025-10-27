@@ -24,7 +24,6 @@ public:
     Cue* currentCue;
 
     void paint(Graphics& g) override;
-    String getCueTypeName();
 };
 
 class CueEditor :

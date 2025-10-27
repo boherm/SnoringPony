@@ -22,6 +22,8 @@ public:
     CueManager();
     ~CueManager();
 
+    Factory<Cue> factory;
+
     Cuelist* parentCuelist;
 
     void addItemInternal(Cue* c, var data);

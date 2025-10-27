@@ -49,14 +49,5 @@ void CueTypeUI::paint(Graphics& g)
     g.fillRoundedRectangle(getLocalBounds().toFloat(), 2.0f);
     g.setColour(Colours::white);
     g.setFont(Font(12, Font::bold));
-    g.drawText(getCueTypeName(), getLocalBounds().reduced(4), Justification::centred, true);
-}
-
-String CueTypeUI::getCueTypeName()
-{
-    if (currentCue->getTypeString() == "MusicCue") {
-        return "Music";
-    } else {
-        return "Cue";
-    }
+    g.drawText(currentCue->getCueType(), getLocalBounds().reduced(4), Justification::centred, true);
 }

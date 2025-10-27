@@ -9,14 +9,19 @@
 */
 
 #include "CueManager.h"
+#include "music/MusicCue.h"
+#include "test/TestCue.h"
+#include "../ui/SPAssetManager.h"
 
 CueManager::CueManager() :
-    BaseManager<Cue>("Cues")
+    BaseManager("Cues")
 {
     // selectItemWhenCreated = true;
     // hideInEditor = true;
 
-
+    managerFactory = &factory;
+    factory.defs.add(Factory<Cue>::Definition::createDef("", "Music", &MusicCue::create)->addIcon(SPAssetManager::getInstance()->getInterfaceIcon("Audio")));
+    factory.defs.add(Factory<Cue>::Definition::createDef("", "Test", &TestCue::create)->addIcon(SPAssetManager::getInstance()->getInterfaceIcon("test")));
 }
 
 CueManager::~CueManager()
@@ -31,6 +36,7 @@ void CueManager::addItemInternal(Cue* c, var data) {
     if (maxId != 0 && c->id->floatValue() == 1) {
         c->id->setValue(floor(maxId+1));
     }
+
     // DBG("CueManager::addItemInternal, cue id: " << c->id->floatValue());
     //reorderItems();
     //correctCueIds();

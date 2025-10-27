@@ -30,6 +30,7 @@ public:
     StringParameter* notes;
 
     String getTypeString() const override { return "Cue"; }
+    virtual String getCueType() const { return "Cue"; }
     static Cue* create(var params) { return new Cue(params); }
     // void parameterValueChanged(Parameter* parameter) override;
     CueEditor* getEditorInternal(bool isRoot, Array<Inspectable*> inspectables);

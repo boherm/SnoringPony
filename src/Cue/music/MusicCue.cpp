@@ -13,7 +13,7 @@
 
 MusicCue::MusicCue(var params)
 {
-    objectType = "MusicCue";
+    objectType = "Music";
 
     audioFile = addFileParameter("Audio File", "Audio file to play for this cue", params.getProperty("audioFile", ""));
     targetAudioInterface = addTargetParameter("Audio Interface", "Audio interface to play this cue through", InterfaceManager::getInstance());
