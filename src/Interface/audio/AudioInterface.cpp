@@ -29,7 +29,8 @@ InspectableEditor* AudioModuleHardwareSettings::getEditorInternal(bool isRoot, A
 AudioInterface::AudioInterface() :
     Interface("Audio Interface 1"),
     hs(&am),
-    outputs(this)
+    outputs(this),
+    availableDevicesCache()
 {
     this->logIncomingData->remove();
     this->logOutgoingData->remove();
@@ -68,6 +69,10 @@ void AudioInterface::initSetup()
 	currentBufferSize = setup.bufferSize;
 
 	if (setup.outputDeviceName.isEmpty()) setWarningMessage("This interface isn't connected to an audio output");
+
+    refreshAvailableDevices();
+    saveDevicesSize = availableDevicesCache->size();
+    saveCurrentDevice = setup.outputDeviceName;
 }
 
 void AudioInterface::updateAudioSetup()
@@ -77,8 +82,11 @@ void AudioInterface::updateAudioSetup()
     currentSampleRate = setup.sampleRate;
     currentBufferSize = setup.bufferSize;
 
-	if (setup.outputDeviceName.isEmpty()) setWarningMessage("This interface isn't connected to an audio output");
-    else clearWarning();
+    if (getWarningMessage().isEmpty()) {
+        if (setup.outputDeviceName.isEmpty()) setWarningMessage("This interface isn't connected to an audio output");
+        else if (setup.outputDeviceName != saveCurrentDevice) setWarningMessage(saveCurrentDevice + " isn't connected anymore");
+        else clearWarning();
+    }
 }
 
 var AudioInterface::getJSONData(bool includeNonOverriden)
@@ -100,22 +108,75 @@ void AudioInterface::loadJSONDataInternal(var data)
 	{
 
 		std::unique_ptr<XmlElement> elem = XmlDocument::parse(data.getProperty("audioSettings", ""));
+        saveCurrentDevice = elem.get()->getStringAttribute("audioOutputDeviceName", "");
+        saveOutputs = elem.get()->getStringAttribute("audioDeviceOutChans", "0");
+        saveDevicesSize = 0;
 		am.initialise(0, 2, elem.get(), true);
 	}
 
+    Logger::writeToLog(saveCurrentDevice);
 	updateAudioSetup();
 
 	Interface::loadJSONDataInternal(data);
-
-	AudioDeviceManager::AudioDeviceSetup setup;
-	am.getAudioDeviceSetup(setup);
-	if (setup.outputDeviceName.isEmpty()) setWarningMessage("This interface isn't connected to an audio output");
-	else clearWarning();
-    outputs.refreshAllOutputsChannelOptions();
 }
 
 void AudioInterface::changeListenerCallback(ChangeBroadcaster*)
 {
-	updateAudioSetup();
+    AudioDeviceManager::AudioDeviceSetup setup;
+    am.getAudioDeviceSetup(setup);
+
+    refreshAvailableDevices();
+    int newDeviceAvailableSize = availableDevicesCache->size();
+
+    // if we detect a change in the available audio devices
+    if (newDeviceAvailableSize != saveDevicesSize) {
+
+        if (newDeviceAvailableSize < saveDevicesSize && saveCurrentDevice != setup.outputDeviceName) {
+            setWarningMessage(saveCurrentDevice + " isn't connected anymore");
+        }
+
+        if (newDeviceAvailableSize > saveDevicesSize) {
+
+            for (int i = 0; i < newDeviceAvailableSize; i++) {
+                if (availableDevicesCache->getReference(i) == saveCurrentDevice) {
+                    setup.outputDeviceName = saveCurrentDevice;
+                    if (saveOutputs.isNotEmpty()) {
+                        BigInteger test = BigInteger(std::stoi(saveOutputs.toStdString(), nullptr, 2));
+                        setup.outputChannels = test;
+                        saveOutputs = "";
+                    }
+                    am.initialise(0, setup.outputChannels.countNumberOfSetBits(), nullptr, true);
+                    am.setAudioDeviceSetup(setup, true);
+
+                    clearWarning();
+                }
+            }
+
+        }
+
+        saveDevicesSize = newDeviceAvailableSize;
+    } else {
+        saveCurrentDevice = setup.outputDeviceName;
+        saveOutputs = setup.outputChannels.toString(2);
+    }
+
+    updateAudioSetup();
     outputs.refreshAllOutputsChannelOptions();
+}
+
+void AudioInterface::refreshAvailableDevices()
+{
+    availableDevicesCache.reset(new StringArray());
+
+    const auto& deviceTypes = am.getAvailableDeviceTypes();
+
+    for (auto* deviceType : deviceTypes)
+    {
+        deviceType->scanForDevices();
+
+        for (const auto& device : deviceType->getDeviceNames())
+        {
+            availableDevicesCache->add(device);
+        }
+    }
 }

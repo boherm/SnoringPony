@@ -12,6 +12,7 @@
 #include "../Interface.h"
 #include "AudioOutput.h"
 #include "juce_events/juce_events.h"
+#include <memory>
 
 #pragma once
 
@@ -48,8 +49,16 @@ public:
     var getJSONData(bool includeNonOverriden = false) override;
     void loadJSONDataInternal(var data) override;
 
+    void refreshAvailableDevices();
+
     void changeListenerCallback(ChangeBroadcaster*) override;
 
     String getTypeString() const override { return "Audio"; }
     static AudioInterface* create(var params) { return new AudioInterface(); };
+
+private:
+    std::unique_ptr<StringArray> availableDevicesCache;
+    int saveDevicesSize;
+    String saveCurrentDevice;
+    String saveOutputs;
 };
