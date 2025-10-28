@@ -30,8 +30,8 @@ public:
 
     Trigger* testTrigger;
 
-    int savedChan1 = 0;
-    int savedChan2 = 0;
+    int savedChan1 = 1;
+    int savedChan2 = 1;
 
     void initAudioSetup();
 
