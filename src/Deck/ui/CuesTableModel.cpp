@@ -10,6 +10,7 @@
 
 #include "CuesTableModel.h"
 #include "../../Cuelist/CuelistManager.h"
+#include "../../ui/SPAssetManager.h"
 #include "juce_gui_basics/juce_gui_basics.h"
 
 enum ColumnIds
@@ -28,7 +29,6 @@ CuesTableModel::CuesTableModel(TableListBox* tlb, Cuelist* cl)
     if (cl == nullptr) {
         return;
     }
-    // generateTestData();
 }
 
 CuesTableModel::~CuesTableModel()
@@ -42,17 +42,19 @@ int CuesTableModel::getNumRows()
 
 void CuesTableModel::paintRowBackground(Graphics& g, int rowNumber, int width, int height, bool rowIsSelected)
 {
+    Cue* cue = cl->cues.items[rowNumber];
+
     if (rowIsSelected)
     {
-        g.fillAll(BG_COLOR.brighter(0.1f));
+        g.fillAll(cue->itemColor->getColor().brighter(0.1f));
     }
     else if (rowNumber % 2 == 0)
     {
-        g.fillAll(BG_COLOR);
+        g.fillAll(cue->itemColor->getColor());
     }
     else
     {
-        g.fillAll(BG_COLOR.brighter(0.05f));
+        g.fillAll(cue->itemColor->getColor().darker(0.1f));
     }
 }
 
@@ -67,15 +69,21 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
     Cue* cue = cl->cues.items[rowNumber];
 
     String text;
+    Image img;
     Path myPath;
     switch (columnId)
     {
         case IdColumn:
-            text = cue->id->stringValue();
+            g.drawText(cue->id->stringValue(), 2, 0, width - 4, height, Justification::centred, true);
+            text = "";
             break;
 
         case TypeColumn:
-            text = cue->getCueType();
+            img = SPAssetManager::getInstance()->getCueIcon(cue->getCueType());
+            g.setOpacity(0.7f);
+            g.drawImageWithin(img, 7.0, 7.0, width - 14.0, height - 14.0, RectanglePlacement::centred, false);
+            g.setOpacity(1.0f);
+            text = "";
             break;
 
         case TimeColumn:

@@ -21,6 +21,10 @@ Cue::Cue(var params) :
 	canBeDisabled = false;
 	editorIsCollapsed = false;
 	itemDataType = "Cue";
+    setHasCustomColor(true);
+    itemColor->hideInEditor = false;
+	itemColor->setDefaultValue(BG_COLOR);
+    itemColor->setControlMode(Parameter::ControlMode::REFERENCE);
 
     id = addFloatParameter("ID", "ID of this cue", params.getProperty("id", 1.0));
     id->lockManualControlMode = true;
@@ -54,6 +58,8 @@ CueEditor* Cue::getEditorInternal(bool isRoot, Array<Inspectable*> inspectables)
 
 void Cue::parameterValueChanged(Parameter* p)
 {
+    ControllableContainer::parameterValueChanged(p);
+
     if (p == id) {
         clearWarning();
         setNiceName(id->stringValue());
@@ -62,5 +68,13 @@ void Cue::parameterValueChanged(Parameter* p)
         if (id->stringValue() != niceName) {
             setWarningMessage("A cue with this ID already exists!");
         }
+    }
+}
+
+void Cue::parameterControlModeChanged(Parameter* p)
+{
+    if (p == itemColor && itemColor->controlMode == Parameter::ControlMode::REFERENCE)
+    {
+        itemColor->referenceTarget->setRootContainer(ProjectSettings::getInstance()->getControllableContainerByName("colorPresets"));
     }
 }

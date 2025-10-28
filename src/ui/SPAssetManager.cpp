@@ -35,3 +35,8 @@ Image SPAssetManager::getInterfaceIcon(String type)
         return ImageCache::getFromMemory(BinaryData::noicon_png, BinaryData::noicon_pngSize);
     }
 }
+
+Image SPAssetManager::getCueIcon(String type)
+{
+    return ImageCache::getFromMemory(BinaryData::noicon_png, BinaryData::noicon_pngSize);
+}

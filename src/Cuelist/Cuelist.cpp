@@ -27,6 +27,7 @@ Cuelist::Cuelist(var params) :
     setHasCustomColor(true);
     itemColor->hideInEditor = false;
 	itemColor->setDefaultValue(BG_COLOR.brighter(.2f));
+    itemColor->setControlMode(Parameter::ControlMode::REFERENCE);
 
     goBtn = addTrigger("GO", "Trigger next cue");
     stopBtn = addTrigger("STOP", "Stop current cue");
@@ -36,16 +37,12 @@ Cuelist::Cuelist(var params) :
 
 Cuelist::~Cuelist()
 {
-    // if (cues) {
-    //     delete cues;
-    //     cues = nullptr;
-    // }
 }
 
-// juce::var Cuelist::getJSONData(bool includeNonOverriden)
-// {
-//     Logger::writeToLog("Cuelist::getJSONData");
-//     juce::var v = BaseItem::getJSONData(includeNonOverriden);
-//     v.getDynamicObject()->setProperty("cues", "toto2");
-//     return v;
-// }
+void Cuelist::parameterControlModeChanged(Parameter* p)
+{
+    if (p == itemColor && itemColor->controlMode == Parameter::ControlMode::REFERENCE)
+    {
+        itemColor->referenceTarget->setRootContainer(ProjectSettings::getInstance()->getControllableContainerByName("colorPresets"));
+    }
+}

@@ -12,7 +12,8 @@
 #include "../../Cuelist/Cuelist.h"
 #include "juce_gui_basics/juce_gui_basics.h"
 
-class CuesTableModel : public TableListBoxModel
+class CuesTableModel :
+    public TableListBoxModel
 {
 public:
     CuesTableModel(TableListBox* tlb, Cuelist* cl);
@@ -20,6 +21,8 @@ public:
 
     TableListBox* tlb = nullptr;
     Cuelist* cl = nullptr;
+
+    void addListeners();
 
     int getNumRows() override;
     void paintRowBackground(Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override;

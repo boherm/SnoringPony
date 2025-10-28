@@ -20,7 +20,8 @@
 
 class CuesTableUI :
     public Component,
-    public BaseManagerListener<Cue>
+    public BaseManagerListener<Cue>,
+    public ContainerAsyncListener
 {
 public:
     CuesTableUI(Cuelist* cl);
@@ -35,9 +36,30 @@ public:
     void paint (Graphics&) override;
     void resized() override;
 
-    void itemAdded(Cue*) { tableListBox.updateContent(); }
-	void itemRemoved(Cue*) { tableListBox.updateContent(); }
-	void itemsReordered() { tableListBox.updateContent(); }
+    void addCuesListeners();
+
+    void itemAdded(Cue* c)
+    {
+        tableListBox.updateContent();
+        tableListBox.repaint();
+    }
+
+	void itemRemoved(Cue* c)
+    {
+        tableListBox.updateContent();
+        tableListBox.repaint();
+    }
+	void itemsReordered()
+    {
+        tableListBox.updateContent();
+        tableListBox.repaint();
+    }
+
+    void newMessage(const ContainerAsyncEvent& e) override
+    {
+        tableListBox.updateContent();
+        tableListBox.repaint();
+    }
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CuesTableUI)

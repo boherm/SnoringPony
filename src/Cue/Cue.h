@@ -16,8 +16,9 @@
 class Cuelist;
 
 class Cue:
-    public BaseItem
-    // public ParameterListener
+    public BaseItem,
+    public ChangeBroadcaster,
+    public ParameterListener
 {
 public:
     Cue(var params = var());
@@ -35,10 +36,11 @@ public:
     String getTypeString() const override { return "Cue"; }
     virtual String getCueType() const { return "Cue"; }
     static Cue* create(var params) { return new Cue(params); }
-    // void parameterValueChanged(Parameter* parameter) override;
+
     CueEditor* getEditorInternal(bool isRoot, Array<Inspectable*> inspectables);
 
-    void parameterValueChanged(Parameter* p);
+    void parameterValueChanged(Parameter* p) override;
+    void parameterControlModeChanged(Parameter* p) override;
 
     virtual void play() {}
 

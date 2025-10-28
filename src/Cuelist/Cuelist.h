@@ -14,8 +14,9 @@
 #include "../Cue/CueManager.h"
 
 class Cuelist :
-    public BaseItem ,
-    public ChangeBroadcaster
+    public BaseItem,
+    public ChangeBroadcaster,
+    public ParameterListener
 {
     public:
         Cuelist(var params = var());
@@ -31,4 +32,6 @@ class Cuelist :
 
         juce::String getTypeString() const override { return "Cuelist"; }
         static Cuelist *create(var params) { return new Cuelist(params); }
+
+        void parameterControlModeChanged(Parameter* p) override;
 };
