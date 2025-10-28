@@ -33,18 +33,10 @@ public:
     void inspectCue(int rowNumber);
     void cellDoubleClicked(int rowNumber, int columnId, const MouseEvent& event) override;
 
-private:
-    struct CueData
-    {
-        String name;
-        String time;
-        String description;
-        bool isActive;
-    };
+// private:
+//     Array<Cue> cues;
+//     void generateTestData();
 
-    Array<CueData> cueData;
-    void generateTestData();
-
-public:
-    void refreshData() { generateTestData(); }
+// public:
+//     void refreshData() { generateTestData(); }
 };

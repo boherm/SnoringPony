@@ -34,11 +34,10 @@ public:
 
     void paint (Graphics&) override;
     void resized() override;
-    void fillText();
 
-    void itemAdded(Cue*) { fillText(); }
-	void itemRemoved(Cue*) { fillText(); }
-	void itemsReordered() { fillText(); }
+    void itemAdded(Cue*) { tableListBox.updateContent(); }
+	void itemRemoved(Cue*) { tableListBox.updateContent(); }
+	void itemsReordered() { tableListBox.updateContent(); }
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CuesTableUI)

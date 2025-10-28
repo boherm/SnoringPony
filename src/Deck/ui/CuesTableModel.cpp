@@ -14,10 +14,10 @@
 
 enum ColumnIds
 {
-    NameColumn = 1,
-    TimeColumn = 2,
+    IdColumn = 1,
+    TypeColumn = 2,
     DescriptionColumn = 3,
-    ActiveColumn = 4
+    TimeColumn = 4
 };
 
 CuesTableModel::CuesTableModel(TableListBox* tlb, Cuelist* cl)
@@ -28,7 +28,7 @@ CuesTableModel::CuesTableModel(TableListBox* tlb, Cuelist* cl)
     if (cl == nullptr) {
         return;
     }
-    generateTestData();
+    // generateTestData();
 }
 
 CuesTableModel::~CuesTableModel()
@@ -38,7 +38,6 @@ CuesTableModel::~CuesTableModel()
 int CuesTableModel::getNumRows()
 {
     return cl->cues.items.size();
-    // return cueData.size();
 }
 
 void CuesTableModel::paintRowBackground(Graphics& g, int rowNumber, int width, int height, bool rowIsSelected)
@@ -59,40 +58,65 @@ void CuesTableModel::paintRowBackground(Graphics& g, int rowNumber, int width, i
 
 void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
 {
-    if (rowNumber >= cueData.size())
+    if (rowNumber >= cl->cues.items.size())
         return;
 
-    const CueData& data = cueData[rowNumber];
     g.setFont(14.0f);
     g.setColour(Colours::white);
 
+    Cue* cue = cl->cues.items[rowNumber];
 
     String text;
     Path myPath;
     switch (columnId)
     {
-        case NameColumn:
-            text = data.name;
+        case IdColumn:
+            text = cue->id->stringValue();
             break;
+
+        case TypeColumn:
+            text = cue->getCueType();
+            break;
+
         case TimeColumn:
-          myPath.addRectangle(4, 3, (width - 8), height - 6);
-          g.setColour(Colours::green.brighter(0.2f));
-          g.strokePath(myPath, PathStrokeType(1));
-          g.setColour(Colours::green.brighter(0.2f).withAlpha(0.6f));
-          g.fillRect(4.0f, 3.0f, (width - 8.0f) * Random::getSystemRandom().nextFloat(), height - 6.0f);
-          g.setColour(Colours::white.withAlpha(0.8f));
-          text = data.time;
-          g.drawText(text, 4, 3, width - 8, height - 6, Justification::centred,
-                     true);
-          return;
-          break;
+            myPath.addRectangle(4, 3, (width - 8), height - 6);
+            g.setColour(Colours::green.brighter(0.2f));
+            g.strokePath(myPath, PathStrokeType(1));
+            g.setColour(Colours::green.brighter(0.2f).withAlpha(0.6f));
+            g.fillRect(4.0f, 3.0f, (width - 8.0f) * Random::getSystemRandom().nextFloat(), height - 6.0f);
+            g.setColour(Colours::white.withAlpha(0.8f));
+            text = "00:20.12";
+            g.drawText(text, 4, 3, width - 8, height - 6, Justification::centred,
+                    true);
+            return;
+            break;
+
         case DescriptionColumn:
-            text = data.description;
+            text = cue->description->stringValue();
             break;
-        case ActiveColumn:
-            text = data.isActive ? "OK" : "KO";
-            g.setColour(data.isActive ? Colours::green : Colours::red);
-            break;
+
+        // case NameColumn:
+        //     text = data.name;
+        //     break;
+        // case TimeColumn:
+        //   myPath.addRectangle(4, 3, (width - 8), height - 6);
+        //   g.setColour(Colours::green.brighter(0.2f));
+        //   g.strokePath(myPath, PathStrokeType(1));
+        //   g.setColour(Colours::green.brighter(0.2f).withAlpha(0.6f));
+        //   g.fillRect(4.0f, 3.0f, (width - 8.0f) * Random::getSystemRandom().nextFloat(), height - 6.0f);
+        //   g.setColour(Colours::white.withAlpha(0.8f));
+        //   text = data.time;
+        //   g.drawText(text, 4, 3, width - 8, height - 6, Justification::centred,
+        //              true);
+        //   return;
+        //   break;
+        // case DescriptionColumn:
+        //     text = data.description;
+        //     break;
+        // case ActiveColumn:
+        //     text = data.isActive ? "OK" : "KO";
+        //     g.setColour(data.isActive ? Colours::green : Colours::red);
+        //     break;
     }
 
     // g.setColour(Colours::white.withAlpha(0.5f));
@@ -206,19 +230,19 @@ void CuesTableModel::sortOrderChanged(int newSortColumnId, bool isForwards)
 {
 }
 
-void CuesTableModel::generateTestData()
-{
-    cueData.clear();
+// void CuesTableModel::generateTestData()
+// {
+//     cueData.clear();
 
-    for (auto& cue : cl->cues.items) {
-        CueData cd;
-        cd.name = cue->niceName;
-        cd.time = "00:01:30";
-        cd.description = cue->notes->getValue();
-        cd.isActive = true;
+    // for (auto& cue : cl->cues.items) {
+    //     CueData cd;
+    //     cd.name = cue->niceName;
+    //     cd.time = "00:01:30";
+    //     cd.description = cue->notes->getValue();
+    //     cd.isActive = true;
 
-        cueData.add(cd);
-    }
+    //     cueData.add(cd);
+    // }
 
     // cueData.add({"Cue 1", "00:01:30", "Introduction", true});
     // cueData.add({"Cue 2", "00:02:45", "Verse 1", false});
@@ -228,4 +252,4 @@ void CuesTableModel::generateTestData()
     // cueData.add({"Cue 6", "00:08:15", "Final Chorus", false});
     // cueData.add({"Cue 7", "00:09:45", "Outro", true});
     // cueData.add({"Cue 8", "00:11:00", "Applause", false});
-}
+// }

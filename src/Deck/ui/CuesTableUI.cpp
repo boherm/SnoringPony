@@ -13,10 +13,10 @@
 
 enum ColumnIds
 {
-    NameColumn = 1,
-    TimeColumn = 2,
+    IdColumn = 1,
+    TypeColumn = 2,
     DescriptionColumn = 3,
-    ActiveColumn = 4
+    TimeColumn = 4
 };
 
 CuesTableUI::CuesTableUI(Cuelist* cl)
@@ -37,22 +37,19 @@ CuesTableUI::CuesTableUI(Cuelist* cl)
     tableListBox.setModel(tableModel.get());
     tableListBox.setRowHeight(30);
     int flags = TableHeaderComponent::visible | TableHeaderComponent::resizable | TableHeaderComponent::appearsOnColumnMenu;
-    tableListBox.getHeader().addColumn("Nom", NameColumn, 200, 50, 1500, flags & ~TableHeaderComponent::appearsOnColumnMenu);
-    tableListBox.getHeader().addColumn("Temps", TimeColumn, 200, 50, 1500, flags);
-    tableListBox.getHeader().addColumn("Description", DescriptionColumn, 200, 50, 1500, flags);
-    // tableListBox.getHeader().addColumn("Actif", ActiveColumn, 200, 50, 1000, flags);
+    tableListBox.getHeader().addColumn("#", IdColumn, 55, 55, 100, flags & ~TableHeaderComponent::appearsOnColumnMenu);
+    tableListBox.getHeader().addColumn("Type", TypeColumn, 40, 40, 40, flags & ~TableHeaderComponent::resizable);
+    tableListBox.getHeader().addColumn("Description", DescriptionColumn, 200, 200, 3000, flags & ~TableHeaderComponent::appearsOnColumnMenu);
+    tableListBox.getHeader().addColumn("Time", TimeColumn, 200, 200, 200, flags & ~TableHeaderComponent::resizable);
 
     addAndMakeVisible(tableListBox);
-    // cl->cues.addControllableContainerListener(this);
     cl->cues.addBaseManagerListener(this);
 
-    fillText();
     resized();
 }
 
 CuesTableUI::~CuesTableUI()
 {
-    // cl->cues.removeControllableContainerListener(this);
     cl->cues.removeBaseManagerListener(this);
     tableListBox.setLookAndFeel(nullptr);
     lafTable.reset();
@@ -68,17 +65,19 @@ void CuesTableUI::resized()
     width -= tableListBox.getViewport()->getScrollBarThickness();
 
     tableListBox.setBounds(getLocalBounds());
-    tableListBox.getHeader().setColumnWidth(1, width * (1.0/12));
-    tableListBox.getHeader().setColumnWidth(2, width * (2.0/12));
-    tableListBox.getHeader().setColumnWidth(3, width * (9.0/12));
-    // tableListBox.getHeader().setColumnWidth(4, getWidth() * (1.0/12));
-}
 
-void CuesTableUI::fillText()
-{
-    if (tableModel)
-    {
-        tableModel->refreshData();
-        tableListBox.updateContent();
+    tableListBox.getHeader().setColumnWidth(IdColumn, 55);
+    width -= 55;
+
+    if (tableListBox.getHeader().isColumnVisible(TypeColumn)) {
+        tableListBox.getHeader().setColumnWidth(TypeColumn, 40);
+        width -= 40;
     }
+
+    if (tableListBox.getHeader().isColumnVisible(TimeColumn)) {
+        tableListBox.getHeader().setColumnWidth(TimeColumn, 200);
+        width -= 200;
+    }
+
+    tableListBox.getHeader().setColumnWidth(DescriptionColumn, width);
 }

@@ -15,6 +15,8 @@
 #include "CuesTableUI.h"
 #include "DeckViewHeaderUI.h"
 
+class Cue;
+
 class DeckViewUI :
     public Component,
     public ParameterListener

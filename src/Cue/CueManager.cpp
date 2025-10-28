@@ -37,30 +37,20 @@ void CueManager::addItemInternal(Cue* c, var data) {
         c->id->setValue(floor(maxId+1));
     }
 
-    // DBG("CueManager::addItemInternal, cue id: " << c->id->floatValue());
-    //reorderItems();
-    //correctCueIds();
-    // parentCuelist->sendChangeMessage();
-    // DBG(getJSONData().toString());
+    c->parentCuelist = parentCuelist;
 }
 
-//void CueManager::removeItemInternal(Cue* c)
-//{
-//    DBG("CueManager::removeItemInternal, cue id: " << c->id->floatValue());
-//}
+void CueManager::loadJSONDataManagerInternal(var data) {
+    // Logger::writeToLog("CueManager:loadJSONDataManagerInternal");
+    BaseManager<Cue>::loadJSONDataManagerInternal(data);
 
-// var CueManager::getJSONData(bool includeNonOverriden)
-// {
-//     Logger::writeToLog("CueManager::getJSONData");
-//     var v = BaseManager<Cue>::getJSONData(includeNonOverriden);
-
-//     Array<var> cuesArray;
-
-//     for (Cue* c : items) {
-//         cuesArray.add(c->getJSONData(includeNonOverriden));
-//     }
-
-//     v.getDynamicObject()->setProperty("cues", cuesArray);
-
-//     return v;
-// }
+    // If we have multiple cues with same ID
+    Array<float> existingIds;
+    for (Cue* c : items) {
+        float idValue = c->id->floatValue();
+        if (existingIds.contains(idValue)) {
+            c->setWarningMessage("A cue with this ID already exists!");
+        }
+        existingIds.add(idValue);
+    }
+}

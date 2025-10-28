@@ -29,4 +29,5 @@ public:
     void addItemInternal(Cue* c, var data);
     // void removeItemInternal(Cue*) override;
     // var getJSONData(bool includeNonOverriden = false) override;
+    void loadJSONDataManagerInternal(var data) override;
 };

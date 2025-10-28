@@ -13,6 +13,8 @@
 #include "../MainIncludes.h"
 #include "editor/CueEditor.h"
 
+class Cuelist;
+
 class Cue:
     public BaseItem
     // public ParameterListener
@@ -24,9 +26,10 @@ public:
     String objectType;
     var objectData;
 
-    // Cuelist* parentCuelist;
+    Cuelist* parentCuelist;
 
     FloatParameter* id;
+    StringParameter* description;
     StringParameter* notes;
 
     String getTypeString() const override { return "Cue"; }
@@ -35,13 +38,15 @@ public:
     // void parameterValueChanged(Parameter* parameter) override;
     CueEditor* getEditorInternal(bool isRoot, Array<Inspectable*> inspectables);
 
-    virtual void play();
+    void parameterValueChanged(Parameter* p);
 
-private:
-    AudioFormatManager formatManager;
-    std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
-    AudioTransportSource transportSource;
-    AudioSourcePlayer sourcePlayer;
-    AudioDeviceManager deviceManager;
+    virtual void play() {}
+
+// private:
+//     AudioFormatManager formatManager;
+//     std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
+//     AudioTransportSource transportSource;
+//     AudioSourcePlayer sourcePlayer;
+//     AudioDeviceManager deviceManager;
 
 };
