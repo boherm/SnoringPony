@@ -114,7 +114,6 @@ void AudioInterface::loadJSONDataInternal(var data)
 		am.initialise(0, 2, elem.get(), true);
 	}
 
-    Logger::writeToLog(saveCurrentDevice);
 	updateAudioSetup();
 
 	Interface::loadJSONDataInternal(data);
