@@ -15,10 +15,11 @@
 
 enum ColumnIds
 {
-    IdColumn = 1,
-    TypeColumn = 2,
-    DescriptionColumn = 3,
-    TimeColumn = 4
+    StatusColumn = 1,
+    IdColumn = 2,
+    TypeColumn = 3,
+    DescriptionColumn = 4,
+    TimeColumn = 5
 };
 
 CuesTableModel::CuesTableModel(TableListBox* tlb, Cuelist* cl)
@@ -54,7 +55,7 @@ void CuesTableModel::paintRowBackground(Graphics& g, int rowNumber, int width, i
     }
     else
     {
-        g.fillAll(cue->itemColor->getColor().darker(0.1f));
+        g.fillAll(cue->itemColor->getColor().darker(0.2f));
     }
 }
 
@@ -73,7 +74,15 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
     Path myPath;
     switch (columnId)
     {
+        case StatusColumn:
+            g.setColour(Colours::green.darker(0.3f));
+            myPath.addRectangle(0, 0, 5, height);
+            myPath.addTriangle(5, 0, 5, height, 10, height / 2);
+            g.fillPath(myPath);
+            break;
+
         case IdColumn:
+            g.setColour(Colours::white);
             g.drawText(cue->id->stringValue(), 2, 0, width - 4, height, Justification::centred, true);
             text = "";
             break;
@@ -140,50 +149,130 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
 {
     if (event.mods.isPopupMenu())
     {
-        Logger::writeToLog("CuesTableModel::cellClicked: " + String(tlb->getSelectedRows().size()));
         PopupMenu p;
-        // p.addCustomItem(0, "Cue " + String(rowNumber + 1), false, false);
-        p.addItem(-1, "Play this cue");
-        p.addItem(1, "Edit this cue", tlb->getSelectedRows().size() == 1);
-        p.addItem(2, tlb->getSelectedRows().size() > 1 ? "Delete selected cues" : "Delete this cue");
-        p.addSeparator();
-        p.addItem(3, "Add new cue after");
-        p.addItem(4, "Add new cue before");
+
+        if (tlb->getSelectedRows().size() == 1) {
+            p.addSectionHeader("Cue " + String(this->cl->cues.items[rowNumber]->id->intValue()));
+            p.addItem(1, "Play this cue");
+            p.addItem(2, "Edit this cue");
+            p.addItem(9, "Replace with new cue");
+        } else {
+            p.addItem(6, "Reorder selected cues ids...");
+        }
+        p.addColouredItem(3, tlb->getSelectedRows().size() > 1 ? "Delete selected cues" : "Delete this cue", Colours::red);
+
+        if (tlb->getSelectedRows().size() == 1) {
+            p.addSeparator();
+
+            p.addItem(7, "Add new cue before...");
+            p.addItem(8, "Add new cue after...");
+        }
 
         p.showMenuAsync(PopupMenu::Options(), [this, rowNumber](int result) {
-            if (result == -1){
+            if (result == 1){
                 // Play action
                 if (rowNumber < cl->cues.items.size()) {
                     Cue* item = cl->cues.items[rowNumber];
                     item->play();
                 }
             }
-            if (result == 1) {
+            if (result == 2) {
                 // Edit action
                 if (rowNumber < cl->cues.items.size()) {
                     inspectCue(rowNumber);
                 }
-            } else if (result == 2) {
-                // Delete action
-                if (rowNumber < cl->cues.items.size() && tlb->getSelectedRows().size() == 1) {
-                    Cue* item = cl->cues.items[rowNumber];
 
-                    if (item->askConfirmationBeforeRemove && GlobalSettings::getInstance()->askBeforeRemovingItems->boolValue())
-                    {
-                        AlertWindow::showAsync(
-                            MessageBoxOptions().withIconType(AlertWindow::QuestionIcon)
-                                .withTitle("Delete " + item->niceName)
-                                .withMessage("Are you sure you want to delete this ?")
-                                .withButton("Delete")
-                                .withButton("Cancel"),
-                                [item](int result)
-                                {
-                                    if (result != 0) item->remove();
-                                }
-                        );
+            } else if (result == 3) {
+                // Delete action
+                String title = "Delete selected cues";
+                String message = "Are you sure you want to delete the selected cues?";
+                SparseSet<int> selected = tlb->getSelectedRows();
+
+                if (GlobalSettings::getInstance()->askBeforeRemovingItems->boolValue())
+                {
+                    if (tlb->getSelectedRows().size() == 1) {
+                        Cue* item = cl->cues.items[tlb->getSelectedRows()[0]];
+                        title = "Delete " + item->niceName;
+                        message = "Are you sure you want to delete this cue?";
                     }
-                    else cl->cues.askForRemoveBaseItem(item);
+
+                    AlertWindow::showAsync(
+                        MessageBoxOptions().withIconType(AlertWindow::QuestionIcon)
+                            .withTitle(title)
+                            .withMessage(message)
+                            .withButton("Delete")
+                            .withButton("Cancel"),
+                            [selected, this](int result)
+                            {
+                                if (result == 0) return;
+
+                                for (int i = selected.size() - 1; i >= 0; i--) {
+                                    int r = selected[i];
+                                    if (r < this->cl->cues.items.size()) {
+                                        Cue* item = this->cl->cues.items[r];
+                                        item->remove();
+                                    }
+                                }
+                            }
+                    );
+
                 }
+            } else if (result == 7 || result == 8) {
+                // Add new cue before/after
+                int newIndex = (result == 7) ? rowNumber : rowNumber + 1;
+                this->cl->cues.factory.showCreateMenu([this, newIndex](Cue* newCue)
+                    {
+                        if (newCue != nullptr)
+                        {
+                            var newCueData(new DynamicObject());
+                            newCueData.getDynamicObject()->setProperty("index", newIndex);
+                            this->cl->cues.addItem(newCue, newCueData);
+                        }
+                    }
+                );
+            } else if (result == 9) {
+                // Replace with new cue
+                this->cl->cues.factory.showCreateMenu([this, rowNumber](Cue* newCue)
+                    {
+                        if (newCue != nullptr)
+                        {
+                            Cue* oldCue = this->cl->cues.items[rowNumber];
+
+                            if (newCue->getCueType() == oldCue->getCueType())
+                            {
+                                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon,
+                                    "Replace " + oldCue->niceName,
+                                    "You cannot replace a cue with another cue of the same type.");
+                                return;
+                            }
+
+                            AlertWindow::showAsync(
+                                MessageBoxOptions().withIconType(AlertWindow::QuestionIcon)
+                                    .withTitle("Replace " + oldCue->niceName)
+                                    .withMessage("Are you sure you want to replace this cue?")
+                                    .withButton("Replace")
+                                    .withButton("Cancel"),
+                                    [this, newCue, oldCue, rowNumber](int result)
+                                    {
+                                        if (result == 0) return;
+
+                                        var newCueData(new DynamicObject());
+                                        newCueData.getDynamicObject()->setProperty("index", rowNumber);
+                                        newCueData.getDynamicObject()->setProperty("id", oldCue->id->floatValue());
+                                        newCue->itemColor->setValue(oldCue->itemColor->getValue());
+                                        newCue->itemColor->referenceTarget->setValue(oldCue->itemColor->referenceTarget->getValue());
+                                        newCue->description->setValue(oldCue->description->stringValue());
+                                        newCue->notes->setValue(oldCue->notes->stringValue());
+                                        oldCue->remove();
+                                        this->cl->cues.addItem(newCue, newCueData);
+                                        this->inspectCue(rowNumber);
+
+                                    }
+                            );
+
+                        }
+                    }
+                );
             }
         });
         return;
@@ -192,13 +281,18 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
 
 void CuesTableModel::backgroundClicked(const MouseEvent& event)
 {
-    // if (event.mods.isPopupMenu())
-    // {
-    //     PopupMenu p;
-    //     p.addItem(1, "Add new cue");
-    //     p.showMenuAsync(PopupMenu::Options());
-    //     return;
-    // }
+    tlb->deselectAllRows();
+
+    if (event.mods.isPopupMenu()){
+        cl->cues.factory.showCreateMenu([this](Cue* item)
+            {
+                if (item != nullptr)
+                {
+                    this->cl->cues.addItem(item);
+                }
+            }
+        );
+    }
 }
 
 void CuesTableModel::cellDoubleClicked(int rowNumber, int columnId, const MouseEvent& event)

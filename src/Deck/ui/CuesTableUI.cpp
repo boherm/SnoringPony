@@ -13,10 +13,11 @@
 
 enum ColumnIds
 {
-    IdColumn = 1,
-    TypeColumn = 2,
-    DescriptionColumn = 3,
-    TimeColumn = 4
+    StatusColumn = 1,
+    IdColumn = 2,
+    TypeColumn = 3,
+    DescriptionColumn = 4,
+    TimeColumn = 5
 };
 
 CuesTableUI::CuesTableUI(Cuelist* cl)
@@ -37,9 +38,10 @@ CuesTableUI::CuesTableUI(Cuelist* cl)
     tableListBox.setModel(tableModel.get());
     tableListBox.setRowHeight(30);
     int flags = TableHeaderComponent::visible | TableHeaderComponent::resizable | TableHeaderComponent::appearsOnColumnMenu;
+    tableListBox.getHeader().addColumn("", StatusColumn, 10, 10, 10, flags & ~TableHeaderComponent::appearsOnColumnMenu | ~TableHeaderComponent::resizable);
     tableListBox.getHeader().addColumn("#", IdColumn, 60, 60, 100, flags & ~TableHeaderComponent::appearsOnColumnMenu);
     tableListBox.getHeader().addColumn("Type", TypeColumn, 40, 40, 40, flags & ~TableHeaderComponent::resizable);
-    tableListBox.getHeader().addColumn("Description", DescriptionColumn, 200, 200, 3000, flags & ~TableHeaderComponent::appearsOnColumnMenu);
+    tableListBox.getHeader().addColumn("Description", DescriptionColumn, 200, 200, 5000, flags & ~TableHeaderComponent::appearsOnColumnMenu);
     tableListBox.getHeader().addColumn("Time", TimeColumn, 200, 200, 200, flags & ~TableHeaderComponent::resizable);
 
     addAndMakeVisible(tableListBox);
@@ -68,6 +70,9 @@ void CuesTableUI::resized()
     width -= tableListBox.getViewport()->getScrollBarThickness();
 
     tableListBox.setBounds(getLocalBounds());
+
+    tableListBox.getHeader().setColumnWidth(StatusColumn, 10);
+    width -= 10;
 
     tableListBox.getHeader().setColumnWidth(IdColumn, 60);
     width -= 60;
