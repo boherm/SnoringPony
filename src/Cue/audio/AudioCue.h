@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    MusicCue.h
+    AudioCue.h
     Created: 19 Oct 2025 11:29:00am
     Author:  boherm
 
@@ -13,19 +13,19 @@
 #include "../../MainIncludes.h"
 #include "../Cue.h"
 
-class MusicCue :
+class AudioCue :
     public Cue
 {
 public:
-    MusicCue(var params = var());
-    virtual ~MusicCue();
+    AudioCue(var params = var());
+    virtual ~AudioCue();
 
     FileParameter* audioFile;
     TargetParameter* targetAudioInterface;
 
-    String getTypeString() const override { return "Music"; }
-    String getCueType() const override { return "Music"; }
-    static MusicCue* create(var params) { return new MusicCue(params); }
+    String getTypeString() const override { return "Audio"; }
+    String getCueType() const override { return "Audio"; }
+    static AudioCue* create(var params) { return new AudioCue(params); }
 
     void play();
 };

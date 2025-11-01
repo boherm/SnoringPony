@@ -9,7 +9,7 @@
 */
 
 #include "CueManager.h"
-#include "music/MusicCue.h"
+#include "audio/AudioCue.h"
 #include "test/TestCue.h"
 #include "../ui/SPAssetManager.h"
 
@@ -20,7 +20,7 @@ CueManager::CueManager() :
     // hideInEditor = true;
 
     managerFactory = &factory;
-    factory.defs.add(Factory<Cue>::Definition::createDef("", "Music", &MusicCue::create)->addIcon(SPAssetManager::getInstance()->getInterfaceIcon("Audio")));
+    factory.defs.add(Factory<Cue>::Definition::createDef("", "Audio", &AudioCue::create)->addIcon(SPAssetManager::getInstance()->getInterfaceIcon("Audio")));
     factory.defs.add(Factory<Cue>::Definition::createDef("", "Test", &TestCue::create)->addIcon(SPAssetManager::getInstance()->getInterfaceIcon("test")));
 }
 

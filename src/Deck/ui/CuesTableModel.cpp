@@ -152,7 +152,8 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
         PopupMenu p;
 
         if (tlb->getSelectedRows().size() == 1) {
-            p.addSectionHeader("Cue " + String(this->cl->cues.items[rowNumber]->id->intValue()));
+            Cue* selectedCue = cl->cues.items[rowNumber];
+            p.addSectionHeader("Cue " + selectedCue->id->stringValue() + " - " + selectedCue->getCueType());
             p.addItem(1, "Play this cue");
             p.addItem(2, "Edit this cue");
             p.addItem(9, "Replace with new cue");

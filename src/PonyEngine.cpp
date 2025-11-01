@@ -51,7 +51,6 @@ PonyEngine::PonyEngine() :
     ProjectSettings::getInstance()->addChildControllableContainer(&decksSettings);
     ProjectSettings::getInstance()->customValuesCC.hideInEditor = true;
     ProjectSettings::getInstance()->dashboardCC.editorIsCollapsed = true;
-
 }
 
 PonyEngine::~PonyEngine()

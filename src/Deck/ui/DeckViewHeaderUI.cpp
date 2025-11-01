@@ -9,7 +9,6 @@
 */
 
 #include "DeckViewHeaderUI.h"
-#include "../../Cue/music/MusicCue.h"
 
 DeckViewHeaderUI::DeckViewHeaderUI(Cuelist* cl) :
     currentCuelist(cl)

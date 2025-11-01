@@ -1,19 +1,19 @@
 /*
   ==============================================================================
 
-    MusicCue.cpp
+    AudioCue.cpp
     Created: 19 Oct 2025 11:29:00am
     Author:  boherm
 
   ==============================================================================
 */
 
-#include "MusicCue.h"
+#include "AudioCue.h"
 #include "../../Interface/InterfaceManager.h"
 
-MusicCue::MusicCue(var params)
+AudioCue::AudioCue(var params)
 {
-    objectType = "Music";
+    objectType = "Audio";
 
     audioFile = addFileParameter("Audio File", "Audio file to play for this cue", params.getProperty("audioFile", ""));
     targetAudioInterface = addTargetParameter("Audio Interface", "Audio interface to play this cue through", InterfaceManager::getInstance());
@@ -21,11 +21,11 @@ MusicCue::MusicCue(var params)
     targetAudioInterface->customGetTargetContainerFunc = &InterfaceManager::showMenuForTargetAudioOutput;
 }
 
-MusicCue::~MusicCue()
+AudioCue::~AudioCue()
 {
 }
 
-void MusicCue::play()
+void AudioCue::play()
 {
-    Logger::writeToLog("MusicCue::play");
+    Logger::writeToLog("AudioCue::play");
 }
