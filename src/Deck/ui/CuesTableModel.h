@@ -36,6 +36,9 @@ public:
     void inspectCue(int rowNumber);
     void cellDoubleClicked(int rowNumber, int columnId, const MouseEvent& event) override;
 
+    // Drag and drop support
+    var getDragSourceDescription(const SparseSet<int>& selectedRows) override;
+
 // private:
 //     Array<Cue> cues;
 //     void generateTestData();

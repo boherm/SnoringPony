@@ -21,7 +21,9 @@
 class CuesTableUI :
     public Component,
     public BaseManagerListener<Cue>,
-    public ContainerAsyncListener
+    public ContainerAsyncListener,
+    public DragAndDropContainer,
+    public DragAndDropTarget
 {
 public:
     CuesTableUI(Cuelist* cl);
@@ -34,6 +36,7 @@ public:
     std::unique_ptr<LookAndFeelTable> lafTable;
 
     void paint (Graphics&) override;
+    void paintOverChildren (Graphics&) override;
     void resized() override;
 
     void addCuesListeners();
@@ -61,6 +64,15 @@ public:
         tableListBox.repaint();
     }
 
+    // DragAndDropTarget implementation
+    bool isInterestedInDragSource(const SourceDetails& dragSourceDetails) override;
+    void itemDragEnter(const SourceDetails& dragSourceDetails) override;
+    void itemDragMove(const SourceDetails& dragSourceDetails) override;
+    void itemDragExit(const SourceDetails& dragSourceDetails) override;
+    void itemDropped(const SourceDetails& dragSourceDetails) override;
+
 private:
+    int insertIndex = -1;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CuesTableUI)
 };

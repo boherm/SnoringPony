@@ -77,7 +77,7 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         case StatusColumn:
             g.setColour(Colours::green.darker(0.3f));
             myPath.addRectangle(0, 0, 5, height);
-            myPath.addTriangle(5, 0, 5, height, 10, height / 2);
+            myPath.addTriangle(5, 0, 5, height, 10, height * 0.5f);
             g.fillPath(myPath);
             break;
 
@@ -331,6 +331,27 @@ int CuesTableModel::getColumnAutoSizeWidth(int columnId)
 
 void CuesTableModel::sortOrderChanged(int newSortColumnId, bool isForwards)
 {
+}
+
+var CuesTableModel::getDragSourceDescription(const SparseSet<int>& selectedRows)
+{
+    // Return a var containing the selected row indices to enable dragging
+    if (selectedRows.size() > 0)
+    {
+        var dragData(new DynamicObject());
+        dragData.getDynamicObject()->setProperty("type", "cueTableRows");
+
+        // Store the selected rows as an array
+        Array<var> rowsArray;
+        for (int i = 0; i < selectedRows.size(); i++)
+        {
+            rowsArray.add(selectedRows[i]);
+        }
+        dragData.getDynamicObject()->setProperty("rows", rowsArray);
+
+        return dragData;
+    }
+    return var();
 }
 
 // void CuesTableModel::generateTestData()
