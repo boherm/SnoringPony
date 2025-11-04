@@ -11,26 +11,32 @@
 #include "ShowControl.h"
 
 //==============================================================================
-ShowControlUI::ShowControlUI(const String &contentName): ShapeShifterContent(ShowControl::getInstance(), contentName) {
-}
 
-ShowControlUI::~ShowControlUI() {
-}
+ShowControlUI::ShowControlUI(const String &contentName):
+    ShapeShifterContent(ShowControl::getInstance(), contentName) { }
+
+ShowControlUI::~ShowControlUI() { }
+
+//==============================================================================
 
 juce_ImplementSingleton(ShowControl);
 
-ShowControl::ShowControl(): ControllableContainer("Show Control") {
+ShowControl::ShowControl():
+    ControllableContainer("Show Control")
+{
     paramGo = addTrigger("GO", "GO the next cue");
-    paramPanic = addTrigger("Panic", "Push in case of emergency!");
     btnGo = paramGo->createButtonUI();
-    btnPanic = paramPanic->createButtonUI();
     addAndMakeVisible(btnGo);
-    addAndMakeVisible(btnPanic);
     btnGo->customBGColor = Colour(0, 139, 0);
     btnGo->useCustomBGColor = true;
+    paramGo->setEnabled(false);
 
+    paramPanic = addTrigger("Panic", "Push in case of emergency!");
+    btnPanic = paramPanic->createButtonUI();
+    addAndMakeVisible(btnPanic);
     btnPanic->customBGColor = Colour(159, 0, 0);
     btnPanic->useCustomBGColor = true;
+    paramPanic->setEnabled(false);
 }
 
 ShowControl::~ShowControl() {
@@ -38,13 +44,11 @@ ShowControl::~ShowControl() {
     delete btnPanic;
 }
 
-void ShowControl::paint(juce::Graphics &g) {
-}
+void ShowControl::paint(juce::Graphics &g) { }
 
 void ShowControl::resized() {
     btnGo->setBounds(0, 0, getLocalBounds().getWidth() / 2, getLocalBounds().getHeight());
-    btnPanic->setBounds(getLocalBounds().getWidth() / 2, 0, getLocalBounds().getWidth() / 2,
-                        getLocalBounds().getHeight());
+    btnPanic->setBounds(getLocalBounds().getWidth() / 2, 0, getLocalBounds().getWidth() / 2, getLocalBounds().getHeight());
 }
 
 void ShowControl::triggerTriggered(Trigger *t) {

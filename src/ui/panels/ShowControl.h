@@ -37,5 +37,5 @@ public:
     void triggerTriggered(Trigger* t) override;
 
 private:
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ShowControl)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ShowControl)
 };
