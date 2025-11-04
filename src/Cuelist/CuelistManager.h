@@ -13,6 +13,8 @@
 #include "../MainIncludes.h"
 #include "Cuelist.h"
 
+class Cue;
+
 class CuelistManager :
     public BaseManager<Cuelist>
 {
@@ -23,4 +25,6 @@ public:
     ~CuelistManager();
 
     PopupMenu getItemsMenuWithTickedItem(int startID, Cuelist* currentCuelist);
+
+    static void showMenuForTargetCue(ControllableContainer* startFromCC, std::function<void(Cue*)> returnFunc);
 };

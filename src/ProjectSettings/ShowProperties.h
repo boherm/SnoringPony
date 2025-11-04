@@ -21,6 +21,7 @@ public:
 	StringParameter* projectName;
     StringParameter* companyName;
     StringParameter* showFileVersion;
+    TargetParameter* nextCueToGo;
 
 	void clear();
 };

@@ -10,6 +10,7 @@
 
 #include "CuelistManager.h"
 #include "CuelistFactory.h"
+#include "../ui/SPAssetManager.h"
 
 CuelistManager::CuelistManager() :
     BaseManager<Cuelist>("Cuelists")
@@ -36,6 +37,56 @@ PopupMenu CuelistManager::getItemsMenuWithTickedItem(int startID, Cuelist* curre
         i++;
     }
     return m;
+}
+
+void CuelistManager::showMenuForTargetCue(ControllableContainer* startFromCC, std::function<void(Cue*)> returnFunc)
+{
+    PopupMenu menu;
+
+    CuelistManager* cm = CuelistManager::getInstance();
+
+    if (startFromCC != nullptr && startFromCC->niceName == "Cues") {
+        CueManager* cueManager = dynamic_cast<CueManager*>(startFromCC);
+        menu.addSectionHeader(cueManager->parentCuelist->niceName);
+        for (int i = 1 ; i <= cueManager->items.size(); ++i)
+        {
+            Cue* c = dynamic_cast<Cue*>(cueManager->items[i-1]);
+            menu.addItem(i, c->niceName + " - " + c->description->stringValue(), true, false, SPAssetManager::getInstance()->getInterfaceIcon(c->getCueType()));
+        }
+
+        menu.showMenuAsync(PopupMenu::Options(), [cueManager, returnFunc](int result)
+            {
+                if (result <= 0) return;
+                returnFunc(cueManager->items[result-1]);
+            }
+        );
+    } else {
+        for (int i = 1; i <= cm->items.size(); ++i)
+        {
+            Cuelist* cl = dynamic_cast<Cuelist*>(cm->items[i-1]);
+            PopupMenu sub;
+
+            for (int y = 1 ; y <= cl->cues.items.size(); ++y)
+            {
+                Cue* c = dynamic_cast<Cue*>(cl->cues.items[y-1]);
+                sub.addItem((i * 10000) + y, c->niceName + " - " + c->description->stringValue(), true, false, SPAssetManager::getInstance()->getInterfaceIcon(c->getCueType()));
+            }
+
+            menu.addSubMenu(cl->niceName, sub);
+        }
+
+        menu.showMenuAsync(PopupMenu::Options(), [cm, returnFunc](int result)
+            {
+                if (result <= 0) return;
+
+                int cueIdx = (result % 10000) - 1;
+                int cuelistIdx = ((result - cueIdx) / 10000) - 1;
+
+                Cuelist* cl = dynamic_cast<Cuelist*>(cm->items[cuelistIdx]);
+                returnFunc(cl->cues.items[cueIdx]);
+            }
+        );
+    }
 }
 
 juce_ImplementSingleton(CuelistManager);
