@@ -11,6 +11,7 @@
 #pragma once
 
 #include "../../MainIncludes.h"
+#include "../../Cue/Cue.h"
 
 class ShowControlUI : public ShapeShifterContent {
 public:
@@ -35,6 +36,8 @@ public:
     void paint (Graphics&) override;
     void resized() override;
     void triggerTriggered(Trigger* t) override;
+
+    void parameterValueChanged(Parameter* p) override;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ShowControl)

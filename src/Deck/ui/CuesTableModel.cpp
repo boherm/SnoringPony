@@ -11,7 +11,8 @@
 #include "CuesTableModel.h"
 #include "../../Cuelist/CuelistManager.h"
 #include "../../ui/SPAssetManager.h"
-#include "juce_gui_basics/juce_gui_basics.h"
+#include "../../PonyEngine.h"
+#include "juce_graphics/juce_graphics.h"
 
 enum ColumnIds
 {
@@ -30,10 +31,15 @@ CuesTableModel::CuesTableModel(TableListBox* tlb, Cuelist* cl)
     if (cl == nullptr) {
         return;
     }
+
+    PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
+    engine->showProperties.nextCueToGo->addParameterListener(this);
 }
 
 CuesTableModel::~CuesTableModel()
 {
+    PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
+    engine->showProperties.nextCueToGo->removeParameterListener(this);
 }
 
 int CuesTableModel::getNumRows()
@@ -59,6 +65,13 @@ void CuesTableModel::paintRowBackground(Graphics& g, int rowNumber, int width, i
     }
 }
 
+void CuesTableModel::parameterValueChanged(Parameter* p)
+{
+    if (p == dynamic_cast<PonyEngine*>(Engine::mainEngine)->showProperties.nextCueToGo) {
+        tlb->repaint();
+    }
+}
+
 void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
 {
     if (rowNumber >= cl->cues.items.size())
@@ -69,16 +82,22 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
 
     Cue* cue = cl->cues.items[rowNumber];
 
+    TargetParameter* nextCueTarget = dynamic_cast<PonyEngine*>(Engine::mainEngine)->showProperties.nextCueToGo;
+    Cue* nextCue = nextCueTarget->getTargetContainerAs<Cue>();
+
     String text;
     Image img;
     Path myPath;
     switch (columnId)
     {
         case StatusColumn:
-            g.setColour(Colours::green.darker(0.3f));
-            myPath.addRectangle(0, 0, 5, height);
-            myPath.addTriangle(5, 0, 5, height, 10, height * 0.5f);
-            g.fillPath(myPath);
+
+            if (nextCue == cue) {
+                g.setColour(Colours::darkorange.darker(0.3f));
+                myPath.addRectangle(0, 0, 5, height);
+                myPath.addTriangle(5, 0, 5, height, 10, height * 0.5f);
+                g.fillPath(myPath);
+            }
             break;
 
         case IdColumn:
@@ -155,12 +174,14 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
             Cue* selectedCue = cl->cues.items[rowNumber];
             p.addSectionHeader("Cue " + selectedCue->id->stringValue() + " - " + selectedCue->getCueType());
             p.addItem(1, "Play this cue");
-            p.addItem(2, "Edit this cue");
+            p.addItem(2, "Set go next this cue");
+            p.addSeparator();
+            p.addItem(3, "Edit this cue");
             p.addItem(9, "Replace with new cue");
         } else {
             p.addItem(6, "Reorder selected cues ids...");
         }
-        p.addColouredItem(3, tlb->getSelectedRows().size() > 1 ? "Delete selected cues" : "Delete this cue", Colours::red);
+        p.addColouredItem(4, tlb->getSelectedRows().size() > 1 ? "Delete selected cues" : "Delete this cue", Colours::red);
 
         if (tlb->getSelectedRows().size() == 1) {
             p.addSeparator();
@@ -177,13 +198,20 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
                     item->play();
                 }
             }
-            if (result == 2) {
+            if (result == 2){
+                // Set go next action
+                if (rowNumber < cl->cues.items.size()) {
+                    Cue* item = cl->cues.items[rowNumber];
+                    item->setGoNext();
+                }
+            }
+            if (result == 3) {
                 // Edit action
                 if (rowNumber < cl->cues.items.size()) {
                     inspectCue(rowNumber);
                 }
 
-            } else if (result == 3) {
+            } else if (result == 4) {
                 // Delete action
                 String title = "Delete selected cues";
                 String message = "Are you sure you want to delete the selected cues?";

@@ -9,6 +9,8 @@
 */
 
 #include "ShowControl.h"
+#include "juce_organicui/settings/ProjectSettings.h"
+#include "../../PonyEngine.h"
 
 //==============================================================================
 
@@ -27,21 +29,27 @@ ShowControl::ShowControl():
     paramGo = addTrigger("GO", "GO the next cue");
     btnGo = paramGo->createButtonUI();
     addAndMakeVisible(btnGo);
-    btnGo->customBGColor = Colour(0, 139, 0);
+    btnGo->customBGColor = Colours::darkgreen;
     btnGo->useCustomBGColor = true;
     paramGo->setEnabled(false);
 
     paramPanic = addTrigger("Panic", "Push in case of emergency!");
     btnPanic = paramPanic->createButtonUI();
     addAndMakeVisible(btnPanic);
-    btnPanic->customBGColor = Colour(159, 0, 0);
+    btnPanic->customBGColor = Colours::darkred;
     btnPanic->useCustomBGColor = true;
     paramPanic->setEnabled(false);
+
+    PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
+    engine->showProperties.nextCueToGo->addParameterListener(this);
 }
 
 ShowControl::~ShowControl() {
     delete btnGo;
     delete btnPanic;
+
+    PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
+    engine->showProperties.nextCueToGo->removeParameterListener(this);
 }
 
 void ShowControl::paint(juce::Graphics &g) { }
@@ -52,6 +60,29 @@ void ShowControl::resized() {
 }
 
 void ShowControl::triggerTriggered(Trigger *t) {
-    Logger::getCurrentLogger()->writeToLog("Push: " + t->niceName);
-    // UserInputManager::getInstance()->processInput(t->niceName);
+    if (t == paramGo) {
+        // TODO: move this logic in engine directly?
+        TargetParameter* tp = dynamic_cast<PonyEngine*>(Engine::mainEngine)->showProperties.nextCueToGo;
+        Cue* nextCue = tp->getTargetContainerAs<Cue>();
+        if (nextCue != nullptr) {
+            nextCue->play();
+            tp->resetValue();
+            tp->notifyValueChanged();
+        }
+    }
+}
+
+void ShowControl::parameterValueChanged(Parameter *p) {
+    if (p == dynamic_cast<PonyEngine*>(Engine::mainEngine)->showProperties.nextCueToGo) {
+        Logger::writeToLog("ShowControl::parameterValueChanged: " + p->niceName);
+
+        TargetParameter* tp = dynamic_cast<TargetParameter*>(p);
+        Cue* nextCue = tp->getTargetContainerAs<Cue>();
+
+        if (nextCue != nullptr) {
+            paramGo->setEnabled(true);
+        } else {
+            paramGo->setEnabled(false);
+        }
+    }
 }

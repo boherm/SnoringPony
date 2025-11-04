@@ -12,6 +12,7 @@
 #include "audio/AudioCue.h"
 #include "test/TestCue.h"
 #include "../ui/SPAssetManager.h"
+#include "../PonyEngine.h"
 
 CueManager::CueManager() :
     BaseManager("Cues")
@@ -45,8 +46,17 @@ void CueManager::addItemInternal(Cue* c, var data)
     }
 }
 
+void CueManager::removeItemInternal(Cue* c)
+{
+    TargetParameter* nextCueParam = dynamic_cast<PonyEngine*>(Engine::mainEngine)->showProperties.nextCueToGo;
+    Cue* nextCue = nextCueParam->getTargetContainerAs<Cue>();
+    if (nextCue == c) {
+        nextCueParam->resetValue();
+        nextCueParam->notifyValueChanged();
+    }
+}
+
 void CueManager::loadJSONDataManagerInternal(var data) {
-    // Logger::writeToLog("CueManager:loadJSONDataManagerInternal");
     BaseManager<Cue>::loadJSONDataManagerInternal(data);
 
     // If we have multiple cues with same ID

@@ -13,7 +13,8 @@
 #include "juce_gui_basics/juce_gui_basics.h"
 
 class CuesTableModel :
-    public TableListBoxModel
+    public TableListBoxModel,
+    public ParameterListener
 {
 public:
     CuesTableModel(TableListBox* tlb, Cuelist* cl);
@@ -38,6 +39,8 @@ public:
 
     // Drag and drop support
     var getDragSourceDescription(const SparseSet<int>& selectedRows) override;
+
+    void parameterValueChanged(Parameter* p) override;
 
 // private:
 //     Array<Cue> cues;
