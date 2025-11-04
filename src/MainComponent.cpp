@@ -13,6 +13,7 @@
 #include "juce_organicui/ui/shapeshifter/ShapeShifterFactory.h"
 #include "ui/panels/Clock.h"
 #include "ui/panels/ShowControl.h"
+#include "ui/panels/ShowInfos.h"
 #include "Cuelist/ui/CuelistManagerUI.h"
 #include "Deck/ui/DeckUI.h"
 #include "Interface/ui/InterfaceManagerUI.h"
@@ -36,6 +37,7 @@ void MainContentComponent::init()
     ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Interfaces", &InterfaceManagerUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Clock", &ClockUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Show Control", &ShowControlUI::create));
+	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Show Infos", &ShowInfosUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Cuelists", &CuelistManagerUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Deck A", &DeckUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Deck B", &DeckUI::create));

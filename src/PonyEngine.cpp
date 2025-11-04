@@ -19,6 +19,7 @@
 #include "ui/SPAssetManager.h"
 #include "ui/panels/Clock.h"
 #include "ui/panels/ShowControl.h"
+#include "ui/panels/ShowInfos.h"
 #include "Interface/InterfaceManager.h"
 
 ControllableContainer* getAppSettings();
@@ -66,6 +67,7 @@ PonyEngine::~PonyEngine()
 
     Clock::deleteInstance();
     ShowControl::deleteInstance();
+    ShowInfos::deleteInstance();
 
     SPAssetManager::deleteInstance();
     UserInputManager::deleteInstance();
