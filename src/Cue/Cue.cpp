@@ -10,6 +10,7 @@
 
 #include "Cue.h"
 #include "../Cuelist/Cuelist.h"
+#include "../PonyEngine.h"
 
 Cue::Cue(var params) :
     BaseItem(params.getProperty("name", "1.000")),
@@ -17,6 +18,7 @@ Cue::Cue(var params) :
 	objectData(params)
 
 {
+    saveAndLoadRecursiveData = true;
     nameCanBeChangedByUser = false;
 	canBeDisabled = false;
 	editorIsCollapsed = false;
@@ -25,6 +27,11 @@ Cue::Cue(var params) :
     itemColor->hideInEditor = false;
 	itemColor->setDefaultValue(BG_COLOR);
     itemColor->setControlMode(Parameter::ControlMode::REFERENCE);
+
+    goBtn = addTrigger("Go", "Trigger this cue now");
+    goBtn->hideInEditor = true;
+    goNextBtn = addTrigger("Go Next", "Trigger this cue after next");
+    goNextBtn->hideInEditor = true;
 
     id = addFloatParameter("ID", "ID of this cue", params.getProperty("id", 1.0));
     id->lockManualControlMode = true;
@@ -76,5 +83,23 @@ void Cue::parameterControlModeChanged(Parameter* p)
     if (p == itemColor && itemColor->controlMode == Parameter::ControlMode::REFERENCE)
     {
         itemColor->referenceTarget->setRootContainer(ProjectSettings::getInstance()->getControllableContainerByName("colorPresets"));
+    }
+}
+
+void Cue::setGoNext()
+{
+    PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
+    engine->showProperties.nextCueToGo->setTarget(this);
+    engine->showProperties.nextCueToGo->notifyValueChanged();
+}
+
+void Cue::triggerTriggered(Trigger* t)
+{
+    if (t == goBtn) {
+        play();
+    }
+
+    if (t == goNextBtn) {
+        setGoNext();
     }
 }

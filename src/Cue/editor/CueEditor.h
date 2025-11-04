@@ -11,6 +11,7 @@
 #pragma once
 
 #include "../../MainIncludes.h"
+#include "juce_organicui/controllable/ui/TriggerUI.h"
 
 class Cue;
 
@@ -35,6 +36,10 @@ public:
 
     // std::unique_ptr<FloatParameterLabelUI> idStepperUI;
     std::unique_ptr<CueTypeUI> cueTypeUI;
+
+    TriggerUI* goBtnUI;
+    TriggerUI* goNextBtnUI;
+
     virtual void resizedInternalHeaderItemInternal(Rectangle<int> &r) override;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CueEditor)

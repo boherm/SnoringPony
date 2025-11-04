@@ -33,6 +33,9 @@ public:
     StringParameter* description;
     StringParameter* notes;
 
+    Trigger* goBtn;
+    Trigger* goNextBtn;
+
     String getTypeString() const override { return "Cue"; }
     virtual String getCueType() const { return "Cue"; }
     static Cue* create(var params) { return new Cue(params); }
@@ -42,7 +45,10 @@ public:
     void parameterValueChanged(Parameter* p) override;
     void parameterControlModeChanged(Parameter* p) override;
 
+    void triggerTriggered(Trigger* t) override;
+
     virtual void play() {}
+    void setGoNext();
 
 // private:
 //     AudioFormatManager formatManager;

@@ -10,6 +10,7 @@
 
 #include "CueEditor.h"
 #include "../Cue.h"
+#include "juce_graphics/juce_graphics.h"
 
 CueEditor::CueEditor(Array<Cue *> cues, bool isRoot) :
 	BaseItemEditor(Inspectable::getArrayAs<Cue, BaseItem>(cues), isRoot)
@@ -18,20 +19,33 @@ CueEditor::CueEditor(Array<Cue *> cues, bool isRoot) :
 
     cueTypeUI = std::make_unique<CueTypeUI>(cue);
     addAndMakeVisible(cueTypeUI.get());
-    // idStepperUI.reset(cue->id->createLabelParameter());
-    // idStepperUI->showLabel = false;
-    // addAndMakeVisible(idStepperUI.get());
-    // Logger::writeToLog("CueEditor::CueEditor: " + String(cue->niceName));
+
+    goBtnUI = cue->goBtn->createButtonUI();
+    goBtnUI->customBGColor = Colours::darkgreen;
+    goBtnUI->useCustomBGColor = true;
+
+    goNextBtnUI = cue->goNextBtn->createButtonUI();
+    goNextBtnUI->customBGColor = Colours::darkorange.darker(0.3f);
+    goNextBtnUI->useCustomBGColor = true;
+
+    addAndMakeVisible(goBtnUI);
+    addAndMakeVisible(goNextBtnUI);
 }
 
 CueEditor::~CueEditor()
 {
+    delete goBtnUI;
+    delete goNextBtnUI;
 }
 
 void CueEditor::resizedInternalHeaderItemInternal(Rectangle<int>& r)
 {
-    // idStepperUI->setBounds(r.removeFromRight(90).reduced(2));
-    cueTypeUI->setBounds(r.removeFromRight(70).reduced(2));
+    cueTypeUI->setBounds(r.removeFromRight(90).reduced(2));
+
+    goNextBtnUI->setBounds(r.removeFromRight(60).reduced(2));
+    goBtnUI->setBounds(r.removeFromRight(60).reduced(2));
+
+
 }
 
 CueTypeUI::CueTypeUI(Cue* cue)
