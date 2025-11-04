@@ -21,7 +21,10 @@ public:
 	StringParameter* projectName;
     StringParameter* companyName;
     StringParameter* showFileVersion;
+
+    TargetParameter* startingNextCue;
     TargetParameter* nextCueToGo;
 
 	void clear();
+    void parameterValueChanged(Parameter* p) override;
 };
