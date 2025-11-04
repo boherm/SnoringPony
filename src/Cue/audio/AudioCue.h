@@ -12,6 +12,7 @@
 
 #include "../../MainIncludes.h"
 #include "../Cue.h"
+#include "AudioFile.h"
 
 class AudioCue :
     public Cue
@@ -20,8 +21,7 @@ public:
     AudioCue(var params = var());
     virtual ~AudioCue();
 
-    FileParameter* audioFile;
-    TargetParameter* targetAudioInterface;
+    AudioManager audioManager;
 
     String getTypeString() const override { return "Audio"; }
     String getCueType() const override { return "Audio"; }

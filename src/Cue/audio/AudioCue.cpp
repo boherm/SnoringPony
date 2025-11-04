@@ -9,16 +9,16 @@
 */
 
 #include "AudioCue.h"
-#include "../../Interface/InterfaceManager.h"
 
-AudioCue::AudioCue(var params)
+AudioCue::AudioCue(var params):
+    audioManager(this)
 {
     objectType = "Audio";
+    addChildControllableContainer(&audioManager);
 
-    audioFile = addFileParameter("Audio File", "Audio file to play for this cue", params.getProperty("audioFile", ""));
-    targetAudioInterface = addTargetParameter("Audio Interface", "Audio interface to play this cue through", InterfaceManager::getInstance());
-    targetAudioInterface->targetType = TargetParameter::CONTAINER;
-    targetAudioInterface->customGetTargetContainerFunc = &InterfaceManager::showMenuForTargetAudioOutput;
+    if (audioManager.items.isEmpty()) {
+        audioManager.addItemFromData(var());
+    }
 }
 
 AudioCue::~AudioCue()
