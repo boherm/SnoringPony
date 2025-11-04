@@ -74,8 +74,6 @@ void ShowControl::triggerTriggered(Trigger *t) {
 
 void ShowControl::parameterValueChanged(Parameter *p) {
     if (p == dynamic_cast<PonyEngine*>(Engine::mainEngine)->showProperties.nextCueToGo) {
-        Logger::writeToLog("ShowControl::parameterValueChanged: " + p->niceName);
-
         TargetParameter* tp = dynamic_cast<TargetParameter*>(p);
         Cue* nextCue = tp->getTargetContainerAs<Cue>();
 
