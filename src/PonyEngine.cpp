@@ -12,6 +12,7 @@
 #include "Cuelist/CuelistManager.h"
 #include "MainIncludes.h"
 #include "PonyEngine.h"
+#include "Brain.h"
 #include "UserInputManager.h"
 #include "ProjectSettings/ShowProperties.h"
 #include "ProjectSettings/DecksSettings.h"
@@ -71,6 +72,8 @@ PonyEngine::~PonyEngine()
 
     SPAssetManager::deleteInstance();
     UserInputManager::deleteInstance();
+
+    Brain::deleteInstance();
 }
 
 void PonyEngine::clearInternal()

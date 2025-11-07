@@ -11,6 +11,7 @@
 #include "ShowInfos.h"
 #include "../../PonyEngine.h"
 #include "../../Cue/Cue.h"
+#include "../../Cuelist/Cuelist.h"
 
 //==============================================================================
 
@@ -27,13 +28,21 @@ ShowInfos::ShowInfos():
     ControllableContainer("Show Infos")
 {
     PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
-    engine->showProperties.nextCueToGo->addParameterListener(this);
+    engine->showProperties.mainCuelist->addParameterListener(this);
+
+    mainCuelist = engine->showProperties.mainCuelist->getTargetContainerAs<Cuelist>();
+
+    if (mainCuelist != nullptr)
+        mainCuelist->nextCue->addParameterListener(this);
 }
 
 ShowInfos::~ShowInfos()
 {
+    if (mainCuelist != nullptr)
+        mainCuelist->nextCue->removeParameterListener(this);
+
     PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
-    engine->showProperties.nextCueToGo->removeParameterListener(this);
+    engine->showProperties.mainCuelist->removeParameterListener(this);
 }
 
 void ShowInfos::paint(juce::Graphics &g)
@@ -49,10 +58,9 @@ void ShowInfos::paint(juce::Graphics &g)
     g.setColour(Colours::white.darker(0.6f));
     g.drawText("|", getLocalBounds().reduced(5).withY(32).withX(7), Justification::topLeft);
 
-    TargetParameter* nextCueTarget = dynamic_cast<PonyEngine*>(Engine::mainEngine)->showProperties.nextCueToGo;
-    Cue* nextCue = nextCueTarget->getTargetContainerAs<Cue>();
-    if (nextCue) {
-        g.drawText(nextCue->id->stringValue() + ": " + nextCue->description->stringValue(), getLocalBounds().reduced(25, 8).withY(32), Justification::topLeft);
+    if (mainCuelist && mainCuelist->nextCue->getTargetContainerAs<Cue>()) {
+        Cue* c = mainCuelist->nextCue->getTargetContainerAs<Cue>();
+        g.drawText(c->id->stringValue() + ": " + c->description->stringValue(), getLocalBounds().reduced(25, 8).withY(32), Justification::topLeft);
     } else {
         g.drawText("(no cue next)", getLocalBounds().reduced(25, 8).withY(32), Justification::topLeft);
     }
@@ -64,8 +72,22 @@ void ShowInfos::resized()
 
 void ShowInfos::parameterValueChanged(Parameter* p)
 {
-    if (p == dynamic_cast<PonyEngine*>(Engine::mainEngine)->showProperties.nextCueToGo)
+    PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
+
+    if (p == engine->showProperties.mainCuelist)
     {
+        if (mainCuelist != nullptr)
+            mainCuelist->nextCue->removeParameterListener(this);
+
+        mainCuelist = engine->showProperties.mainCuelist->getTargetContainerAs<Cuelist>();
+
+        if (mainCuelist != nullptr)
+            mainCuelist->nextCue->addParameterListener(this);
+
+        repaint();
+    }
+
+    if (mainCuelist && p == mainCuelist->nextCue) {
         repaint();
     }
 }

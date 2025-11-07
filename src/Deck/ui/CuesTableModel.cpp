@@ -11,8 +11,6 @@
 #include "CuesTableModel.h"
 #include "../../Cuelist/CuelistManager.h"
 #include "../../ui/SPAssetManager.h"
-#include "../../PonyEngine.h"
-#include "juce_graphics/juce_graphics.h"
 
 enum ColumnIds
 {
@@ -32,14 +30,12 @@ CuesTableModel::CuesTableModel(TableListBox* tlb, Cuelist* cl)
         return;
     }
 
-    PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
-    engine->showProperties.nextCueToGo->addParameterListener(this);
+    cl->nextCue->addParameterListener(this);
 }
 
 CuesTableModel::~CuesTableModel()
 {
-    PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
-    engine->showProperties.nextCueToGo->removeParameterListener(this);
+    cl->nextCue->removeParameterListener(this);
 }
 
 int CuesTableModel::getNumRows()
@@ -67,7 +63,7 @@ void CuesTableModel::paintRowBackground(Graphics& g, int rowNumber, int width, i
 
 void CuesTableModel::parameterValueChanged(Parameter* p)
 {
-    if (p == dynamic_cast<PonyEngine*>(Engine::mainEngine)->showProperties.nextCueToGo) {
+    if (p == cl->nextCue) {
         tlb->repaint();
     }
 }
@@ -81,9 +77,7 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
     g.setColour(Colours::white);
 
     Cue* cue = cl->cues.items[rowNumber];
-
-    TargetParameter* nextCueTarget = dynamic_cast<PonyEngine*>(Engine::mainEngine)->showProperties.nextCueToGo;
-    Cue* nextCue = nextCueTarget->getTargetContainerAs<Cue>();
+    Cue* nextCue = cl->nextCue->getTargetContainerAs<Cue>();
 
     String text;
     Image img;
@@ -173,8 +167,8 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
         if (tlb->getSelectedRows().size() == 1) {
             Cue* selectedCue = cl->cues.items[rowNumber];
             p.addSectionHeader("Cue " + selectedCue->id->stringValue() + " - " + selectedCue->getCueType());
-            p.addItem(1, "Play this cue");
-            p.addItem(2, "Set go next this cue");
+            // p.addItem(1, "Play this cue");
+            p.addItem(2, "Go after current cue");
             p.addSeparator();
             p.addItem(3, "Edit this cue");
             p.addItem(9, "Replace with new cue");
@@ -191,13 +185,13 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
         }
 
         p.showMenuAsync(PopupMenu::Options(), [this, rowNumber](int result) {
-            if (result == 1){
-                // Play action
-                if (rowNumber < cl->cues.items.size()) {
-                    Cue* item = cl->cues.items[rowNumber];
-                    item->play();
-                }
-            }
+            // if (result == 1){
+            //     // Play action
+            //     if (rowNumber < cl->cues.items.size()) {
+            //         Cue* item = cl->cues.items[rowNumber];
+            //         item->play();
+            //     }
+            // }
             if (result == 2){
                 // Set go next action
                 if (rowNumber < cl->cues.items.size()) {

@@ -22,8 +22,8 @@ public:
     StringParameter* companyName;
     StringParameter* showFileVersion;
 
-    TargetParameter* startingNextCue;
-    TargetParameter* nextCueToGo;
+    TargetParameter* startupMainCuelist;
+    TargetParameter* mainCuelist;
 
 	void clear();
     void parameterValueChanged(Parameter* p) override;

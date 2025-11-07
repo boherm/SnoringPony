@@ -28,10 +28,8 @@ Cue::Cue(var params) :
 	itemColor->setDefaultValue(BG_COLOR);
     itemColor->setControlMode(Parameter::ControlMode::REFERENCE);
 
-    goBtn = addTrigger("Go", "Trigger this cue now");
-    goBtn->hideInEditor = true;
-    goNextBtn = addTrigger("Go Next", "Trigger this cue after next");
-    goNextBtn->hideInEditor = true;
+    setNextBtn = addTrigger("Set next", "Trigger this cue after next");
+    setNextBtn->hideInEditor = true;
 
     id = addFloatParameter("ID", "ID of this cue", params.getProperty("id", 1.0));
     id->lockManualControlMode = true;
@@ -63,6 +61,12 @@ CueEditor* Cue::getEditorInternal(bool isRoot, Array<Inspectable*> inspectables)
     return new CueEditor(this, isRoot);
 }
 
+void Cue::setGoNext()
+{
+    parentCuelist->nextCue->setTarget(this);
+    parentCuelist->nextCue->notifyValueChanged();
+}
+
 void Cue::parameterValueChanged(Parameter* p)
 {
     ControllableContainer::parameterValueChanged(p);
@@ -86,20 +90,9 @@ void Cue::parameterControlModeChanged(Parameter* p)
     }
 }
 
-void Cue::setGoNext()
-{
-    PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
-    engine->showProperties.nextCueToGo->setTarget(this);
-    engine->showProperties.nextCueToGo->notifyValueChanged();
-}
-
 void Cue::triggerTriggered(Trigger* t)
 {
-    if (t == goBtn) {
-        play();
-    }
-
-    if (t == goNextBtn) {
+    if (t == setNextBtn) {
         setGoNext();
     }
 }

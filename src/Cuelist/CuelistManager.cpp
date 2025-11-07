@@ -89,4 +89,13 @@ void CuelistManager::showMenuForTargetCue(ControllableContainer* startFromCC, st
     }
 }
 
+Cue* CuelistManager::getNextCue(Cue* c)
+{
+    // Cuelist* cl = c->parentCuelist;
+    // int index = cl->cues.items.indexOf(c);
+    // if (index < 0 || index + 1 >= cl->cues.items.size()) return nullptr;
+    // return dynamic_cast<Cue*>(cl->cues.items[index + 1]);
+    return nullptr;
+}
+
 juce_ImplementSingleton(CuelistManager);

@@ -11,7 +11,6 @@
 #pragma once
 
 #include "../../MainIncludes.h"
-#include "juce_organicui/controllable/ui/TriggerUI.h"
 
 class Cue;
 
@@ -34,11 +33,9 @@ public:
     CueEditor(Array<Cue*> cues, bool isRoot);
     virtual ~CueEditor();
 
-    // std::unique_ptr<FloatParameterLabelUI> idStepperUI;
     std::unique_ptr<CueTypeUI> cueTypeUI;
 
-    TriggerUI* goBtnUI;
-    TriggerUI* goNextBtnUI;
+    TriggerUI* setNextBtnUI;
 
     virtual void resizedInternalHeaderItemInternal(Rectangle<int> &r) override;
 

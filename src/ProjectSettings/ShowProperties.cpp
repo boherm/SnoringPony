@@ -26,16 +26,16 @@ ShowProperties::ShowProperties() :
     companyName = addStringParameter("Company name", "Company name of the show project", "Unknown Company");
     showFileVersion = addStringParameter("Show file version", "Version of this project file", "1.0");
 
-    startingNextCue = addTargetParameter("Next cue on load", "Target of the next cue to go on loading this project file", CuelistManager::getInstance());
-    startingNextCue->targetType = TargetParameter::CONTAINER;
-    startingNextCue->customGetTargetContainerFunc = &CuelistManager::showMenuForTargetCue;
+    startupMainCuelist = addTargetParameter("Startup main cuelist", "Target of the main cuelist to load on starting the show", CuelistManager::getInstance());
+    startupMainCuelist->targetType = TargetParameter::CONTAINER;
+    startupMainCuelist->maxDefaultSearchLevel = 0;
 
-    nextCueToGo = addTargetParameter("Next cue to go", "Target of the next cue to go", CuelistManager::getInstance());
-    nextCueToGo->targetType = TargetParameter::CONTAINER;
-    nextCueToGo->isSavable = false;
-    nextCueToGo->customGetTargetContainerFunc = &CuelistManager::showMenuForTargetCue;
-    nextCueToGo->alwaysNotify = true;
-    nextCueToGo->hideInEditor = true;
+    mainCuelist = addTargetParameter("Current main cuelist", "Target the current main cuelist", CuelistManager::getInstance());
+    mainCuelist->targetType = TargetParameter::CONTAINER;
+    mainCuelist->maxDefaultSearchLevel = 0;
+    mainCuelist->isSavable = false;
+    // currentMainCuelist->alwaysNotify = true;
+    // currentMainCuelist->hideInEditor = true;
 }
 
 void ShowProperties::clear()
@@ -44,8 +44,8 @@ void ShowProperties::clear()
     companyName->resetValue();
     showFileVersion->resetValue();
 
-    startingNextCue->resetValue();
-    nextCueToGo->resetValue();
+    startupMainCuelist->resetValue();
+    mainCuelist->resetValue();
 }
 
 void ShowProperties::parameterValueChanged(Parameter* p)
@@ -54,10 +54,10 @@ void ShowProperties::parameterValueChanged(Parameter* p)
 
     if (!Engine::mainEngine->isLoadingFile) return;
 
-    if (p == startingNextCue) {
-        if (startingNextCue->getTargetContainer() != nullptr) {
-            nextCueToGo->setTarget(startingNextCue->getTargetContainer());
-            nextCueToGo->notifyValueChanged();
+    if (p == startupMainCuelist) {
+        if (startupMainCuelist->getTargetContainer() != nullptr) {
+            mainCuelist->setTarget(startupMainCuelist->getTargetContainer());
+            mainCuelist->notifyValueChanged();
         }
     }
 }

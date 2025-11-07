@@ -8,6 +8,7 @@
   ==============================================================================
 */
 
+#include "Brain.h"
 #include "MainComponent.h"
 #include "PonyEngine.h"
 #include "ui/AboutWindow.h"
@@ -26,6 +27,9 @@ namespace PonyCommandIDs
 
 	static const int exportSelection = 0x800;
 	static const int importSelection = 0x801;
+
+    static const int keyGo = 0x9001;
+    static const int keyPanic = 0x9002;
 }
 
 void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationCommandInfo& result)
@@ -52,7 +56,7 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
 		result.setInfo("Go to website", "", "Help", result.readOnlyInKeyEditor);
 		break;
 	case PonyCommandIDs::gotoDiscord:
-		result.setInfo("Go to Discord", "", "Help", result.readOnlyInKeyEditor);
+		// result.setInfo("Go to Discord", "", "Help", result.readOnlyInKeyEditor);
 		break;
 
 	case PonyCommandIDs::gotoDocs:
@@ -79,6 +83,16 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
 		result.addDefaultKeypress(KeyPress::createFromDescription("o").getKeyCode(), ModifierKeys::altModifier);
 		break;
 
+    case PonyCommandIDs::keyGo:
+		result.setInfo("Go", "This will go the next cue", "Show Control", 0);
+		result.addDefaultKeypress(KeyPress::createFromDescription("spacebar").getKeyCode(), 0);
+        break;
+
+    case PonyCommandIDs::keyPanic:
+		result.setInfo("Panic", "This will stop all active cues", "Show Control", 0);
+		result.addDefaultKeypress(KeyPress::createFromDescription("escape").getKeyCode(), 0);
+        break;
+
 	default:
 		OrganicMainContentComponent::getCommandInfo(commandID, result);
 		break;
@@ -87,21 +101,26 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
 
 void MainContentComponent::getAllCommands(Array<CommandID>& commands) {
 	OrganicMainContentComponent::getAllCommands(commands);
-	
+
 	const CommandID ids[] = {
 		PonyCommandIDs::showAbout,
-		PonyCommandIDs::showWelcome,
+		// PonyCommandIDs::showWelcome,
+
 		PonyCommandIDs::donate,
 		PonyCommandIDs::sponsor,
 		PonyCommandIDs::gotoWebsite,
-		PonyCommandIDs::gotoDiscord,
+		// PonyCommandIDs::gotoDiscord,
 		PonyCommandIDs::gotoDocs,
 		PonyCommandIDs::gotoChangelog,
 		PonyCommandIDs::postGithubIssue,
+
 		PonyCommandIDs::importSelection,
 		PonyCommandIDs::exportSelection,
+
+        PonyCommandIDs::keyGo,
+        PonyCommandIDs::keyPanic
 	};
-	
+
 	commands.addArray(ids, numElementsInArray(ids));
 }
 
@@ -128,7 +147,7 @@ PopupMenu MainContentComponent::getMenuForIndex(int topLevelMenuIndex, const Str
 		menu.addCommandItem(&getCommandManager(), PonyCommandIDs::gotoChangelog);
 		menu.addCommandItem(&getCommandManager(), PonyCommandIDs::postGithubIssue);
 	}
-	
+
 	return menu;
 }
 
@@ -192,6 +211,18 @@ bool MainContentComponent::perform(const InvocationInfo& info)
 		((PonyEngine*)Engine::mainEngine)->importSelection();
 	}
 	break;
+
+    case PonyCommandIDs::keyGo:
+    {
+        Brain::getInstance()->go();
+    }
+    break;
+
+    case PonyCommandIDs::keyPanic:
+    {
+        Brain::getInstance()->panic();
+    }
+    break;
 
 	default:
 		return OrganicMainContentComponent::perform(info);

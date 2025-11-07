@@ -12,6 +12,8 @@
 
 #include "../../MainIncludes.h"
 
+class Cuelist;
+
 class ShowInfosUI : public ShapeShifterContent {
 public:
     ShowInfosUI(const String &contentName);
@@ -28,6 +30,8 @@ public:
     juce_DeclareSingleton(ShowInfos, true);
     ShowInfos();
     ~ShowInfos() override;
+
+    Cuelist* mainCuelist = nullptr;
 
     void paint (Graphics&) override;
     void resized() override;

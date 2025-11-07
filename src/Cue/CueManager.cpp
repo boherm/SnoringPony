@@ -13,9 +13,11 @@
 #include "test/TestCue.h"
 #include "../ui/SPAssetManager.h"
 #include "../PonyEngine.h"
+#include "../Cue/Cue.h"
+#include "../Cuelist/Cuelist.h"
 
 CueManager::CueManager() :
-    BaseManager("Cues")
+    BaseManager<Cue>("Cues")
 {
     // selectItemWhenCreated = true;
     // hideInEditor = true;
@@ -44,22 +46,39 @@ void CueManager::addItemInternal(Cue* c, var data)
             c->id->setValue(floor(maxId+1));
         }
     }
-}
 
-void CueManager::removeItemInternal(Cue* c)
-{
-    TargetParameter* nextCueParam = dynamic_cast<PonyEngine*>(Engine::mainEngine)->showProperties.nextCueToGo;
-    Cue* nextCue = nextCueParam->getTargetContainerAs<Cue>();
-    if (nextCue == c) {
-        nextCueParam->resetValue();
-        nextCueParam->notifyValueChanged();
+    // if not loading file, we set the first cue automatically to next cue to be fire
+    if (!Engine::mainEngine->isLoadingFile) {
+        if (items.size() == 1) {
+            c->setGoNext();
+        }
     }
 }
 
-void CueManager::loadJSONDataManagerInternal(var data) {
+void CueManager::askForRemoveBaseItem(BaseItem* item)
+{
+    Cue* itemCue = static_cast<Cue*>(item);
+    Cue* nextCue = parentCuelist->nextCue->getTargetContainerAs<Cue>();
+
+    if (nextCue == itemCue) {
+        int idx = parentCuelist->cues.items.indexOf(itemCue);
+        if (idx + 1 < parentCuelist->cues.items.size()) {
+            Cue* c = parentCuelist->cues.items[idx + 1];
+            c->setGoNext();
+        } else {
+            parentCuelist->nextCue->resetValue();
+            parentCuelist->nextCue->notifyValueChanged();
+        }
+    }
+
+    BaseManager<Cue>::askForRemoveBaseItem(item);
+}
+
+void CueManager::loadJSONDataManagerInternal(var data)
+{
     BaseManager<Cue>::loadJSONDataManagerInternal(data);
 
-    // If we have multiple cues with same ID
+    // If we have multiple cues with same ID, we set a warning on them
     Array<float> existingIds;
     for (Cue* c : items) {
         float idValue = c->id->floatValue();

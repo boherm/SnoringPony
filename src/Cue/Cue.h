@@ -11,7 +11,7 @@
 #pragma once
 
 #include "../MainIncludes.h"
-#include "editor/CueEditor.h"
+#include "ui/CueEditor.h"
 
 class Cuelist;
 
@@ -33,8 +33,7 @@ public:
     StringParameter* description;
     StringParameter* notes;
 
-    Trigger* goBtn;
-    Trigger* goNextBtn;
+    Trigger* setNextBtn;
 
     String getTypeString() const override { return "Cue"; }
     virtual String getCueType() const { return "Cue"; }

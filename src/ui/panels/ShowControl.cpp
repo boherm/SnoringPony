@@ -9,8 +9,9 @@
 */
 
 #include "ShowControl.h"
-#include "juce_organicui/settings/ProjectSettings.h"
 #include "../../PonyEngine.h"
+#include "../../Brain.h"
+#include "../../Cuelist/Cuelist.h"
 
 //==============================================================================
 
@@ -41,39 +42,67 @@ ShowControl::ShowControl():
     paramPanic->setEnabled(false);
 
     PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
-    engine->showProperties.nextCueToGo->addParameterListener(this);
+    engine->showProperties.mainCuelist->addParameterListener(this);
+
+    mainCuelist = engine->showProperties.mainCuelist->getTargetContainerAs<Cuelist>();
+
+    if (mainCuelist != nullptr)
+        mainCuelist->nextCue->addParameterListener(this);
 }
 
-ShowControl::~ShowControl() {
+ShowControl::~ShowControl()
+{
     delete btnGo;
     delete btnPanic;
 
+    if (mainCuelist != nullptr)
+        mainCuelist->nextCue->removeParameterListener(this);
+
     PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
-    engine->showProperties.nextCueToGo->removeParameterListener(this);
+    engine->showProperties.mainCuelist->removeParameterListener(this);
 }
 
 void ShowControl::paint(juce::Graphics &g) { }
 
-void ShowControl::resized() {
+void ShowControl::resized()
+{
     btnGo->setBounds(0, 0, getLocalBounds().getWidth() / 2, getLocalBounds().getHeight());
     btnPanic->setBounds(getLocalBounds().getWidth() / 2, 0, getLocalBounds().getWidth() / 2, getLocalBounds().getHeight());
 }
 
-void ShowControl::triggerTriggered(Trigger *t) {
+void ShowControl::triggerTriggered(Trigger *t)
+{
     if (t == paramGo) {
-        // TODO: move this logic in engine directly?
-        TargetParameter* tp = dynamic_cast<PonyEngine*>(Engine::mainEngine)->showProperties.nextCueToGo;
-        Cue* nextCue = tp->getTargetContainerAs<Cue>();
-        if (nextCue != nullptr) {
-            nextCue->play();
-            tp->resetValue();
-            tp->notifyValueChanged();
-        }
+        Brain::getInstance()->go();
     }
 }
 
-void ShowControl::parameterValueChanged(Parameter *p) {
-    if (p == dynamic_cast<PonyEngine*>(Engine::mainEngine)->showProperties.nextCueToGo) {
+void ShowControl::parameterValueChanged(Parameter *p)
+{
+    PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
+
+    if (p == engine->showProperties.mainCuelist) {
+        if (mainCuelist != nullptr)
+            mainCuelist->nextCue->removeParameterListener(this);
+
+        mainCuelist = engine->showProperties.mainCuelist->getTargetContainerAs<Cuelist>();
+
+        if (mainCuelist != nullptr) {
+            mainCuelist->nextCue->addParameterListener(this);
+
+            TargetParameter* tp = dynamic_cast<TargetParameter*>(mainCuelist->nextCue);
+            Cue* nextCue = tp->getTargetContainerAs<Cue>();
+
+            if (nextCue != nullptr) {
+                paramGo->setEnabled(true);
+            } else {
+                paramGo->setEnabled(false);
+            }
+        }
+        repaint();
+    }
+
+    if (mainCuelist && p == mainCuelist->nextCue) {
         TargetParameter* tp = dynamic_cast<TargetParameter*>(p);
         Cue* nextCue = tp->getTargetContainerAs<Cue>();
 
@@ -82,5 +111,6 @@ void ShowControl::parameterValueChanged(Parameter *p) {
         } else {
             paramGo->setEnabled(false);
         }
+        repaint();
     }
 }

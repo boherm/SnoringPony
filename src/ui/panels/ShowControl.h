@@ -13,6 +13,8 @@
 #include "../../MainIncludes.h"
 #include "../../Cue/Cue.h"
 
+class Cuelist;
+
 class ShowControlUI : public ShapeShifterContent {
 public:
     ShowControlUI(const String &contentName);
@@ -29,6 +31,8 @@ public:
     juce_DeclareSingleton(ShowControl, true);
     ShowControl();
     ~ShowControl() override;
+
+    Cuelist* mainCuelist = nullptr;
 
     Trigger* paramGo; TriggerButtonUI* btnGo;
     Trigger* paramPanic; TriggerButtonUI* btnPanic;

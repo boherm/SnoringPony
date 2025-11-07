@@ -10,7 +10,6 @@
 
 #include "CueEditor.h"
 #include "../Cue.h"
-#include "juce_graphics/juce_graphics.h"
 
 CueEditor::CueEditor(Array<Cue *> cues, bool isRoot) :
 	BaseItemEditor(Inspectable::getArrayAs<Cue, BaseItem>(cues), isRoot)
@@ -20,30 +19,23 @@ CueEditor::CueEditor(Array<Cue *> cues, bool isRoot) :
     cueTypeUI = std::make_unique<CueTypeUI>(cue);
     addAndMakeVisible(cueTypeUI.get());
 
-    goBtnUI = cue->goBtn->createButtonUI();
-    goBtnUI->customBGColor = Colours::darkgreen;
-    goBtnUI->useCustomBGColor = true;
+    setNextBtnUI = cue->setNextBtn->createButtonUI();
+    setNextBtnUI->customBGColor = Colours::darkorange.darker(0.3f);
+    setNextBtnUI->useCustomBGColor = true;
 
-    goNextBtnUI = cue->goNextBtn->createButtonUI();
-    goNextBtnUI->customBGColor = Colours::darkorange.darker(0.3f);
-    goNextBtnUI->useCustomBGColor = true;
-
-    addAndMakeVisible(goBtnUI);
-    addAndMakeVisible(goNextBtnUI);
+    addAndMakeVisible(setNextBtnUI);
 }
 
 CueEditor::~CueEditor()
 {
-    delete goBtnUI;
-    delete goNextBtnUI;
+    delete setNextBtnUI;
 }
 
 void CueEditor::resizedInternalHeaderItemInternal(Rectangle<int>& r)
 {
     cueTypeUI->setBounds(r.removeFromRight(90).reduced(2));
 
-    goNextBtnUI->setBounds(r.removeFromRight(60).reduced(2));
-    goBtnUI->setBounds(r.removeFromRight(60).reduced(2));
+    setNextBtnUI->setBounds(r.removeFromRight(60).reduced(2));
 
 
 }

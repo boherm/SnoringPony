@@ -27,4 +27,6 @@ public:
     PopupMenu getItemsMenuWithTickedItem(int startID, Cuelist* currentCuelist);
 
     static void showMenuForTargetCue(ControllableContainer* startFromCC, std::function<void(Cue*)> returnFunc);
+
+    Cue* getNextCue(Cue* c);
 };

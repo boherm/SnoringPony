@@ -27,7 +27,8 @@ public:
     Cuelist* parentCuelist;
 
     void addItemInternal(Cue* c, var data);
-    void removeItemInternal(Cue*) override;
-    // var getJSONData(bool includeNonOverriden = false) override;
+
+    void askForRemoveBaseItem(BaseItem* item) override;
+
     void loadJSONDataManagerInternal(var data) override;
 };
