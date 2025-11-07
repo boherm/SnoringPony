@@ -28,5 +28,8 @@ public:
 
     static void showMenuForTargetCue(ControllableContainer* startFromCC, std::function<void(Cue*)> returnFunc);
 
+    void addItemInternal(Cuelist* cl, var data);
+    void askForRemoveBaseItem(BaseItem* item);
+
     Cue* getNextCue(Cue* c);
 };

@@ -11,6 +11,7 @@
 #include "CuelistManager.h"
 #include "../Cue//CueManager.h"
 #include "../ui/SPAssetManager.h"
+#include "../PonyEngine.h"
 
 CuelistManager::CuelistManager() :
     BaseManager<Cuelist>("Cuelists")
@@ -87,6 +88,29 @@ void CuelistManager::showMenuForTargetCue(ControllableContainer* startFromCC, st
             }
         );
     }
+}
+
+void CuelistManager::addItemInternal(Cuelist* cl, var data)
+{
+    PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
+    // if not loading file, we set the first cuelist automatically to main cuelist to be controlled
+    if (!engine->isLoadingFile) {
+        if (items.size() == 1) {
+            engine->showProperties.mainCuelist->setTarget(cl);
+            engine->showProperties.mainCuelist->notifyValueChanged();
+        }
+    }
+}
+
+void CuelistManager::askForRemoveBaseItem(BaseItem* item)
+{
+    Cuelist* cl = static_cast<Cuelist*>(item);
+    PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
+    if (engine->showProperties.mainCuelist->getTargetContainerAs<Cuelist>() == cl) {
+        engine->showProperties.mainCuelist->resetValue();
+        engine->showProperties.mainCuelist->notifyValueChanged();
+    }
+    BaseManager<Cuelist>::askForRemoveBaseItem(item);
 }
 
 Cue* CuelistManager::getNextCue(Cue* c)
