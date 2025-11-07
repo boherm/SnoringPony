@@ -11,6 +11,7 @@
 #pragma once
 
 #include "../Cuelist.h"
+#include "../../Cue/Cue.h"
 
 class CuelistManagerItemUI :
 	public BaseItemUI<Cuelist>,

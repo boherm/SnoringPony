@@ -8,13 +8,13 @@
   ==============================================================================
 */
 
+#pragma once
+
 #include "../../MainIncludes.h"
 #include "../Interface.h"
-#include "AudioOutput.h"
-#include "juce_events/juce_events.h"
-#include <memory>
 
-#pragma once
+class AudioOutput;
+class AudioOutputManager;
 
 class AudioModuleHardwareSettings :
 	public ControllableContainer
@@ -38,7 +38,7 @@ public:
     AudioModuleHardwareSettings hs;
     AudioDeviceManager am;
 
-    AudioOutputManager outputs;
+    AudioOutputManager* outputs;
 
 	double currentSampleRate;
 	int currentBufferSize;

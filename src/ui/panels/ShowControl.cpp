@@ -11,6 +11,7 @@
 #include "ShowControl.h"
 #include "../../PonyEngine.h"
 #include "../../Brain.h"
+#include "../../Cue/Cue.h"
 #include "../../Cuelist/Cuelist.h"
 
 //==============================================================================

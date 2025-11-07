@@ -11,7 +11,8 @@
 #pragma once
 
 #include "../../MainIncludes.h"
-#include "../../Cuelist/Cuelist.h"
+
+class Cuelist;
 
 class DeckViewHeaderUI :
     public Component,

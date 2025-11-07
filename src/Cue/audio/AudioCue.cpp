@@ -9,20 +9,22 @@
 */
 
 #include "AudioCue.h"
+#include "AudioFile.h"
 
-AudioCue::AudioCue(var params):
-    audioManager(this)
+AudioCue::AudioCue(var params)
 {
     objectType = "Audio";
-    addChildControllableContainer(&audioManager);
+    audioManager = new AudioManager(this);
+    addChildControllableContainer(audioManager);
 
-    if (audioManager.items.isEmpty()) {
-        audioManager.addItemFromData(var());
+    if (audioManager->items.isEmpty()) {
+        audioManager->addItemFromData(var());
     }
 }
 
 AudioCue::~AudioCue()
 {
+    delete audioManager;
 }
 
 void AudioCue::play()

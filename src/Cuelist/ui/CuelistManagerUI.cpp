@@ -10,13 +10,14 @@
 
 #include "CuelistManagerUI.h"
 #include "../CuelistManager.h"
+#include "../../Cuelist/Cuelist.h"
 
 CuelistManagerUI::CuelistManagerUI(const String & contentName) :
 	BaseManagerShapeShifterUI(contentName, CuelistManager::getInstance())
 {
 	addItemText = "Add a new Cuelist";
 	noItemText = "You can manage your Cuelists here,\nadd a new one to get started.";
-	
+
 	setShowSearchBar(true);
 	addExistingItems();
 }

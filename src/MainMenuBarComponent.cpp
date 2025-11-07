@@ -9,9 +9,8 @@
 */
 
 #include "MainMenuBarComponent.h"
+#include "PonyEngine.h"
 #include "ProjectSettings/ShowProperties.h"
-#include "juce_graphics/juce_graphics.h"
-#include "juce_organicui/settings/ProjectSettings.h"
 
 MainMenuBarComponent::MainMenuBarComponent(MainContentComponent* mainComp, PonyEngine* engine) :
 	Component("Menu Bar")
@@ -40,7 +39,7 @@ void MainMenuBarComponent::paint(Graphics& g)
 {
 	g.fillAll(BG_COLOR);
     g.setColour(TEXTNAME_COLOR);
-    
+
     Rectangle<int> *r = new Rectangle<int>(
             getLocalBounds().getX() + 5,
             getLocalBounds().getY(),
@@ -51,10 +50,10 @@ void MainMenuBarComponent::paint(Graphics& g)
     String title = this->showProperties->companyName->stringValue() + " - " +
         this->showProperties->projectName->stringValue() + " - " +
         this->showProperties->showFileVersion->stringValue();
-    
+
     g.drawText(title, *r, Justification::centred, 1);
-    
-    // Main badge
+
+    // Main or backup instance badge
     // g.setColour(Colours::darkred);
     // g.fillRoundedRectangle(getLocalBounds().getWidth() - 55, getLocalBounds().getY() + 4, 50, 16, 5);
     // g.setColour(Colours::white);
@@ -63,7 +62,7 @@ void MainMenuBarComponent::paint(Graphics& g)
 
 void MainMenuBarComponent::resized()
 {
-#if !JUCE_MAC	
+#if !JUCE_MAC
 	Rectangle<int> r = getLocalBounds();
 	r.removeFromRight(300);
 	menuBarComp.setBounds(r);

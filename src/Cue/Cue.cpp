@@ -9,8 +9,8 @@
 */
 
 #include "Cue.h"
+#include "ui/CueEditor.h"
 #include "../Cuelist/Cuelist.h"
-#include "../PonyEngine.h"
 
 Cue::Cue(var params) :
     BaseItem(params.getProperty("name", "1.000")),
@@ -56,7 +56,7 @@ Cue::~Cue()
     // sourcePlayer.setSource(nullptr);
 }
 
-CueEditor* Cue::getEditorInternal(bool isRoot, Array<Inspectable*> inspectables)
+InspectableEditor* Cue::getEditorInternal(bool isRoot, Array<Inspectable*> inspectables)
 {
     return new CueEditor(this, isRoot);
 }

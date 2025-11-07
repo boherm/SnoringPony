@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "ui/AboutWindow.h"
+#include "MainIncludes.h"
 
 ApplicationProperties& getAppProperties();
 ApplicationCommandManager& getCommandManager();
@@ -23,10 +23,10 @@ public:
 	MainContentComponent();
 	~MainContentComponent() override;
 
-	std::unique_ptr<AboutWindow> aboutWindow;
-	
+	std::unique_ptr<Component> aboutWindow;
+
 	void init() override;
-	
+
 	void getCommandInfo(CommandID commandID, ApplicationCommandInfo& result) override;
 	void getAllCommands(Array<CommandID>& commands) override;
 	void fillFileMenuInternal(PopupMenu& menu) override;

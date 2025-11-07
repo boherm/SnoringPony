@@ -16,7 +16,6 @@
 #include "UserInputManager.h"
 #include "ProjectSettings/ShowProperties.h"
 #include "ProjectSettings/DecksSettings.h"
-#include "ui/AboutWindow.h"
 #include "ui/SPAssetManager.h"
 #include "ui/panels/Clock.h"
 #include "ui/panels/ShowControl.h"

@@ -11,12 +11,11 @@
 #pragma once
 
 #include "../../MainIncludes.h"
-#include "CuesTableModel.h"
-#include "../../ui/LookAndFeelTable.h"
-#include "../../Cuelist/Cuelist.h"
-#include "juce_gui_basics/juce_gui_basics.h"
-#include "juce_organicui/manager/BaseManagerListener.h"
 #include "../../Cue/Cue.h"
+
+class Cuelist;
+class CuesTableModel;
+class LookAndFeelTable;
 
 class CuesTableUI :
     public Component,

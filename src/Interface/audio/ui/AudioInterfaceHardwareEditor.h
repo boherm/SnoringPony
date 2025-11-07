@@ -11,16 +11,17 @@
 #pragma once
 
 #include "../../../MainIncludes.h"
-#include "../AudioInterface.h"
+
+class AudioModuleHardwareSettings;
 
 class AudioInterfaceHardwareEditor :
 	public GenericControllableContainerEditor
 {
 public:
-	AudioInterfaceHardwareEditor(AudioModuleHardwareSettings * hs, bool isRoot);
+	AudioInterfaceHardwareEditor(AudioModuleHardwareSettings* hs, bool isRoot);
 	~AudioInterfaceHardwareEditor();
 
-	AudioModuleHardwareSettings * hs;
+	AudioModuleHardwareSettings* hs;
 	AudioDeviceSelectorComponent selector;
 
 	void setCollapsed(bool value, bool force = false, bool animate = true, bool doNotRebuild = false) override;

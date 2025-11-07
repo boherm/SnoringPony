@@ -11,7 +11,6 @@
 #pragma once
 
 #include "../MainIncludes.h"
-#include "ui/CueEditor.h"
 
 class Cuelist;
 
@@ -39,7 +38,7 @@ public:
     virtual String getCueType() const { return "Cue"; }
     static Cue* create(var params) { return new Cue(params); }
 
-    CueEditor* getEditorInternal(bool isRoot, Array<Inspectable*> inspectables);
+    InspectableEditor* getEditorInternal(bool isRoot, Array<Inspectable*> inspectables);
 
     void parameterValueChanged(Parameter* p) override;
     void parameterControlModeChanged(Parameter* p) override;

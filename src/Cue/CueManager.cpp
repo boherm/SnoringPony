@@ -12,7 +12,6 @@
 #include "audio/AudioCue.h"
 #include "test/TestCue.h"
 #include "../ui/SPAssetManager.h"
-#include "../PonyEngine.h"
 #include "../Cue/Cue.h"
 #include "../Cuelist/Cuelist.h"
 
@@ -61,9 +60,9 @@ void CueManager::askForRemoveBaseItem(BaseItem* item)
     Cue* nextCue = parentCuelist->nextCue->getTargetContainerAs<Cue>();
 
     if (nextCue == itemCue) {
-        int idx = parentCuelist->cues.items.indexOf(itemCue);
-        if (idx + 1 < parentCuelist->cues.items.size()) {
-            Cue* c = parentCuelist->cues.items[idx + 1];
+        int idx = parentCuelist->cues->items.indexOf(itemCue);
+        if (idx + 1 < parentCuelist->cues->items.size()) {
+            Cue* c = parentCuelist->cues->items[idx + 1];
             c->setGoNext();
         } else {
             parentCuelist->nextCue->resetValue();

@@ -9,17 +9,18 @@
 */
 
 #include "Cuelist.h"
-#include "../ProjectSettings/ColorPresets.h"
 #include "CuelistManager.h"
+#include "../Cue/CueManager.h"
+#include "juce_organicui/inspectable/ui/InspectableEditor.h"
 #include "ui/CuelistEditor.h"
 
 Cuelist::Cuelist(var params) :
     BaseItem("Cuelist"),
     objectType(params.getProperty("type", "Cuelist").toString()),
-	objectData(params),
-    cues()
+	objectData(params)
 {
-    cues.parentCuelist = this;
+    cues = new CueManager();
+    cues->parentCuelist = this;
 
     saveAndLoadRecursiveData = true;
 
@@ -36,15 +37,16 @@ Cuelist::Cuelist(var params) :
 	itemColor->setDefaultValue(BG_COLOR.brighter(.2f));
     itemColor->setControlMode(Parameter::ControlMode::REFERENCE);
 
-    nextCue = addTargetParameter("Next cue", "Target the next cue to play", &cues);
+    nextCue = addTargetParameter("Next cue", "Target the next cue to play", cues);
     nextCue->targetType = TargetParameter::CONTAINER;
     nextCue->maxDefaultSearchLevel = 0;
 
-    addChildControllableContainer(&cues);
+    addChildControllableContainer(cues);
 }
 
 Cuelist::~Cuelist()
 {
+    delete cues;
 }
 
 void Cuelist::go()
@@ -54,10 +56,10 @@ void Cuelist::go()
     if (nCue) {
         nCue->play();
 
-        int idx = cues.items.indexOf(nCue);
+        int idx = cues->items.indexOf(nCue);
 
-        if (cues.items.size() > idx + 1) {
-            cues.items[idx + 1]->setGoNext();
+        if (cues->items.size() > idx + 1) {
+            cues->items[idx + 1]->setGoNext();
         } else {
             nextCue->resetValue();
             nextCue->notifyValueChanged();
@@ -70,7 +72,7 @@ void Cuelist::stop()
     // todo: implement this!
 }
 
-CuelistEditor* Cuelist::getEditorInternal(bool isRoot, Array<Inspectable*> inspectables)
+InspectableEditor* Cuelist::getEditorInternal(bool isRoot, Array<Inspectable*> inspectables)
 {
     return new CuelistEditor(this, isRoot);
 }
@@ -95,7 +97,7 @@ void Cuelist::triggerTriggered(Trigger* t)
 void Cuelist::loadJSONDataInternal(var data)
 {
     // Set first cue to next cue at load
-    Cue* firstCue = cues.items.getFirst();
+    Cue* firstCue = cues->items.getFirst();
 
     if (firstCue)
         firstCue->setGoNext();

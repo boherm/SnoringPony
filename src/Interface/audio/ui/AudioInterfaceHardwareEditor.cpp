@@ -9,6 +9,7 @@
 */
 
 #include "AudioInterfaceHardwareEditor.h"
+#include "../AudioInterface.h"
 
 AudioInterfaceHardwareEditor::AudioInterfaceHardwareEditor(AudioModuleHardwareSettings* hs, bool isRoot) :
 	GenericControllableContainerEditor(hs, isRoot),

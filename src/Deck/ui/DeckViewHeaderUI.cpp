@@ -9,6 +9,9 @@
 */
 
 #include "DeckViewHeaderUI.h"
+#include "../../Cuelist/Cuelist.h"
+#include "../../Cue/CueManager.h"
+
 
 DeckViewHeaderUI::DeckViewHeaderUI(Cuelist* cl) :
     currentCuelist(cl)
@@ -52,11 +55,11 @@ void DeckViewHeaderUI::buttonClicked(Button* button)
 {
     if (button == addItemBT.get() && currentCuelist)
     {
-		currentCuelist->cues.factory.showCreateMenu([this](Cue* item)
+		currentCuelist->cues->factory.showCreateMenu([this](Cue* item)
 			{
 				if (item != nullptr)
 				{
-					this->currentCuelist->cues.addItem(item);
+					this->currentCuelist->cues->addItem(item);
 				}
 			}
 		);

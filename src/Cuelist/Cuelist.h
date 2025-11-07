@@ -11,8 +11,8 @@
 #pragma once
 
 #include "../MainIncludes.h"
-#include "../Cue/CueManager.h"
-#include "ui/CuelistEditor.h"
+
+class CueManager;
 
 class Cuelist :
     public BaseItem,
@@ -26,7 +26,7 @@ class Cuelist :
         String objectType;
         var objectData;
 
-        CueManager cues;
+        CueManager* cues;
 
         TargetParameter* nextCue;
 
@@ -39,7 +39,7 @@ class Cuelist :
         juce::String getTypeString() const override { return "Cuelist"; }
         static Cuelist *create(var params) { return new Cuelist(params); }
 
-        CuelistEditor* getEditorInternal(bool isRoot, Array<Inspectable*> inspectables);
+        InspectableEditor* getEditorInternal(bool isRoot, Array<Inspectable*> inspectables);
         void loadJSONDataInternal(var data) override;
 
         void parameterControlModeChanged(Parameter* p) override;

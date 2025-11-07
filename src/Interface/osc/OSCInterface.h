@@ -8,9 +8,9 @@
   ==============================================================================
 */
 
-#include "../Interface.h"
-
 #pragma once
+
+#include "../Interface.h"
 
 class OSCInterface :
     public Interface

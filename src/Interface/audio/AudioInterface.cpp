@@ -8,9 +8,9 @@
   ==============================================================================
 */
 
+#include "../Interface.h"
 #include "AudioInterface.h"
 #include "AudioOutput.h"
-#include "juce_core/juce_core.h"
 #include "ui/AudioInterfaceHardwareEditor.h"
 
 AudioModuleHardwareSettings::AudioModuleHardwareSettings(AudioDeviceManager* am) :
@@ -29,20 +29,21 @@ InspectableEditor* AudioModuleHardwareSettings::getEditorInternal(bool isRoot, A
 AudioInterface::AudioInterface() :
     Interface("Audio Interface 1"),
     hs(&am),
-    outputs(this),
     availableDevicesCache()
 {
-    this->logIncomingData->remove();
-    this->logOutgoingData->remove();
+    logIncomingData->remove();
+    logOutgoingData->remove();
 
+    outputs = new AudioOutputManager(this);
     addChildControllableContainer(&hs);
-    addChildControllableContainer(&outputs);
+    addChildControllableContainer(outputs);
     initSetup();
     // updateAudioSetup();
 }
 
 AudioInterface::~AudioInterface()
 {
+    delete outputs;
 	// am.removeAudioCallback(&player);
 	// am.removeAudioCallback(this);
 	am.removeChangeListener(this);
@@ -160,7 +161,7 @@ void AudioInterface::changeListenerCallback(ChangeBroadcaster*)
     }
 
     updateAudioSetup();
-    outputs.refreshAllOutputsChannelOptions();
+    outputs->refreshAllOutputsChannelOptions();
 }
 
 void AudioInterface::refreshAvailableDevices()

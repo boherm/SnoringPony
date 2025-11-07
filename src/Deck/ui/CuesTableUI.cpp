@@ -9,7 +9,10 @@
 */
 
 #include "CuesTableUI.h"
-#include "juce_graphics/juce_graphics.h"
+#include "CuesTableModel.h"
+#include "../../Cuelist/Cuelist.h"
+#include "../../Cue/CueManager.h"
+#include "../../ui/LookAndFeelTable.h"
 
 enum ColumnIds
 {
@@ -45,8 +48,8 @@ CuesTableUI::CuesTableUI(Cuelist* cl)
     tableListBox.getHeader().addColumn("Time", TimeColumn, 200, 200, 200, flags & ~TableHeaderComponent::resizable);
 
     addAndMakeVisible(tableListBox);
-    cl->cues.addBaseManagerListener(this);
-    cl->cues.addAsyncContainerListener(this);
+    cl->cues->addBaseManagerListener(this);
+    cl->cues->addAsyncContainerListener(this);
 
     // addCuesListeners();
     resized();
@@ -54,8 +57,8 @@ CuesTableUI::CuesTableUI(Cuelist* cl)
 
 CuesTableUI::~CuesTableUI()
 {
-    cl->cues.removeAsyncContainerListener(this);
-    cl->cues.removeBaseManagerListener(this);
+    cl->cues->removeAsyncContainerListener(this);
+    cl->cues->removeBaseManagerListener(this);
     tableListBox.setLookAndFeel(nullptr);
     lafTable.reset();
 }
@@ -111,7 +114,7 @@ void CuesTableUI::resized()
 
 void CuesTableUI::addCuesListeners()
 {
-    for (auto& cue : cl->cues.items) {
+    for (auto& cue : cl->cues->items) {
         cue->addAsyncContainerListener(this);
     }
 }
@@ -208,9 +211,9 @@ void CuesTableUI::itemDropped(const SourceDetails& dragSourceDetails)
     for (int i = 0; i < sourceRows.size(); i++)
     {
         int rowIndex = sourceRows[i];
-        if (rowIndex >= 0 && rowIndex < cl->cues.items.size())
+        if (rowIndex >= 0 && rowIndex < cl->cues->items.size())
         {
-            cuesToMove.add(cl->cues.items[rowIndex]);
+            cuesToMove.add(cl->cues->items[rowIndex]);
         }
     }
 
@@ -231,19 +234,19 @@ void CuesTableUI::itemDropped(const SourceDetails& dragSourceDetails)
     if (cuesToMove.size() == 1)
     {
         Cue* cueToMove = cuesToMove[0];
-        int currentIndex = cl->cues.items.indexOf(cueToMove);
+        int currentIndex = cl->cues->items.indexOf(cueToMove);
 
         // Adjust target index if we're moving down (after the current position)
         if (currentIndex < targetIndex)
             targetIndex--;
 
         // Ensure the target index is valid
-        targetIndex = jlimit(0, cl->cues.items.size() - 1, targetIndex);
+        targetIndex = jlimit(0, cl->cues->items.size() - 1, targetIndex);
 
         // Move the cue using the BaseManager's setItemIndex method
         if (currentIndex != targetIndex)
         {
-            cl->cues.setItemIndex(cueToMove, targetIndex, true);
+            cl->cues->setItemIndex(cueToMove, targetIndex, true);
         }
 
         // Add to new selection
@@ -275,14 +278,14 @@ void CuesTableUI::itemDropped(const SourceDetails& dragSourceDetails)
         for (int i = sortedIndices.size() - 1; i >= 0; i--)
         {
             int currentIndex = sortedIndices[i];
-            Cue* cue = cl->cues.items[currentIndex];
+            Cue* cue = cl->cues->items[currentIndex];
 
             int newIndex = adjustedTarget + i;
-            newIndex = jlimit(0, cl->cues.items.size() - 1, newIndex);
+            newIndex = jlimit(0, cl->cues->items.size() - 1, newIndex);
 
             if (currentIndex != newIndex)
             {
-                cl->cues.setItemIndex(cue, newIndex, true);
+                cl->cues->setItemIndex(cue, newIndex, true);
             }
         }
 

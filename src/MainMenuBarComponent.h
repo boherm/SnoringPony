@@ -11,8 +11,10 @@
 #pragma once
 
 #include "MainIncludes.h"
-#include "PonyEngine.h"
-#include "MainComponent.h"
+
+class MainContentComponent;
+class PonyEngine;
+class ShowProperties;
 
 class MainMenuBarComponent :
 	public Component,

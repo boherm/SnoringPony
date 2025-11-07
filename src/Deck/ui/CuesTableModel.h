@@ -8,9 +8,11 @@
   ==============================================================================
 */
 
+#pragma once
+
 #include "../../MainIncludes.h"
-#include "../../Cuelist/Cuelist.h"
-#include "juce_gui_basics/juce_gui_basics.h"
+
+class Cuelist;
 
 class CuesTableModel :
     public TableListBoxModel,

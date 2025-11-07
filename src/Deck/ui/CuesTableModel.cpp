@@ -9,7 +9,9 @@
 */
 
 #include "CuesTableModel.h"
+#include "../../Cuelist/Cuelist.h"
 #include "../../Cuelist/CuelistManager.h"
+#include "../../Cue/CueManager.h"
 #include "../../ui/SPAssetManager.h"
 
 enum ColumnIds
@@ -40,12 +42,12 @@ CuesTableModel::~CuesTableModel()
 
 int CuesTableModel::getNumRows()
 {
-    return cl->cues.items.size();
+    return cl->cues->items.size();
 }
 
 void CuesTableModel::paintRowBackground(Graphics& g, int rowNumber, int width, int height, bool rowIsSelected)
 {
-    Cue* cue = cl->cues.items[rowNumber];
+    Cue* cue = cl->cues->items[rowNumber];
 
     if (rowIsSelected)
     {
@@ -70,13 +72,13 @@ void CuesTableModel::parameterValueChanged(Parameter* p)
 
 void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
 {
-    if (rowNumber >= cl->cues.items.size())
+    if (rowNumber >= cl->cues->items.size())
         return;
 
     g.setFont(14.0f);
     g.setColour(Colours::white);
 
-    Cue* cue = cl->cues.items[rowNumber];
+    Cue* cue = cl->cues->items[rowNumber];
     Cue* nextCue = cl->nextCue->getTargetContainerAs<Cue>();
 
     String text;
@@ -165,7 +167,7 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
         PopupMenu p;
 
         if (tlb->getSelectedRows().size() == 1) {
-            Cue* selectedCue = cl->cues.items[rowNumber];
+            Cue* selectedCue = cl->cues->items[rowNumber];
             p.addSectionHeader("Cue " + selectedCue->id->stringValue() + " - " + selectedCue->getCueType());
             // p.addItem(1, "Play this cue");
             p.addItem(2, "Go after current cue");
@@ -194,14 +196,14 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
             // }
             if (result == 2){
                 // Set go next action
-                if (rowNumber < cl->cues.items.size()) {
-                    Cue* item = cl->cues.items[rowNumber];
+                if (rowNumber < cl->cues->items.size()) {
+                    Cue* item = cl->cues->items[rowNumber];
                     item->setGoNext();
                 }
             }
             if (result == 3) {
                 // Edit action
-                if (rowNumber < cl->cues.items.size()) {
+                if (rowNumber < cl->cues->items.size()) {
                     inspectCue(rowNumber);
                 }
 
@@ -214,7 +216,7 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
                 if (GlobalSettings::getInstance()->askBeforeRemovingItems->boolValue())
                 {
                     if (tlb->getSelectedRows().size() == 1) {
-                        Cue* item = cl->cues.items[tlb->getSelectedRows()[0]];
+                        Cue* item = cl->cues->items[tlb->getSelectedRows()[0]];
                         title = "Delete " + item->niceName;
                         message = "Are you sure you want to delete this cue?";
                     }
@@ -231,8 +233,8 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
 
                                 for (int i = selected.size() - 1; i >= 0; i--) {
                                     int r = selected[i];
-                                    if (r < this->cl->cues.items.size()) {
-                                        Cue* item = this->cl->cues.items[r];
+                                    if (r < this->cl->cues->items.size()) {
+                                        Cue* item = this->cl->cues->items[r];
                                         item->remove();
                                     }
                                 }
@@ -243,23 +245,23 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
             } else if (result == 7 || result == 8) {
                 // Add new cue before/after
                 int newIndex = (result == 7) ? rowNumber : rowNumber + 1;
-                this->cl->cues.factory.showCreateMenu([this, newIndex](Cue* newCue)
+                this->cl->cues->factory.showCreateMenu([this, newIndex](Cue* newCue)
                     {
                         if (newCue != nullptr)
                         {
                             var newCueData(new DynamicObject());
                             newCueData.getDynamicObject()->setProperty("index", newIndex);
-                            this->cl->cues.addItem(newCue, newCueData);
+                            this->cl->cues->addItem(newCue, newCueData);
                         }
                     }
                 );
             } else if (result == 9) {
                 // Replace with new cue
-                this->cl->cues.factory.showCreateMenu([this, rowNumber](Cue* newCue)
+                this->cl->cues->factory.showCreateMenu([this, rowNumber](Cue* newCue)
                     {
                         if (newCue != nullptr)
                         {
-                            Cue* oldCue = this->cl->cues.items[rowNumber];
+                            Cue* oldCue = this->cl->cues->items[rowNumber];
 
                             if (newCue->getCueType() == oldCue->getCueType())
                             {
@@ -287,7 +289,7 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
                                         newCue->description->setValue(oldCue->description->stringValue());
                                         newCue->notes->setValue(oldCue->notes->stringValue());
                                         oldCue->remove();
-                                        this->cl->cues.addItem(newCue, newCueData);
+                                        this->cl->cues->addItem(newCue, newCueData);
                                         this->inspectCue(rowNumber);
 
                                     }
@@ -307,11 +309,11 @@ void CuesTableModel::backgroundClicked(const MouseEvent& event)
     tlb->deselectAllRows();
 
     if (event.mods.isPopupMenu()){
-        cl->cues.factory.showCreateMenu([this](Cue* item)
+        cl->cues->factory.showCreateMenu([this](Cue* item)
             {
                 if (item != nullptr)
                 {
-                    this->cl->cues.addItem(item);
+                    this->cl->cues->addItem(item);
                 }
             }
         );
@@ -330,7 +332,7 @@ void CuesTableModel::inspectCue(int rowNumber)
         return;
     InspectorUI *inspectorUI = dynamic_cast<InspectorUI *>(inspect->contentComponent);
 
-    inspectorUI->inspector->setCurrentInspectables(cl->cues.items[rowNumber]);
+    inspectorUI->inspector->setCurrentInspectables(cl->cues->items[rowNumber]);
     inspectorUI->repaint();
 }
 

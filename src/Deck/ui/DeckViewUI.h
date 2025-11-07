@@ -11,11 +11,11 @@
 #pragma once
 
 #include "../../MainIncludes.h"
-#include "../../Cuelist/Cuelist.h"
-#include "CuesTableUI.h"
-#include "DeckViewHeaderUI.h"
 
 class Cue;
+class Cuelist;
+class CuesTableUI;
+class DeckViewHeaderUI;
 
 class DeckViewUI :
     public Component,

@@ -9,7 +9,7 @@
 */
 
 #include "CuelistManager.h"
-#include "CuelistFactory.h"
+#include "../Cue//CueManager.h"
 #include "../ui/SPAssetManager.h"
 
 CuelistManager::CuelistManager() :
@@ -66,9 +66,9 @@ void CuelistManager::showMenuForTargetCue(ControllableContainer* startFromCC, st
             Cuelist* cl = dynamic_cast<Cuelist*>(cm->items[i-1]);
             PopupMenu sub;
 
-            for (int y = 1 ; y <= cl->cues.items.size(); ++y)
+            for (int y = 1 ; y <= cl->cues->items.size(); ++y)
             {
-                Cue* c = dynamic_cast<Cue*>(cl->cues.items[y-1]);
+                Cue* c = dynamic_cast<Cue*>(cl->cues->items[y-1]);
                 sub.addItem((i * 10000) + y, c->niceName + " - " + c->description->stringValue(), true, false, SPAssetManager::getInstance()->getInterfaceIcon(c->getCueType()));
             }
 
@@ -83,7 +83,7 @@ void CuelistManager::showMenuForTargetCue(ControllableContainer* startFromCC, st
                 int cuelistIdx = ((result - cueIdx) / 10000) - 1;
 
                 Cuelist* cl = dynamic_cast<Cuelist*>(cm->items[cuelistIdx]);
-                returnFunc(cl->cues.items[cueIdx]);
+                returnFunc(cl->cues->items[cueIdx]);
             }
         );
     }

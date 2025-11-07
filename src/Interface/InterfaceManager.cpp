@@ -9,8 +9,8 @@
 */
 
 #include "../ui/SPAssetManager.h"
-#include "InterfaceManager.h"
 #include "Interface.h"
+#include "InterfaceManager.h"
 
 #include "audio/AudioInterface.h"
 #include "audio/AudioOutput.h"
@@ -33,7 +33,7 @@ InterfaceManager::~InterfaceManager()
 {
 }
 
-void InterfaceManager::showMenuForTargetAudioOutput(ControllableContainer* startFromCC, std::function<void(AudioOutput*)> returnFunc)
+void InterfaceManager::showMenuForTargetAudioOutput(ControllableContainer* startFromCC, std::function<void(ControllableContainer*)> returnFunc)
 {
     PopupMenu menu;
 
@@ -61,9 +61,9 @@ void InterfaceManager::showMenuForTargetAudioOutput(ControllableContainer* start
             AudioInterface* audioInterface = dynamic_cast<AudioInterface*>(m->items[i-1]);
             PopupMenu sub;
 
-            for (int y = 1 ; y <= audioInterface->outputs.items.size(); ++y)
+            for (int y = 1 ; y <= audioInterface->outputs->items.size(); ++y)
             {
-                sub.addItem((i * 1000) + y, audioInterface->outputs.items[y-1]->niceName);
+                sub.addItem((i * 1000) + y, audioInterface->outputs->items[y-1]->niceName);
             }
 
             menu.addSubMenu(audioInterface->niceName, sub);
@@ -77,7 +77,7 @@ void InterfaceManager::showMenuForTargetAudioOutput(ControllableContainer* start
                 int interfaceIdx = ((result - outputIdx) / 1000) - 1;
 
                 AudioInterface* audioInterface = dynamic_cast<AudioInterface*>(m->items[interfaceIdx]);
-                returnFunc(audioInterface->outputs.items[outputIdx]);
+                returnFunc(audioInterface->outputs->items[outputIdx]);
             }
         );
 

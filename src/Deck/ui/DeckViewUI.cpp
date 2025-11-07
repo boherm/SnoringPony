@@ -10,11 +10,10 @@
 
 #include "../../MainIncludes.h"
 #include "DeckViewUI.h"
-#include "../../PonyEngine.h"
+#include "DeckViewHeaderUI.h"
 #include "CuesTableUI.h"
-#include "juce_core/juce_core.h"
 #include "../../Cuelist/CuelistManager.h"
-#include "CuesTableUI.h"
+#include "../../PonyEngine.h"
 
 DeckViewUI::DeckViewUI(const String &deckName)
 {
