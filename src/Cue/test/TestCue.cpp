@@ -14,6 +14,10 @@ TestCue::TestCue(var params) :
     Cue(params)
 {
     objectType = "Test";
+
+    duration->isSavable = false;
+    duration->hideInEditor = true;
+    duration->hideInRemoteControl = true;
 }
 
 TestCue::~TestCue()

@@ -29,6 +29,7 @@ public:
     Cuelist* parentCuelist;
 
     FloatParameter* id;
+    FloatParameter* duration;
     StringParameter* description;
     StringParameter* notes;
 

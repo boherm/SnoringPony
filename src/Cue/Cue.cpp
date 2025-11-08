@@ -34,6 +34,10 @@ Cue::Cue(var params) :
     id = addFloatParameter("ID", "ID of this cue", params.getProperty("id", 1.0));
     id->lockManualControlMode = true;
 
+    duration = addFloatParameter("Duration", "Duration of the cue", params.getProperty("duration", 0.0));
+    duration->lockManualControlMode = true;
+    duration->defaultUI = FloatParameter::TIME;
+
     description = addStringParameter("Description", "Description of the cue", params.getProperty("description", ""));
     description->lockManualControlMode = true;
 

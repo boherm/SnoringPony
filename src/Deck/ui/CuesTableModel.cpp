@@ -117,9 +117,8 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
             g.setColour(Colours::green.brighter(0.2f).withAlpha(0.6f));
             g.fillRect(4.0f, 3.0f, (width - 8.0f) * Random::getSystemRandom().nextFloat(), height - 6.0f);
             g.setColour(Colours::white.withAlpha(0.8f));
-            text = "00:20.12";
-            g.drawText(text, 4, 3, width - 8, height - 6, Justification::centred,
-                    true);
+            text = StringUtil::valueToTimeString(cue->duration->doubleValue());
+            g.drawText(text, 4, 3, width - 8, height - 6, Justification::centred, true);
             return;
             break;
 
