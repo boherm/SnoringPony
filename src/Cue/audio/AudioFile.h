@@ -23,6 +23,7 @@ public:
 
     AudioCue* audioCue;
     FileParameter* audioFile;
+    FloatParameter* duration;
     TargetParameter* targetAudioInterface;
 
     String getTypeString() const override { return "AudioFile"; }
