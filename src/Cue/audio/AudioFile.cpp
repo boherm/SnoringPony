@@ -39,3 +39,19 @@ AudioFile::AudioFile(var params, AudioCue* audioCue) :
     targetAudioInterface->targetType = TargetParameter::CONTAINER;
     targetAudioInterface->customGetTargetContainerFunc = &InterfaceManager::showMenuForTargetAudioOutput;
 }
+
+void AudioFile::parameterValueChanged(Parameter* p)
+{
+    BaseItem::parameterValueChanged(p);
+
+    if (Engine::mainEngine->isLoadingFile) return;
+
+    if (p == audioFile)
+    {
+        File f = audioFile->getFile();
+
+        if (f.existsAsFile()) {
+            setNiceName(f.getFileName());
+        }
+    }
+}

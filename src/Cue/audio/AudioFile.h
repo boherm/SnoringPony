@@ -27,6 +27,8 @@ public:
 
     String getTypeString() const override { return "AudioFile"; }
     static AudioFile* create(var params) { return new AudioFile(params); }
+
+    void parameterValueChanged(Parameter* p) override;
 };
 
 //==============================================================================
