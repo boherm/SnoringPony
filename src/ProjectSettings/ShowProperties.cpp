@@ -34,8 +34,8 @@ ShowProperties::ShowProperties() :
     mainCuelist->targetType = TargetParameter::CONTAINER;
     mainCuelist->maxDefaultSearchLevel = 0;
     mainCuelist->isSavable = false;
-    // currentMainCuelist->alwaysNotify = true;
-    // currentMainCuelist->hideInEditor = true;
+    mainCuelist->alwaysNotify = true;
+    mainCuelist->hideInEditor = true;
 }
 
 void ShowProperties::clear()
