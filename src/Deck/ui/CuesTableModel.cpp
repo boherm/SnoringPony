@@ -301,6 +301,8 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
             }
         });
         return;
+    } else {
+        inspectCue(rowNumber);
     }
 }
 
@@ -320,10 +322,10 @@ void CuesTableModel::backgroundClicked(const MouseEvent& event)
     }
 }
 
-void CuesTableModel::cellDoubleClicked(int rowNumber, int columnId, const MouseEvent& event)
-{
-    inspectCue(rowNumber);
-}
+// void CuesTableModel::cellDoubleClicked(int rowNumber, int columnId, const MouseEvent& event)
+// {
+//     inspectCue(rowNumber);
+// }
 
 void CuesTableModel::inspectCue(int rowNumber)
 {
