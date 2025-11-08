@@ -21,6 +21,7 @@ Cuelist::Cuelist(var params) :
 {
     cues = new CueManager();
     cues->parentCuelist = this;
+    cues->hideInEditor = true;
 
     saveAndLoadRecursiveData = true;
 
