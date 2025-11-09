@@ -87,3 +87,13 @@ void CueManager::loadJSONDataManagerInternal(var data)
         existingIds.add(idValue);
     }
 }
+
+bool CueManager::hasCuePlaying()
+{
+    for (Cue* c : items) {
+        if (c->isPlaying->boolValue()) {
+            return true;
+        }
+    }
+    return false;
+}

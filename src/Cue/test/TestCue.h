@@ -24,5 +24,6 @@ public:
     String getCueType() const override { return "Test"; }
     static TestCue* create(var params) { return new TestCue(params); }
 
-    void play();
+    void play() override;
+    void stop() override;
 };

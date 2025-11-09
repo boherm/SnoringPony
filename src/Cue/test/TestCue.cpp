@@ -28,3 +28,8 @@ void TestCue::play()
 {
     Logger::writeToLog("TestCue::play: " + niceName);
 }
+
+void TestCue::stop()
+{
+    Logger::writeToLog("TestCue::stop: " + niceName);
+}

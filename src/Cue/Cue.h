@@ -11,6 +11,7 @@
 #pragma once
 
 #include "../MainIncludes.h"
+#include "juce_organicui/controllable/parameter/BoolParameter.h"
 
 class Cuelist;
 
@@ -27,6 +28,8 @@ public:
     var objectData;
 
     Cuelist* parentCuelist;
+
+    BoolParameter* isPlaying;
 
     FloatParameter* id;
     FloatParameter* duration;
@@ -47,6 +50,7 @@ public:
     void triggerTriggered(Trigger* t) override;
 
     virtual void play() {}
+    virtual void stop() {}
     void setGoNext();
 
 // private:

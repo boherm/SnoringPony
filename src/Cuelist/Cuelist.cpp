@@ -22,6 +22,7 @@ Cuelist::Cuelist(var params) :
     cues = new CueManager();
     cues->parentCuelist = this;
     cues->hideInEditor = true;
+    cues->addAsyncContainerListener(this);
 
     saveAndLoadRecursiveData = true;
 
@@ -38,6 +39,9 @@ Cuelist::Cuelist(var params) :
 	itemColor->setDefaultValue(BG_COLOR.brighter(.2f));
     itemColor->setControlMode(Parameter::ControlMode::REFERENCE);
 
+    isPlaying = addBoolParameter("Is Playing", "Indicates if a cue in this cuelist is currently playing", false, false);
+    isPlaying->isSavable = false;
+
     nextCue = addTargetParameter("Next cue", "Target the next cue to play", cues);
     nextCue->targetType = TargetParameter::CONTAINER;
     nextCue->maxDefaultSearchLevel = 0;
@@ -47,6 +51,7 @@ Cuelist::Cuelist(var params) :
 
 Cuelist::~Cuelist()
 {
+    cues->removeAsyncContainerListener(this);
     delete cues;
 }
 
@@ -70,7 +75,12 @@ void Cuelist::go()
 
 void Cuelist::stop()
 {
-    // todo: implement this!
+    for (int i = 0; i < cues->items.size(); i++) {
+        Cue* c = cues->items[i];
+        if (c->isPlaying->boolValue()) {
+            c->stop();
+        }
+    }
 }
 
 InspectableEditor* Cuelist::getEditorInternal(bool isRoot, Array<Inspectable*> inspectables)
@@ -102,4 +112,17 @@ void Cuelist::loadJSONDataInternal(var data)
 
     if (firstCue)
         firstCue->setGoNext();
+}
+
+void Cuelist::newMessage(const ContainerAsyncEvent& e)
+{
+    if (
+            e.source == cues && e.type == ContainerAsyncEvent::EventType::ControllableFeedbackUpdate && e.targetControllable->niceName == "Is Playing"
+        )
+    {
+        if (cues->hasCuePlaying())
+            isPlaying->setValue(true);
+        else
+            isPlaying->setValue(false);
+    }
 }

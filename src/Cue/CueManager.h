@@ -26,6 +26,8 @@ public:
 
     Cuelist* parentCuelist;
 
+    bool hasCuePlaying();
+
     void addItemInternal(Cue* c, var data);
 
     void askForRemoveBaseItem(BaseItem* item) override;

@@ -17,31 +17,36 @@ class CueManager;
 class Cuelist :
     public BaseItem,
     public ChangeBroadcaster,
-    public ParameterListener
+    public ParameterListener,
+    public ContainerAsyncListener
 {
-    public:
-        Cuelist(var params = var());
-        virtual ~Cuelist();
+public:
+    Cuelist(var params = var());
+    virtual ~Cuelist();
 
-        String objectType;
-        var objectData;
+    String objectType;
+    var objectData;
 
-        CueManager* cues;
+    CueManager* cues;
 
-        TargetParameter* nextCue;
+    BoolParameter* isPlaying; // Todo: implement this!
 
-        Trigger* goBtn;
-        Trigger* stopBtn;
+    TargetParameter* nextCue;
 
-        void go();
-        void stop();
+    Trigger* goBtn;
+    Trigger* stopBtn;
 
-        juce::String getTypeString() const override { return "Cuelist"; }
-        static Cuelist *create(var params) { return new Cuelist(params); }
+    void go();
+    void stop();
 
-        InspectableEditor* getEditorInternal(bool isRoot, Array<Inspectable*> inspectables);
-        void loadJSONDataInternal(var data) override;
+    juce::String getTypeString() const override { return "Cuelist"; }
+    static Cuelist *create(var params) { return new Cuelist(params); }
 
-        void parameterControlModeChanged(Parameter* p) override;
-        void triggerTriggered(Trigger* t) override;
+    InspectableEditor* getEditorInternal(bool isRoot, Array<Inspectable*> inspectables);
+    void loadJSONDataInternal(var data) override;
+
+    void parameterControlModeChanged(Parameter* p) override;
+    void triggerTriggered(Trigger* t) override;
+
+    void newMessage(const ContainerAsyncEvent& e) override;
 };

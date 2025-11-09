@@ -28,6 +28,9 @@ Cue::Cue(var params) :
 	itemColor->setDefaultValue(BG_COLOR);
     itemColor->setControlMode(Parameter::ControlMode::REFERENCE);
 
+    isPlaying = addBoolParameter("Is Playing", "Indicates if this cue is currently playing", false, false);
+    isPlaying->isSavable = false;
+
     setNextBtn = addTrigger("Set next", "Trigger this cue after next");
     setNextBtn->hideInEditor = true;
 

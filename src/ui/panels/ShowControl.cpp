@@ -47,8 +47,10 @@ ShowControl::ShowControl():
 
     mainCuelist = engine->showProperties.mainCuelist->getTargetContainerAs<Cuelist>();
 
-    if (mainCuelist != nullptr)
+    if (mainCuelist != nullptr) {
         mainCuelist->nextCue->addParameterListener(this);
+        mainCuelist->isPlaying->addParameterListener(this);
+    }
 }
 
 ShowControl::~ShowControl()
@@ -56,8 +58,10 @@ ShowControl::~ShowControl()
     delete btnGo;
     delete btnPanic;
 
-    if (mainCuelist != nullptr)
+    if (mainCuelist != nullptr) {
         mainCuelist->nextCue->removeParameterListener(this);
+        mainCuelist->isPlaying->removeParameterListener(this);
+    }
 
     PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
     engine->showProperties.mainCuelist->removeParameterListener(this);
@@ -76,6 +80,10 @@ void ShowControl::triggerTriggered(Trigger *t)
     if (t == paramGo) {
         Brain::getInstance()->go();
     }
+
+    if (t == paramPanic) {
+        Brain::getInstance()->panic();
+    }
 }
 
 void ShowControl::parameterValueChanged(Parameter *p)
@@ -83,13 +91,16 @@ void ShowControl::parameterValueChanged(Parameter *p)
     PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
 
     if (p == engine->showProperties.mainCuelist) {
-        if (mainCuelist != nullptr)
+        if (mainCuelist != nullptr) {
             mainCuelist->nextCue->removeParameterListener(this);
+            mainCuelist->isPlaying->removeParameterListener(this);
+        }
 
         mainCuelist = engine->showProperties.mainCuelist->getTargetContainerAs<Cuelist>();
 
         if (mainCuelist != nullptr) {
             mainCuelist->nextCue->addParameterListener(this);
+            mainCuelist->isPlaying->addParameterListener(this);
 
             TargetParameter* tp = dynamic_cast<TargetParameter*>(mainCuelist->nextCue);
             Cue* nextCue = tp->getTargetContainerAs<Cue>();
@@ -111,6 +122,15 @@ void ShowControl::parameterValueChanged(Parameter *p)
             paramGo->setEnabled(true);
         } else {
             paramGo->setEnabled(false);
+        }
+        repaint();
+    }
+
+    if (mainCuelist && p == mainCuelist->isPlaying) {
+        if (mainCuelist->isPlaying->boolValue()) {
+            paramPanic->setEnabled(true);
+        } else {
+            paramPanic->setEnabled(false);
         }
         repaint();
     }
