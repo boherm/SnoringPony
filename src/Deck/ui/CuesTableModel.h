@@ -31,7 +31,6 @@ public:
     void paintRowBackground(Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override;
     void paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
     Component* refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate) override;
-    int getColumnAutoSizeWidth(int columnId) override;
     void sortOrderChanged(int newSortColumnId, bool isForwards) override;
     void cellClicked(int rowNumber, int columnId, const MouseEvent& event) override;
     void backgroundClicked(const MouseEvent& event) override;

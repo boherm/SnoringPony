@@ -5,6 +5,60 @@
     <Filter Include="SnoringPony\resources">
       <UniqueIdentifier>{D7335BFF-FFB2-A690-CE1C-02AE67CCBEBC}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SnoringPony\Source\Cue\audio">
+      <UniqueIdentifier>{586B47B9-6DE2-2958-EDF9-A258A0B33EBA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Cue\test">
+      <UniqueIdentifier>{0F326983-B63B-5C52-B8B4-6E29E07AB5F7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Cue\ui">
+      <UniqueIdentifier>{A33F64B7-148A-9A87-E435-EA1CB4CF18A2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Cue">
+      <UniqueIdentifier>{1905EC52-9019-6EE7-5E81-B4EB086C2B7C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Cuelist\ui">
+      <UniqueIdentifier>{5C035158-CBCB-F322-EB85-4E09FE8110C8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Cuelist">
+      <UniqueIdentifier>{AC328D8B-B22C-958F-DE62-987FAC51C310}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Deck\ui">
+      <UniqueIdentifier>{3A00BA13-C4F8-8157-950F-7FF7B17DC091}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Deck">
+      <UniqueIdentifier>{72EB24D3-D564-E4E3-2A66-30D0DF267D3B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Interface\audio\ui">
+      <UniqueIdentifier>{B7338DCB-8D7C-2C8A-1FAE-C24C05DEA962}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Interface\audio">
+      <UniqueIdentifier>{6BDDC13E-A056-E8FE-E65B-FA817ECF0918}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Interface\midi">
+      <UniqueIdentifier>{6C9D08FA-276B-D99C-E11E-4084A6CBACB7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Interface\mixer">
+      <UniqueIdentifier>{FF1CAC50-0D2E-ADE5-39D1-76963CD94C73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Interface\osc">
+      <UniqueIdentifier>{17ACB112-077F-38BA-BE17-97275F46C14D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Interface\ui">
+      <UniqueIdentifier>{E16C3CA1-6B76-BEA6-3651-45807ADA4DAB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Interface">
+      <UniqueIdentifier>{94D45E40-67E2-58E1-06DC-6E35BF711F27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\ProjectSettings">
+      <UniqueIdentifier>{65B4B78B-00AF-0E10-CF06-79E1CA443041}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\ui\panels">
+      <UniqueIdentifier>{8C0C33FF-2D1A-17FF-ED0C-725382612D6D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\ui">
+      <UniqueIdentifier>{A7DF289B-CE27-240A-2AE8-D50431AA5282}</UniqueIdentifier>
+    </Filter>
     <Filter Include="SnoringPony\Source\ui">
       <UniqueIdentifier>{A7DF289B-CE27-240A-2AE8-D50431AA5282}</UniqueIdentifier>
     </Filter>
@@ -985,11 +1039,119 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\Cue\audio\AudioCue.cpp">
+      <Filter>SnoringPony\Source\Cue\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cue\audio\AudioFile.cpp">
+      <Filter>SnoringPony\Source\Cue\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cue\test\TestCue.cpp">
+      <Filter>SnoringPony\Source\Cue\test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cue\ui\CueEditor.cpp">
+      <Filter>SnoringPony\Source\Cue\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cue\Cue.cpp">
+      <Filter>SnoringPony\Source\Cue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cue\CueManager.cpp">
+      <Filter>SnoringPony\Source\Cue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cuelist\ui\CuelistEditor.cpp">
+      <Filter>SnoringPony\Source\Cuelist\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cuelist\ui\CuelistManagerItemUI.cpp">
+      <Filter>SnoringPony\Source\Cuelist\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cuelist\ui\CuelistManagerUI.cpp">
+      <Filter>SnoringPony\Source\Cuelist\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cuelist\Cuelist.cpp">
+      <Filter>SnoringPony\Source\Cuelist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cuelist\CuelistFactory.cpp">
+      <Filter>SnoringPony\Source\Cuelist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cuelist\CuelistManager.cpp">
+      <Filter>SnoringPony\Source\Cuelist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Deck\ui\CuesTableModel.cpp">
+      <Filter>SnoringPony\Source\Deck\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Deck\ui\CuesTableUI.cpp">
+      <Filter>SnoringPony\Source\Deck\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Deck\ui\DeckUI.cpp">
+      <Filter>SnoringPony\Source\Deck\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Deck\ui\DeckViewHeaderUI.cpp">
+      <Filter>SnoringPony\Source\Deck\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Deck\ui\DeckViewUI.cpp">
+      <Filter>SnoringPony\Source\Deck\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\audio\ui\AudioInterfaceHardwareEditor.cpp">
+      <Filter>SnoringPony\Source\Interface\audio\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\audio\ui\AudioOutputEditor.cpp">
+      <Filter>SnoringPony\Source\Interface\audio\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\audio\AudioInterface.cpp">
+      <Filter>SnoringPony\Source\Interface\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\audio\AudioOutput.cpp">
+      <Filter>SnoringPony\Source\Interface\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\midi\MIDIInterface.cpp">
+      <Filter>SnoringPony\Source\Interface\midi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\mixer\MixerInterface.cpp">
+      <Filter>SnoringPony\Source\Interface\mixer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\osc\OSCInterface.cpp">
+      <Filter>SnoringPony\Source\Interface\osc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\ui\InterfaceManagerUI.cpp">
+      <Filter>SnoringPony\Source\Interface\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\ui\InterfaceUI.cpp">
+      <Filter>SnoringPony\Source\Interface\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\Interface.cpp">
+      <Filter>SnoringPony\Source\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\InterfaceManager.cpp">
+      <Filter>SnoringPony\Source\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ProjectSettings\ColorPresets.cpp">
+      <Filter>SnoringPony\Source\ProjectSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ProjectSettings\DecksSettings.cpp">
+      <Filter>SnoringPony\Source\ProjectSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ProjectSettings\ShowProperties.cpp">
+      <Filter>SnoringPony\Source\ProjectSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\panels\Clock.cpp">
+      <Filter>SnoringPony\Source\ui\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\panels\ShowControl.cpp">
+      <Filter>SnoringPony\Source\ui\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\panels\ShowInfos.cpp">
+      <Filter>SnoringPony\Source\ui\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\LookAndFeelTable.cpp">
+      <Filter>SnoringPony\Source\ui</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\ui\AboutWindow.cpp">
       <Filter>SnoringPony\Source\ui</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\ui\SPAssetManager.cpp">
       <Filter>SnoringPony\Source\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Brain.cpp">
+      <Filter>SnoringPony\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Main.cpp">
       <Filter>SnoringPony\Source</Filter>
@@ -1003,7 +1165,13 @@
     <ClCompile Include="..\..\src\MainIncludes.cpp">
       <Filter>SnoringPony\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\MainMenuBarComponent.cpp">
+      <Filter>SnoringPony\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\PonyEngine.cpp">
+      <Filter>SnoringPony\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\UserInputManager.cpp">
       <Filter>SnoringPony\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\modules\juce\modules\juce_audio_basics\audio_play_head\juce_AudioPlayHead.cpp">
@@ -4359,11 +4527,119 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\Cue\audio\AudioCue.h">
+      <Filter>SnoringPony\Source\Cue\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cue\audio\AudioFile.h">
+      <Filter>SnoringPony\Source\Cue\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cue\test\TestCue.h">
+      <Filter>SnoringPony\Source\Cue\test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cue\ui\CueEditor.h">
+      <Filter>SnoringPony\Source\Cue\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cue\Cue.h">
+      <Filter>SnoringPony\Source\Cue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cue\CueManager.h">
+      <Filter>SnoringPony\Source\Cue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cuelist\ui\CuelistEditor.h">
+      <Filter>SnoringPony\Source\Cuelist\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cuelist\ui\CuelistManagerItemUI.h">
+      <Filter>SnoringPony\Source\Cuelist\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cuelist\ui\CuelistManagerUI.h">
+      <Filter>SnoringPony\Source\Cuelist\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cuelist\Cuelist.h">
+      <Filter>SnoringPony\Source\Cuelist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cuelist\CuelistFactory.h">
+      <Filter>SnoringPony\Source\Cuelist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cuelist\CuelistManager.h">
+      <Filter>SnoringPony\Source\Cuelist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Deck\ui\CuesTableModel.h">
+      <Filter>SnoringPony\Source\Deck\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Deck\ui\CuesTableUI.h">
+      <Filter>SnoringPony\Source\Deck\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Deck\ui\DeckUI.h">
+      <Filter>SnoringPony\Source\Deck\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Deck\ui\DeckViewHeaderUI.h">
+      <Filter>SnoringPony\Source\Deck\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Deck\ui\DeckViewUI.h">
+      <Filter>SnoringPony\Source\Deck\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\audio\ui\AudioInterfaceHardwareEditor.h">
+      <Filter>SnoringPony\Source\Interface\audio\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\audio\ui\AudioOutputEditor.h">
+      <Filter>SnoringPony\Source\Interface\audio\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\audio\AudioInterface.h">
+      <Filter>SnoringPony\Source\Interface\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\audio\AudioOutput.h">
+      <Filter>SnoringPony\Source\Interface\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\midi\MIDIInterface.h">
+      <Filter>SnoringPony\Source\Interface\midi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\mixer\MixerInterface.h">
+      <Filter>SnoringPony\Source\Interface\mixer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\osc\OSCInterface.h">
+      <Filter>SnoringPony\Source\Interface\osc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\ui\InterfaceManagerUI.h">
+      <Filter>SnoringPony\Source\Interface\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\ui\InterfaceUI.h">
+      <Filter>SnoringPony\Source\Interface\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\Interface.h">
+      <Filter>SnoringPony\Source\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\InterfaceManager.h">
+      <Filter>SnoringPony\Source\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ProjectSettings\ColorPresets.h">
+      <Filter>SnoringPony\Source\ProjectSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ProjectSettings\DecksSettings.h">
+      <Filter>SnoringPony\Source\ProjectSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ProjectSettings\ShowProperties.h">
+      <Filter>SnoringPony\Source\ProjectSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\panels\Clock.h">
+      <Filter>SnoringPony\Source\ui\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\panels\ShowControl.h">
+      <Filter>SnoringPony\Source\ui\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\panels\ShowInfos.h">
+      <Filter>SnoringPony\Source\ui\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\LookAndFeelTable.h">
+      <Filter>SnoringPony\Source\ui</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\ui\AboutWindow.h">
       <Filter>SnoringPony\Source\ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\ui\SPAssetManager.h">
       <Filter>SnoringPony\Source\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Brain.h">
+      <Filter>SnoringPony\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Main.h">
       <Filter>SnoringPony\Source</Filter>
@@ -4374,7 +4650,13 @@
     <ClInclude Include="..\..\src\MainIncludes.h">
       <Filter>SnoringPony\Source</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\MainMenuBarComponent.h">
+      <Filter>SnoringPony\Source</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\PonyEngine.h">
+      <Filter>SnoringPony\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\UserInputManager.h">
       <Filter>SnoringPony\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\modules\juce\modules\juce_audio_basics\audio_play_head\juce_AudioPlayHead.h">
@@ -10980,6 +11262,33 @@
       <Filter>SnoringPony\resources</Filter>
     </None>
     <None Include="..\..\resources\tray_icon.png">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
+    <None Include="..\..\resources\action_cue.png">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
+    <None Include="..\..\resources\audio_cue.png">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
+    <None Include="..\..\resources\audio_interface.png">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
+    <None Include="..\..\resources\group_cue.png">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
+    <None Include="..\..\resources\midi_interface.png">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
+    <None Include="..\..\resources\mixer_interface.png">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
+    <None Include="..\..\resources\network_interface.png">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
+    <None Include="..\..\resources\noicon.png">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
+    <None Include="..\..\resources\note_cue.png">
       <Filter>SnoringPony\resources</Filter>
     </None>
     <None Include="..\..\modules\juce\modules\juce_audio_devices\native\oboe\src\common\README.md">

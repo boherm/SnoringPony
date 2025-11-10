@@ -11,6 +11,7 @@
 #include "MainMenuBarComponent.h"
 #include "PonyEngine.h"
 #include "ProjectSettings/ShowProperties.h"
+#include "MainComponent.h"
 
 MainMenuBarComponent::MainMenuBarComponent(MainContentComponent* mainComp, PonyEngine* engine) :
 	Component("Menu Bar")
@@ -37,7 +38,11 @@ MainMenuBarComponent::~MainMenuBarComponent()
 
 void MainMenuBarComponent::paint(Graphics& g)
 {
-	g.fillAll(BG_COLOR);
+    g.fillAll(BG_COLOR);
+}
+
+void MainMenuBarComponent::paintOverChildren(Graphics& g)
+{
     g.setColour(TEXTNAME_COLOR);
 
     Rectangle<int> *r = new Rectangle<int>(

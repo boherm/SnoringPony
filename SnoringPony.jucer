@@ -13,8 +13,160 @@
             file="resources/default.ponylayout"/>
       <FILE id="LR50Nt" name="icon.png" compile="0" resource="1" file="resources/icon.png"/>
       <FILE id="BgHvX4" name="tray_icon.png" compile="0" resource="1" file="resources/tray_icon.png"/>
+      <FILE id="yGHZ62" name="action_cue.png" compile="0" resource="1" file="resources/action_cue.png"/>
+      <FILE id="DgS5vE" name="audio_cue.png" compile="0" resource="1" file="resources/audio_cue.png"/>
+      <FILE id="HWcti6" name="audio_interface.png" compile="0" resource="1"
+            file="resources/audio_interface.png"/>
+      <FILE id="ZfdlKT" name="group_cue.png" compile="0" resource="1" file="resources/group_cue.png"/>
+      <FILE id="TDScj1" name="midi_interface.png" compile="0" resource="1"
+            file="resources/midi_interface.png"/>
+      <FILE id="cleTO9" name="mixer_interface.png" compile="0" resource="1"
+            file="resources/mixer_interface.png"/>
+      <FILE id="U2GJjr" name="network_interface.png" compile="0" resource="1"
+            file="resources/network_interface.png"/>
+      <FILE id="DfWkzh" name="noicon.png" compile="0" resource="1" file="resources/noicon.png"/>
+      <FILE id="gJDjzp" name="note_cue.png" compile="0" resource="1" file="resources/note_cue.png"/>
     </GROUP>
     <GROUP id="{72D7B173-FD6A-E831-8382-81700F33CF69}" name="Source">
+      <GROUP id="{C9606774-8254-F321-2D03-8A88FDBDEFE4}" name="Cue">
+        <GROUP id="{F6360A6C-7FC2-6FAA-7205-29D762DAEC42}" name="audio">
+          <FILE id="TKPFyS" name="AudioCue.cpp" compile="1" resource="0" file="src/Cue/audio/AudioCue.cpp"/>
+          <FILE id="lue5p9" name="AudioCue.h" compile="0" resource="0" file="src/Cue/audio/AudioCue.h"/>
+          <FILE id="DwTgkP" name="AudioFile.cpp" compile="1" resource="0" file="src/Cue/audio/AudioFile.cpp"/>
+          <FILE id="bN8xqB" name="AudioFile.h" compile="0" resource="0" file="src/Cue/audio/AudioFile.h"/>
+        </GROUP>
+        <GROUP id="{32A1E7EC-9D5D-BB85-EBF9-88819AC2F8DC}" name="test">
+          <FILE id="UpgXL6" name="TestCue.cpp" compile="1" resource="0" file="src/Cue/test/TestCue.cpp"/>
+          <FILE id="krpj07" name="TestCue.h" compile="0" resource="0" file="src/Cue/test/TestCue.h"/>
+        </GROUP>
+        <GROUP id="{C9CAAE13-5938-AA3A-C591-71AA92FD3494}" name="ui">
+          <FILE id="YOOYkS" name="CueEditor.cpp" compile="1" resource="0" file="src/Cue/ui/CueEditor.cpp"/>
+          <FILE id="cjtZkz" name="CueEditor.h" compile="0" resource="0" file="src/Cue/ui/CueEditor.h"/>
+        </GROUP>
+        <FILE id="oAPlTB" name="Cue.cpp" compile="1" resource="0" file="src/Cue/Cue.cpp"/>
+        <FILE id="fbA1vU" name="Cue.h" compile="0" resource="0" file="src/Cue/Cue.h"/>
+        <FILE id="mlLRPB" name="CueManager.cpp" compile="1" resource="0" file="src/Cue/CueManager.cpp"/>
+        <FILE id="cajy7m" name="CueManager.h" compile="0" resource="0" file="src/Cue/CueManager.h"/>
+      </GROUP>
+      <GROUP id="{A1CBA1D4-C593-3C3B-C209-A3456A62F1DE}" name="Cuelist">
+        <GROUP id="{F3CC0BC2-FFB2-A43E-E5AA-07341BABD1CF}" name="ui">
+          <FILE id="VdMVii" name="CuelistEditor.cpp" compile="1" resource="0"
+                file="src/Cuelist/ui/CuelistEditor.cpp"/>
+          <FILE id="CGJyPT" name="CuelistEditor.h" compile="0" resource="0" file="src/Cuelist/ui/CuelistEditor.h"/>
+          <FILE id="zmIli2" name="CuelistManagerItemUI.cpp" compile="1" resource="0"
+                file="src/Cuelist/ui/CuelistManagerItemUI.cpp"/>
+          <FILE id="GHFbMY" name="CuelistManagerItemUI.h" compile="0" resource="0"
+                file="src/Cuelist/ui/CuelistManagerItemUI.h"/>
+          <FILE id="Vvcxe2" name="CuelistManagerUI.cpp" compile="1" resource="0"
+                file="src/Cuelist/ui/CuelistManagerUI.cpp"/>
+          <FILE id="h6RXLD" name="CuelistManagerUI.h" compile="0" resource="0"
+                file="src/Cuelist/ui/CuelistManagerUI.h"/>
+        </GROUP>
+        <FILE id="WtNDkS" name="Cuelist.cpp" compile="1" resource="0" file="src/Cuelist/Cuelist.cpp"/>
+        <FILE id="fadJmp" name="Cuelist.h" compile="0" resource="0" file="src/Cuelist/Cuelist.h"/>
+        <FILE id="WxeNa9" name="CuelistFactory.cpp" compile="1" resource="0"
+              file="src/Cuelist/CuelistFactory.cpp"/>
+        <FILE id="ABddfm" name="CuelistFactory.h" compile="0" resource="0"
+              file="src/Cuelist/CuelistFactory.h"/>
+        <FILE id="WBJC7Q" name="CuelistManager.cpp" compile="1" resource="0"
+              file="src/Cuelist/CuelistManager.cpp"/>
+        <FILE id="IWvcBi" name="CuelistManager.h" compile="0" resource="0"
+              file="src/Cuelist/CuelistManager.h"/>
+      </GROUP>
+      <GROUP id="{1BF47743-82F4-D783-D7C9-CB8F63BFF4C9}" name="Deck">
+        <GROUP id="{B2D76598-703C-8A8B-62A6-298672ADFCAC}" name="ui">
+          <FILE id="MoutYf" name="CuesTableModel.cpp" compile="1" resource="0"
+                file="src/Deck/ui/CuesTableModel.cpp"/>
+          <FILE id="gCyZiF" name="CuesTableModel.h" compile="0" resource="0"
+                file="src/Deck/ui/CuesTableModel.h"/>
+          <FILE id="Q7maij" name="CuesTableUI.cpp" compile="1" resource="0" file="src/Deck/ui/CuesTableUI.cpp"/>
+          <FILE id="DxMk6T" name="CuesTableUI.h" compile="0" resource="0" file="src/Deck/ui/CuesTableUI.h"/>
+          <FILE id="y5cZKR" name="DeckUI.cpp" compile="1" resource="0" file="src/Deck/ui/DeckUI.cpp"/>
+          <FILE id="BG9v4y" name="DeckUI.h" compile="0" resource="0" file="src/Deck/ui/DeckUI.h"/>
+          <FILE id="kllP8n" name="DeckViewHeaderUI.cpp" compile="1" resource="0"
+                file="src/Deck/ui/DeckViewHeaderUI.cpp"/>
+          <FILE id="aDqyCP" name="DeckViewHeaderUI.h" compile="0" resource="0"
+                file="src/Deck/ui/DeckViewHeaderUI.h"/>
+          <FILE id="dOYfBo" name="DeckViewUI.cpp" compile="1" resource="0" file="src/Deck/ui/DeckViewUI.cpp"/>
+          <FILE id="RVOWV4" name="DeckViewUI.h" compile="0" resource="0" file="src/Deck/ui/DeckViewUI.h"/>
+        </GROUP>
+      </GROUP>
+      <GROUP id="{9F996CF1-A83D-C302-1119-B731310571F8}" name="Interface">
+        <GROUP id="{A28FFC92-0B84-4D12-4A6B-18C2962903CA}" name="audio">
+          <GROUP id="{B4C077E1-6C64-BD6E-B889-7B6A3E11DF46}" name="ui">
+            <FILE id="O0a94E" name="AudioInterfaceHardwareEditor.cpp" compile="1"
+                  resource="0" file="src/Interface/audio/ui/AudioInterfaceHardwareEditor.cpp"/>
+            <FILE id="DCC0U1" name="AudioInterfaceHardwareEditor.h" compile="0"
+                  resource="0" file="src/Interface/audio/ui/AudioInterfaceHardwareEditor.h"/>
+            <FILE id="dhsiHe" name="AudioOutputEditor.cpp" compile="1" resource="0"
+                  file="src/Interface/audio/ui/AudioOutputEditor.cpp"/>
+            <FILE id="laTgku" name="AudioOutputEditor.h" compile="0" resource="0"
+                  file="src/Interface/audio/ui/AudioOutputEditor.h"/>
+          </GROUP>
+          <FILE id="fM1ZjW" name="AudioInterface.cpp" compile="1" resource="0"
+                file="src/Interface/audio/AudioInterface.cpp"/>
+          <FILE id="PyRM1F" name="AudioInterface.h" compile="0" resource="0"
+                file="src/Interface/audio/AudioInterface.h"/>
+          <FILE id="PgBsfo" name="AudioOutput.cpp" compile="1" resource="0" file="src/Interface/audio/AudioOutput.cpp"/>
+          <FILE id="zNSVtC" name="AudioOutput.h" compile="0" resource="0" file="src/Interface/audio/AudioOutput.h"/>
+        </GROUP>
+        <GROUP id="{5EC76B7A-E8F9-2806-70BF-1F75BB336122}" name="midi">
+          <FILE id="JPmpFq" name="MIDIInterface.cpp" compile="1" resource="0"
+                file="src/Interface/midi/MIDIInterface.cpp"/>
+          <FILE id="nvLph3" name="MIDIInterface.h" compile="0" resource="0" file="src/Interface/midi/MIDIInterface.h"/>
+        </GROUP>
+        <GROUP id="{AF426437-FBAB-194E-56D2-9A20BD4CBD62}" name="mixer">
+          <FILE id="nIGXOu" name="MixerInterface.cpp" compile="1" resource="0"
+                file="src/Interface/mixer/MixerInterface.cpp"/>
+          <FILE id="vx7LBa" name="MixerInterface.h" compile="0" resource="0"
+                file="src/Interface/mixer/MixerInterface.h"/>
+        </GROUP>
+        <GROUP id="{023D512E-62A3-4D02-81EE-EA28EB792660}" name="osc">
+          <FILE id="ZYkzgO" name="OSCInterface.cpp" compile="1" resource="0"
+                file="src/Interface/osc/OSCInterface.cpp"/>
+          <FILE id="Xqv4X9" name="OSCInterface.h" compile="0" resource="0" file="src/Interface/osc/OSCInterface.h"/>
+        </GROUP>
+        <GROUP id="{0CA6DB6E-2314-0671-0B67-F07A22FBCE97}" name="ui">
+          <FILE id="SeOkxg" name="InterfaceManagerUI.cpp" compile="1" resource="0"
+                file="src/Interface/ui/InterfaceManagerUI.cpp"/>
+          <FILE id="O1jWBY" name="InterfaceManagerUI.h" compile="0" resource="0"
+                file="src/Interface/ui/InterfaceManagerUI.h"/>
+          <FILE id="x2vJ1X" name="InterfaceUI.cpp" compile="1" resource="0" file="src/Interface/ui/InterfaceUI.cpp"/>
+          <FILE id="U2kXsW" name="InterfaceUI.h" compile="0" resource="0" file="src/Interface/ui/InterfaceUI.h"/>
+        </GROUP>
+        <FILE id="DKLzl2" name="Interface.cpp" compile="1" resource="0" file="src/Interface/Interface.cpp"/>
+        <FILE id="JLOBBN" name="Interface.h" compile="0" resource="0" file="src/Interface/Interface.h"/>
+        <FILE id="WG4WBL" name="InterfaceManager.cpp" compile="1" resource="0"
+              file="src/Interface/InterfaceManager.cpp"/>
+        <FILE id="vGc30K" name="InterfaceManager.h" compile="0" resource="0"
+              file="src/Interface/InterfaceManager.h"/>
+      </GROUP>
+      <GROUP id="{570BE9DA-F47D-33C6-807F-BA4F0F848B72}" name="ProjectSettings">
+        <FILE id="dBwppK" name="ColorPresets.cpp" compile="1" resource="0"
+              file="src/ProjectSettings/ColorPresets.cpp"/>
+        <FILE id="Opsyyz" name="ColorPresets.h" compile="0" resource="0" file="src/ProjectSettings/ColorPresets.h"/>
+        <FILE id="j6JM3v" name="DecksSettings.cpp" compile="1" resource="0"
+              file="src/ProjectSettings/DecksSettings.cpp"/>
+        <FILE id="NbXFbZ" name="DecksSettings.h" compile="0" resource="0" file="src/ProjectSettings/DecksSettings.h"/>
+        <FILE id="veEHlR" name="ShowProperties.cpp" compile="1" resource="0"
+              file="src/ProjectSettings/ShowProperties.cpp"/>
+        <FILE id="MKxMiL" name="ShowProperties.h" compile="0" resource="0"
+              file="src/ProjectSettings/ShowProperties.h"/>
+      </GROUP>
+      <GROUP id="{20F5B4C7-57F7-331D-5146-37C2A16AA627}" name="ui">
+        <GROUP id="{52B09711-0D0C-1791-CEAB-300CE209300E}" name="panels">
+          <FILE id="cPO2Cz" name="Clock.cpp" compile="1" resource="0" file="src/ui/panels/Clock.cpp"/>
+          <FILE id="CYR6ek" name="Clock.h" compile="0" resource="0" file="src/ui/panels/Clock.h"/>
+          <FILE id="cTQgdv" name="ShowControl.cpp" compile="1" resource="0" file="src/ui/panels/ShowControl.cpp"/>
+          <FILE id="Ul3dJ1" name="ShowControl.h" compile="0" resource="0" file="src/ui/panels/ShowControl.h"/>
+          <FILE id="Y1M3nE" name="ShowInfos.cpp" compile="1" resource="0" file="src/ui/panels/ShowInfos.cpp"/>
+          <FILE id="NxI23G" name="ShowInfos.h" compile="0" resource="0" file="src/ui/panels/ShowInfos.h"/>
+        </GROUP>
+        <FILE id="c4rjXG" name="LookAndFeelTable.cpp" compile="1" resource="0"
+              file="src/ui/LookAndFeelTable.cpp"/>
+        <FILE id="SCabv4" name="LookAndFeelTable.h" compile="0" resource="0"
+              file="src/ui/LookAndFeelTable.h"/>
+      </GROUP>
       <GROUP id="{EF871B6A-5B4C-AA4B-6777-DCDFF6A14C82}" name="ui">
         <FILE id="o733S0" name="AboutWindow.cpp" compile="1" resource="0" file="src/ui/AboutWindow.cpp"/>
         <FILE id="IwOBqF" name="AboutWindow.h" compile="0" resource="0" file="src/ui/AboutWindow.h"/>
@@ -23,6 +175,8 @@
         <FILE id="fh4VOw" name="SPAssetManager.h" compile="0" resource="0"
               file="src/ui/SPAssetManager.h"/>
       </GROUP>
+      <FILE id="Ka83EP" name="Brain.cpp" compile="1" resource="0" file="src/Brain.cpp"/>
+      <FILE id="HIlKLJ" name="Brain.h" compile="0" resource="0" file="src/Brain.h"/>
       <FILE id="pZKegw" name="Main.cpp" compile="1" resource="0" file="src/Main.cpp"/>
       <FILE id="LBIUQs" name="Main.h" compile="0" resource="0" file="src/Main.h"/>
       <FILE id="rzo81q" name="MainComponent.cpp" compile="1" resource="0"
@@ -33,8 +187,16 @@
       <FILE id="ryaHqV" name="MainIncludes.cpp" compile="1" resource="0"
             file="src/MainIncludes.cpp"/>
       <FILE id="A3V8aI" name="MainIncludes.h" compile="0" resource="0" file="src/MainIncludes.h"/>
+      <FILE id="O4F3lO" name="MainMenuBarComponent.cpp" compile="1" resource="0"
+            file="src/MainMenuBarComponent.cpp"/>
+      <FILE id="KoMnRD" name="MainMenuBarComponent.h" compile="0" resource="0"
+            file="src/MainMenuBarComponent.h"/>
       <FILE id="rP9IQH" name="PonyEngine.cpp" compile="1" resource="0" file="src/PonyEngine.cpp"/>
       <FILE id="BVChMh" name="PonyEngine.h" compile="0" resource="0" file="src/PonyEngine.h"/>
+      <FILE id="mC0HTc" name="UserInputManager.cpp" compile="1" resource="0"
+            file="src/UserInputManager.cpp"/>
+      <FILE id="oCVxPh" name="UserInputManager.h" compile="0" resource="0"
+            file="src/UserInputManager.h"/>
     </GROUP>
   </MAINGROUP>
   <MODULES>

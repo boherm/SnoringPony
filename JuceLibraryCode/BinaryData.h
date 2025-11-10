@@ -23,8 +23,35 @@ namespace BinaryData
     extern const char*   tray_icon_png;
     const int            tray_icon_pngSize = 2548;
 
+    extern const char*   action_cue_png;
+    const int            action_cue_pngSize = 3467;
+
+    extern const char*   audio_cue_png;
+    const int            audio_cue_pngSize = 2581;
+
+    extern const char*   audio_interface_png;
+    const int            audio_interface_pngSize = 2882;
+
+    extern const char*   group_cue_png;
+    const int            group_cue_pngSize = 2036;
+
+    extern const char*   midi_interface_png;
+    const int            midi_interface_pngSize = 4238;
+
+    extern const char*   mixer_interface_png;
+    const int            mixer_interface_pngSize = 4283;
+
+    extern const char*   network_interface_png;
+    const int            network_interface_pngSize = 2011;
+
+    extern const char*   noicon_png;
+    const int            noicon_pngSize = 2379;
+
+    extern const char*   note_cue_png;
+    const int            note_cue_pngSize = 1988;
+
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 5;
+    const int namedResourceListSize = 14;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];

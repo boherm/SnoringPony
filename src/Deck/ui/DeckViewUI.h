@@ -29,7 +29,7 @@ public:
     std::unique_ptr<DeckViewHeaderUI> headerUI;
 
     String deckName;
-    Cuelist* currentCuelist;
+    Cuelist* currentCuelist = nullptr;
 
     void setCurrentCuelist(Cuelist* cl);
     void paint (Graphics&) override;

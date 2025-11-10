@@ -32,5 +32,6 @@ public:
 
 	void parameterValueChanged(Parameter* parameter) override;
 	void paint(Graphics& g) override;
+	void paintOverChildren(Graphics& g) override;
 	void resized() override;
 };

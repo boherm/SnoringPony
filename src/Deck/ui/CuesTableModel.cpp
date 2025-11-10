@@ -344,23 +344,6 @@ void CuesTableModel::inspectCue(int rowNumber)
     inspectorUI->repaint();
 }
 
-int CuesTableModel::getColumnAutoSizeWidth(int columnId)
-{
-    // switch (columnId)
-    // {
-    //     case NameColumn:
-    //         return 120;
-    //     case TimeColumn:
-    //         return 80;
-    //     case DescriptionColumn:
-    //         return 200;
-    //     case ActiveColumn:
-    //         return 60;
-    //     default:
-    //         return 100;
-    // }
-}
-
 void CuesTableModel::sortOrderChanged(int newSortColumnId, bool isForwards)
 {
 }

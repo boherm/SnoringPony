@@ -132,7 +132,7 @@ void DeckViewUI::mouseDown(const MouseEvent& event)
                 }
             }
         );
-    } else if (currentCuelist) {
+    } else if (currentCuelist != nullptr) {
         auto inspect = ShapeShifterManager::getInstance()->getContentForName("Inspector");
         if (inspect == nullptr)
             return;
