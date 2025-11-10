@@ -17,7 +17,6 @@ class CueManager;
 class Cuelist :
     public BaseItem,
     public ChangeBroadcaster,
-    public ParameterListener,
     public ContainerAsyncListener
 {
 public:

@@ -17,8 +17,7 @@ class Cuelist;
 
 class Cue:
     public BaseItem,
-    public ChangeBroadcaster,
-    public ParameterListener
+    public ChangeBroadcaster
 {
 public:
     Cue(var params = var());
