@@ -58,6 +58,9 @@ void AudioOutput::refreshChannelOptions()
     chan1->clearOptions();
     chan2->clearOptions();
 
+    chan1->addOption("-- Select an output --", 0);
+    chan2->addOption("-- Select an output --", 0);
+
     if (currentDevice == nullptr) return;
 
     StringArray items = currentDevice->getOutputChannelNames();
@@ -101,10 +104,12 @@ void AudioOutput::onContainerParameterChangedInternal(Parameter* p)
         if (type == "m") {
             chan1->hideInEditor = false;
             chan2->hideInEditor = true;
+            chan2->setValueWithData(0);
             clearWarning();
         } else if (type == "s") {
             chan1->hideInEditor = false;
             chan2->hideInEditor = false;
+            chan2->setValueWithData(savedChan2);
             clearWarning();
         } else {
             chan1->hideInEditor = true;
