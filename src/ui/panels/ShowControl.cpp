@@ -13,7 +13,6 @@
 #include "../../Brain.h"
 #include "../../Cue/Cue.h"
 #include "../../Cuelist/Cuelist.h"
-#include "juce_graphics/juce_graphics.h"
 
 //==============================================================================
 
@@ -34,6 +33,7 @@ ShowControl::ShowControl():
     addAndMakeVisible(btnGo);
     btnGo->customBGColor = Colours::darkgreen;
     btnGo->useCustomBGColor = true;
+    btnGo->customTextSize = 30;
     paramGo->setEnabled(false);
 
     paramPanic = addTrigger("Panic", "Push in case of emergency!");
@@ -41,6 +41,7 @@ ShowControl::ShowControl():
     addAndMakeVisible(btnPanic);
     btnPanic->customBGColor = Colours::darkred;
     btnPanic->useCustomBGColor = true;
+    btnPanic->customTextSize = 30;
     paramPanic->setEnabled(false);
 
     isPanicking = addBoolParameter("Is Panicking", "Is the show currently panicking?", false);
@@ -60,6 +61,7 @@ ShowControl::ShowControl():
 
 ShowControl::~ShowControl()
 {
+    stopTimer();
     delete btnGo;
     delete btnPanic;
 
@@ -136,17 +138,39 @@ void ShowControl::parameterValueChanged(Parameter *p)
             paramPanic->setEnabled(true);
         } else {
             paramPanic->setEnabled(false);
-            isPanicking->setValue(false);
+            stopPanicking();
         }
         repaint();
     }
+}
 
-    if (mainCuelist && p == isPanicking) {
-        if (isPanicking->boolValue()) {
-            btnPanic->customBGColor = Colours::darkorange;
-        } else {
+void ShowControl::startPanicking()
+{
+    if (!btnPanic->isEnabled())
+        return;
+
+    startTimer(150);
+    isPanicking->setValue(true);
+    btnPanic->customLabel = "Don't\nPanic!";
+}
+
+void ShowControl::stopPanicking()
+{
+    stopTimer();
+    isPanicking->setValue(false);
+    btnPanic->customBGColor = Colours::darkred;
+    btnPanic->customLabel = "";
+}
+
+void ShowControl::timerCallback()
+{
+    if (isPanicking->boolValue()) {
+
+        if (btnPanic->customBGColor == Colours::darkred)
+            btnPanic->customBGColor = Colours::red.darker(0.3f);
+        else
             btnPanic->customBGColor = Colours::darkred;
-        }
+
         repaint();
     }
 }

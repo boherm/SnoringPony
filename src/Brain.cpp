@@ -32,7 +32,6 @@ void Brain::panic()
     Cuelist* cl = dynamic_cast<PonyEngine*>(Engine::mainEngine)->showProperties.mainCuelist->getTargetContainerAs<Cuelist>();
     if (cl) {
         cl->panic();
-        if (ShowControl::getInstance()->btnPanic->isEnabled())
-            ShowControl::getInstance()->isPanicking->setValue(true);
+        ShowControl::getInstance()->startPanicking();
     }
 }

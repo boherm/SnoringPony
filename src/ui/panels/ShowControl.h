@@ -25,7 +25,8 @@ public:
 
 class ShowControl :
     public ControllableContainer,
-    public Component
+    public Component,
+    public Timer
 {
 public:
     juce_DeclareSingleton(ShowControl, true);
@@ -38,11 +39,16 @@ public:
     Trigger* paramGo; TriggerButtonUI* btnGo;
     Trigger* paramPanic; TriggerButtonUI* btnPanic;
 
+    void startPanicking();
+    void stopPanicking();
+
     void paint (Graphics&) override;
     void resized() override;
     void triggerTriggered(Trigger* t) override;
 
     void parameterValueChanged(Parameter* p) override;
+
+    void timerCallback() override;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ShowControl)
