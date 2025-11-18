@@ -66,6 +66,11 @@ void AudioCue::stop()
     filesManager->stopAll();
 }
 
+void AudioCue::panic()
+{
+    filesManager->panicAll();
+}
+
 void AudioCue::timerCallback()
 {
     double maxCurrentTime = 0.0;

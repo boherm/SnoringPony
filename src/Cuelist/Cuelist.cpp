@@ -83,6 +83,16 @@ void Cuelist::stop()
     }
 }
 
+void Cuelist::panic()
+{
+    for (int i = 0; i < cues->items.size(); i++) {
+        Cue* c = cues->items[i];
+        if (c->isPlaying->boolValue()) {
+            c->panic();
+        }
+    }
+}
+
 InspectableEditor* Cuelist::getEditorInternal(bool isRoot, Array<Inspectable*> inspectables)
 {
     return new CuelistEditor(this, isRoot);

@@ -11,6 +11,7 @@
 #pragma once
 
 #include "../../MainIncludes.h"
+#include "juce_organicui/controllable/parameter/BoolParameter.h"
 
 class Cuelist;
 
@@ -33,6 +34,7 @@ public:
 
     Cuelist* mainCuelist = nullptr;
 
+    BoolParameter* isPanicking;
     Trigger* paramGo; TriggerButtonUI* btnGo;
     Trigger* paramPanic; TriggerButtonUI* btnPanic;
 

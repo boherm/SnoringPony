@@ -38,6 +38,7 @@ public:
 
     void play() override;
     void stop() override;
+    void panic() override;
 
 private:
     void timerCallback() override;

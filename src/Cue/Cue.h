@@ -51,6 +51,7 @@ public:
 
     virtual void play() {}
     virtual void stop() {}
+    virtual void panic() {}
     void setGoNext();
 
 // private:

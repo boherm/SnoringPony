@@ -14,6 +14,33 @@
 
 class AudioOutput;
 
+class AudioPlayerMixer:
+    public MixerAudioSource
+{
+public:
+    bool isPanicking = false;
+    bool fadeStopPending = false;
+    double sampleRate = 44100.0;
+    AudioTransportSource* transportSource = nullptr;
+    LinearSmoothedValue<float> panicFadingGain { 1.0f };
+
+    void setSource(AudioTransportSource* transport)
+    {
+        transportSource = transport;
+    }
+
+    void setSampleRate(double rate)
+    {
+        sampleRate = rate;
+    }
+
+    void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
+    void getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill) override;
+
+    void panicFade();
+    void resetPanicFade();
+};
+
 class AudioPlayer
 {
 public:
@@ -26,6 +53,7 @@ public:
     double duration;
 
     AudioSourcePlayer* player;
+    AudioPlayerMixer* mixer;
     AudioTransportSource* transport;
     AudioFormatReaderSource* readerSource;
 
@@ -34,18 +62,8 @@ public:
 
     void play();
     void stop();
+    void panic();
     void stopAndClean();
-
-    // void setSource(AudioSource* newSource);
-    // AudioSource* getCurrentSource() const noexcept { return source; }
-
-    // void setGain(float newGain) noexcept;
-    // float getGain() const noexcept { return gain; }
-
-    // AudioSource overrides
-    // void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
-    // void releaseResources() override;
-    // void getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill) override;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPlayer)

@@ -50,6 +50,7 @@ public:
 
     void playAll();
     void stopAll();
+    void panicAll();
 
     bool haveOnePlaying();
 };

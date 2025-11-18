@@ -13,6 +13,7 @@
 #include "../../Brain.h"
 #include "../../Cue/Cue.h"
 #include "../../Cuelist/Cuelist.h"
+#include "juce_graphics/juce_graphics.h"
 
 //==============================================================================
 
@@ -41,6 +42,10 @@ ShowControl::ShowControl():
     btnPanic->customBGColor = Colours::darkred;
     btnPanic->useCustomBGColor = true;
     paramPanic->setEnabled(false);
+
+    isPanicking = addBoolParameter("Is Panicking", "Is the show currently panicking?", false);
+    isPanicking->hideInRemoteControl = true;
+    isPanicking->setEnabled(false);
 
     PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
     engine->showProperties.mainCuelist->addParameterListener(this);
@@ -131,6 +136,16 @@ void ShowControl::parameterValueChanged(Parameter *p)
             paramPanic->setEnabled(true);
         } else {
             paramPanic->setEnabled(false);
+            isPanicking->setValue(false);
+        }
+        repaint();
+    }
+
+    if (mainCuelist && p == isPanicking) {
+        if (isPanicking->boolValue()) {
+            btnPanic->customBGColor = Colours::darkorange;
+        } else {
+            btnPanic->customBGColor = Colours::darkred;
         }
         repaint();
     }

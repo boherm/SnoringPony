@@ -48,6 +48,15 @@ void AudioFilesManager::stopAll()
     }
 }
 
+void AudioFilesManager::panicAll()
+{
+    for (int i = 0; i < items.size(); ++i)
+    {
+        AudioFile* audioFile = items[i];
+        audioFile->player->panic();
+    }
+}
+
 bool AudioFilesManager::haveOnePlaying()
 {
     for (int i = 0; i < items.size(); ++i)

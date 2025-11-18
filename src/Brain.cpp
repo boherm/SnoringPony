@@ -12,6 +12,7 @@
 #include "PonyEngine.h"
 #include "Cue/Cue.h"
 #include "Cuelist/CuelistManager.h"
+#include "ui/panels/ShowControl.h"
 
 juce_ImplementSingleton(Brain);
 
@@ -29,6 +30,9 @@ void Brain::go()
 void Brain::panic()
 {
     Cuelist* cl = dynamic_cast<PonyEngine*>(Engine::mainEngine)->showProperties.mainCuelist->getTargetContainerAs<Cuelist>();
-    if (cl)
-        cl->stop();
+    if (cl) {
+        cl->panic();
+        if (ShowControl::getInstance()->btnPanic->isEnabled())
+            ShowControl::getInstance()->isPanicking->setValue(true);
+    }
 }

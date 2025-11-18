@@ -37,6 +37,7 @@ public:
 
     void go();
     void stop();
+    void panic();
 
     juce::String getTypeString() const override { return "Cuelist"; }
     static Cuelist *create(var params) { return new Cuelist(params); }
