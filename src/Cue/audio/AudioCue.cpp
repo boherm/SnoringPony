@@ -70,44 +70,44 @@ void AudioCue::stop()
 
 // void AudioCue::changeListenerCallback(ChangeBroadcaster* source)
 // {
-    // Logger::writeToLog("AudioCue::changeListenerCallback called");
-    // auto* transport = dynamic_cast<AudioTransportSource*>(source);
-    // if (transport == nullptr)
-    //     return;
+//     Logger::writeToLog("AudioCue::changeListenerCallback called");
+//     auto* transport = dynamic_cast<AudioTransportSource*>(source);
+//     if (transport == nullptr)
+//         return;
 
-    // if (transport->isPlaying())
-    //     return;
+//     if (transport->isPlaying())
+//         return;
 
-    // for (auto it = activePlaybacks.begin(); it != activePlaybacks.end(); ++it)
-    // {
-    //     if ((*it)->transport.get() != transport)
-    //         continue;
+//     for (auto it = activePlaybacks.begin(); it != activePlaybacks.end(); ++it)
+//     {
+//         if ((*it)->transport.get() != transport)
+//             continue;
 
-    //     std::unique_ptr<PlaybackInstance> finished = std::move(*it);
-    //     activePlaybacks.erase(it);
+//         std::unique_ptr<PlaybackInstance> finished = std::move(*it);
+//         activePlaybacks.erase(it);
 
-    //     if (finished->context != nullptr && finished->context->mixer != nullptr)
-    //         finished->context->mixer->removeInputSource(finished->transport.get());
+//         if (finished->context != nullptr && finished->context->mixer != nullptr)
+//             finished->context->mixer->removeInputSource(finished->transport.get());
 
-    //     transport->removeChangeListener(this);
-    //     transport->stop();
-    //     transport->setSource(nullptr);
+//         transport->removeChangeListener(this);
+//         transport->stop();
+//         transport->setSource(nullptr);
 
-    //     finished->readerSource.reset();
-    //     finished->transport.reset();
+//         finished->readerSource.reset();
+//         finished->transport.reset();
 
-    //     if (finished->context != nullptr)
-    //     {
-    //         auto* ctx = finished->context;
-    //         if (ctx->activeTransports > 0)
-    //             --ctx->activeTransports;
+//         if (finished->context != nullptr)
+//         {
+//             auto* ctx = finished->context;
+//             if (ctx->activeTransports > 0)
+//                 --ctx->activeTransports;
 
-    //         if (ctx->activeTransports == 0)
-    //             releaseOutputContext(ctx->output);
+//             if (ctx->activeTransports == 0)
+//                 releaseOutputContext(ctx->output);
 
-    //         finished->context = nullptr;
-    //     }
+//             finished->context = nullptr;
+//         }
 
-    //     return;
-    // }
+//         return;
+//     }
 // }
