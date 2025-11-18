@@ -91,14 +91,14 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         case StatusColumn:
 
             if (nextCue == cue) {
-                g.setColour(Colours::darkorange.darker(0.3f));
+                g.setColour(Colours::orange.brighter(0.2f));
                 myPath.addRectangle(0, 0, 5, height);
                 myPath.addTriangle(5, 0, 5, height, 10, height * 0.5f);
                 g.fillPath(myPath);
             }
 
             if (cue->isPlaying->boolValue()) {
-                g.setColour(Colours::darkgreen.darker(0.3f));
+                g.setColour(Colours::green.brighter(0.2f));
                 myPath.addRectangle(0, 0, 5, height);
                 myPath.addTriangle(5, 0, 5, height, 10, height * 0.5f);
                 g.fillPath(myPath);
