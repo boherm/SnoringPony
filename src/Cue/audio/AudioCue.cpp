@@ -10,6 +10,7 @@
 
 #include "AudioCue.h"
 #include "AudioFile.h"
+#include "../../Audio/AudioPlayer.h"
 
 AudioCue::AudioCue(var params)
 {
@@ -59,55 +60,27 @@ void AudioCue::play()
         return;
     filesManager->playAll();
     isPlaying->setValue(true);
+    startTimerHz(10);
 }
 
 void AudioCue::stop()
 {
     filesManager->stopAll();
     isPlaying->setValue(false);
+    stopTimer();
+    currentTime->setValue(0.0);
 }
 
-
-// void AudioCue::changeListenerCallback(ChangeBroadcaster* source)
-// {
-//     Logger::writeToLog("AudioCue::changeListenerCallback called");
-//     auto* transport = dynamic_cast<AudioTransportSource*>(source);
-//     if (transport == nullptr)
-//         return;
-
-//     if (transport->isPlaying())
-//         return;
-
-//     for (auto it = activePlaybacks.begin(); it != activePlaybacks.end(); ++it)
-//     {
-//         if ((*it)->transport.get() != transport)
-//             continue;
-
-//         std::unique_ptr<PlaybackInstance> finished = std::move(*it);
-//         activePlaybacks.erase(it);
-
-//         if (finished->context != nullptr && finished->context->mixer != nullptr)
-//             finished->context->mixer->removeInputSource(finished->transport.get());
-
-//         transport->removeChangeListener(this);
-//         transport->stop();
-//         transport->setSource(nullptr);
-
-//         finished->readerSource.reset();
-//         finished->transport.reset();
-
-//         if (finished->context != nullptr)
-//         {
-//             auto* ctx = finished->context;
-//             if (ctx->activeTransports > 0)
-//                 --ctx->activeTransports;
-
-//             if (ctx->activeTransports == 0)
-//                 releaseOutputContext(ctx->output);
-
-//             finished->context = nullptr;
-//         }
-
-//         return;
-//     }
-// }
+void AudioCue::timerCallback()
+{
+    double maxCurrentTime = 0.0;
+    for (auto& audioFile : filesManager->items)
+    {
+        if (audioFile->player->transport != nullptr)
+        {
+            double currentTime = audioFile->player->transport->getCurrentPosition();
+            maxCurrentTime = jmax(maxCurrentTime, currentTime);
+        }
+    }
+    currentTime->setValue(maxCurrentTime);
+}

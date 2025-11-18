@@ -37,6 +37,12 @@ Cue::Cue(var params) :
     id = addFloatParameter("ID", "ID of this cue", params.getProperty("id", 1.0));
     id->lockManualControlMode = true;
 
+    currentTime = addFloatParameter("Current time", "Current time of the cue", 0.0);
+    currentTime->lockManualControlMode = true;
+    currentTime->hideInRemoteControl = true;
+    currentTime->defaultUI = FloatParameter::TIME;
+    currentTime->setEnabled(false);
+
     duration = addFloatParameter("Duration", "Duration of the cue", params.getProperty("duration", 0.0));
     duration->lockManualControlMode = true;
     duration->defaultUI = FloatParameter::TIME;
@@ -47,20 +53,10 @@ Cue::Cue(var params) :
 	notes = addStringParameter("Notes", "Notes of the cue", params.getProperty("notes", ""));
     notes->lockManualControlMode = true;
     notes->multiline = true;
-
-    // formatManager.registerBasicFormats();
-    // deviceManager.initialise(2, 2, nullptr, true);
-    // deviceManager.addAudioCallback(&sourcePlayer);
-
-    // sourcePlayer.setSource(&transportSource);
 }
 
 Cue::~Cue()
 {
-    // transportSource.stop();
-    // transportSource.setSource(nullptr);
-    // deviceManager.removeAudioCallback(&sourcePlayer);
-    // sourcePlayer.setSource(nullptr);
 }
 
 InspectableEditor* Cue::getEditorInternal(bool isRoot, Array<Inspectable*> inspectables)

@@ -18,7 +18,8 @@ class AudioOutput;
 
 class AudioCue :
     public Cue,
-    public ContainerAsyncListener
+    public ContainerAsyncListener,
+    public Timer
 {
 public:
     AudioCue(var params = var());
@@ -35,4 +36,7 @@ public:
 
     void play() override;
     void stop() override;
+
+private:
+    void timerCallback() override;
 };

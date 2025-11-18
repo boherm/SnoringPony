@@ -81,6 +81,8 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
     Cue* cue = cl->cues->items[rowNumber];
     Cue* nextCue = cl->nextCue->getTargetContainerAs<Cue>();
 
+    double positionPercent;
+    double timeLeft;
     String text;
     Image img;
     Path myPath;
@@ -118,13 +120,19 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
             break;
 
         case TimeColumn:
+            if (cue->duration->doubleValue() <= 0.0)
+                return;
+
+            timeLeft = cue->duration->doubleValue() - cue->currentTime->doubleValue();
+            positionPercent = cue->currentTime->doubleValue() / cue->duration->doubleValue();
+
             myPath.addRectangle(4, 3, (width - 8), height - 6);
-            g.setColour(Colours::green.brighter(0.2f));
+            g.setColour(timeLeft > 10 ? Colours::green.brighter(0.2f) : Colours::red.brighter(0.2f));
             g.strokePath(myPath, PathStrokeType(1));
-            g.setColour(Colours::green.brighter(0.2f).withAlpha(0.6f));
-            g.fillRect(4.0f, 3.0f, (width - 8.0f) * Random::getSystemRandom().nextFloat(), height - 6.0f);
+            g.setColour(timeLeft > 10 ? Colours::green.brighter(0.2f).withAlpha(0.6f) : Colours::red.brighter(0.2f).withAlpha(0.6f));
+            g.fillRect(4.0f, 3.0f, (width - 8.0f) * positionPercent, height - 6.0f);
             g.setColour(Colours::white.withAlpha(0.8f));
-            text = StringUtil::valueToTimeString(cue->duration->doubleValue());
+            text = StringUtil::valueToTimeString(jmax<double>(timeLeft, 0.0));
             g.drawText(text, 4, 3, width - 8, height - 6, Justification::centred, true);
             return;
             break;

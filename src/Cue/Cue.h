@@ -31,6 +31,7 @@ public:
     BoolParameter* isPlaying;
 
     FloatParameter* id;
+    FloatParameter* currentTime;
     FloatParameter* duration;
     StringParameter* description;
     StringParameter* notes;
