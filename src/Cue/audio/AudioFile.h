@@ -28,6 +28,7 @@ public:
     FileParameter* audioFile;
     FloatParameter* duration;
     TargetParameter* targetAudioInterface;
+    FloatParameter* volume;
 
     String getTypeString() const override { return "AudioFile"; }
     static AudioFile* create(var params) { return new AudioFile(params); }

@@ -93,6 +93,8 @@ AudioFile::AudioFile(var params, AudioCue* audioCue) :
     targetAudioInterface = addTargetParameter("Audio Output", "Audio output to play this cue through", InterfaceManager::getInstance());
     targetAudioInterface->targetType = TargetParameter::CONTAINER;
     targetAudioInterface->customGetTargetContainerFunc = &InterfaceManager::showMenuForTargetAudioOutput;
+
+    volume = addFloatParameter("Volume", "Volume for this audio file", params.getProperty("volume", 1.0), 0.0, 1.5, 0.01);
 }
 
 AudioFile::~AudioFile()
@@ -135,4 +137,7 @@ void AudioFile::parameterValueChanged(Parameter* p)
 
         player->setOutput(audioOutput);
     }
+
+    if (p == volume)
+        player->transport->setGain(volume->floatValue());
 }
