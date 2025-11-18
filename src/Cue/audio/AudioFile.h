@@ -50,4 +50,6 @@ public:
 
     void playAll();
     void stopAll();
+
+    bool haveOnePlaying();
 };

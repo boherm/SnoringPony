@@ -59,16 +59,11 @@ void AudioCue::play()
     if (isPlaying->boolValue())
         return;
     filesManager->playAll();
-    isPlaying->setValue(true);
-    startTimerHz(10);
 }
 
 void AudioCue::stop()
 {
     filesManager->stopAll();
-    isPlaying->setValue(false);
-    stopTimer();
-    currentTime->setValue(0.0);
 }
 
 void AudioCue::timerCallback()
@@ -83,4 +78,22 @@ void AudioCue::timerCallback()
         }
     }
     currentTime->setValue(maxCurrentTime);
+}
+
+void AudioCue::changeListenerCallback(ChangeBroadcaster* source)
+{
+    if (dynamic_cast<AudioTransportSource*>(source) != nullptr)
+    {
+        AudioTransportSource* transport = dynamic_cast<AudioTransportSource*>(source);
+        if (transport->isPlaying()) {
+            isPlaying->setValue(true);
+            startTimerHz(10);
+        }
+
+        if (!transport->isPlaying() && !filesManager->haveOnePlaying()) {
+            isPlaying->setValue(false);
+            stopTimer();
+            currentTime->setValue(0.0);
+        }
+    }
 }

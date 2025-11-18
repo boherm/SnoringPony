@@ -19,7 +19,8 @@ class AudioOutput;
 class AudioCue :
     public Cue,
     public ContainerAsyncListener,
-    public Timer
+    public Timer,
+    public ChangeListener
 {
 public:
     AudioCue(var params = var());
@@ -33,6 +34,7 @@ public:
     static AudioCue* create(var params) { return new AudioCue(params); }
 
     void newMessage(const ContainerAsyncEvent& e) override;
+    void changeListenerCallback(ChangeBroadcaster* source) override;
 
     void play() override;
     void stop() override;

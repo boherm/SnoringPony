@@ -48,6 +48,17 @@ void AudioFilesManager::stopAll()
     }
 }
 
+bool AudioFilesManager::haveOnePlaying()
+{
+    for (int i = 0; i < items.size(); ++i)
+    {
+        AudioFile* audioFile = items[i];
+        if (audioFile->player->transport->isPlaying())
+            return true;
+    }
+    return false;
+}
+
 //==============================================================================
 
 AudioFile::AudioFile(var params, AudioCue* audioCue) :
@@ -55,6 +66,7 @@ AudioFile::AudioFile(var params, AudioCue* audioCue) :
     audioCue(audioCue)
 {
     player = std::make_unique<AudioPlayer>();
+    player->transport->addChangeListener(audioCue);
 
     // TODO: add preview button to play/stop preview on a selected preview output? (set in projectsettings?)
     userCanRemove = true;
@@ -77,6 +89,7 @@ AudioFile::AudioFile(var params, AudioCue* audioCue) :
 AudioFile::~AudioFile()
 {
     player->stopAndClean();
+    player->transport->removeChangeListener(audioCue);
 }
 
 void AudioFile::parameterValueChanged(Parameter* p)
