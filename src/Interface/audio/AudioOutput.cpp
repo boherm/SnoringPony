@@ -105,11 +105,13 @@ void AudioOutput::onContainerParameterChangedInternal(Parameter* p)
             chan1->hideInEditor = false;
             chan2->hideInEditor = true;
             chan2->setValueWithData(0);
+            setupAudioOutputs();
             clearWarning();
         } else if (type == "s") {
             chan1->hideInEditor = false;
             chan2->hideInEditor = false;
             chan2->setValueWithData(savedChan2);
+            setupAudioOutputs();
             clearWarning();
         } else {
             chan1->hideInEditor = true;
