@@ -38,6 +38,7 @@ Cue::Cue(var params) :
     id->lockManualControlMode = true;
 
     currentTime = addFloatParameter("Current time", "Current time of the cue", 0.0);
+    currentTime->isSavable = false;
     currentTime->lockManualControlMode = true;
     currentTime->hideInRemoteControl = true;
     currentTime->defaultUI = FloatParameter::TIME;
