@@ -1,80 +1,72 @@
 {
   "mainLayout": {
     "type": 1,
-    "width": 1353,
-    "height": 780,
+    "width": 1920,
+    "height": 1176,
     "direction": 2,
     "shifters": [
       {
         "type": 1,
-        "width": 1353,
-        "height": 780,
-        "direction": 2,
+        "width": 1920,
+        "height": 1176,
+        "direction": 1,
         "shifters": [
           {
             "type": 1,
-            "width": 1353,
-            "height": 466,
-            "direction": 1,
+            "width": 382,
+            "height": 1176,
+            "direction": 2,
             "shifters": [
               {
-                "type": 1,
-                "width": 307,
-                "height": 466,
-                "direction": 2,
-                "shifters": [
+                "type": 0,
+                "width": 382,
+                "height": 119,
+                "currentContent": "Clock",
+                "tabs": [
                   {
-                    "type": 0,
-                    "width": 307,
-                    "height": 240,
-                    "currentContent": "Modules",
-                    "tabs": [
-                      {
-                        "name": "Modules"
-                      }
-                    ]
-                  },
-                  {
-                    "type": 0,
-                    "width": 307,
-                    "height": 220,
-                    "currentContent": "Custom Variables",
-                    "tabs": [
-                      {
-                        "name": "Custom Variables"
-                      }
-                    ]
+                    "name": "Clock"
                   }
                 ]
               },
               {
                 "type": 0,
-                "width": 606,
-                "height": 466,
-                "currentContent": "State Machine",
+                "width": 382,
+                "height": 113,
+                "currentContent": "Show Control",
                 "tabs": [
                   {
-                    "name": "State Machine"
-                  },
-                  {
-                    "name": "Dashboard"
-                  },
-                  {
-                    "name": "Module Router"
-                  },
-                  {
-                    "name": "Morpher"
+                    "name": "Show Control"
                   }
                 ]
               },
               {
                 "type": 0,
-                "width": 428,
-                "height": 466,
-                "currentContent": "Inspector",
+                "width": 382,
+                "height": 458,
+                "currentContent": "Show Infos",
                 "tabs": [
                   {
-                    "name": "Inspector"
+                    "name": "Cuelists"
+                  },
+                  {
+                    "name": "Interfaces"
+                  },
+                  {
+                    "name": "Show Infos"
+                  }
+                ]
+              },
+              {
+                "type": 0,
+                "width": 382,
+                "height": 468,
+                "currentContent": "Logger",
+                "tabs": [
+                  {
+                    "name": "Logger"
+                  },
+                  {
+                    "name": "Warnings"
                   }
                 ]
               }
@@ -82,46 +74,41 @@
           },
           {
             "type": 1,
-            "width": 1353,
-            "height": 308,
-            "direction": 1,
+            "width": 1532,
+            "height": 1176,
+            "direction": 2,
             "shifters": [
               {
                 "type": 0,
-                "width": 178,
-                "height": 308,
-                "currentContent": "Sequences",
+                "width": 1532,
+                "height": 702,
+                "currentContent": "Deck A",
                 "tabs": [
                   {
-                    "name": "Sequences"
+                    "name": "Dashboard"
+                  },
+                  {
+                    "name": "Deck A"
+                  },
+                  {
+                    "name": "Deck B"
+                  },
+                  {
+                    "name": "Deck C"
+                  },
+                  {
+                    "name": "Deck D"
                   }
                 ]
               },
               {
                 "type": 0,
-                "width": 689,
-                "height": 308,
-                "currentContent": "Sequence Editor",
+                "width": 1532,
+                "height": 467,
+                "currentContent": "Inspector",
                 "tabs": [
                   {
-                    "name": "Sequence Editor"
-                  }
-                ]
-              },
-              {
-                "type": 0,
-                "width": 474,
-                "height": 308,
-                "currentContent": "Logger",
-                "tabs": [
-                  {
-                    "name": "Help"
-                  },
-                  {
-                    "name": "Logger"
-                  },
-                  {
-                    "name": "Warnings"
+                    "name": "Inspector"
                   }
                 ]
               }
