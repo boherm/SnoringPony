@@ -42,6 +42,13 @@ Cuelist::Cuelist(var params) :
     isPlaying = addBoolParameter("Is Playing", "Indicates if a cue in this cuelist is currently playing", false, false);
     isPlaying->isSavable = false;
 
+    currentCue = addTargetParameter("Current cue", "Target the current cue", cues);
+    currentCue->targetType = TargetParameter::CONTAINER;
+    currentCue->maxDefaultSearchLevel = 0;
+    currentCue->isSavable = false;
+    currentCue->alwaysNotify = true;
+    currentCue->setEnabled(false);
+
     nextCue = addTargetParameter("Next cue", "Target the next cue to play", cues);
     nextCue->targetType = TargetParameter::CONTAINER;
     nextCue->maxDefaultSearchLevel = 0;
@@ -60,6 +67,7 @@ void Cuelist::go()
     Cue* nCue = nextCue->getTargetContainerAs<Cue>();
 
     if (nCue) {
+        currentCue->setValueFromTarget(nCue);
         nCue->play();
 
         int idx = cues->items.indexOf(nCue);
@@ -130,9 +138,11 @@ void Cuelist::newMessage(const ContainerAsyncEvent& e)
             e.source == cues && e.type == ContainerAsyncEvent::EventType::ControllableFeedbackUpdate && e.targetControllable->niceName == "Is Playing"
         )
     {
-        if (cues->hasCuePlaying())
+        if (cues->hasCuePlaying()) {
             isPlaying->setValue(true);
-        else
+        } else {
             isPlaying->setValue(false);
+            currentCue->resetValue();
+        }
     }
 }

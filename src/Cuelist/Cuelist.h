@@ -30,6 +30,7 @@ public:
 
     BoolParameter* isPlaying; // Todo: implement this!
 
+    TargetParameter* currentCue;
     TargetParameter* nextCue;
 
     Trigger* goBtn;
