@@ -37,7 +37,7 @@ void SnoringPonyApplication::initialiseInternal(const String &)
 	ShapeShifterManager::getInstance()->setDefaultFileData(BinaryData::default_ponylayout);
 	ShapeShifterManager::getInstance()->setLayoutInformations("ponylayout", "SnoringPony/layouts");
 	// App Updater (url update.json - base donwload)
-	AppUpdater::getInstance()->setURLs("https://webhook.site/7fb6eddc-aebf-4783-bdc3-e9e3e0b80da2", "https://webhook.site/7fb6eddc-aebf-4783-bdc3-e9e3e0b80da2", "SnoringPony");
+	AppUpdater::getInstance()->setURLs("https://snoringpony.app/api/check-update", "https://download.snoringpony.app/", "SnoringPony");
 	// Help URL (http://benjamin.kuperberg.fr/chataigne/help/help_en.json)
 	HelpBox::getInstance()->helpURL = URL("http://benjamin.kuperberg.fr/chataigne/help/");
 	// Crashdumper
@@ -50,7 +50,7 @@ void SnoringPonyApplication::afterInit()
 	// Download dashboard server
 	// DashboardManager::getInstance()->setupDownloadURL("https://webhook.site/7fb6eddc-aebf-4783-bdc3-e9e3e0b80da2");
 	DashboardManager::getInstance()->setupDownloadURL("http://benjamin.kuperberg.fr/download/dashboard/dashboard.php?folder=dashboard");
-	
+
 	if (mainWindow != nullptr)
 	{
 		mainWindow->setMenuBarComponent(new MainMenuBarComponent((MainContentComponent*)mainComponent.get(), (PonyEngine*)engine.get()));
