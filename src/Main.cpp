@@ -39,7 +39,7 @@ void SnoringPonyApplication::initialiseInternal(const String &)
 	// App Updater (url update.json - base donwload)
 	AppUpdater::getInstance()->setURLs("https://snoringpony.app/api/check-update", "https://download.snoringpony.app/", "SnoringPony");
 	// Help URL (http://benjamin.kuperberg.fr/chataigne/help/help_en.json)
-	HelpBox::getInstance()->helpURL = URL("http://benjamin.kuperberg.fr/chataigne/help/");
+	HelpBox::getInstance()->helpURL = URL("https://snoringpony.app/api/");
 	// Crashdumper
 	CrashDumpUploader::getInstance()->init("https://webhook.site/7fb6eddc-aebf-4783-bdc3-e9e3e0b80da2", ImageCache::getFromMemory(BinaryData::crash_png, BinaryData::crash_pngSize));
 }
