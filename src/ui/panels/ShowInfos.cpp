@@ -29,17 +29,28 @@ ShowInfos::ShowInfos():
 {
     PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
     engine->showProperties.mainCuelist->addParameterListener(this);
-
-    mainCuelist = engine->showProperties.mainCuelist->getTargetContainerAs<Cuelist>();
-
-    if (mainCuelist != nullptr)
-        mainCuelist->nextCue->addParameterListener(this);
 }
 
 ShowInfos::~ShowInfos()
 {
-    if (mainCuelist != nullptr)
+    if (currentCue != nullptr) {
+        currentCue->id->removeParameterListener(this);
+        currentCue->description->removeParameterListener(this);
+        currentCue = nullptr;
+    }
+
+    if (nextCue != nullptr) {
+        nextCue->id->removeParameterListener(this);
+        nextCue->description->removeParameterListener(this);
+        nextCue->notes->removeParameterListener(this);
+        nextCue = nullptr;
+    }
+
+    if (mainCuelist != nullptr) {
+        mainCuelist->currentCue->removeParameterListener(this);
         mainCuelist->nextCue->removeParameterListener(this);
+        mainCuelist = nullptr;
+    }
 
     PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
     engine->showProperties.mainCuelist->removeParameterListener(this);
@@ -47,22 +58,35 @@ ShowInfos::~ShowInfos()
 
 void ShowInfos::paint(juce::Graphics &g)
 {
+    auto area = getLocalBounds().reduced(5, 10);
+
     g.fillAll(BG_COLOR);
 
+    // Current cue line
     g.setFont(20.0f);
     g.setColour(Colours::white);
-    g.drawText(">", getLocalBounds().reduced(5), Justification::topLeft);
-
-    // g.drawText("1.000: Lorem ipsum dolor sit amet, consectetur adipiscing elit, praesent tincidunt agueu mi", getLocalBounds().reduced(25, 8), Justification::topLeft);
-
-    g.setColour(Colours::white.darker(0.6f));
-    g.drawText("|", getLocalBounds().reduced(5).withY(32).withX(7), Justification::topLeft);
-
-    if (mainCuelist && mainCuelist->nextCue->getTargetContainerAs<Cue>()) {
-        Cue* c = mainCuelist->nextCue->getTargetContainerAs<Cue>();
-        g.drawText(c->id->stringValue() + ": " + c->description->stringValue(), getLocalBounds().reduced(25, 8).withY(32), Justification::topLeft);
+    g.drawText(">", area, Justification::topLeft);
+    if (currentCue != nullptr) {
+        g.drawText(currentCue->id->stringValue() + ": " + currentCue->description->stringValue(), area.withX(25), Justification::topLeft);
     } else {
-        g.drawText("(no cue next)", getLocalBounds().reduced(25, 8).withY(32), Justification::topLeft);
+        g.setColour(Colours::white.darker(0.6f));
+        g.drawText("(no cue now)", area.withX(25), Justification::topLeft);
+    }
+
+    // Next cue with notes
+    area.removeFromTop(26);
+    g.setColour(Colours::white.darker(0.6f));
+    g.drawText("|", area.withX(5), Justification::topLeft);
+    if (nextCue != nullptr) {
+        g.drawText(nextCue->id->stringValue() + ": " + nextCue->description->stringValue(), area.withX(25), Justification::topLeft);
+    } else {
+        g.drawText("(no cue next)", area.withX(25), Justification::topLeft);
+    }
+
+    if (nextCue != nullptr) {
+        area.removeFromTop(40);
+        g.setFont(16.0f);
+        g.drawMultiLineText(nextCue->notes->stringValue(), area.withX(25).getX(), area.getY(), area.getWidth() - 30, Justification::topLeft, 1.2f);
     }
 }
 
@@ -76,18 +100,62 @@ void ShowInfos::parameterValueChanged(Parameter* p)
 
     if (p == engine->showProperties.mainCuelist)
     {
-        if (mainCuelist != nullptr)
+        if (nextCue != nullptr) {
+            nextCue->id->removeParameterListener(this);
+            nextCue->description->removeParameterListener(this);
+            nextCue->notes->removeParameterListener(this);
+            nextCue = nullptr;
+        }
+
+        if (mainCuelist != nullptr) {
+            mainCuelist->currentCue->removeParameterListener(this);
             mainCuelist->nextCue->removeParameterListener(this);
+        }
 
         mainCuelist = engine->showProperties.mainCuelist->getTargetContainerAs<Cuelist>();
 
-        if (mainCuelist != nullptr)
+        if (mainCuelist != nullptr) {
+            mainCuelist->currentCue->addParameterListener(this);
             mainCuelist->nextCue->addParameterListener(this);
-
-        repaint();
+            Cue* nc = mainCuelist->nextCue->getTargetContainerAs<Cue>();
+            nextCue = nc;
+            if (nc != nullptr) {
+                nc->id->addParameterListener(this);
+                nc->description->addParameterListener(this);
+                nc->notes->addParameterListener(this);
+            }
+        }
     }
 
-    if (mainCuelist && p == mainCuelist->nextCue) {
-        repaint();
+    if (mainCuelist && p == mainCuelist->currentCue)
+    {
+        if (currentCue != nullptr) {
+            currentCue->id->removeParameterListener(this);
+            currentCue->description->removeParameterListener(this);
+        }
+        Cue* cc = mainCuelist->currentCue->getTargetContainerAs<Cue>();
+        currentCue = cc;
+        if (cc != nullptr) {
+            cc->id->addParameterListener(this);
+            cc->description->addParameterListener(this);
+        }
     }
+
+    if (mainCuelist && p == mainCuelist->nextCue)
+    {
+        if (nextCue != nullptr) {
+            nextCue->id->removeParameterListener(this);
+            nextCue->description->removeParameterListener(this);
+            nextCue->notes->removeParameterListener(this);
+        }
+        Cue* nc = mainCuelist->nextCue->getTargetContainerAs<Cue>();
+        nextCue = nc;
+        if (nc != nullptr) {
+            nc->id->addParameterListener(this);
+            nc->description->addParameterListener(this);
+            nc->notes->addParameterListener(this);
+        }
+    }
+
+    repaint();
 }

@@ -13,6 +13,7 @@
 #include "../../MainIncludes.h"
 
 class Cuelist;
+class Cue;
 
 class ShowInfosUI : public ShapeShifterContent {
 public:
@@ -32,6 +33,8 @@ public:
     ~ShowInfos() override;
 
     Cuelist* mainCuelist = nullptr;
+    Cue* currentCue = nullptr;
+    Cue* nextCue = nullptr;
 
     void paint (Graphics&) override;
     void resized() override;
