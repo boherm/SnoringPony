@@ -13,6 +13,7 @@
 #include "MainIncludes.h"
 #include "ProjectSettings/ShowProperties.h"
 #include "ProjectSettings/ColorPresets.h"
+#include "ProjectSettings/VolumePresets.h"
 #include "ProjectSettings/DecksSettings.h"
 
 class PonyEngine : public Engine
@@ -23,6 +24,7 @@ public:
 
     ShowProperties showProperties;
     ColorPresets colorPresets;
+    VolumePresets volumePresets;
     DecksSettings decksSettings;
 
 	void clearInternal() override;

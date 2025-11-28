@@ -34,6 +34,7 @@ public:
     static AudioFile* create(var params) { return new AudioFile(params); }
 
     void parameterValueChanged(Parameter* p) override;
+    void parameterControlModeChanged(Parameter* p) override;
 };
 
 //==============================================================================

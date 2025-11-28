@@ -29,6 +29,7 @@ PonyEngine::PonyEngine() :
 	Engine("SnoringPony", ".indy"),
     showProperties(),
     colorPresets(),
+    volumePresets(),
     decksSettings()
 	//ossiaDevice(nullptr)
 {
@@ -48,7 +49,8 @@ PonyEngine::PonyEngine() :
 
     // Set projects settings
     ProjectSettings::getInstance()->addChildControllableContainer(&showProperties);
-    ProjectSettings::getInstance()->addChildControllableContainer(&colorPresets);;
+    ProjectSettings::getInstance()->addChildControllableContainer(&colorPresets);
+    ProjectSettings::getInstance()->addChildControllableContainer(&volumePresets);
     ProjectSettings::getInstance()->addChildControllableContainer(&decksSettings);
     ProjectSettings::getInstance()->customValuesCC.hideInEditor = true;
     ProjectSettings::getInstance()->dashboardCC.editorIsCollapsed = true;
@@ -78,17 +80,12 @@ PonyEngine::~PonyEngine()
 void PonyEngine::clearInternal()
 {
 	//clear
-	//StateManager::getInstance()->clear();
-	//ChataigneSequenceManager::getInstance()->clear();
-
-	//ModuleRouterManager::getInstance()->clear();
-	//ModuleManager::getInstance()->clear();
-	//CVGroupManager::getInstance()->clear();
     InterfaceManager::getInstance()->clear();
 	CuelistManager::getInstance()->clear();
 
     showProperties.clear();
     colorPresets.clear();
+    volumePresets.clear();
     decksSettings.clear();
 }
 

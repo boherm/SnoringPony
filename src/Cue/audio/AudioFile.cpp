@@ -141,3 +141,11 @@ void AudioFile::parameterValueChanged(Parameter* p)
     if (p == volume)
         player->transport->setGain(volume->floatValue());
 }
+
+void AudioFile::parameterControlModeChanged(Parameter* p)
+{
+    if (p == volume && volume->controlMode == Parameter::ControlMode::REFERENCE)
+    {
+        volume->referenceTarget->setRootContainer(ProjectSettings::getInstance()->getControllableContainerByName("volumePresets"));
+    }
+}
