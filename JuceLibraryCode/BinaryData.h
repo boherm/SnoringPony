@@ -17,6 +17,9 @@ namespace BinaryData
     extern const char*   default_ponylayout;
     const int            default_ponylayoutSize = 3038;
 
+    extern const char*   playlist_cue_png;
+    const int            playlist_cue_pngSize = 3123;
+
     extern const char*   icon_png;
     const int            icon_pngSize = 40809;
 
@@ -51,7 +54,7 @@ namespace BinaryData
     const int            note_cue_pngSize = 1988;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 14;
+    const int namedResourceListSize = 15;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];

@@ -46,6 +46,8 @@ Image SPAssetManager::getCueIcon(String type)
         return ImageCache::getFromMemory(BinaryData::note_cue_png, BinaryData::note_cue_pngSize);
     } else if (type == "Action") {
         return ImageCache::getFromMemory(BinaryData::action_cue_png, BinaryData::action_cue_pngSize);
+    } else if (type == "Playlist") {
+        return ImageCache::getFromMemory(BinaryData::playlist_cue_png, BinaryData::playlist_cue_pngSize);
     } else {
         return ImageCache::getFromMemory(BinaryData::noicon_png, BinaryData::noicon_pngSize);
     }

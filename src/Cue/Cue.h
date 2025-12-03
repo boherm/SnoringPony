@@ -53,12 +53,4 @@ public:
     virtual void stop() {}
     virtual void panic() {}
     void setGoNext();
-
-// private:
-//     AudioFormatManager formatManager;
-//     std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
-//     AudioTransportSource transportSource;
-//     AudioSourcePlayer sourcePlayer;
-//     AudioDeviceManager deviceManager;
-
 };

@@ -11258,6 +11258,9 @@
     <None Include="..\..\resources\default.ponylayout">
       <Filter>SnoringPony\resources</Filter>
     </None>
+    <None Include="..\..\resources\playlist_cue.png">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
     <None Include="..\..\resources\icon.png">
       <Filter>SnoringPony\resources</Filter>
     </None>

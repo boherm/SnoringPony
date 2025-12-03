@@ -11,6 +11,8 @@
       <FILE id="WhxZqQ" name="crash.png" compile="0" resource="1" file="resources/crash.png"/>
       <FILE id="PpOxIR" name="default.ponylayout" compile="0" resource="1"
             file="resources/default.ponylayout"/>
+      <FILE id="uDpLpc" name="playlist_cue.png" compile="0" resource="1"
+            file="resources/playlist_cue.png"/>
       <FILE id="LR50Nt" name="icon.png" compile="0" resource="1" file="resources/icon.png"/>
       <FILE id="BgHvX4" name="tray_icon.png" compile="0" resource="1" file="resources/tray_icon.png"/>
       <FILE id="yGHZ62" name="action_cue.png" compile="0" resource="1" file="resources/action_cue.png"/>

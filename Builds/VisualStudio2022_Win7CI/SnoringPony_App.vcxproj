@@ -5564,6 +5564,7 @@
     <None Include="..\..\resources\about.png"/>
     <None Include="..\..\resources\crash.png"/>
     <None Include="..\..\resources\default.ponylayout"/>
+    <None Include="..\..\resources\playlist_cue.png"/>
     <None Include="..\..\resources\icon.png"/>
     <None Include="..\..\resources\tray_icon.png"/>
     <None Include="..\..\resources\action_cue.png"/>
