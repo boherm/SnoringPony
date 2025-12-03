@@ -10,7 +10,8 @@
 
 #include "CueManager.h"
 #include "audio/AudioCue.h"
-#include "test/TestCue.h"
+#include "playlist/PlaylistCue.h"
+#include "fade/FadeCue.h"
 #include "../ui/SPAssetManager.h"
 #include "../Cue/Cue.h"
 #include "../Cuelist/Cuelist.h"
@@ -22,8 +23,9 @@ CueManager::CueManager() :
     // hideInEditor = true;
 
     managerFactory = &factory;
-    factory.defs.add(Factory<Cue>::Definition::createDef("", "Audio", &AudioCue::create)->addIcon(SPAssetManager::getInstance()->getInterfaceIcon("Audio")));
-    factory.defs.add(Factory<Cue>::Definition::createDef("", "Test", &TestCue::create)->addIcon(SPAssetManager::getInstance()->getInterfaceIcon("test")));
+    factory.defs.add(Factory<Cue>::Definition::createDef("", "Audio", &AudioCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Audio")));
+    factory.defs.add(Factory<Cue>::Definition::createDef("", "Playlist", &PlaylistCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Playlist")));
+    factory.defs.add(Factory<Cue>::Definition::createDef("", "Fade", &FadeCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Fade")));
 }
 
 CueManager::~CueManager()

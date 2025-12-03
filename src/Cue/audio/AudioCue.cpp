@@ -59,6 +59,7 @@ void AudioCue::play()
     if (isPlaying->boolValue())
         return;
     filesManager->playAll();
+    resetRelativeGlobalGainForFade();
 }
 
 void AudioCue::stop()
@@ -101,4 +102,39 @@ void AudioCue::changeListenerCallback(ChangeBroadcaster* source)
             currentTime->setValue(0.0);
         }
     }
+}
+
+void AudioCue::setRelativeGlobalGainForFade(float gain, float percent)
+{
+    // Clamp t
+    float t = percent;
+    if (t < 0.0f) t = 0.0f;
+    if (t > 1.0f) t = 1.0f;
+
+    // Curve on t (gamma < 1 = slow at the end, gamma > 1 = slow at the beginning)
+    float tCurve = std::pow(t, 2.7f);
+
+    // Make the gain transition in all audio files
+    for (auto& audioFile : filesManager->items)
+    {
+        // Set start and end gain, clamp to avoid log(0)
+        float startGain = audioFile->volume->floatValue() * savedRelativeGain;
+        float endGain   = gain;
+        if (startGain <= 0.0f) startGain = 0.000001f;
+        if (endGain   <= 0.0f) endGain   = 0.000001f;
+
+        // Interpolate new gain
+        float newGain = std::pow(
+                10.0f,
+                ( (1.0f - tCurve) * 20.0f * std::log10(startGain)
+                  +        tCurve  * 20.0f * std::log10(endGain) ) / 20.0f
+                );
+        audioFile->player->transport->setGain(newGain);
+    }
+}
+
+void AudioCue::resetRelativeGlobalGainForFade()
+{
+    savedRelativeGain = 1.0f;
+    setRelativeGlobalGainForFade(1.0f, 1.0f);
 }

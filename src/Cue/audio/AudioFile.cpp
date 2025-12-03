@@ -139,7 +139,7 @@ void AudioFile::parameterValueChanged(Parameter* p)
     }
 
     if (p == volume)
-        player->transport->setGain(volume->floatValue());
+        player->transport->setGain(volume->floatValue() * audioCue->savedRelativeGain);
 }
 
 void AudioFile::parameterControlModeChanged(Parameter* p)

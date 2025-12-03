@@ -44,8 +44,8 @@ Image SPAssetManager::getCueIcon(String type)
         return ImageCache::getFromMemory(BinaryData::group_cue_png, BinaryData::group_cue_pngSize);
     } else if (type == "Note") {
         return ImageCache::getFromMemory(BinaryData::note_cue_png, BinaryData::note_cue_pngSize);
-    } else if (type == "Action") {
-        return ImageCache::getFromMemory(BinaryData::action_cue_png, BinaryData::action_cue_pngSize);
+    } else if (type == "Fade") {
+        return ImageCache::getFromMemory(BinaryData::fade_cue_png, BinaryData::fade_cue_pngSize);
     } else if (type == "Playlist") {
         return ImageCache::getFromMemory(BinaryData::playlist_cue_png, BinaryData::playlist_cue_pngSize);
     } else {

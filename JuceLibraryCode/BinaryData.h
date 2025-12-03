@@ -14,6 +14,9 @@ namespace BinaryData
     extern const char*   crash_png;
     const int            crash_pngSize = 110194;
 
+    extern const char*   fade_cue_png;
+    const int            fade_cue_pngSize = 3977;
+
     extern const char*   default_ponylayout;
     const int            default_ponylayoutSize = 3038;
 
@@ -25,9 +28,6 @@ namespace BinaryData
 
     extern const char*   tray_icon_png;
     const int            tray_icon_pngSize = 2548;
-
-    extern const char*   action_cue_png;
-    const int            action_cue_pngSize = 3467;
 
     extern const char*   audio_cue_png;
     const int            audio_cue_pngSize = 2581;

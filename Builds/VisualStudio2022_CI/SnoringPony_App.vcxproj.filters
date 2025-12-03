@@ -8,9 +8,6 @@
     <Filter Include="SnoringPony\Source\Cue\audio">
       <UniqueIdentifier>{586B47B9-6DE2-2958-EDF9-A258A0B33EBA}</UniqueIdentifier>
     </Filter>
-    <Filter Include="SnoringPony\Source\Cue\test">
-      <UniqueIdentifier>{0F326983-B63B-5C52-B8B4-6E29E07AB5F7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="SnoringPony\Source\Cue\ui">
       <UniqueIdentifier>{A33F64B7-148A-9A87-E435-EA1CB4CF18A2}</UniqueIdentifier>
     </Filter>
@@ -1044,9 +1041,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Cue\audio\AudioFile.cpp">
       <Filter>SnoringPony\Source\Cue\audio</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Cue\test\TestCue.cpp">
-      <Filter>SnoringPony\Source\Cue\test</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Cue\ui\CueEditor.cpp">
       <Filter>SnoringPony\Source\Cue\ui</Filter>
@@ -4532,9 +4526,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Cue\audio\AudioFile.h">
       <Filter>SnoringPony\Source\Cue\audio</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Cue\test\TestCue.h">
-      <Filter>SnoringPony\Source\Cue\test</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Cue\ui\CueEditor.h">
       <Filter>SnoringPony\Source\Cue\ui</Filter>
@@ -11255,6 +11246,9 @@
     <None Include="..\..\resources\crash.png">
       <Filter>SnoringPony\resources</Filter>
     </None>
+    <None Include="..\..\resources\fade_cue.png">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
     <None Include="..\..\resources\default.ponylayout">
       <Filter>SnoringPony\resources</Filter>
     </None>
@@ -11265,9 +11259,6 @@
       <Filter>SnoringPony\resources</Filter>
     </None>
     <None Include="..\..\resources\tray_icon.png">
-      <Filter>SnoringPony\resources</Filter>
-    </None>
-    <None Include="..\..\resources\action_cue.png">
       <Filter>SnoringPony\resources</Filter>
     </None>
     <None Include="..\..\resources\audio_cue.png">

@@ -159,7 +159,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\Cue\audio\AudioCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\audio\AudioFile.cpp"/>
-    <ClCompile Include="..\..\src\Cue\test\TestCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\ui\CueEditor.cpp"/>
     <ClCompile Include="..\..\src\Cue\Cue.cpp"/>
     <ClCompile Include="..\..\src\Cue\CueManager.cpp"/>
@@ -3321,7 +3320,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\Cue\audio\AudioCue.h"/>
     <ClInclude Include="..\..\src\Cue\audio\AudioFile.h"/>
-    <ClInclude Include="..\..\src\Cue\test\TestCue.h"/>
     <ClInclude Include="..\..\src\Cue\ui\CueEditor.h"/>
     <ClInclude Include="..\..\src\Cue\Cue.h"/>
     <ClInclude Include="..\..\src\Cue\CueManager.h"/>
@@ -5563,11 +5561,11 @@
   <ItemGroup>
     <None Include="..\..\resources\about.png"/>
     <None Include="..\..\resources\crash.png"/>
+    <None Include="..\..\resources\fade_cue.png"/>
     <None Include="..\..\resources\default.ponylayout"/>
     <None Include="..\..\resources\playlist_cue.png"/>
     <None Include="..\..\resources\icon.png"/>
     <None Include="..\..\resources\tray_icon.png"/>
-    <None Include="..\..\resources\action_cue.png"/>
     <None Include="..\..\resources\audio_cue.png"/>
     <None Include="..\..\resources\audio_interface.png"/>
     <None Include="..\..\resources\group_cue.png"/>

@@ -74,7 +74,6 @@ endif
 OBJECTS_APP := \
   $(JUCE_OBJDIR)/AudioCue_6b8f1412.o \
   $(JUCE_OBJDIR)/AudioFile_d20cdec7.o \
-  $(JUCE_OBJDIR)/TestCue_636bc5c0.o \
   $(JUCE_OBJDIR)/CueEditor_6ade7941.o \
   $(JUCE_OBJDIR)/Cue_4c4af201.o \
   $(JUCE_OBJDIR)/CueManager_4c7e6ef6.o \
@@ -164,11 +163,6 @@ $(JUCE_OBJDIR)/AudioCue_6b8f1412.o: ../../src/Cue/audio/AudioCue.cpp
 $(JUCE_OBJDIR)/AudioFile_d20cdec7.o: ../../src/Cue/audio/AudioFile.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling AudioFile.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/TestCue_636bc5c0.o: ../../src/Cue/test/TestCue.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling TestCue.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/CueEditor_6ade7941.o: ../../src/Cue/ui/CueEditor.cpp

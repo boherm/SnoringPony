@@ -29,6 +29,8 @@ public:
     AudioFilesManager* filesManager;
     AudioFormatManager formatManager;
 
+    float savedRelativeGain = 1.0f;
+
     String getTypeString() const override { return "Audio"; }
     String getCueType() const override { return "Audio"; }
     static AudioCue* create(var params) { return new AudioCue(params); }
@@ -39,6 +41,9 @@ public:
     void play() override;
     void stop() override;
     void panic() override;
+
+    void setRelativeGlobalGainForFade(float gain, float percent);
+    void resetRelativeGlobalGainForFade();
 
 private:
     void timerCallback() override;

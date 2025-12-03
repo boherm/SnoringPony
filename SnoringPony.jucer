@@ -9,13 +9,13 @@
     <GROUP id="{33CB39F8-43C1-5EE5-E27D-0A9CD562E541}" name="resources">
       <FILE id="TBBD6Q" name="about.png" compile="0" resource="1" file="resources/about.png"/>
       <FILE id="WhxZqQ" name="crash.png" compile="0" resource="1" file="resources/crash.png"/>
+      <FILE id="xWkqPV" name="fade_cue.png" compile="0" resource="1" file="resources/fade_cue.png"/>
       <FILE id="PpOxIR" name="default.ponylayout" compile="0" resource="1"
             file="resources/default.ponylayout"/>
       <FILE id="uDpLpc" name="playlist_cue.png" compile="0" resource="1"
             file="resources/playlist_cue.png"/>
       <FILE id="LR50Nt" name="icon.png" compile="0" resource="1" file="resources/icon.png"/>
       <FILE id="BgHvX4" name="tray_icon.png" compile="0" resource="1" file="resources/tray_icon.png"/>
-      <FILE id="yGHZ62" name="action_cue.png" compile="0" resource="1" file="resources/action_cue.png"/>
       <FILE id="DgS5vE" name="audio_cue.png" compile="0" resource="1" file="resources/audio_cue.png"/>
       <FILE id="HWcti6" name="audio_interface.png" compile="0" resource="1"
             file="resources/audio_interface.png"/>
@@ -36,10 +36,6 @@
           <FILE id="lue5p9" name="AudioCue.h" compile="0" resource="0" file="src/Cue/audio/AudioCue.h"/>
           <FILE id="DwTgkP" name="AudioFile.cpp" compile="1" resource="0" file="src/Cue/audio/AudioFile.cpp"/>
           <FILE id="bN8xqB" name="AudioFile.h" compile="0" resource="0" file="src/Cue/audio/AudioFile.h"/>
-        </GROUP>
-        <GROUP id="{32A1E7EC-9D5D-BB85-EBF9-88819AC2F8DC}" name="test">
-          <FILE id="UpgXL6" name="TestCue.cpp" compile="1" resource="0" file="src/Cue/test/TestCue.cpp"/>
-          <FILE id="krpj07" name="TestCue.h" compile="0" resource="0" file="src/Cue/test/TestCue.h"/>
         </GROUP>
         <GROUP id="{C9CAAE13-5938-AA3A-C591-71AA92FD3494}" name="ui">
           <FILE id="YOOYkS" name="CueEditor.cpp" compile="1" resource="0" file="src/Cue/ui/CueEditor.cpp"/>
