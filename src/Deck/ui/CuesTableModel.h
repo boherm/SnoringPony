@@ -33,20 +33,13 @@ public:
     Component* refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate) override;
     void sortOrderChanged(int newSortColumnId, bool isForwards) override;
     void cellClicked(int rowNumber, int columnId, const MouseEvent& event) override;
+    void selectedRowsChanged(int lastRowSelected) override;
     void backgroundClicked(const MouseEvent& event) override;
 
     void inspectCue(int rowNumber);
-    // void cellDoubleClicked(int rowNumber, int columnId, const MouseEvent& event) override;
 
     // Drag and drop support
     var getDragSourceDescription(const SparseSet<int>& selectedRows) override;
 
     void parameterValueChanged(Parameter* p) override;
-
-// private:
-//     Array<Cue> cues;
-//     void generateTestData();
-
-// public:
-//     void refreshData() { generateTestData(); }
 };

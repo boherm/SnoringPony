@@ -31,13 +31,10 @@ CuesTableModel::CuesTableModel(TableListBox* tlb, Cuelist* cl)
     if (cl == nullptr) {
         return;
     }
-
-    cl->nextCue->addParameterListener(this);
 }
 
 CuesTableModel::~CuesTableModel()
 {
-    cl->nextCue->removeParameterListener(this);
 }
 
 int CuesTableModel::getNumRows()
@@ -76,10 +73,11 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         return;
 
     g.setFont(14.0f);
-    g.setColour(Colours::white);
 
     Cue* cue = cl->cues->items[rowNumber];
     Cue* nextCue = cl->nextCue->getTargetContainerAs<Cue>();
+
+    g.setColour(Colours::white);
 
     double positionPercent;
     double timeLeft;
@@ -103,6 +101,7 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
                 myPath.addTriangle(5, 0, 5, height, 10, height * 0.5f);
                 g.fillPath(myPath);
             }
+
             break;
 
         case IdColumn:
@@ -114,6 +113,12 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         case TypeColumn:
             img = SPAssetManager::getInstance()->getCueIcon(cue->getCueType());
             g.setOpacity(0.7f);
+
+            if (cue->getWarningMessage().isNotEmpty()) {
+                g.setOpacity(1.0f);
+                img = AssetManager::getInstance()->warningImage;
+            }
+
             g.drawImageWithin(img, 7.0, 7.0, width - 14.0, height - 14.0, RectanglePlacement::centred, false);
             g.setOpacity(1.0f);
             text = "";
@@ -140,38 +145,21 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         case DescriptionColumn:
             text = cue->description->stringValue();
             break;
-
-        // case NameColumn:
-        //     text = data.name;
-        //     break;
-        // case TimeColumn:
-        //   myPath.addRectangle(4, 3, (width - 8), height - 6);
-        //   g.setColour(Colours::green.brighter(0.2f));
-        //   g.strokePath(myPath, PathStrokeType(1));
-        //   g.setColour(Colours::green.brighter(0.2f).withAlpha(0.6f));
-        //   g.fillRect(4.0f, 3.0f, (width - 8.0f) * Random::getSystemRandom().nextFloat(), height - 6.0f);
-        //   g.setColour(Colours::white.withAlpha(0.8f));
-        //   text = data.time;
-        //   g.drawText(text, 4, 3, width - 8, height - 6, Justification::centred,
-        //              true);
-        //   return;
-        //   break;
-        // case DescriptionColumn:
-        //     text = data.description;
-        //     break;
-        // case ActiveColumn:
-        //     text = data.isActive ? "OK" : "KO";
-        //     g.setColour(data.isActive ? Colours::green : Colours::red);
-        //     break;
     }
 
-    // g.setColour(Colours::white.withAlpha(0.5f));
     g.drawText(text, 2, 0, width - 4, height, Justification::centredLeft, true);
 }
 
 Component* CuesTableModel::refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate)
 {
     return nullptr;
+}
+
+void CuesTableModel::selectedRowsChanged(int lastRowSelected)
+{
+    if (tlb->getSelectedRows().size() == 1) {
+        inspectCue(lastRowSelected);
+    }
 }
 
 void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& event)
@@ -314,9 +302,6 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
                 );
             }
         });
-        return;
-    } else {
-        inspectCue(rowNumber);
     }
 }
 
@@ -335,11 +320,6 @@ void CuesTableModel::backgroundClicked(const MouseEvent& event)
         );
     }
 }
-
-// void CuesTableModel::cellDoubleClicked(int rowNumber, int columnId, const MouseEvent& event)
-// {
-//     inspectCue(rowNumber);
-// }
 
 void CuesTableModel::inspectCue(int rowNumber)
 {
@@ -376,27 +356,3 @@ var CuesTableModel::getDragSourceDescription(const SparseSet<int>& selectedRows)
     }
     return var();
 }
-
-// void CuesTableModel::generateTestData()
-// {
-//     cueData.clear();
-
-    // for (auto& cue : cl->cues.items) {
-    //     CueData cd;
-    //     cd.name = cue->niceName;
-    //     cd.time = "00:01:30";
-    //     cd.description = cue->notes->getValue();
-    //     cd.isActive = true;
-
-    //     cueData.add(cd);
-    // }
-
-    // cueData.add({"Cue 1", "00:01:30", "Introduction", true});
-    // cueData.add({"Cue 2", "00:02:45", "Verse 1", false});
-    // cueData.add({"Cue 3", "00:04:12", "Chorus", true});
-    // cueData.add({"Cue 4", "00:05:30", "Verse 2", false});
-    // cueData.add({"Cue 5", "00:07:00", "Bridge", true});
-    // cueData.add({"Cue 6", "00:08:15", "Final Chorus", false});
-    // cueData.add({"Cue 7", "00:09:45", "Outro", true});
-    // cueData.add({"Cue 8", "00:11:00", "Applause", false});
-// }

@@ -38,8 +38,6 @@ public:
     void paintOverChildren (Graphics&) override;
     void resized() override;
 
-    void addCuesListeners();
-
     void itemAdded(Cue* c)
     {
         tableListBox.updateContent();

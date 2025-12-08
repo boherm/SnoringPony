@@ -52,7 +52,7 @@ void CuelistManager::showMenuForTargetCue(ControllableContainer* startFromCC, st
         for (int i = 1 ; i <= cueManager->items.size(); ++i)
         {
             Cue* c = dynamic_cast<Cue*>(cueManager->items[i-1]);
-            menu.addItem(i, c->niceName + " - " + c->description->stringValue(), true, false, SPAssetManager::getInstance()->getInterfaceIcon(c->getCueType()));
+            menu.addItem(i, c->niceName + " - " + c->description->stringValue(), true, false, SPAssetManager::getInstance()->getCueIcon(c->getCueType()));
         }
 
         menu.showMenuAsync(PopupMenu::Options(), [cueManager, returnFunc](int result)
@@ -70,7 +70,7 @@ void CuelistManager::showMenuForTargetCue(ControllableContainer* startFromCC, st
             for (int y = 1 ; y <= cl->cues->items.size(); ++y)
             {
                 Cue* c = dynamic_cast<Cue*>(cl->cues->items[y-1]);
-                sub.addItem((i * 10000) + y, c->niceName + " - " + c->description->stringValue(), true, false, SPAssetManager::getInstance()->getInterfaceIcon(c->getCueType()));
+                sub.addItem((i * 10000) + y, c->niceName + " - " + c->description->stringValue(), true, false, SPAssetManager::getInstance()->getCueIcon(c->getCueType()));
             }
 
             menu.addSubMenu(cl->niceName, sub);

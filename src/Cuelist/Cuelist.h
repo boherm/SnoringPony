@@ -28,7 +28,7 @@ public:
 
     CueManager* cues;
 
-    BoolParameter* isPlaying; // Todo: implement this!
+    BoolParameter* isPlaying;
 
     TargetParameter* currentCue;
     TargetParameter* nextCue;

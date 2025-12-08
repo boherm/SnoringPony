@@ -51,7 +51,6 @@ CuesTableUI::CuesTableUI(Cuelist* cl)
     cl->cues->addBaseManagerListener(this);
     cl->cues->addAsyncContainerListener(this);
 
-    // addCuesListeners();
     resized();
 }
 
@@ -110,13 +109,6 @@ void CuesTableUI::resized()
     }
 
     tableListBox.getHeader().setColumnWidth(DescriptionColumn, width);
-}
-
-void CuesTableUI::addCuesListeners()
-{
-    for (auto& cue : cl->cues->items) {
-        cue->addAsyncContainerListener(this);
-    }
 }
 
 bool CuesTableUI::isInterestedInDragSource(const SourceDetails& dragSourceDetails)
