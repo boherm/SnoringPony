@@ -22,7 +22,8 @@ class CuesTableUI :
     public BaseManagerListener<Cue>,
     public ContainerAsyncListener,
     public DragAndDropContainer,
-    public DragAndDropTarget
+    public DragAndDropTarget,
+    public WarningTarget::AsyncListener
 {
 public:
     CuesTableUI(Cuelist* cl);
@@ -56,6 +57,12 @@ public:
     }
 
     void newMessage(const ContainerAsyncEvent& e) override
+    {
+        tableListBox.updateContent();
+        tableListBox.repaint();
+    }
+
+    void newMessage(const WarningTarget::WarningTargetEvent& e) override
     {
         tableListBox.updateContent();
         tableListBox.repaint();

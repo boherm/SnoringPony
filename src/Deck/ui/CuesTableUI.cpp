@@ -50,6 +50,7 @@ CuesTableUI::CuesTableUI(Cuelist* cl)
     addAndMakeVisible(tableListBox);
     cl->cues->addBaseManagerListener(this);
     cl->cues->addAsyncContainerListener(this);
+    cl->cues->addAsyncWarningTargetListener(this);
 
     resized();
 }
@@ -58,6 +59,7 @@ CuesTableUI::~CuesTableUI()
 {
     cl->cues->removeAsyncContainerListener(this);
     cl->cues->removeBaseManagerListener(this);
+    cl->cues->removeAsyncWarningTargetListener(this);
     tableListBox.setLookAndFeel(nullptr);
     lafTable.reset();
 }

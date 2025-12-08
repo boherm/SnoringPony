@@ -35,6 +35,8 @@ public:
     void stop() override;
     void panic() override;
 
+    void parameterValueChanged(Parameter* p) override;
+
 private:
     void timerCallback() override;
 };

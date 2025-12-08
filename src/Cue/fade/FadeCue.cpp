@@ -32,17 +32,26 @@ FadeCue::~FadeCue()
 
 void FadeCue::play()
 {
+    if (getWarningMessage().isNotEmpty()) {
+        return;
+    }
     currentTime->setValue(0.0);
     startTimer(50);
 }
 
 void FadeCue::stop()
 {
+    if (getWarningMessage().isNotEmpty()) {
+        return;
+    }
     currentTime->setValue(0.0);
 }
 
 void FadeCue::panic()
 {
+    if (getWarningMessage().isNotEmpty()) {
+        return;
+    }
     stopTimer();
     currentTime->setValue(0.0);
     isPlaying->setValue(false);
@@ -71,6 +80,22 @@ void FadeCue::timerCallback()
 
         if (stopAtEnd->boolValue()) {
             target->stop();
+        }
+    }
+}
+
+void FadeCue::parameterValueChanged(Parameter* p)
+{
+    if (getWarningMessage().isNotEmpty()) {
+        clearWarning();
+    }
+
+    if (p == targetCue) {
+        ControllableContainer* targetContainer = targetCue->getTargetContainer();
+        Cue* target = dynamic_cast<Cue*>(targetContainer);
+
+        if (target == nullptr || !target->isFadable) {
+            setWarningMessage("Target Cue is not valid");
         }
     }
 }

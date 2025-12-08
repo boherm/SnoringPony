@@ -19,6 +19,7 @@ AudioCue::AudioCue(var params)
     filesManager = new AudioFilesManager(this);
     filesManager->addAsyncContainerListener(this);
     addChildControllableContainer(filesManager);
+    isFadable = true;
 
     if (filesManager->items.isEmpty()) {
         filesManager->addItemFromData(var());
