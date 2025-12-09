@@ -9,6 +9,8 @@
 */
 
 #include "Main.h"
+#include "Brain.h"
+#include "Cuelist/CuelistManager.h"
 #include "MainMenuBarComponent.h"
 #include "PonyEngine.h"
 #include "MainComponent.h"
@@ -67,4 +69,24 @@ void SnoringPonyApplication::shutdown()
 void SnoringPonyApplication::handleCrashed()
 {
 	OrganicApplication::handleCrashed();
+}
+
+void SnoringPonyApplication::systemRequestedQuit()
+{
+    // Check if any cuelist is playing, warn the user before quitting
+    if (CuelistManager::getInstance()->haveOnePlaying()) {
+        AlertWindow::showAsync(MessageBoxOptions()
+            .withIconType(AlertWindow::WarningIcon)
+            .withTitle("Quit while playing?")
+            .withMessage("There is at least one cuelist playing. Are you sure you want to quit?")
+            .withButton("Quit")
+            .withButton("Cancel"),
+            [this](int result) {
+                if (result == 1) { // Quit
+                    OrganicApplication::systemRequestedQuit();
+                }
+            });
+        return;
+    }
+    OrganicApplication::systemRequestedQuit();
 }

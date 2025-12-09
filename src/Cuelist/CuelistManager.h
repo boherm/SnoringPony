@@ -32,4 +32,6 @@ public:
     void askForRemoveBaseItem(BaseItem* item);
 
     Cue* getNextCue(Cue* c);
+
+    bool haveOnePlaying();
 };

@@ -26,6 +26,7 @@ public:
 	void afterInit() override;
 
 	void shutdown() override;
+    void systemRequestedQuit() override;
 
 	void handleCrashed() override;
 };

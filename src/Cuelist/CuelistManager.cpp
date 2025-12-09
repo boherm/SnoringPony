@@ -122,4 +122,18 @@ Cue* CuelistManager::getNextCue(Cue* c)
     return nullptr;
 }
 
+bool CuelistManager::haveOnePlaying()
+{
+    bool result = false;
+
+    for (Cuelist* cl : items) {
+        if (cl->isPlaying->boolValue()) {
+            result = true;
+            break;
+        }
+    }
+
+    return result;
+}
+
 juce_ImplementSingleton(CuelistManager);
