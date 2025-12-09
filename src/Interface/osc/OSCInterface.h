@@ -11,43 +11,79 @@
 #pragma once
 
 #include "../Interface.h"
+#include "../../MainIncludes.h"
+
+using namespace servus;
+
+class OSCOutput :
+	public BaseItem,
+	public Thread
+{
+public:
+	OSCOutput();
+	~OSCOutput();
+
+	bool forceDisabled;
+	bool senderIsConnected;
+
+	// send
+	BoolParameter* useLocal;
+	StringParameter* remoteHost;
+	IntParameter* remotePort;
+
+	void setForceDisabled(bool value);
+
+	void setupSender();
+	void sendOSC(const OSCMessage& m);
+
+	virtual void run() override;
+
+	void onContainerParameterChangedInternal(Parameter* p) override;
+
+	// virtual InspectableEditor* getEditorInternal(bool isRoot);
+
+private:
+	OSCSender sender;
+	std::queue<std::unique_ptr<OSCMessage>> messageQueue;
+	CriticalSection queueLock;
+};
 
 class OSCInterface :
-    public Interface
+    public Interface,
+    public Thread,
+    public OSCReceiver::Listener<OSCReceiver::RealtimeCallback>,
+    public BaseManager<OSCOutput>::ManagerListener
 {
 public:
     OSCInterface();
     ~OSCInterface();
 
-    // MIDIDeviceParameter* deviceParam;
+    // zeroconf
+    Servus servus;
 
-    // MIDIMappingManager mappingManager;
-    // MIDIFeedbackManager feedbackManager;
-    // MIDIInputDevice* inputDevice;
-    // MIDIOutputDevice* outputDevice;
+    // inputs
+    std::unique_ptr<EnablingControllableContainer> receiveCC;
+	IntParameter* localPort;
+    OSCReceiver receiver;
 
-    // BoolParameter* autoAdd;
+    void setupReceiver();
+	void processMessage(const OSCMessage& msg);
+	void oscMessageReceived(const OSCMessage& message) override;
+	void oscBundleReceived(const OSCBundle& bundle) override;
 
-    // IntParameter* numBytes;
-    // ControllableContainer dataContainer;
+    // outputs
+    std::unique_ptr<BaseManager<OSCOutput>> outputManager;
+    void setupSenders();
+	void sendOSC(const OSCMessage& msg);
+    void itemAdded(OSCOutput* output) override;
 
-    // StringParameter* infos;
-    // HashMap<String, juce::uint32> TSLastReceived;
-    // HashMap<String, int> delayedValue;
-
-    // void updateDevices();
-    // void updateBytesParams();
-    // void onContainerParameterChangedInternal(Parameter *) override;
-
-    // void sendStartupBytes();
-
-    // void noteOnReceived(const int &channel, const int &pitch, const int &velocity) override;
-    // void noteOffReceived(const int &channel, const int &pitch, const int &velocity) override;
-    // void controlChangeReceived(const int& channel, const int& number, const int& value) override;
-    // void pitchWheelReceived(const int& channel, const int& value) override;
-
-    // void feedback(String address, var value, String origin);
+    void loadJSONDataInternal(var data) override;
+    void onContainerNiceNameChanged() override;
+    void onContainerParameterChangedInternal(Parameter* p) override;
 
     String getTypeString() const override { return "OSC"; }
     static OSCInterface* create(var params) { return new OSCInterface(); };
+
+    void setupZeroConf();
+    void run() override;
 };
