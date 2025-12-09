@@ -13,8 +13,6 @@
 PlaylistCue::PlaylistCue(var params) :
     Cue(params)
 {
-    objectType = "Playlist";
-
     duration->isSavable = false;
     duration->hideInEditor = true;
     duration->hideInRemoteControl = true;

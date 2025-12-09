@@ -31,10 +31,13 @@ CuesTableModel::CuesTableModel(TableListBox* tlb, Cuelist* cl)
     if (cl == nullptr) {
         return;
     }
+
+    cl->nextCue->addParameterListener(this);
 }
 
 CuesTableModel::~CuesTableModel()
 {
+    cl->nextCue->removeParameterListener(this);
 }
 
 int CuesTableModel::getNumRows()

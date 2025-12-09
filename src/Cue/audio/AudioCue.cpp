@@ -14,7 +14,6 @@
 
 AudioCue::AudioCue(var params)
 {
-    objectType = "Audio";
     formatManager.registerBasicFormats();
     filesManager = new AudioFilesManager(this);
     filesManager->addAsyncContainerListener(this);

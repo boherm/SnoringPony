@@ -31,7 +31,7 @@ public:
 
     float savedRelativeGain = 1.0f;
 
-    String getTypeString() const override { return "Audio"; }
+    String getTypeString() const override { return "Audio Cue"; }
     String getCueType() const override { return "Audio"; }
     static AudioCue* create(var params) { return new AudioCue(params); }
 

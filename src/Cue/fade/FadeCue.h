@@ -27,7 +27,7 @@ public:
     FloatParameter* volume;
     BoolParameter* stopAtEnd;
 
-    String getTypeString() const override { return "Fade"; }
+    String getTypeString() const override { return "Fade Cue"; }
     String getCueType() const override { return "Fade"; }
     static FadeCue* create(var params) { return new FadeCue(params); }
 

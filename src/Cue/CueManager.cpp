@@ -23,9 +23,9 @@ CueManager::CueManager() :
     // hideInEditor = true;
 
     managerFactory = &factory;
-    factory.defs.add(Factory<Cue>::Definition::createDef("", "Audio", &AudioCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Audio")));
-    factory.defs.add(Factory<Cue>::Definition::createDef("", "Playlist", &PlaylistCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Playlist")));
-    factory.defs.add(Factory<Cue>::Definition::createDef("", "Fade", &FadeCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Fade")));
+    factory.defs.add(Factory<Cue>::Definition::createDef("Audio", "Audio Cue", &AudioCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Audio")));
+    factory.defs.add(Factory<Cue>::Definition::createDef("Audio", "Playlist Cue", &PlaylistCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Playlist")));
+    factory.defs.add(Factory<Cue>::Definition::createDef("Playback", "Fade Cue", &FadeCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Fade")));
 }
 
 CueManager::~CueManager()

@@ -15,8 +15,6 @@
 FadeCue::FadeCue(var params) :
     Cue(params)
 {
-    objectType = "Fade";
-
     targetCue = addTargetParameter("Target Cue", "Define the targeted cue");
     targetCue->targetType = TargetParameter::CONTAINER;
     targetCue->customGetTargetContainerFunc = &CuelistManager::showMenuForTargetCue;
@@ -86,6 +84,8 @@ void FadeCue::timerCallback()
 
 void FadeCue::parameterValueChanged(Parameter* p)
 {
+    Cue::parameterValueChanged(p);
+
     if (getWarningMessage().isNotEmpty()) {
         clearWarning();
     }

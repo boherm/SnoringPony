@@ -44,7 +44,7 @@ Cue::Cue(var params) :
     currentTime->defaultUI = FloatParameter::TIME;
     currentTime->setEnabled(false);
 
-    duration = addFloatParameter("Duration", "Duration of the cue", params.getProperty("duration", 0.0));
+    duration = addFloatParameter("Duration", "Duration of the cue", params.getProperty("duration", 0.0), 0.0);
     duration->lockManualControlMode = true;
     duration->defaultUI = FloatParameter::TIME;
 

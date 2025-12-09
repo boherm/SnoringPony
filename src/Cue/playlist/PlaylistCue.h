@@ -20,7 +20,7 @@ public:
     PlaylistCue(var params = var());
     virtual ~PlaylistCue();
 
-    String getTypeString() const override { return "Playlist"; }
+    String getTypeString() const override { return "Playlist Cue"; }
     String getCueType() const override { return "Playlist"; }
     static PlaylistCue* create(var params) { return new PlaylistCue(params); }
 
