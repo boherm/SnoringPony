@@ -15,6 +15,8 @@
 
 using namespace servus;
 
+class OSCCommandManager;
+
 class OSCOutput :
 	public BaseItem,
 	public Thread
@@ -76,6 +78,9 @@ public:
     void setupSenders();
 	void sendOSC(const OSCMessage& msg);
     void itemAdded(OSCOutput* output) override;
+
+    // templates
+    std::unique_ptr<OSCCommandManager> templateManager;
 
     void loadJSONDataInternal(var data) override;
     void onContainerNiceNameChanged() override;

@@ -9,9 +9,8 @@
 */
 
 #include "OSCInterface.h"
-#include "juce_opengl/opengl/juce_gl.h"
-#include "juce_organicui/helpers/OSCHelpers.h"
 #include "ui/OSCInputEditor.h"
+#include "OSCCommand.h"
 
 OSCInterface::OSCInterface() :
     Interface("OSC Interface 1"),
@@ -42,6 +41,11 @@ OSCInterface::OSCInterface() :
 		o->remotePort->setValue(44000);
 		if (!Engine::mainEngine->isLoadingFile) setupSenders();
 	}
+
+    // Templates for commands
+    templateManager.reset(new OSCCommandManager());
+    templateManager->interface = this;
+    addChildControllableContainer(templateManager.get());
 
     // start zeroconf thread
     if (!isThreadRunning() && !Engine::mainEngine->isLoadingFile) startThread();
@@ -171,34 +175,7 @@ void OSCInterface::processMessage(const OSCMessage& msg)
 		NLOG(niceName, msg.getAddressPattern().toString() << " :" << s);
 	}
 
-    if (msg.getAddressPattern().toString() == "/button1")
-    {
-
-        OSCMessage ackMsg ("/scene/fire");
-        // ackMsg.addString("bonjour !!");
-        sendOSC(ackMsg);
-    }
 	// processMessageInternal(msg);
-
-	// if (internalMappings->boolValue()) {
-	// 	UserInputManager::getInstance()->processMessage(msg, "");
-	// }
-
-	/*
-	if (scriptManager->items.size() > 0)
-	{
-		Array<var> params;
-		params.add(msg.getAddressPattern().toString());
-		var args = var(Array<var>()); //initialize force array
-		for (auto& a : msg) args.append(OSCHelpers::argumentToVar(a));
-		params.add(args);
-		scriptManager->callFunctionOnAllItems(oscEventId, params);
-
-		for (auto& entry : scriptCallbacks)
-			if (std::get<0>(entry).matches(msg.getAddressPattern().toString()))
-				scriptManager->callFunctionOnAllItems(std::get<1>(entry), params);
-	}
-	*/
 }
 
 void OSCInterface::itemAdded(OSCOutput* output)
@@ -216,8 +193,6 @@ void OSCInterface::sendOSC(const OSCMessage& msg)
 {
 	if (isClearing || outputManager == nullptr) return;
 	if (!enabled->boolValue()) return;
-
-	// if (!outputManager->enabled->boolValue()) return;
 
 	if (logOutgoingData->boolValue())
 	{
