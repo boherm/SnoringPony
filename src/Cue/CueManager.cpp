@@ -10,6 +10,7 @@
 
 #include "CueManager.h"
 #include "audio/AudioCue.h"
+#include "osc/OSCCue.h"
 #include "playlist/PlaylistCue.h"
 #include "fade/FadeCue.h"
 #include "../ui/SPAssetManager.h"
@@ -26,6 +27,7 @@ CueManager::CueManager() :
     factory.defs.add(Factory<Cue>::Definition::createDef("Audio", "Audio Cue", &AudioCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Audio")));
     factory.defs.add(Factory<Cue>::Definition::createDef("Audio", "Playlist Cue", &PlaylistCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Playlist")));
     factory.defs.add(Factory<Cue>::Definition::createDef("Playback", "Fade Cue", &FadeCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Fade")));
+    factory.defs.add(Factory<Cue>::Definition::createDef("Network", "OSC Cue", &OSCCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("OSC")));
 }
 
 CueManager::~CueManager()
