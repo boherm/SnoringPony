@@ -16,8 +16,8 @@ class Brain
 {
 public:
     juce_DeclareSingleton(Brain, true)
-    Brain();
-	~Brain();
+    Brain() {}
+	virtual ~Brain() {}
 
     void go();
     void panic();

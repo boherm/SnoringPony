@@ -18,8 +18,8 @@ class UserInputManager:
 public:
     juce_DeclareSingleton(UserInputManager, true);
 
-    UserInputManager();
-    ~UserInputManager();
+    UserInputManager() {}
+    virtual ~UserInputManager() {}
 
     void processInput(String s);
     void processMessage(const juce::OSCMessage& m, const juce::String& clientId) override;

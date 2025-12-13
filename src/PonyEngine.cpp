@@ -62,6 +62,7 @@ PonyEngine::~PonyEngine()
 	//delete singletons here
 
 	isClearing = true;
+	OSCRemoteControl::getInstance()->removeRemoteControlListener(UserInputManager::getInstance());
 
     InterfaceManager::deleteInstance();
 	CuelistManager::deleteInstance();
@@ -99,21 +100,6 @@ var PonyEngine::getJSONData(bool includeNonOverriden)
 	var clData = CuelistManager::getInstance()->getJSONData(includeNonOverriden);
 	if (!clData.isVoid() && clData.getDynamicObject()->getProperties().size() > 0) data.getDynamicObject()->setProperty(CuelistManager::getInstance()->shortName, clData);
 
-	/*var mData = ModuleManager::getInstance()->getJSONData();
-	if (!mData.isVoid() && mData.getDynamicObject()->getProperties().size() > 0) data.getDynamicObject()->setProperty(ModuleManager::getInstance()->shortName, mData);
-
-	var cvData = CVGroupManager::getInstance()->getJSONData();
-	if (!cvData.isVoid() && cvData.getDynamicObject()->getProperties().size() > 0) data.getDynamicObject()->setProperty(CVGroupManager::getInstance()->shortName, cvData);
-
-	var sData = StateManager::getInstance()->getJSONData();
-	if (!sData.isVoid() && sData.getDynamicObject()->getProperties().size() > 0) data.getDynamicObject()->setProperty(StateManager::getInstance()->shortName, sData);
-
-	var seqData = ChataigneSequenceManager::getInstance()->getJSONData();
-	if (!seqData.isVoid() && seqData.getDynamicObject()->getProperties().size() > 0) data.getDynamicObject()->setProperty(ChataigneSequenceManager::getInstance()->shortName, seqData);
-
-	var rData = ModuleRouterManager::getInstance()->getJSONData();
-	if (!rData.isVoid() && rData.getDynamicObject()->getProperties().size() > 0) data.getDynamicObject()->setProperty(ModuleRouterManager::getInstance()->shortName, rData);
-	 */
 	return data;
 }
 
@@ -132,41 +118,6 @@ void PonyEngine::loadJSONDataInternalEngine(var data, ProgressTask* loadingTask)
 	CuelistManager::getInstance()->loadJSONData(clData);
 	clTask->setProgress(1);
 	clTask->end();
-
-	/*
-	ProgressTask* moduleTask = loadingTask->addTask("Modules");
-	ProgressTask* cvTask = loadingTask->addTask("Custom Variables");
-	ProgressTask* stateTask = loadingTask->addTask("States");
-	ProgressTask* sequenceTask = loadingTask->addTask("Sequences");
-	ProgressTask* routerTask = loadingTask->addTask("Router");
-
-	ModuleManager::getInstance()->factory->updateCustomModules(false);
-
-	moduleTask->start();
-	ModuleManager::getInstance()->loadJSONData(data.getProperty(ModuleManager::getInstance()->shortName, var()));
-	moduleTask->setProgress(1);
-	moduleTask->end();
-
-	cvTask->start();
-	CVGroupManager::getInstance()->loadJSONData(data.getProperty(CVGroupManager::getInstance()->shortName, var()));
-	cvTask->setProgress(1);
-	cvTask->end();
-
-	stateTask->start();
-	StateManager::getInstance()->loadJSONData(data.getProperty(StateManager::getInstance()->shortName, var()));
-	stateTask->setProgress(1);
-	stateTask->end();
-
-	sequenceTask->start();
-	ChataigneSequenceManager::getInstance()->loadJSONData(data.getProperty(ChataigneSequenceManager::getInstance()->shortName, var()));
-	sequenceTask->setProgress(1);
-	sequenceTask->end();
-
-	routerTask->start();
-	ModuleRouterManager::getInstance()->loadJSONData(data.getProperty(ModuleRouterManager::getInstance()->shortName, var()));
-	routerTask->setProgress(1);
-	routerTask->end();
-	 */
 }
 
 void PonyEngine::childStructureChanged(ControllableContainer* cc)
