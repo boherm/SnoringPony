@@ -35,7 +35,6 @@ ShowProperties::ShowProperties() :
     mainCuelist->maxDefaultSearchLevel = 0;
     mainCuelist->isSavable = false;
     mainCuelist->alwaysNotify = true;
-    mainCuelist->hideInEditor = true;
 }
 
 void ShowProperties::clear()
