@@ -20,6 +20,7 @@ OSCInterface::OSCInterface() :
     // Inputs
     receiveCC.reset(new EnablingControllableContainer("OSC Input"));
 	receiveCC->customGetEditorFunc = &OSCInputEditor::create;
+    receiveCC->hideInEditor = true;
 	addChildControllableContainer(receiveCC.get());
 
     localPort = receiveCC->addIntParameter("Local Port", "Local port to receive OSC messages", 14000, 1024, 65535);
@@ -43,8 +44,8 @@ OSCInterface::OSCInterface() :
 	}
 
     // Templates for commands
-    templateManager.reset(new OSCCommandManager());
-    templateManager->interface = this;
+    templateManager.reset(new BaseManager<OSCCommand>("OSC Message Templates"));
+    templateManager->addBaseManagerListener(this);
     addChildControllableContainer(templateManager.get());
 
     // start zeroconf thread
@@ -123,7 +124,6 @@ void OSCInterface::setupReceiver()
 		return;
 	}
 
-	//DBG("Local port set to : " << localPort->intValue());
 	bool result = receiver.connect(localPort->intValue());
 
 	if (result)
@@ -181,6 +181,21 @@ void OSCInterface::processMessage(const OSCMessage& msg)
 void OSCInterface::itemAdded(OSCOutput* output)
 {
 	output->warningResolveInspectable = this;
+}
+
+void OSCInterface::itemAdded(OSCCommand* command)
+{
+    command->interface = this;
+	command->warningResolveInspectable = this;
+}
+
+void OSCInterface::itemsAdded(Array<OSCCommand*> commands)
+{
+    for (OSCCommand* c : commands)
+    {
+        c->interface = this;
+        c->warningResolveInspectable = this;
+    }
 }
 
 void OSCInterface::setupSenders()

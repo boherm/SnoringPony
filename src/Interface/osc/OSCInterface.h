@@ -15,7 +15,7 @@
 
 using namespace servus;
 
-class OSCCommandManager;
+class OSCCommand;
 
 class OSCOutput :
 	public BaseItem,
@@ -50,11 +50,14 @@ private:
 	CriticalSection queueLock;
 };
 
+// -----------------------------------------------------
+
 class OSCInterface :
     public Interface,
     public Thread,
     public OSCReceiver::Listener<OSCReceiver::RealtimeCallback>,
-    public BaseManager<OSCOutput>::ManagerListener
+    public BaseManager<OSCOutput>::ManagerListener,
+    public BaseManager<OSCCommand>::ManagerListener
 {
 public:
     OSCInterface();
@@ -78,9 +81,11 @@ public:
     void setupSenders();
 	void sendOSC(const OSCMessage& msg);
     void itemAdded(OSCOutput* output) override;
+    void itemAdded(OSCCommand* command) override;
+    void itemsAdded(Array<OSCCommand*> commands) override;
 
     // templates
-    std::unique_ptr<OSCCommandManager> templateManager;
+    std::unique_ptr<BaseManager<OSCCommand>> templateManager;
 
     void loadJSONDataInternal(var data) override;
     void onContainerNiceNameChanged() override;

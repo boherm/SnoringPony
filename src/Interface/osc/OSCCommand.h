@@ -15,11 +15,14 @@
 class OSCInterface;
 
 class OSCCommandArguments :
-    public ControllableContainer
+    public GenericControllableManager
 {
 public:
     OSCCommandArguments();
     virtual ~OSCCommandArguments() {}
+
+    BoolParameter* editable;
+    InspectableEditor* getEditorInternal(bool isRoot, Array<Inspectable*> inspectables);
 };
 
 // -----------------------------------------------------
@@ -46,18 +49,4 @@ public:
     String getTypeString() const override { return "Command"; }
     static OSCCommand* create(var params) { return new OSCCommand(params.getProperty("name", "OSC Message 1")); };
     InspectableEditor* getEditorInternal(bool isRoot, Array<Inspectable*> inspectables);
-};
-
-// -----------------------------------------------------
-
-class OSCCommandManager :
-    public BaseManager<OSCCommand>
-{
-public:
-    OSCCommandManager();
-    virtual ~OSCCommandManager();
-
-    OSCInterface* interface;
-
-    void addItemInternal(OSCCommand* command, var data);
 };

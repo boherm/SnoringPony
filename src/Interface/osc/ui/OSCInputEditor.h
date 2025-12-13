@@ -19,7 +19,6 @@ public:
     OSCInputEditor(Array<ControllableContainer*> cc, bool isRoot);
     ~OSCInputEditor();
 
-
     void resizedInternalHeader(Rectangle<int>& r) override;
     Label ipLabel;
 

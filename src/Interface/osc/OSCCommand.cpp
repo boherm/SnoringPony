@@ -10,21 +10,23 @@
 
 #include "OSCCommand.h"
 #include "OSCInterface.h"
-#include "juce_osc/juce_osc.h"
 #include "ui/OSCCommandEditor.h"
+#include "ui/OSCCommandArgumentsEditor.h"
 
 OSCCommandArguments::OSCCommandArguments() :
-    ControllableContainer("Arguments")
+    GenericControllableManager("Arguments", false, false, false, false)
 {
-    saveAndLoadRecursiveData = true;
-    hideInRemoteControl = true;
-    defaultHideInRemoteControl = true;
-    userCanAddControllables = true;
-    allowSameChildrenNiceNames = false,
-    userAddControllablesFilters.add(IntParameter::getTypeStringStatic());
-    userAddControllablesFilters.add(FloatParameter::getTypeStringStatic());
-    userAddControllablesFilters.add(StringParameter::getTypeStringStatic());
-    userAddControllablesFilters.add(BoolParameter::getTypeStringStatic());
+    editable = addBoolParameter("Editable", "If true, arguments can be edited directly in cues", false);
+    editable->hideInEditor = true;
+
+    factory.defs.remove(6);
+    factory.defs.remove(5);
+    factory.defs.remove(4);
+}
+
+InspectableEditor* OSCCommandArguments::getEditorInternal(bool isRoot, Array<Inspectable*> inspectables)
+{
+    return new OSCCommandArgumentsEditor(this, isRoot);
 }
 
 // --------------------------------------------------------------------
@@ -32,6 +34,7 @@ OSCCommandArguments::OSCCommandArguments() :
 OSCCommand::OSCCommand(String name):
     BaseItem(name)
 {
+    canBeDisabled = false;
     isSavable = true;
 	isSelectable = false;
     saveAndLoadRecursiveData = true;
@@ -57,33 +60,31 @@ OSCMessage OSCCommand::buildMessage()
 {
     OSCMessage msg(address->stringValue());
 
-    for (Parameter* c : argumentsContainer->getAllParameters())
+    for (int i = 0; i < argumentsContainer->items.size(); i++)
     {
+        GenericControllableItem* p = static_cast<GenericControllableItem*>(argumentsContainer->items[i]);
+        auto param = static_cast<Parameter*>(p->controllable);
 
-        if (c->getTypeString() == IntParameter::getTypeStringStatic())
+        if (IntParameter::getTypeStringStatic() == param->getTypeString())
         {
-            auto param = static_cast<IntParameter*>(c);
             msg.addInt32(param->intValue());
             continue;
         }
 
-        if (c->getTypeString() == FloatParameter::getTypeStringStatic())
+        if (FloatParameter::getTypeStringStatic() == param->getTypeString())
         {
-            auto param = static_cast<FloatParameter*>(c);
             msg.addFloat32(param->floatValue());
             continue;
         }
 
-        if (c->getTypeString() == StringParameter::getTypeStringStatic())
+        if (StringParameter::getTypeStringStatic() == param->getTypeString())
         {
-            auto param = static_cast<StringParameter*>(c);
             msg.addString(param->stringValue());
             continue;
         }
 
-        if (c->getTypeString() == BoolParameter::getTypeStringStatic())
+        if (BoolParameter::getTypeStringStatic() == param->getTypeString())
         {
-            auto param = static_cast<BoolParameter*>(c);
             msg.addBool(param->boolValue());
             continue;
         }
@@ -100,23 +101,4 @@ void OSCCommand::execute()
 InspectableEditor* OSCCommand::getEditorInternal(bool isRoot, Array<Inspectable*> inspectables)
 {
     return new OSCCommandEditor(this, isRoot);
-}
-
-// --------------------------------------------------------------------
-
-OSCCommandManager::OSCCommandManager() :
-    BaseManager<OSCCommand>("OSC Message Templates")
-{
-    isSelectable = false;
-    saveAndLoadRecursiveData = true;
-}
-
-OSCCommandManager::~OSCCommandManager()
-{
-}
-
-void OSCCommandManager::addItemInternal(OSCCommand* command, var data)
-{
-    command->interface = interface;
-    command->warningResolveInspectable = interface;
 }
