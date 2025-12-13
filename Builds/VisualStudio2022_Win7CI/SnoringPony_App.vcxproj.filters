@@ -11243,6 +11243,9 @@
     <None Include="..\..\resources\about.png">
       <Filter>SnoringPony\resources</Filter>
     </None>
+    <None Include="..\..\resources\obs_interface.png">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
     <None Include="..\..\resources\crash.png">
       <Filter>SnoringPony\resources</Filter>
     </None>

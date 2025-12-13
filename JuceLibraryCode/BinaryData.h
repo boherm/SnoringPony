@@ -11,6 +11,9 @@ namespace BinaryData
     extern const char*   about_png;
     const int            about_pngSize = 118622;
 
+    extern const char*   obs_interface_png;
+    const int            obs_interface_pngSize = 5953;
+
     extern const char*   crash_png;
     const int            crash_pngSize = 110194;
 
@@ -54,7 +57,7 @@ namespace BinaryData
     const int            note_cue_pngSize = 1988;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 15;
+    const int namedResourceListSize = 16;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];
