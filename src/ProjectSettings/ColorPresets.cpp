@@ -34,3 +34,9 @@ void ColorPresets::clear()
 {
     controllables.clear();
 }
+
+void ColorPresets::onControllableAdded(Controllable* c)
+{
+    Parameter* p = dynamic_cast<Parameter*>(c);
+    p->userCanChangeName = true;
+}

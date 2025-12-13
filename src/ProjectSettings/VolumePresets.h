@@ -21,4 +21,6 @@ public:
     static void createItem(ControllableContainer* cc);
 
     void clear();
+
+    void onControllableAdded(Controllable* c) override;
 };

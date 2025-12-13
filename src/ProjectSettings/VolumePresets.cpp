@@ -35,3 +35,9 @@ void VolumePresets::clear()
 {
     controllables.clear();
 }
+
+void VolumePresets::onControllableAdded(Controllable* c)
+{
+    Parameter* p = dynamic_cast<Parameter*>(c);
+    p->userCanChangeName = true;
+}
