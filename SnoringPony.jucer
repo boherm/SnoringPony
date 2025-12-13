@@ -8,6 +8,8 @@
   <MAINGROUP id="QuL8Eu" name="SnoringPony">
     <GROUP id="{33CB39F8-43C1-5EE5-E27D-0A9CD562E541}" name="resources">
       <FILE id="TBBD6Q" name="about.png" compile="0" resource="1" file="resources/about.png"/>
+      <FILE id="oPVEVZ" name="auto-follow.png" compile="0" resource="1" file="resources/auto-follow.png"/>
+      <FILE id="KjgHZf" name="loop.png" compile="0" resource="1" file="resources/loop.png"/>
       <FILE id="eJ3rrF" name="obs_interface.png" compile="0" resource="1"
             file="resources/obs_interface.png"/>
       <FILE id="WhxZqQ" name="crash.png" compile="0" resource="1" file="resources/crash.png"/>

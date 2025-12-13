@@ -5560,6 +5560,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\resources\about.png"/>
+    <None Include="..\..\resources\auto-follow.png"/>
+    <None Include="..\..\resources\loop.png"/>
     <None Include="..\..\resources\obs_interface.png"/>
     <None Include="..\..\resources\crash.png"/>
     <None Include="..\..\resources\fade_cue.png"/>

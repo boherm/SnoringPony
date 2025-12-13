@@ -122,6 +122,7 @@
 		2C87AE6A3E840516AC8BF488 /* juce_graphics */ /* juce_graphics */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_graphics; path = ../../modules/juce/modules/juce_graphics; sourceTree = SOURCE_ROOT; };
 		2D2B4F93C5D28050FFEE10B8 /* MainMenuBarComponent.h */ /* MainMenuBarComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MainMenuBarComponent.h; path = ../../src/MainMenuBarComponent.h; sourceTree = SOURCE_ROOT; };
 		2E0F1FCC31314CFB650B86D0 /* include_juce_audio_processors_lv2_libs.cpp */ /* include_juce_audio_processors_lv2_libs.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = include_juce_audio_processors_lv2_libs.cpp; path = ../../JuceLibraryCode/include_juce_audio_processors_lv2_libs.cpp; sourceTree = SOURCE_ROOT; };
+		2E5C9488917DBA188FE28169 /* loop.png */ /* loop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = loop.png; path = ../../resources/loop.png; sourceTree = SOURCE_ROOT; };
 		2EE2AB4CA7FB36ECCE56EB14 /* include_juce_organicui.cpp */ /* include_juce_organicui.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = include_juce_organicui.cpp; path = ../../JuceLibraryCode/include_juce_organicui.cpp; sourceTree = SOURCE_ROOT; };
 		30EB42599D8F6002FA80FD9B /* include_juce_audio_basics.mm */ /* include_juce_audio_basics.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_audio_basics.mm; path = ../../JuceLibraryCode/include_juce_audio_basics.mm; sourceTree = SOURCE_ROOT; };
 		32A9C290ED97424306D30C00 /* DecksSettings.h */ /* DecksSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DecksSettings.h; path = ../../src/ProjectSettings/DecksSettings.h; sourceTree = SOURCE_ROOT; };
@@ -164,6 +165,7 @@
 		5D29EEEDC890B444EDE1F128 /* CuesTableModel.cpp */ /* CuesTableModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CuesTableModel.cpp; path = ../../src/Deck/ui/CuesTableModel.cpp; sourceTree = SOURCE_ROOT; };
 		5EBA8DAB8541FA76A5600A2E /* AboutWindow.h */ /* AboutWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AboutWindow.h; path = ../../src/ui/AboutWindow.h; sourceTree = SOURCE_ROOT; };
 		642CC9D7F5E1D204D1F6F61F /* ColorPresets.h */ /* ColorPresets.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ColorPresets.h; path = ../../src/ProjectSettings/ColorPresets.h; sourceTree = SOURCE_ROOT; };
+		64D566B29E72E2BDCB6B7102 /* auto-follow.png */ /* auto-follow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "auto-follow.png"; path = "../../resources/auto-follow.png"; sourceTree = SOURCE_ROOT; };
 		650E7B08E4274E2E2333F1B7 /* obs_interface.png */ /* obs_interface.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = obs_interface.png; path = ../../resources/obs_interface.png; sourceTree = SOURCE_ROOT; };
 		6619BD74FDE8206E3EB0488B /* ShowInfos.cpp */ /* ShowInfos.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ShowInfos.cpp; path = ../../src/ui/panels/ShowInfos.cpp; sourceTree = SOURCE_ROOT; };
 		673F84CF2C710E52F67D39CC /* MainIncludes.cpp */ /* MainIncludes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MainIncludes.cpp; path = ../../src/MainIncludes.cpp; sourceTree = SOURCE_ROOT; };
@@ -622,6 +624,8 @@
 			isa = PBXGroup;
 			children = (
 				36163ED5AF6DA8797DC10768,
+				64D566B29E72E2BDCB6B7102,
+				2E5C9488917DBA188FE28169,
 				650E7B08E4274E2E2333F1B7,
 				C2C9A35BFD9B29A4488257D9,
 				727E1333936FFA2682F9FD02,
