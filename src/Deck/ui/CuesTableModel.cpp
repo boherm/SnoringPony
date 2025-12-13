@@ -305,6 +305,8 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
                 );
             }
         });
+    } else {
+        inspectCue(rowNumber);
     }
 }
 
