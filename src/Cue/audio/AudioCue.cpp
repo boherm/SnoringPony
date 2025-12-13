@@ -14,6 +14,8 @@
 
 AudioCue::AudioCue(var params)
 {
+    loop = addBoolParameter("Loop", "If enabled, audio files will loop when they reach the end.", false);
+
     formatManager.registerBasicFormats();
     filesManager = new AudioFilesManager(this);
     filesManager->addAsyncContainerListener(this);
@@ -56,6 +58,7 @@ void AudioCue::newMessage(const ContainerAsyncEvent& e)
 
 void AudioCue::play()
 {
+    askedToStop = false;
     if (isPlaying->boolValue())
         return;
     filesManager->playAll();
@@ -65,11 +68,13 @@ void AudioCue::play()
 void AudioCue::stop()
 {
     filesManager->stopAll();
+    askedToStop = true;
 }
 
 void AudioCue::panic()
 {
     filesManager->panicAll();
+    askedToStop = true;
 }
 
 void AudioCue::timerCallback()
@@ -100,6 +105,10 @@ void AudioCue::changeListenerCallback(ChangeBroadcaster* source)
             isPlaying->setValue(false);
             stopTimer();
             currentTime->setValue(0.0);
+
+            if (loop->boolValue() && !askedToStop) {
+                filesManager->resetCurrentTime();
+            }
         }
     }
 }

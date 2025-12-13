@@ -12,6 +12,7 @@
 
 #include "../../MainIncludes.h"
 #include "../Cue.h"
+#include "juce_organicui/controllable/parameter/BoolParameter.h"
 
 class AudioFilesManager;
 class AudioOutput;
@@ -28,6 +29,10 @@ public:
 
     AudioFilesManager* filesManager;
     AudioFormatManager formatManager;
+
+    bool askedToStop = false;
+
+    BoolParameter* loop;
 
     float savedRelativeGain = 1.0f;
 

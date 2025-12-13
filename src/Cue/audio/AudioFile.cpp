@@ -68,6 +68,16 @@ bool AudioFilesManager::haveOnePlaying()
     return false;
 }
 
+void AudioFilesManager::resetCurrentTime()
+{
+    for (int i = 0; i < items.size(); ++i)
+    {
+        AudioFile* audioFile = items[i];
+        audioFile->player->transport->setPosition(0.0);
+        audioFile->player->transport->start();
+    }
+}
+
 //==============================================================================
 
 AudioFile::AudioFile(var params, AudioCue* audioCue) :

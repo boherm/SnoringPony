@@ -54,5 +54,7 @@ public:
     void stopAll();
     void panicAll();
 
+    void resetCurrentTime();
+
     bool haveOnePlaying();
 };
