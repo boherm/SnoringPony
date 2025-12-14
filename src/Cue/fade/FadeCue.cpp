@@ -33,8 +33,15 @@ void FadeCue::play()
     if (getWarningMessage().isNotEmpty()) {
         return;
     }
-    currentTime->setValue(0.0);
-    startTimer(50);
+
+    ControllableContainer* targetContainer = targetCue->getTargetContainer();
+    Cue* target = dynamic_cast<Cue*>(targetContainer);
+
+    if (target->isFadable) {
+        target->fade(volume->doubleValue(), duration->doubleValue());
+        currentTime->setValue(0.0);
+        startTimer(50);
+    }
 }
 
 void FadeCue::stop()
@@ -58,27 +65,28 @@ void FadeCue::panic()
 void FadeCue::timerCallback()
 {
     ControllableContainer* targetContainer = targetCue->getTargetContainer();
-    AudioCue* target = dynamic_cast<AudioCue*>(targetContainer);
+    Cue* target = dynamic_cast<Cue*>(targetContainer);
 
-    double time = currentTime->floatValue();
-    time += 0.05f;
-    currentTime->setValue(time);
-    isPlaying->setValue(true);
+    if (target->isFadable) {
+        double time = currentTime->floatValue();
+        time += 0.05f;
+        currentTime->setValue(time);
+        isPlaying->setValue(true);
 
-    if (target) {
-        target->setRelativeGlobalGainForFade(volume->floatValue(), currentTime->floatValue() / duration->floatValue());
-    }
+        if (time > duration->floatValue())
+        {
+            stopTimer();
+            currentTime->setValue(0.0);
+            isPlaying->setValue(false);
 
-    if (time > duration->floatValue())
-    {
+            if (stopAtEnd->boolValue()) {
+                target->stop();
+            }
+        }
+    } else {
         stopTimer();
         currentTime->setValue(0.0);
         isPlaying->setValue(false);
-        target->savedRelativeGain = volume->floatValue();
-
-        if (stopAtEnd->boolValue()) {
-            target->stop();
-        }
     }
 }
 

@@ -96,6 +96,8 @@ AudioFile::AudioFile(var params, AudioCue* audioCue) :
     audioFile->fileTypeFilter = "*.wav;*.aiff;*.mp3;*.flac;*.ogg";
 
     duration = addFloatParameter("Duration", "Duration of the audio file to play", params.getProperty("duration", 0.0));
+    duration->minimumValue = 0.0f;
+    duration->isSavable = false;
     duration->defaultUI = FloatParameter::TIME;
     duration->hideInRemoteControl = true;
     duration->setEnabled(false);
@@ -149,7 +151,7 @@ void AudioFile::parameterValueChanged(Parameter* p)
     }
 
     if (p == volume)
-        player->transport->setGain(volume->floatValue() * audioCue->savedRelativeGain);
+        player->transport->setGain(volume->floatValue());
 }
 
 void AudioFile::parameterControlModeChanged(Parameter* p)

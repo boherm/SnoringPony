@@ -34,8 +34,6 @@ public:
 
     BoolParameter* loop;
 
-    float savedRelativeGain = 1.0f;
-
     String getTypeString() const override { return "Audio Cue"; }
     String getCueType() const override { return "Audio"; }
     static AudioCue* create(var params) { return new AudioCue(params); }
@@ -47,8 +45,7 @@ public:
     void stop() override;
     void panic() override;
 
-    void setRelativeGlobalGainForFade(float gain, float percent);
-    void resetRelativeGlobalGainForFade();
+    void fade(double targetGain, double duration) override;
 
 private:
     void timerCallback() override;

@@ -26,7 +26,6 @@ OSCCueMessage::OSCCueMessage(String name) :
 {
     saveAndLoadRecursiveData = true;
     isSelectable = false;
-    miniMode->setValue(true);
 
     testBtn = addTrigger("Test", "Send test OSC message", true);
     testBtn->hideInEditor = true;

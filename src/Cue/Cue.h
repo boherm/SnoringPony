@@ -53,5 +53,6 @@ public:
     virtual void play() {}
     virtual void stop() {}
     virtual void panic() {}
+    virtual void fade(double targetGain, double duration) {}
     void setGoNext();
 };

@@ -32,6 +32,20 @@ void AudioPlayerMixer::resetPanicFade()
     isPanicking = false;
 }
 
+void AudioPlayerMixer::fade(double targetGain, double duration)
+{
+    fadingGain.reset(sampleRate, duration + 2.0f); // ?
+    fadingGain.setTargetValue(targetGain);
+    isFading = true;
+}
+
+void AudioPlayerMixer::resetFade()
+{
+    fadingGain.reset(sampleRate, 0.0);
+    fadingGain.setTargetValue(1.0f);
+    isFading = false;
+}
+
 void AudioPlayerMixer::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 {
     MixerAudioSource::prepareToPlay(samplesPerBlockExpected, sampleRate);
@@ -50,6 +64,7 @@ void AudioPlayerMixer::getNextAudioBlock(const AudioSourceChannelInfo& info)
         float* data = buffer->getWritePointer (ch, start);
         for (int i = 0; i < num; ++i) {
             data[i] *= panicFadingGain.getNextValue();
+            data[i] *= fadingGain.getNextValue();
         }
     }
 
@@ -70,6 +85,11 @@ void AudioPlayerMixer::getNextAudioBlock(const AudioSourceChannelInfo& info)
                 }
             });
         }
+    }
+
+    if (!isPanicking && isFading && !fadingGain.isSmoothing() && fadingGain.getCurrentValue() < 0.0f)
+    {
+        isFading = false;
     }
 
 }
@@ -129,7 +149,7 @@ bool AudioPlayer::setOutput(AudioOutput* output)
     return true;
 }
 
-void AudioPlayer::play()
+void AudioPlayer::play(bool resetFade)
 {
     if (currentFile.existsAsFile())
     {
@@ -146,6 +166,8 @@ void AudioPlayer::play()
             transport->setPosition(0.0);
             transport->start();
             mixer->resetPanicFade();
+            if (resetFade)
+                mixer->resetFade();
         }
     }
 }
@@ -167,4 +189,9 @@ void AudioPlayer::stopAndClean()
     transport->setSource(nullptr);
     if (output != nullptr)
         output->am.removeAudioCallback(player);
+}
+
+void AudioPlayer::fade(double targetGain, double duration)
+{
+    mixer->fade(targetGain, duration);
 }

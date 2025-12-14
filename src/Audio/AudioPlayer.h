@@ -19,10 +19,12 @@ class AudioPlayerMixer:
 {
 public:
     bool isPanicking = false;
+    bool isFading = false;
     bool fadeStopPending = false;
     double sampleRate = 44100.0;
     AudioTransportSource* transportSource = nullptr;
     LinearSmoothedValue<float> panicFadingGain { 1.0f };
+    LinearSmoothedValue<float> fadingGain { 1.0f };
 
     void setSource(AudioTransportSource* transport)
     {
@@ -39,6 +41,8 @@ public:
 
     void panicFade();
     void resetPanicFade();
+    void fade(double targetGain, double duration);
+    void resetFade();
 };
 
 class AudioPlayer
@@ -60,10 +64,12 @@ public:
     bool setFile(const File& audioFile);
     bool setOutput(AudioOutput* output);
 
-    void play();
+    void play(bool resetFade = true);
     void stop();
     void panic();
     void stopAndClean();
+
+    void fade(double targetGain, double duration);
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPlayer)
