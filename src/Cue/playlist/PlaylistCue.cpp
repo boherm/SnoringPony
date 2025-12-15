@@ -326,6 +326,7 @@ void PlaylistCue::changeListenerCallback(ChangeBroadcaster* source)
                 isPlaying->setValue(false);
                 currentTime->setValue(0.0);
                 refreshGlobalDuration();
+                endCue();
                 return;
             }
             nextFile->player->play(false);

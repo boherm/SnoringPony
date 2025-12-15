@@ -103,9 +103,11 @@ void AudioCue::changeListenerCallback(ChangeBroadcaster* source)
             stopTimer();
             currentTime->setValue(0.0);
 
-            if (loop->boolValue() && !askedToStop) {
+            if (loop->boolValue() && !askedToStop)
                 filesManager->resetCurrentTime();
-            }
+
+            if (!loop->boolValue() && !askedToStop)
+                endCue();
         }
     }
 }

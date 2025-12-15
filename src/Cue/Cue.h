@@ -60,6 +60,13 @@ public:
     FloatParameter* preWaitCurrentTime;
     BoolParameter* preWaitActive;
 
+    enum AutoFollowType
+    {
+        IMMEDIATE = 0,
+        AFTER_PRE = 1,
+        AFTER_CUE = 2
+    };
+
     EnablingControllableContainer* autoFollowCC;
     FloatParameter* autoFollowDuration;
     FloatParameter* autoFollowCurrentTime;
@@ -90,6 +97,12 @@ public:
     void panic();
     virtual void panicInternal() {}
     virtual void fade(double targetGain, double duration) {}
+    void endCue();
+    void playNextCue();
+    bool isAutoStartCue();
+    void setNextCue();
+    void autoFollowProcess(AutoFollowType type);
+
     void setGoNext();
     void onCueTimerFinished(Cue::CueTimer* timer);
 };

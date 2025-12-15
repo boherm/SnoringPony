@@ -21,7 +21,9 @@ enum ColumnIds
     IdColumn = 2,
     TypeColumn = 3,
     DescriptionColumn = 4,
-    TimeColumn = 5
+    TimeColumn = 5,
+    PreWaitColumn = 6,
+    AutoFollowColumn = 7
 };
 
 CuesTableModel::CuesTableModel(TableListBox* tlb, Cuelist* cl)
@@ -94,7 +96,7 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
             g.fillPath(myPath);
         }
 
-        if (cue->isPlaying->boolValue()) {
+        if (cue->isPlaying->boolValue() || cue->preWaitActive->boolValue() || cue->autoFollowActive->boolValue()) {
             g.setColour(Colours::green.brighter(0.2f));
             myPath.addRectangle(0, 0, 5, height);
             myPath.addTriangle(5, 0, 5, height, 10, height * 0.5f);
@@ -106,7 +108,10 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
     // Id column
     if (IdColumn == columnId) {
         g.setColour(Colours::white);
+        if (cue->isAutoStartCue())
+            g.setOpacity(0.4f);
         g.drawText(cue->id->stringValue(), 2, 0, width - 4, height, Justification::centred, true);
+        g.setOpacity(1.0f);
         return;
     }
 
@@ -114,6 +119,9 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
     if (TypeColumn == columnId) {
         Image img = SPAssetManager::getInstance()->getCueIcon(cue->getCueType());
         g.setOpacity(0.7f);
+
+        if (cue->isAutoStartCue())
+            g.setOpacity(0.4f);
 
         if (cue->getWarningMessage().isNotEmpty()) {
             g.setOpacity(1.0f);
@@ -124,40 +132,73 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         return;
     }
 
-    // Time column
-    if (TimeColumn == columnId) {
-        if (cue->duration->doubleValue() <= 0.0 && !cue->preWaitActive->boolValue() && !cue->autoFollowActive->boolValue())
+    // Pre-wait column
+    if (PreWaitColumn == columnId) {
+        if (!cue->preWaitCC->enabled->boolValue() || cue->preWaitDuration->doubleValue() <= 0.0)
             return;
 
-        double timeLeft = cue->duration->doubleValue() - cue->currentTime->doubleValue();
-        double positionPercent = cue->currentTime->doubleValue() / cue->duration->doubleValue();
-        auto color = !cue->isPlaying->boolValue() || timeLeft > 10 ? Colours::green.brighter(0.2f) : Colours::red.brighter(0.2f);
-        String text = "";
-
-        if (cue->preWaitActive->boolValue())
-        {
-            timeLeft = cue->preWaitDuration->doubleValue() - cue->preWaitCurrentTime->doubleValue();
-            positionPercent = cue->preWaitCurrentTime->doubleValue() / cue->preWaitDuration->doubleValue();
-            color = Colours::darkgoldenrod;
-            text << "PW: ";
-        }
-
-        if (cue->autoFollowActive->boolValue())
-        {
-            timeLeft = cue->autoFollowDuration->doubleValue() - cue->autoFollowCurrentTime->doubleValue();
-            positionPercent = cue->autoFollowCurrentTime->doubleValue() / cue->autoFollowDuration->doubleValue();
-            color = Colours::orangered.brighter(0.2f);
-            text << "AF: ";
-        }
-        text << StringUtil::valueToTimeString(jmax<double>(timeLeft, 0.0));
+        double timeLeft = cue->preWaitDuration->doubleValue() - cue->preWaitCurrentTime->doubleValue();
+        double positionPercent = cue->preWaitCurrentTime->doubleValue() / cue->preWaitDuration->doubleValue();
+        auto color = Colours::darkgoldenrod;
+        String text = CuesTableModel::valueToTimeString(jmax<double>(timeLeft, 0.0));
 
         Path myPath;
         myPath.addRectangle(4, 3, (width - 8), height - 6);
         g.setColour(color);
+        if (cue->isAutoStartCue()) g.setOpacity(0.5f);
         g.strokePath(myPath, PathStrokeType(1));
         g.setColour(color.withAlpha(0.6f));
+        if (cue->isAutoStartCue()) g.setOpacity(0.5f);
         g.fillRect(4.0f, 3.0f, (width - 8.0f) * positionPercent, height - 6.0f);
         g.setColour(Colours::white.withAlpha(0.8f));
+        if (cue->isAutoStartCue()) g.setOpacity(0.5f);
+        g.drawText(text, 4, 3, width - 8, height - 6, Justification::centred, true);
+        return;
+    }
+
+    // Time column
+    if (TimeColumn == columnId) {
+        if (cue->duration->doubleValue() <= 0.0)
+            return;
+
+        double timeLeft = cue->duration->doubleValue() - cue->currentTime->doubleValue();
+        double positionPercent = cue->currentTime->doubleValue() / cue->duration->doubleValue();
+        auto color = !cue->isPlaying->boolValue() || cue->preWaitActive->boolValue() || timeLeft > 10 ? Colours::green.brighter(0.2f) : Colours::red.brighter(0.2f);
+        String text = CuesTableModel::valueToTimeString(jmax<double>(timeLeft, 0.0));
+
+        Path myPath;
+        myPath.addRectangle(4, 3, (width - 8), height - 6);
+        g.setColour(color);
+        if (cue->isAutoStartCue()) g.setOpacity(0.5f);
+        g.strokePath(myPath, PathStrokeType(1));
+        g.setColour(color.withAlpha(0.6f));
+        if (cue->isAutoStartCue()) g.setOpacity(0.5f);
+        g.fillRect(4.0f, 3.0f, (width - 8.0f) * positionPercent, height - 6.0f);
+        g.setColour(Colours::white.withAlpha(0.8f));
+        if (cue->isAutoStartCue()) g.setOpacity(0.5f);
+        g.drawText(text, 4, 3, width - 8, height - 6, Justification::centred, true);
+        return;
+    }
+
+    if (AutoFollowColumn == columnId) {
+        if (!cue->autoFollowCC->enabled->boolValue() && cue->autoFollowDuration->doubleValue() <= 0.0)
+            return;
+
+        double timeLeft = cue->autoFollowDuration->doubleValue() - cue->autoFollowCurrentTime->doubleValue();
+        double positionPercent = cue->autoFollowCurrentTime->doubleValue() / cue->autoFollowDuration->doubleValue();
+        auto color = Colours::orangered;
+        String text = CuesTableModel::valueToTimeString(jmax<double>(timeLeft, 0.0));
+
+        Path myPath;
+        myPath.addRectangle(4, 3, (width - 8), height - 6);
+        g.setColour(color);
+        if (cue->isAutoStartCue()) g.setOpacity(0.5f);
+        g.strokePath(myPath, PathStrokeType(1));
+        g.setColour(color.withAlpha(0.6f));
+        if (cue->isAutoStartCue()) g.setOpacity(0.5f);
+        g.fillRect(4.0f, 3.0f, (width - 8.0f) * positionPercent, height - 6.0f);
+        g.setColour(Colours::white.withAlpha(0.8f));
+        if (cue->isAutoStartCue()) g.setOpacity(0.5f);
         g.drawText(text, 4, 3, width - 8, height - 6, Justification::centred, true);
         return;
     }
@@ -170,8 +211,10 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
             g.setOpacity(0.5f);
             g.drawImage(SPAssetManager::getInstance()->getLoopIcon(), r.removeFromRight(22).reduced(3), RectanglePlacement::centred, false);
         }
-
         g.setOpacity(1.0f);
+        if (cue->isAutoStartCue())
+            g.setOpacity(0.4f);
+
         g.drawText(cue->description->stringValue(), r.reduced(10, 0), Justification::centredLeft);
         return;
     }
@@ -391,4 +434,17 @@ var CuesTableModel::getDragSourceDescription(const SparseSet<int>& selectedRows)
         return dragData;
     }
     return var();
+}
+
+String CuesTableModel::valueToTimeString(double timeVal)
+{
+    int numDecimals = 3;
+	int hours = abs(trunc(timeVal / 3600));
+	int minutes = abs(trunc(fmod(timeVal, 3600) / 60));
+	double seconds = abs(fmod(timeVal, 60));
+
+    if (hours > 0)
+        return String::formatted("%02i:%02i:%0" + String(3 + numDecimals) + "." + String(numDecimals) + "f", hours, minutes, seconds);
+
+    return String::formatted("%02i:%0" + String(3 + numDecimals) + "." + String(numDecimals) + "f", minutes, seconds);
 }

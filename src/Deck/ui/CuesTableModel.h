@@ -43,4 +43,6 @@ public:
     var getDragSourceDescription(const SparseSet<int>& selectedRows) override;
 
     void parameterValueChanged(Parameter* p) override;
+
+    static String valueToTimeString(double timeVal);
 };

@@ -11,6 +11,7 @@
 #include "Cue.h"
 #include "ui/CueEditor.h"
 #include "../Cuelist/Cuelist.h"
+#include "../Cue/CueManager.h"
 
 Cue::CueTimer::CueTimer(Cue* cue)
 {
@@ -111,16 +112,17 @@ currentTime->hideInRemoteControl = true;
     preWaitCC->editorIsCollapsed = true;
     addChildControllableContainer(preWaitCC, true);
 
-    preWaitDuration = preWaitCC->addFloatParameter("Duration", "Time to wait before starting the cue", 0.0, 0.0);
+    preWaitDuration = preWaitCC->addFloatParameter("Waiting time", "Time to wait before starting the cue", 0.0, 0.0);
     preWaitDuration->lockManualControlMode = true;
     preWaitDuration->defaultUI = FloatParameter::TIME;
 
-    preWaitCurrentTime = preWaitCC->addFloatParameter("Current time", "Current time of the pre-wait", 0.0, 0.0f, 5.0f);
+    preWaitCurrentTime = preWaitCC->addFloatParameter("Current time", "Current time of the pre-wait", 0.0, 0.0);
     preWaitCurrentTime->defaultUI = FloatParameter::TIME;
     preWaitCurrentTime->setEnabled(false);
 
     preWaitActive = preWaitCC->addBoolParameter("Active", "Pre-wait currently active", false);
     preWaitActive->setEnabled(false);
+    // preWaitActive->hideInEditor = true;
 
     // --- Auto-follow ----
     autoFollowTimer = new Cue::CueTimer(this);
@@ -130,9 +132,11 @@ currentTime->hideInRemoteControl = true;
     addChildControllableContainer(autoFollowCC, true);
 
     autoFollowType = autoFollowCC->addEnumParameter("Type", "Type of auto-follow behavior", "Immediate");
-    autoFollowType->setOptions({ "Immediate", "After Cue" });
+    autoFollowType->addOption("Immediate", AutoFollowType::IMMEDIATE);
+    autoFollowType->addOption("After Pre-wait", AutoFollowType::AFTER_PRE);
+    autoFollowType->addOption("After Cue", AutoFollowType::AFTER_CUE);
 
-    autoFollowDuration = autoFollowCC->addFloatParameter("Duration", "Duration before auto-follow triggers the next cue", 0.0, 0.0);
+    autoFollowDuration = autoFollowCC->addFloatParameter("Waiting time", "Duration before auto-follow triggers the next cue", 0.0, 0.0);
     autoFollowDuration->defaultUI = FloatParameter::TIME;
 
     autoFollowCurrentTime = autoFollowCC->addFloatParameter("Current time", "Current time of the auto-follow", 0.0);
@@ -141,6 +145,7 @@ currentTime->hideInRemoteControl = true;
 
     autoFollowActive = autoFollowCC->addBoolParameter("Active", "Auto-follow currently active", false);
     autoFollowActive->setEnabled(false);
+    // autoFollowActive->hideInEditor = true;
 }
 
 Cue::~Cue()
@@ -209,13 +214,16 @@ void Cue::triggerTriggered(Trigger* t)
 
 void Cue::onCueTimerFinished(Cue::CueTimer* timer)
 {
-    if (timer == preWaitTimer) {
+    if (preWaitTimer == timer) {
         preWaitCurrentTime->setValue(0.0f);
         preWaitActive->setValue(false);
+        autoFollowProcess(AutoFollowType::AFTER_PRE);
         playInternal();
     }
-    if (timer == autoFollowTimer) {
-        NLOG(niceName, "Auto-follow finished, triggering next cue.");
+    if (autoFollowTimer == timer) {
+        autoFollowCurrentTime->setValue(0.0f);
+        autoFollowActive->setValue(false);
+        playNextCue();
     }
 }
 
@@ -225,6 +233,7 @@ void Cue::play()
         return;
 
     isPlaying->setValue(true);
+    autoFollowProcess(AutoFollowType::IMMEDIATE);
 
     if (preWaitCC->enabled->boolValue()) {
         preWaitCurrentTime->setValue(0.0f);
@@ -233,6 +242,7 @@ void Cue::play()
     } else {
         playInternal();
     }
+    setNextCue();
 }
 
 void Cue::panic()
@@ -242,7 +252,6 @@ void Cue::panic()
         preWaitCurrentTime->setValue(0.0f);
         preWaitActive->setValue(false);
         isPlaying->setValue(false);
-        return;
     }
 
     if (autoFollowActive->boolValue()) {
@@ -250,7 +259,6 @@ void Cue::panic()
         autoFollowCurrentTime->setValue(0.0f);
         autoFollowActive->setValue(false);
         isPlaying->setValue(false);
-        return;
     }
 
     panicInternal();
@@ -275,4 +283,58 @@ void Cue::stop()
     }
 
     stopInternal();
+}
+
+void Cue::endCue()
+{
+    isPlaying->setValue(false);
+    autoFollowProcess(AutoFollowType::AFTER_CUE);
+}
+
+void Cue::playNextCue()
+{
+    auto idx = parentCuelist->cues->items.indexOf(this);
+    if (idx + 1 < parentCuelist->cues->items.size())
+        parentCuelist->cues->items[idx + 1]->play();
+}
+
+bool Cue::isAutoStartCue()
+{
+    auto idx = parentCuelist->cues->items.indexOf(this);
+    if (idx - 1 < 0)
+        return false;
+    return parentCuelist->cues->items[idx - 1]->autoFollowCC->enabled->boolValue();
+}
+
+void Cue::setNextCue()
+{
+    auto idx = parentCuelist->cues->items.indexOf(this);
+
+    for (int i = idx + 1; i < parentCuelist->cues->items.size(); i++) {
+        Cue* c = parentCuelist->cues->items[i];
+        if (!c->isAutoStartCue()) {
+            parentCuelist->nextCue->setTarget(c);
+            parentCuelist->nextCue->notifyValueChanged();
+            return;
+        }
+    }
+}
+
+void Cue::autoFollowProcess(AutoFollowType type)
+{
+    if (!autoFollowCC->enabled->boolValue())
+        return;
+
+    if (
+            type == autoFollowType->intValue() ||
+            type == AutoFollowType::IMMEDIATE && autoFollowType->intValue() == AutoFollowType::AFTER_PRE && !preWaitCC->enabled->boolValue()
+    ) {
+        if (autoFollowDuration->floatValue() <= 0.0f) {
+            playNextCue();
+        } else {
+            autoFollowCurrentTime->setValue(0.0f);
+            autoFollowActive->setValue(true);
+            autoFollowTimer->start(autoFollowDuration->floatValue(), autoFollowCurrentTime);
+        }
+    }
 }

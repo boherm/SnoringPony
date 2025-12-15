@@ -69,15 +69,6 @@ void Cuelist::go()
     if (nCue) {
         currentCue->setValueFromTarget(nCue);
         nCue->play();
-
-        int idx = cues->items.indexOf(nCue);
-
-        if (cues->items.size() > idx + 1) {
-            cues->items[idx + 1]->setGoNext();
-        } else {
-            nextCue->resetValue();
-            nextCue->notifyValueChanged();
-        }
     }
 }
 
@@ -95,7 +86,7 @@ void Cuelist::panic()
 {
     for (int i = 0; i < cues->items.size(); i++) {
         Cue* c = cues->items[i];
-        if (c->isPlaying->boolValue()) {
+        if (c->isPlaying->boolValue() || c->preWaitActive->boolValue() || c->autoFollowActive->boolValue()) {
             c->panic();
         }
     }
@@ -135,7 +126,8 @@ void Cuelist::loadJSONDataInternal(var data)
 void Cuelist::newMessage(const ContainerAsyncEvent& e)
 {
     if (
-            e.source == cues && e.type == ContainerAsyncEvent::EventType::ControllableFeedbackUpdate && e.targetControllable->niceName == "Is Playing"
+            e.source == cues && e.type == ContainerAsyncEvent::EventType::ControllableFeedbackUpdate &&
+                (e.targetControllable->niceName == "Is Playing" || e.targetControllable->niceName == "Active")
         )
     {
         if (cues->hasCuePlaying()) {

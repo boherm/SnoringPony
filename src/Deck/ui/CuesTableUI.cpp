@@ -20,7 +20,9 @@ enum ColumnIds
     IdColumn = 2,
     TypeColumn = 3,
     DescriptionColumn = 4,
-    TimeColumn = 5
+    TimeColumn = 5,
+    PreWaitColumn = 6,
+    AutoFollowColumn = 7
 };
 
 CuesTableUI::CuesTableUI(Cuelist* cl)
@@ -39,13 +41,15 @@ CuesTableUI::CuesTableUI(Cuelist* cl)
     tableListBox.setMultipleSelectionEnabled(true);
     tableListBox.setAutoSizeMenuOptionShown(false);
     tableListBox.setModel(tableModel.get());
-    tableListBox.setRowHeight(30);
+    tableListBox.setRowHeight(35);
     int flags = TableHeaderComponent::visible | TableHeaderComponent::resizable | TableHeaderComponent::appearsOnColumnMenu;
     tableListBox.getHeader().addColumn("", StatusColumn, 10, 10, 10, flags & ~TableHeaderComponent::appearsOnColumnMenu | ~TableHeaderComponent::resizable);
     tableListBox.getHeader().addColumn("#", IdColumn, 60, 60, 100, flags & ~TableHeaderComponent::appearsOnColumnMenu);
     tableListBox.getHeader().addColumn("Type", TypeColumn, 40, 40, 40, flags & ~TableHeaderComponent::resizable);
     tableListBox.getHeader().addColumn("Description", DescriptionColumn, 200, 200, 5000, flags & ~TableHeaderComponent::appearsOnColumnMenu);
-    tableListBox.getHeader().addColumn("Time", TimeColumn, 200, 200, 200, flags & ~TableHeaderComponent::resizable);
+    tableListBox.getHeader().addColumn("Pre-wait", PreWaitColumn, 130, 130, 130, flags & ~TableHeaderComponent::resizable);
+    tableListBox.getHeader().addColumn("Time", TimeColumn, 130, 130, 130, flags & ~TableHeaderComponent::resizable);
+    tableListBox.getHeader().addColumn("Auto-follow", AutoFollowColumn, 130, 130, 130, flags & ~TableHeaderComponent::resizable);
 
     addAndMakeVisible(tableListBox);
     cl->cues->addBaseManagerListener(this);
@@ -105,9 +109,19 @@ void CuesTableUI::resized()
         width -= 40;
     }
 
+    if (tableListBox.getHeader().isColumnVisible(PreWaitColumn)) {
+        tableListBox.getHeader().setColumnWidth(PreWaitColumn, 130);
+        width -= 130;
+    }
+
     if (tableListBox.getHeader().isColumnVisible(TimeColumn)) {
-        tableListBox.getHeader().setColumnWidth(TimeColumn, 200);
-        width -= 200;
+        tableListBox.getHeader().setColumnWidth(TimeColumn, 130);
+        width -= 130;
+    }
+
+    if (tableListBox.getHeader().isColumnVisible(AutoFollowColumn)) {
+        tableListBox.getHeader().setColumnWidth(AutoFollowColumn, 130);
+        width -= 130;
     }
 
     tableListBox.getHeader().setColumnWidth(DescriptionColumn, width);
