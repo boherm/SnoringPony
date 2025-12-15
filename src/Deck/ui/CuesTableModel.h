@@ -33,6 +33,7 @@ public:
     Component* refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate) override;
     void sortOrderChanged(int newSortColumnId, bool isForwards) override;
     void cellClicked(int rowNumber, int columnId, const MouseEvent& event) override;
+    void cellDoubleClicked(int rowNumber, int columnId, const MouseEvent& event) override;
     void selectedRowsChanged(int lastRowSelected) override;
     void backgroundClicked(const MouseEvent& event) override;
 

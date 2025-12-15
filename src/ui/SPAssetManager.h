@@ -22,4 +22,6 @@ public:
 	Image getAboutImage();
     Image getInterfaceIcon(String type);
     Image getCueIcon(String type);
+    Image getLoopIcon();
+    Image getAutoFollowIcon(bool withFading = false);
 };

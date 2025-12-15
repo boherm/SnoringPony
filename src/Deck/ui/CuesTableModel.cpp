@@ -13,6 +13,7 @@
 #include "../../Cuelist/CuelistManager.h"
 #include "../../Cue/CueManager.h"
 #include "../../ui/SPAssetManager.h"
+#include "juce_graphics/juce_graphics.h"
 
 enum ColumnIds
 {
@@ -76,81 +77,104 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         return;
 
     g.setFont(14.0f);
+    g.setColour(Colours::white);
 
     Cue* cue = cl->cues->items[rowNumber];
     Cue* nextCue = cl->nextCue->getTargetContainerAs<Cue>();
 
-    g.setColour(Colours::white);
 
-    double positionPercent;
-    double timeLeft;
-    String text;
-    Image img;
-    Path myPath;
-    switch (columnId)
-    {
-        case StatusColumn:
+    // Status column
+    if (StatusColumn == columnId) {
+        Path myPath;
 
-            if (nextCue == cue) {
-                g.setColour(Colours::orange.brighter(0.2f));
-                myPath.addRectangle(0, 0, 5, height);
-                myPath.addTriangle(5, 0, 5, height, 10, height * 0.5f);
-                g.fillPath(myPath);
-            }
+        if (nextCue == cue) {
+            g.setColour(Colours::orange.brighter(0.2f));
+            myPath.addRectangle(0, 0, 5, height);
+            myPath.addTriangle(5, 0, 5, height, 10, height * 0.5f);
+            g.fillPath(myPath);
+        }
 
-            if (cue->isPlaying->boolValue()) {
-                g.setColour(Colours::green.brighter(0.2f));
-                myPath.addRectangle(0, 0, 5, height);
-                myPath.addTriangle(5, 0, 5, height, 10, height * 0.5f);
-                g.fillPath(myPath);
-            }
-
-            break;
-
-        case IdColumn:
-            g.setColour(Colours::white);
-            g.drawText(cue->id->stringValue(), 2, 0, width - 4, height, Justification::centred, true);
-            text = "";
-            break;
-
-        case TypeColumn:
-            img = SPAssetManager::getInstance()->getCueIcon(cue->getCueType());
-            g.setOpacity(0.7f);
-
-            if (cue->getWarningMessage().isNotEmpty()) {
-                g.setOpacity(1.0f);
-                img = AssetManager::getInstance()->warningImage;
-            }
-
-            g.drawImageWithin(img, 7.0, 7.0, width - 14.0, height - 14.0, RectanglePlacement::centred, false);
-            g.setOpacity(1.0f);
-            text = "";
-            break;
-
-        case TimeColumn:
-            if (cue->duration->doubleValue() <= 0.0)
-                return;
-
-            timeLeft = cue->duration->doubleValue() - cue->currentTime->doubleValue();
-            positionPercent = cue->currentTime->doubleValue() / cue->duration->doubleValue();
-
-            myPath.addRectangle(4, 3, (width - 8), height - 6);
-            g.setColour(timeLeft > 10 ? Colours::green.brighter(0.2f) : Colours::red.brighter(0.2f));
-            g.strokePath(myPath, PathStrokeType(1));
-            g.setColour(timeLeft > 10 ? Colours::green.brighter(0.2f).withAlpha(0.6f) : Colours::red.brighter(0.2f).withAlpha(0.6f));
-            g.fillRect(4.0f, 3.0f, (width - 8.0f) * positionPercent, height - 6.0f);
-            g.setColour(Colours::white.withAlpha(0.8f));
-            text = StringUtil::valueToTimeString(jmax<double>(timeLeft, 0.0));
-            g.drawText(text, 4, 3, width - 8, height - 6, Justification::centred, true);
-            return;
-            break;
-
-        case DescriptionColumn:
-            text = cue->description->stringValue();
-            break;
+        if (cue->isPlaying->boolValue()) {
+            g.setColour(Colours::green.brighter(0.2f));
+            myPath.addRectangle(0, 0, 5, height);
+            myPath.addTriangle(5, 0, 5, height, 10, height * 0.5f);
+            g.fillPath(myPath);
+        }
+        return;
     }
 
-    g.drawText(text, 2, 0, width - 4, height, Justification::centredLeft, true);
+    // Id column
+    if (IdColumn == columnId) {
+        g.setColour(Colours::white);
+        g.drawText(cue->id->stringValue(), 2, 0, width - 4, height, Justification::centred, true);
+        return;
+    }
+
+    // Type column
+    if (TypeColumn == columnId) {
+        Image img = SPAssetManager::getInstance()->getCueIcon(cue->getCueType());
+        g.setOpacity(0.7f);
+
+        if (cue->getWarningMessage().isNotEmpty()) {
+            g.setOpacity(1.0f);
+            img = AssetManager::getInstance()->warningImage;
+        }
+
+        g.drawImageWithin(img, 7.0, 7.0, width - 14.0, height - 14.0, RectanglePlacement::centred, false);
+        return;
+    }
+
+    // Time column
+    if (TimeColumn == columnId) {
+        if (cue->duration->doubleValue() <= 0.0 && !cue->preWaitActive->boolValue() && !cue->autoFollowActive->boolValue())
+            return;
+
+        double timeLeft = cue->duration->doubleValue() - cue->currentTime->doubleValue();
+        double positionPercent = cue->currentTime->doubleValue() / cue->duration->doubleValue();
+        auto color = !cue->isPlaying->boolValue() || timeLeft > 10 ? Colours::green.brighter(0.2f) : Colours::red.brighter(0.2f);
+        String text = "";
+
+        if (cue->preWaitActive->boolValue())
+        {
+            timeLeft = cue->preWaitDuration->doubleValue() - cue->preWaitCurrentTime->doubleValue();
+            positionPercent = cue->preWaitCurrentTime->doubleValue() / cue->preWaitDuration->doubleValue();
+            color = Colours::darkgoldenrod;
+            text << "PW: ";
+        }
+
+        if (cue->autoFollowActive->boolValue())
+        {
+            timeLeft = cue->autoFollowDuration->doubleValue() - cue->autoFollowCurrentTime->doubleValue();
+            positionPercent = cue->autoFollowCurrentTime->doubleValue() / cue->autoFollowDuration->doubleValue();
+            color = Colours::orangered.brighter(0.2f);
+            text << "AF: ";
+        }
+        text << StringUtil::valueToTimeString(jmax<double>(timeLeft, 0.0));
+
+        Path myPath;
+        myPath.addRectangle(4, 3, (width - 8), height - 6);
+        g.setColour(color);
+        g.strokePath(myPath, PathStrokeType(1));
+        g.setColour(color.withAlpha(0.6f));
+        g.fillRect(4.0f, 3.0f, (width - 8.0f) * positionPercent, height - 6.0f);
+        g.setColour(Colours::white.withAlpha(0.8f));
+        g.drawText(text, 4, 3, width - 8, height - 6, Justification::centred, true);
+        return;
+    }
+
+    // Description Column
+    if (DescriptionColumn == columnId) {
+        Rectangle<float> r = Rectangle<float>(0, 0, width, height);
+
+        if (cue->getControllableByName("Loop") != nullptr && dynamic_cast<BoolParameter*>(cue->getControllableByName("Loop"))->boolValue()) {
+            g.setOpacity(0.5f);
+            g.drawImage(SPAssetManager::getInstance()->getLoopIcon(), r.removeFromRight(22).reduced(3), RectanglePlacement::centred, false);
+        }
+
+        g.setOpacity(1.0f);
+        g.drawText(cue->description->stringValue(), r.reduced(10, 0), Justification::centredLeft);
+        return;
+    }
 }
 
 Component* CuesTableModel::refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate)
@@ -308,6 +332,13 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
     } else {
         inspectCue(rowNumber);
     }
+}
+
+
+void CuesTableModel::cellDoubleClicked(int rowNumber, int columnId, const MouseEvent& event)
+{
+    cl->nextCue->setTarget(cl->cues->items[rowNumber]);
+    cl->nextCue->notifyValueChanged();
 }
 
 void CuesTableModel::backgroundClicked(const MouseEvent& event)
