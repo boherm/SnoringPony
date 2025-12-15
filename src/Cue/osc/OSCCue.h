@@ -29,8 +29,8 @@ public:
     String getCueType() const override { return "OSC"; }
     static OSCCue* create(var params) { return new OSCCue(params); }
 
-    void play() override;
-    void stop() override;
+
+    void playInternal() override;
 
     void itemAdded(OSCCueMessage*) override;
     void itemsAdded(juce::Array<OSCCueMessage *>) override;

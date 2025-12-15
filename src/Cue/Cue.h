@@ -37,6 +37,38 @@ public:
     StringParameter* description;
     StringParameter* notes;
 
+    class CueTimer :
+        public Timer
+    {
+    public:
+        CueTimer(Cue* cue);
+        virtual ~CueTimer();
+
+        Cue* parentCue;
+        FloatParameter* currentTimeParam;
+        float duration;
+
+        void start(float duration, FloatParameter* currentTimeParam);
+        void stop();
+        void notify();
+
+        void timerCallback() override;
+    };
+
+    EnablingControllableContainer* preWaitCC;
+    FloatParameter* preWaitDuration;
+    FloatParameter* preWaitCurrentTime;
+    BoolParameter* preWaitActive;
+
+    EnablingControllableContainer* autoFollowCC;
+    FloatParameter* autoFollowDuration;
+    FloatParameter* autoFollowCurrentTime;
+    EnumParameter* autoFollowType;
+    BoolParameter* autoFollowActive;
+
+    CueTimer* preWaitTimer = nullptr;
+    CueTimer* autoFollowTimer = nullptr;
+
     Trigger* setNextBtn;
 
     String getTypeString() const override { return "Cue"; }
@@ -47,12 +79,17 @@ public:
 
     void parameterValueChanged(Parameter* p) override;
     void parameterControlModeChanged(Parameter* p) override;
-
+    void onControllableFeedbackUpdateInternal(ControllableContainer* cc, Controllable* c) override;
     void triggerTriggered(Trigger* t) override;
 
-    virtual void play() {}
-    virtual void stop() {}
-    virtual void panic() {}
+    void play();
+    virtual void playInternal() { }
+    virtual bool canBePlayed() { return !isPlaying->boolValue(); }
+    void stop();
+    virtual void stopInternal() {}
+    void panic();
+    virtual void panicInternal() {}
     virtual void fade(double targetGain, double duration) {}
     void setGoNext();
+    void onCueTimerFinished(Cue::CueTimer* timer);
 };

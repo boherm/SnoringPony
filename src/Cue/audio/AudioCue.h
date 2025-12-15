@@ -41,9 +41,9 @@ public:
     void newMessage(const ContainerAsyncEvent& e) override;
     void changeListenerCallback(ChangeBroadcaster* source) override;
 
-    void play() override;
-    void stop() override;
-    void panic() override;
+    void playInternal() override;
+    void stopInternal() override;
+    void panicInternal() override;
 
     void fade(double targetGain, double duration) override;
 

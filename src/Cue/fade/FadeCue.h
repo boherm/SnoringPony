@@ -31,9 +31,10 @@ public:
     String getCueType() const override { return "Fade"; }
     static FadeCue* create(var params) { return new FadeCue(params); }
 
-    void play() override;
-    void stop() override;
-    void panic() override;
+    void playInternal() override;
+    bool canBePlayed() override;
+    void stopInternal() override;
+    void panicInternal() override;
 
     void parameterValueChanged(Parameter* p) override;
 

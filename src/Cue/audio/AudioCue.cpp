@@ -56,21 +56,19 @@ void AudioCue::newMessage(const ContainerAsyncEvent& e)
     }
 }
 
-void AudioCue::play()
+void AudioCue::playInternal()
 {
     askedToStop = false;
-    if (isPlaying->boolValue())
-        return;
     filesManager->playAll();
 }
 
-void AudioCue::stop()
+void AudioCue::stopInternal()
 {
     filesManager->stopAll();
     askedToStop = true;
 }
 
-void AudioCue::panic()
+void AudioCue::panicInternal()
 {
     filesManager->panicAll();
     askedToStop = true;

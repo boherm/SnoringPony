@@ -64,9 +64,9 @@ public:
 
     void loadJSONDataItemInternal(juce::var data) override;
 
-    void play() override;
-    void stop() override;
-    void panic() override;
+    void playInternal() override;
+    void stopInternal() override;
+    void panicInternal() override;
     void fade(double targetGain, double duration) override;
     void refreshGlobalDuration();
     void refreshAudioOutput();

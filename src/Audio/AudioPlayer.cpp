@@ -34,7 +34,7 @@ void AudioPlayerMixer::resetPanicFade()
 
 void AudioPlayerMixer::fade(double targetGain, double duration)
 {
-    fadingGain.reset(sampleRate, duration + 2.0f); // ?
+    fadingGain.reset(sampleRate, duration + 2.5f); // ?
     fadingGain.setTargetValue(targetGain);
     isFading = true;
 }

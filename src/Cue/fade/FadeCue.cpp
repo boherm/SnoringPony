@@ -28,38 +28,34 @@ FadeCue::~FadeCue()
 {
 }
 
-void FadeCue::play()
+bool FadeCue::canBePlayed()
 {
-    if (getWarningMessage().isNotEmpty()) {
-        return;
-    }
+    // return Cue::canBePlayed();
+    if (!Cue::canBePlayed() || getWarningMessage().isNotEmpty())
+        return false;
 
-    ControllableContainer* targetContainer = targetCue->getTargetContainer();
-    Cue* target = dynamic_cast<Cue*>(targetContainer);
-
-    if (target->isFadable) {
-        target->fade(volume->doubleValue(), duration->doubleValue());
-        currentTime->setValue(0.0);
-        startTimer(50);
-    }
+    Cue* target = targetCue->getTargetContainerAs<Cue>();
+    return (target != nullptr && target->isFadable);
 }
 
-void FadeCue::stop()
+void FadeCue::playInternal()
 {
-    if (getWarningMessage().isNotEmpty()) {
-        return;
-    }
+    Cue* target = targetCue->getTargetContainerAs<Cue>();
+    target->fade(volume->doubleValue(), duration->doubleValue());
     currentTime->setValue(0.0);
+    startTimer(50);
 }
 
-void FadeCue::panic()
+void FadeCue::stopInternal()
 {
-    if (getWarningMessage().isNotEmpty()) {
-        return;
-    }
     stopTimer();
     currentTime->setValue(0.0);
     isPlaying->setValue(false);
+}
+
+void FadeCue::panicInternal()
+{
+    stopInternal();
 }
 
 void FadeCue::timerCallback()
@@ -94,16 +90,14 @@ void FadeCue::parameterValueChanged(Parameter* p)
 {
     Cue::parameterValueChanged(p);
 
-    if (getWarningMessage().isNotEmpty()) {
-        clearWarning();
-    }
+    clearWarning();
 
     if (p == targetCue) {
-        ControllableContainer* targetContainer = targetCue->getTargetContainer();
-        Cue* target = dynamic_cast<Cue*>(targetContainer);
+        Cue* target = targetCue->getTargetContainerAs<Cue>();
 
         if (target == nullptr || !target->isFadable) {
             setWarningMessage("Target Cue is not valid");
         }
     }
+    notifyWarningChanged();
 }

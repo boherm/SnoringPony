@@ -35,7 +35,7 @@ OSCCue::~OSCCue()
     messagesManager->removeBaseManagerListener(this);
 }
 
-void OSCCue::play()
+void OSCCue::playInternal()
 {
     for (OSCCueMessage* msg : messagesManager->items) {
         ControllableContainer* targetContainer = msg->targetTemplate->getTargetContainer();
@@ -49,10 +49,6 @@ void OSCCue::play()
         OSCMessage oscMsg = msg->buildMessage();
         oscInterface->sendOSC(oscMsg);
     }
-}
-
-void OSCCue::stop()
-{
 }
 
 void OSCCue::itemAdded(OSCCueMessage* newItem)

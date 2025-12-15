@@ -126,13 +126,11 @@ void PlaylistCue::loadJSONDataItemInternal(juce::var data)
     refreshVolume();
 }
 
-void PlaylistCue::play()
+void PlaylistCue::playInternal()
 {
     askedToStop = false;
-    if (isPlaying->boolValue())
-        return;
 
-    // reset positions
+    // reset playlistfile
     for (auto& playlistFile : filesManager->items)
     {
         playlistFile->canBeReorderedInEditor = false;
@@ -140,6 +138,7 @@ void PlaylistCue::play()
         playlistFile->enabled->setEnabled(false);
         playlistFile->audioFile->setEnabled(false);
         playlistFile->player->transport->setPosition(0.0f);
+        playlistFile->player->mixer->resetFade();
     }
     queuedNotifier.addMessage(new ContainerAsyncEvent(ContainerAsyncEvent::ControllableContainerNeedsRebuild, this));
 
@@ -152,23 +151,23 @@ void PlaylistCue::play()
     nextFile->player->play();
 }
 
-void PlaylistCue::stop()
+void PlaylistCue::stopInternal()
 {
-    for (auto& playlistFile : filesManager->items)
-    {
-        playlistFile->player->stopAndClean();
-    }
     askedToStop = true;
     stopTimer();
+    for (auto& playlistFile : filesManager->items)
+    {
+        playlistFile->player->stop();
+    }
 }
 
-void PlaylistCue::panic()
+void PlaylistCue::panicInternal()
 {
+    askedToStop = true;
     for (auto& playlistFile : filesManager->items)
     {
         playlistFile->player->panic();
     }
-    askedToStop = true;
 }
 
 void PlaylistCue::refreshGlobalDuration()
