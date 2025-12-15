@@ -35,6 +35,9 @@ void AudioFilesManager::playAll()
     for (int i = 0; i < items.size(); ++i)
     {
         AudioFile* audioFile = items[i];
+
+        AudioOutput* audioOutput = audioFile->targetAudioInterface->getTargetContainerAs<AudioOutput>();
+        audioFile->player->setOutput(audioOutput);
         audioFile->player->play();
     }
 }
@@ -44,7 +47,7 @@ void AudioFilesManager::stopAll()
     for (int i = 0; i < items.size(); ++i)
     {
         AudioFile* audioFile = items[i];
-        audioFile->player->stop();
+        audioFile->player->stopAndClean();
     }
 }
 

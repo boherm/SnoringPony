@@ -147,6 +147,7 @@ void PlaylistCue::playInternal()
     PlaylistFile* nextFile = getNextFileToPlay();
     if (nextFile == nullptr)
         return;
+    refreshAudioOutput();
     nextFile->player->transport->addChangeListener(this);
     nextFile->player->play();
 }
@@ -157,7 +158,7 @@ void PlaylistCue::stopInternal()
     stopTimer();
     for (auto& playlistFile : filesManager->items)
     {
-        playlistFile->player->stop();
+        playlistFile->player->stopAndClean();
     }
 }
 
