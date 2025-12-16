@@ -130,11 +130,6 @@ void Cuelist::newMessage(const ContainerAsyncEvent& e)
                 (e.targetControllable->niceName == "Is Playing" || e.targetControllable->niceName == "Active")
         )
     {
-        if (cues->hasCuePlaying()) {
-            isPlaying->setValue(true);
-        } else {
-            isPlaying->setValue(false);
-            currentCue->resetValue();
-        }
+        isPlaying->setValue(cues->hasCuePlaying());
     }
 }

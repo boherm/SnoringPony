@@ -9,6 +9,7 @@
 */
 
 #include "PlaylistCue.h"
+#include "../../Cuelist/Cuelist.h"
 #include "../../Interface/InterfaceManager.h"
 #include "../../Interface/audio/AudioOutput.h"
 
@@ -316,6 +317,10 @@ void PlaylistCue::changeListenerCallback(ChangeBroadcaster* source)
                     playlistFile->enabled->setEnabled(true);
                 }
                 queuedNotifier.addMessage(new ContainerAsyncEvent(ContainerAsyncEvent::ControllableContainerNeedsRebuild, this));
+
+                if (parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
+                    parentCuelist->currentCue->resetValue();
+                }
 
                 return;
             }

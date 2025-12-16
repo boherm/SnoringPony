@@ -49,6 +49,7 @@ void OSCCue::playInternal()
         OSCMessage oscMsg = msg->buildMessage();
         oscInterface->sendOSC(oscMsg);
     }
+    endCue();
 }
 
 void OSCCue::itemAdded(OSCCueMessage* newItem)

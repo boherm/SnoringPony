@@ -247,6 +247,10 @@ void Cue::play()
 
 void Cue::panic()
 {
+    if ((preWaitActive->boolValue() || autoFollowActive->boolValue()) && parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
+        parentCuelist->currentCue->resetValue();
+    }
+
     if (preWaitActive->boolValue()) {
         preWaitTimer->stop();
         preWaitCurrentTime->setValue(0.0f);
@@ -266,6 +270,10 @@ void Cue::panic()
 
 void Cue::stop()
 {
+    if ((preWaitActive->boolValue() || autoFollowActive->boolValue()) && parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
+        parentCuelist->currentCue->resetValue();
+    }
+
     if (preWaitActive->boolValue()) {
         preWaitTimer->stop();
         preWaitCurrentTime->setValue(0.0f);
@@ -289,13 +297,25 @@ void Cue::endCue()
 {
     isPlaying->setValue(false);
     autoFollowProcess(AutoFollowType::AFTER_CUE);
+
+    if (!autoFollowCC->enabled->boolValue()) {
+        if (parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
+            parentCuelist->currentCue->resetValue();
+        }
+    }
 }
 
 void Cue::playNextCue()
 {
     auto idx = parentCuelist->cues->items.indexOf(this);
-    if (idx + 1 < parentCuelist->cues->items.size())
-        parentCuelist->cues->items[idx + 1]->play();
+    if (idx + 2 < parentCuelist->cues->items.size()) {
+        Cue* nextCue = parentCuelist->cues->items[idx + 1];
+        nextCue->play();
+
+        if (parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
+            parentCuelist->currentCue->setValueFromTarget(nextCue);
+        }
+    }
 }
 
 bool Cue::isAutoStartCue()
@@ -322,6 +342,11 @@ void Cue::setNextCue()
 
 void Cue::autoFollowProcess(AutoFollowType type)
 {
+    /*
+        if (parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
+            parentCuelist->currentCue->resetValue();
+        }
+    */
     if (!autoFollowCC->enabled->boolValue())
         return;
 

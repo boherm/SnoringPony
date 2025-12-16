@@ -10,6 +10,7 @@
 
 #include "AudioCue.h"
 #include "AudioFile.h"
+#include "../../Cuelist/Cuelist.h"
 #include "../../Audio/AudioPlayer.h"
 
 AudioCue::AudioCue(var params)
@@ -108,6 +109,10 @@ void AudioCue::changeListenerCallback(ChangeBroadcaster* source)
 
             if (!loop->boolValue() && !askedToStop)
                 endCue();
+
+            if (askedToStop && parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
+                parentCuelist->currentCue->resetValue();
+            }
         }
     }
 }

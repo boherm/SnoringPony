@@ -30,17 +30,18 @@ FadeCue::~FadeCue()
 
 bool FadeCue::canBePlayed()
 {
-    // return Cue::canBePlayed();
     if (!Cue::canBePlayed() || getWarningMessage().isNotEmpty())
         return false;
-
-    Cue* target = targetCue->getTargetContainerAs<Cue>();
-    return (target != nullptr && target->isFadable);
+    return true;
 }
 
 void FadeCue::playInternal()
 {
     Cue* target = targetCue->getTargetContainerAs<Cue>();
+    if (target == nullptr || !target->isFadable) {
+        endCue();
+        return;
+    }
     target->fade(volume->doubleValue(), duration->doubleValue());
     currentTime->setValue(0.0);
     startTimer(50);
@@ -78,11 +79,13 @@ void FadeCue::timerCallback()
             if (stopAtEnd->boolValue()) {
                 target->stop();
             }
+            endCue();
         }
     } else {
         stopTimer();
         currentTime->setValue(0.0);
         isPlaying->setValue(false);
+        endCue();
     }
 }
 
