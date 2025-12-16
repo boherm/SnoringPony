@@ -43,7 +43,7 @@ void SnoringPonyApplication::initialiseInternal(const String &)
 	// Help URL (http://benjamin.kuperberg.fr/chataigne/help/help_en.json)
 	HelpBox::getInstance()->helpURL = URL("https://snoringpony.app/api/");
 	// Crashdumper
-	CrashDumpUploader::getInstance()->init("https://webhook.site/7fb6eddc-aebf-4783-bdc3-e9e3e0b80da2", ImageCache::getFromMemory(BinaryData::crash_png, BinaryData::crash_pngSize));
+	CrashDumpUploader::getInstance()->init("https://crash-report.snoringpony.app", ImageCache::getFromMemory(BinaryData::crash_png, BinaryData::crash_pngSize));
 }
 
 
