@@ -13,6 +13,7 @@
 #include "../../Cuelist/CuelistManager.h"
 #include "../../Cue/CueManager.h"
 #include "../../ui/SPAssetManager.h"
+#include "juce_graphics/juce_graphics.h"
 
 enum ColumnIds
 {
@@ -22,7 +23,7 @@ enum ColumnIds
     DescriptionColumn = 4,
     TimeColumn = 5,
     PreWaitColumn = 6,
-    AutoFollowColumn = 7
+    PostWaitColumn = 7
 };
 
 CuesTableModel::CuesTableModel(TableListBox* tlb, Cuelist* cl)
@@ -106,7 +107,7 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
             g.fillPath(myPath);
         }
 
-        if (cue->isPlaying->boolValue() || cue->preWaitActive->boolValue() || cue->autoFollowActive->boolValue()) {
+        if (cue->isPlaying->boolValue() || cue->preWaitActive->boolValue() || cue->postWaitActive->boolValue()) {
             g.setColour(Colours::green.brighter(0.2f));
             myPath.addRectangle(0, 0, 5, height);
             myPath.addTriangle(5, 0, 5, height, 10, height * 0.5f);
@@ -152,17 +153,40 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         auto color = Colours::darkgoldenrod;
         String text = CuesTableModel::valueToTimeString(jmax<double>(timeLeft, 0.0));
 
+        Rectangle<float> r = Rectangle<float>(0, 0, width, height);
+        r.reduce(4, 4);
+
         Path myPath;
-        myPath.addRectangle(4, 3, (width - 8), height - 6);
+        myPath.addRectangle(r.getX(), r.getY(), r.getWidth(), r.getHeight());
         g.setColour(color);
+
         if (cue->isAutoStartCue()) g.setOpacity(0.5f);
+
         g.strokePath(myPath, PathStrokeType(1));
-        g.setColour(color.withAlpha(0.6f));
-        if (cue->isAutoStartCue()) g.setOpacity(0.5f);
-        g.fillRect(4.0f, 3.0f, (width - 8.0f) * positionPercent, height - 6.0f);
+        g.setColour(color.withAlpha(0.3f));
+
+        g.fillRect(r.getX(), r.getY(), r.getWidth() * positionPercent, r.getHeight());
         g.setColour(Colours::white.withAlpha(0.8f));
+
         if (cue->isAutoStartCue()) g.setOpacity(0.5f);
-        g.drawText(text, 4, 3, width - 8, height - 6, Justification::centred, true);
+
+        g.drawText(text, r.getX(), r.getY(), r.getWidth(), r.getHeight(), Justification::centred, true);
+
+        if (cue->postWaitCC->enabled->boolValue() && cue->postWaitType->intValue() == Cue::PostWaitType::IMMEDIATE) {
+            g.setFont(Font(13.0f, Font::bold));
+            g.setColour(Colours::orangered);
+            if (cue->isAutoStartCue()) g.setOpacity(0.5f);
+            g.drawText("P", r.getX() + 6, r.getY(), 15, r.getHeight(), Justification::centred, true);
+            g.drawEllipse(r.getX() + 6, r.getY() + (r.getHeight() / 2) - 7, 14, 14, 1.5f);
+        }
+
+        if (cue->postWaitCC->enabled->boolValue() && cue->postWaitType->intValue() == Cue::PostWaitType::AFTER_PRE) {
+            g.setFont(Font(13.0f, Font::bold));
+            g.setColour(Colours::orangered);
+            if (cue->isAutoStartCue()) g.setOpacity(0.5f);
+            g.drawText("P", r.getX() + r.getWidth() - 20, r.getY(), 15, r.getHeight(), Justification::centred, true);
+            g.drawEllipse(r.getX() + r.getWidth() - 20, r.getY() + (r.getHeight() / 2) - 7, 14, 14, 1.5f);
+        }
         return;
     }
 
@@ -176,40 +200,64 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         auto color = !cue->isPlaying->boolValue() || cue->preWaitActive->boolValue() || timeLeft > 10 ? Colours::green.brighter(0.2f) : Colours::red.brighter(0.2f);
         String text = CuesTableModel::valueToTimeString(jmax<double>(timeLeft, 0.0));
 
+        Rectangle<float> r = Rectangle<float>(0, 0, width, height);
+        r.reduce(4, 4);
+
         Path myPath;
-        myPath.addRectangle(4, 3, (width - 8), height - 6);
+        myPath.addRectangle(r.getX(), r.getY(), r.getWidth(), r.getHeight());
         g.setColour(color);
+
         if (cue->isAutoStartCue()) g.setOpacity(0.5f);
+
         g.strokePath(myPath, PathStrokeType(1));
-        g.setColour(color.withAlpha(0.6f));
-        if (cue->isAutoStartCue()) g.setOpacity(0.5f);
-        g.fillRect(4.0f, 3.0f, (width - 8.0f) * positionPercent, height - 6.0f);
+        g.setColour(color.withAlpha(0.3f));
+
+        g.fillRect(r.getX(), r.getY(), r.getWidth() * positionPercent, r.getHeight());
         g.setColour(Colours::white.withAlpha(0.8f));
+
         if (cue->isAutoStartCue()) g.setOpacity(0.5f);
-        g.drawText(text, 4, 3, width - 8, height - 6, Justification::centred, true);
+
+        g.drawText(text, r.getX(), r.getY(), r.getWidth(), r.getHeight(), Justification::centred, true);
+
+        if (cue->postWaitCC->enabled->boolValue() && cue->postWaitType->intValue() == Cue::PostWaitType::AFTER_CUE) {
+            g.setFont(Font(13.0f, Font::bold));
+            g.setColour(Colours::orangered);
+            if (cue->isAutoStartCue()) g.setOpacity(0.5f);
+            g.drawText("P", r.getX() + r.getWidth() - 20, r.getY(), 15, r.getHeight(), Justification::centred, true);
+            g.drawEllipse(r.getX() + r.getWidth() - 20, r.getY() + (r.getHeight() / 2) - 7, 14, 14, 1.5f);
+        }
         return;
     }
 
-    if (AutoFollowColumn == columnId) {
-        if (!cue->autoFollowCC->enabled->boolValue() && cue->autoFollowDuration->doubleValue() <= 0.0)
+    // Post-wait column
+    if (PostWaitColumn == columnId) {
+        if (!cue->postWaitCC->enabled->boolValue() || cue->postWaitDuration->doubleValue() <= 0.0)
             return;
 
-        double timeLeft = cue->autoFollowDuration->doubleValue() - cue->autoFollowCurrentTime->doubleValue();
-        double positionPercent = cue->autoFollowCurrentTime->doubleValue() / cue->autoFollowDuration->doubleValue();
-        auto color = Colours::orangered;
+        Rectangle<float> r = Rectangle<float>(0, 0, width, height);
+        r.reduce(4, 4);
+
+        double timeLeft = cue->postWaitDuration->doubleValue() - cue->postWaitCurrentTime->doubleValue();
+        double positionPercent = cue->postWaitCurrentTime->doubleValue() / cue->postWaitDuration->doubleValue();
+        auto color = Colours::darkgoldenrod;
         String text = CuesTableModel::valueToTimeString(jmax<double>(timeLeft, 0.0));
 
+
         Path myPath;
-        myPath.addRectangle(4, 3, (width - 8), height - 6);
+        myPath.addRectangle(r.getX(), r.getY(), r.getWidth(), r.getHeight());
         g.setColour(color);
+
         if (cue->isAutoStartCue()) g.setOpacity(0.5f);
+
         g.strokePath(myPath, PathStrokeType(1));
-        g.setColour(color.withAlpha(0.6f));
-        if (cue->isAutoStartCue()) g.setOpacity(0.5f);
-        g.fillRect(4.0f, 3.0f, (width - 8.0f) * positionPercent, height - 6.0f);
+        g.setColour(color.withAlpha(0.3f));
+
+        g.fillRect(r.getX(), r.getY(), r.getWidth() * positionPercent, r.getHeight());
         g.setColour(Colours::white.withAlpha(0.8f));
+
         if (cue->isAutoStartCue()) g.setOpacity(0.5f);
-        g.drawText(text, 4, 3, width - 8, height - 6, Justification::centred, true);
+
+        g.drawText(text, r.getX(), r.getY(), r.getWidth(), r.getHeight(), Justification::centred, true);
         return;
     }
 

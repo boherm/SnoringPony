@@ -95,7 +95,7 @@ void CueManager::loadJSONDataManagerInternal(var data)
 bool CueManager::hasCuePlaying()
 {
     for (Cue* c : items) {
-        if (c->isPlaying->boolValue() || c->preWaitActive->boolValue() || c->autoFollowActive->boolValue()) {
+        if (c->isPlaying->boolValue() || c->preWaitActive->boolValue() || c->postWaitActive->boolValue()) {
             return true;
         }
     }

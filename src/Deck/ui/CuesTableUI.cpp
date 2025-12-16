@@ -22,7 +22,7 @@ enum ColumnIds
     DescriptionColumn = 4,
     TimeColumn = 5,
     PreWaitColumn = 6,
-    AutoFollowColumn = 7
+    PostWaitColumn = 7
 };
 
 CuesTableUI::CuesTableUI(Cuelist* cl)
@@ -49,7 +49,7 @@ CuesTableUI::CuesTableUI(Cuelist* cl)
     tableListBox.getHeader().addColumn("Description", DescriptionColumn, 200, 200, 5000, flags & ~TableHeaderComponent::appearsOnColumnMenu);
     tableListBox.getHeader().addColumn("Pre-wait", PreWaitColumn, 130, 130, 130, flags & ~TableHeaderComponent::resizable);
     tableListBox.getHeader().addColumn("Time", TimeColumn, 130, 130, 130, flags & ~TableHeaderComponent::resizable);
-    tableListBox.getHeader().addColumn("Auto-follow", AutoFollowColumn, 130, 130, 130, flags & ~TableHeaderComponent::resizable);
+    tableListBox.getHeader().addColumn("Post-wait", PostWaitColumn, 130, 130, 130, flags & ~TableHeaderComponent::resizable);
 
     addAndMakeVisible(tableListBox);
     cl->cues->addBaseManagerListener(this);
@@ -119,8 +119,8 @@ void CuesTableUI::resized()
         width -= 130;
     }
 
-    if (tableListBox.getHeader().isColumnVisible(AutoFollowColumn)) {
-        tableListBox.getHeader().setColumnWidth(AutoFollowColumn, 130);
+    if (tableListBox.getHeader().isColumnVisible(PostWaitColumn)) {
+        tableListBox.getHeader().setColumnWidth(PostWaitColumn, 130);
         width -= 130;
     }
 

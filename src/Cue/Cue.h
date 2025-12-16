@@ -60,21 +60,21 @@ public:
     FloatParameter* preWaitCurrentTime;
     BoolParameter* preWaitActive;
 
-    enum AutoFollowType
+    enum PostWaitType
     {
         IMMEDIATE = 0,
         AFTER_PRE = 1,
         AFTER_CUE = 2
     };
 
-    EnablingControllableContainer* autoFollowCC;
-    FloatParameter* autoFollowDuration;
-    FloatParameter* autoFollowCurrentTime;
-    EnumParameter* autoFollowType;
-    BoolParameter* autoFollowActive;
+    EnablingControllableContainer* postWaitCC;
+    FloatParameter* postWaitDuration;
+    FloatParameter* postWaitCurrentTime;
+    EnumParameter* postWaitType;
+    BoolParameter* postWaitActive;
 
     CueTimer* preWaitTimer = nullptr;
-    CueTimer* autoFollowTimer = nullptr;
+    CueTimer* postWaitTimer = nullptr;
 
     Trigger* setNextBtn;
 
@@ -101,7 +101,7 @@ public:
     void playNextCue();
     bool isAutoStartCue();
     void setNextCue();
-    void autoFollowProcess(AutoFollowType type);
+    void autoFollowProcess(PostWaitType type);
 
     String getDescription();
     virtual String autoDescriptionInternal() { return "Cue " + id->stringValue(); }

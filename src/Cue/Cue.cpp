@@ -124,37 +124,37 @@ currentTime->hideInRemoteControl = true;
     preWaitActive->setEnabled(false);
     // preWaitActive->hideInEditor = true;
 
-    // --- Auto-follow ----
-    autoFollowTimer = new Cue::CueTimer(this);
-    autoFollowCC = new EnablingControllableContainer("Auto-follow");
-    autoFollowCC->enabled->setValue(false);
-    autoFollowCC->editorIsCollapsed = true;
-    addChildControllableContainer(autoFollowCC, true);
+    // --- Post-Wait ----
+    postWaitTimer = new Cue::CueTimer(this);
+    postWaitCC = new EnablingControllableContainer("Post-wait");
+    postWaitCC->enabled->setValue(false);
+    postWaitCC->editorIsCollapsed = true;
+    addChildControllableContainer(postWaitCC, true);
 
-    autoFollowType = autoFollowCC->addEnumParameter("Type", "Type of auto-follow behavior", "Immediate");
-    autoFollowType->addOption("Immediate", AutoFollowType::IMMEDIATE);
-    autoFollowType->addOption("After Pre-wait", AutoFollowType::AFTER_PRE);
-    autoFollowType->addOption("After Cue", AutoFollowType::AFTER_CUE);
+    postWaitType = postWaitCC->addEnumParameter("Type", "Define when we start the Post-wait of this cue");
+    postWaitType->addOption("Immediate", PostWaitType::IMMEDIATE);
+    postWaitType->addOption("After Pre-wait", PostWaitType::AFTER_PRE);
+    postWaitType->addOption("After Cue", PostWaitType::AFTER_CUE);
 
-    autoFollowDuration = autoFollowCC->addFloatParameter("Waiting time", "Duration before auto-follow triggers the next cue", 0.0, 0.0);
-    autoFollowDuration->defaultUI = FloatParameter::TIME;
+    postWaitDuration = postWaitCC->addFloatParameter("Waiting time", "Duration before auto-follow triggers the next cue", 0.0, 0.0);
+    postWaitDuration->defaultUI = FloatParameter::TIME;
 
-    autoFollowCurrentTime = autoFollowCC->addFloatParameter("Current time", "Current time of the auto-follow", 0.0);
-    autoFollowCurrentTime->setEnabled(false);
-    autoFollowCurrentTime->defaultUI = FloatParameter::TIME;
+    postWaitCurrentTime = postWaitCC->addFloatParameter("Current time", "Current time of the auto-follow", 0.0);
+    postWaitCurrentTime->setEnabled(false);
+    postWaitCurrentTime->defaultUI = FloatParameter::TIME;
 
-    autoFollowActive = autoFollowCC->addBoolParameter("Active", "Auto-follow currently active", false);
-    autoFollowActive->setEnabled(false);
+    postWaitActive = postWaitCC->addBoolParameter("Active", "Auto-follow currently active", false);
+    postWaitActive->setEnabled(false);
     // autoFollowActive->hideInEditor = true;
 }
 
 Cue::~Cue()
 {
     preWaitTimer->stop();
-    autoFollowTimer->stop();
+    postWaitTimer->stop();
 
     delete preWaitTimer;
-    delete autoFollowTimer;
+    delete postWaitTimer;
 }
 
 InspectableEditor* Cue::getEditorInternal(bool isRoot, Array<Inspectable*> inspectables)
@@ -199,8 +199,8 @@ void Cue::onControllableFeedbackUpdateInternal(ControllableContainer* cc, Contro
         if (preWaitCC == cc && c == preWaitCC->enabled) {
             preWaitCC->editorIsCollapsed = !preWaitCC->enabled->boolValue();
         }
-        if (autoFollowCC == cc && c == autoFollowCC->enabled) {
-            autoFollowCC->editorIsCollapsed = !autoFollowCC->enabled->boolValue();
+        if (postWaitCC == cc && c == postWaitCC->enabled) {
+            postWaitCC->editorIsCollapsed = !postWaitCC->enabled->boolValue();
         }
     }
 }
@@ -217,12 +217,12 @@ void Cue::onCueTimerFinished(Cue::CueTimer* timer)
     if (preWaitTimer == timer) {
         preWaitCurrentTime->setValue(0.0f);
         preWaitActive->setValue(false);
-        autoFollowProcess(AutoFollowType::AFTER_PRE);
+        autoFollowProcess(PostWaitType::AFTER_PRE);
         playInternal();
     }
-    if (autoFollowTimer == timer) {
-        autoFollowCurrentTime->setValue(0.0f);
-        autoFollowActive->setValue(false);
+    if (postWaitTimer == timer) {
+        postWaitCurrentTime->setValue(0.0f);
+        postWaitActive->setValue(false);
         playNextCue();
     }
 }
@@ -233,7 +233,7 @@ void Cue::play()
         return;
 
     isPlaying->setValue(true);
-    autoFollowProcess(AutoFollowType::IMMEDIATE);
+    autoFollowProcess(PostWaitType::IMMEDIATE);
 
     if (preWaitCC->enabled->boolValue()) {
         preWaitCurrentTime->setValue(0.0f);
@@ -247,7 +247,7 @@ void Cue::play()
 
 void Cue::panic()
 {
-    if ((preWaitActive->boolValue() || autoFollowActive->boolValue()) && parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
+    if ((preWaitActive->boolValue() || postWaitActive->boolValue()) && parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
         parentCuelist->currentCue->resetValue();
     }
 
@@ -258,10 +258,10 @@ void Cue::panic()
         isPlaying->setValue(false);
     }
 
-    if (autoFollowActive->boolValue()) {
-        autoFollowTimer->stop();
-        autoFollowCurrentTime->setValue(0.0f);
-        autoFollowActive->setValue(false);
+    if (postWaitActive->boolValue()) {
+        postWaitTimer->stop();
+        postWaitCurrentTime->setValue(0.0f);
+        postWaitActive->setValue(false);
         isPlaying->setValue(false);
     }
 
@@ -270,7 +270,7 @@ void Cue::panic()
 
 void Cue::stop()
 {
-    if ((preWaitActive->boolValue() || autoFollowActive->boolValue()) && parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
+    if ((preWaitActive->boolValue() || postWaitActive->boolValue()) && parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
         parentCuelist->currentCue->resetValue();
     }
 
@@ -282,10 +282,10 @@ void Cue::stop()
         return;
     }
 
-    if (autoFollowActive->boolValue()) {
-        autoFollowTimer->stop();
-        autoFollowCurrentTime->setValue(0.0f);
-        autoFollowActive->setValue(false);
+    if (postWaitActive->boolValue()) {
+        postWaitTimer->stop();
+        postWaitCurrentTime->setValue(0.0f);
+        postWaitActive->setValue(false);
         isPlaying->setValue(false);
         return;
     }
@@ -296,9 +296,9 @@ void Cue::stop()
 void Cue::endCue()
 {
     isPlaying->setValue(false);
-    autoFollowProcess(AutoFollowType::AFTER_CUE);
+    autoFollowProcess(PostWaitType::AFTER_CUE);
 
-    if (!autoFollowCC->enabled->boolValue()) {
+    if (!postWaitCC->enabled->boolValue()) {
         if (parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
             parentCuelist->currentCue->resetValue();
         }
@@ -323,12 +323,17 @@ bool Cue::isAutoStartCue()
     auto idx = parentCuelist->cues->items.indexOf(this);
     if (idx - 1 < 0)
         return false;
-    return parentCuelist->cues->items[idx - 1]->autoFollowCC->enabled->boolValue();
+    return parentCuelist->cues->items[idx - 1]->postWaitCC->enabled->boolValue();
 }
 
 void Cue::setNextCue()
 {
     auto idx = parentCuelist->cues->items.indexOf(this);
+    if (idx + 1 >= parentCuelist->cues->items.size()) {
+        parentCuelist->nextCue->resetValue();
+        parentCuelist->nextCue->notifyValueChanged();
+        return;
+    }
 
     for (int i = idx + 1; i < parentCuelist->cues->items.size(); i++) {
         Cue* c = parentCuelist->cues->items[i];
@@ -340,21 +345,21 @@ void Cue::setNextCue()
     }
 }
 
-void Cue::autoFollowProcess(AutoFollowType type)
+void Cue::autoFollowProcess(PostWaitType type)
 {
-    if (!autoFollowCC->enabled->boolValue())
+    if (!postWaitCC->enabled->boolValue())
         return;
 
     if (
-            type == autoFollowType->intValue() ||
-            type == AutoFollowType::IMMEDIATE && autoFollowType->intValue() == AutoFollowType::AFTER_PRE && !preWaitCC->enabled->boolValue()
+            type == postWaitType->intValue() ||
+            type == PostWaitType::IMMEDIATE && postWaitType->intValue() == PostWaitType::AFTER_PRE && !preWaitCC->enabled->boolValue()
     ) {
-        if (autoFollowDuration->floatValue() <= 0.0f) {
+        if (postWaitDuration->floatValue() <= 0.0f) {
             playNextCue();
         } else {
-            autoFollowCurrentTime->setValue(0.0f);
-            autoFollowActive->setValue(true);
-            autoFollowTimer->start(autoFollowDuration->floatValue(), autoFollowCurrentTime);
+            postWaitCurrentTime->setValue(0.0f);
+            postWaitActive->setValue(true);
+            postWaitTimer->start(postWaitDuration->floatValue(), postWaitCurrentTime);
         }
     }
 }

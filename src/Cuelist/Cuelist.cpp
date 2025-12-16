@@ -86,7 +86,7 @@ void Cuelist::panic()
 {
     for (int i = 0; i < cues->items.size(); i++) {
         Cue* c = cues->items[i];
-        if (c->isPlaying->boolValue() || c->preWaitActive->boolValue() || c->autoFollowActive->boolValue()) {
+        if (c->isPlaying->boolValue() || c->preWaitActive->boolValue() || c->postWaitActive->boolValue()) {
             c->panic();
         }
     }
