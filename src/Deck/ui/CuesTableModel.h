@@ -16,7 +16,8 @@ class Cuelist;
 
 class CuesTableModel :
     public TableListBoxModel,
-    public ParameterListener
+    public ParameterListener,
+    public InspectableSelectionManager::AsyncListener
 {
 public:
     CuesTableModel(TableListBox* tlb, Cuelist* cl);
@@ -45,4 +46,6 @@ public:
     void parameterValueChanged(Parameter* p) override;
 
     static String valueToTimeString(double timeVal);
+
+    void newMessage(const InspectableSelectionManager::SelectionEvent& e) override;
 };

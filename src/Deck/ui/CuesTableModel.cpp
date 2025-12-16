@@ -13,7 +13,6 @@
 #include "../../Cuelist/CuelistManager.h"
 #include "../../Cue/CueManager.h"
 #include "../../ui/SPAssetManager.h"
-#include "juce_graphics/juce_graphics.h"
 
 enum ColumnIds
 {
@@ -36,11 +35,14 @@ CuesTableModel::CuesTableModel(TableListBox* tlb, Cuelist* cl)
     }
 
     cl->nextCue->addParameterListener(this);
+
+	InspectableSelectionManager::mainSelectionManager->addAsyncSelectionManagerListener(this);
 }
 
 CuesTableModel::~CuesTableModel()
 {
     cl->nextCue->removeParameterListener(this);
+	InspectableSelectionManager::mainSelectionManager->removeAsyncSelectionManagerListener(this);
 }
 
 int CuesTableModel::getNumRows()
@@ -484,13 +486,7 @@ void CuesTableModel::backgroundClicked(const MouseEvent& event)
 
 void CuesTableModel::inspectCue(int rowNumber)
 {
-    auto inspect = ShapeShifterManager::getInstance()->getContentForName("Inspector");
-    if (inspect == nullptr)
-        return;
-    InspectorUI *inspectorUI = dynamic_cast<InspectorUI *>(inspect->contentComponent);
-
-    inspectorUI->inspector->setCurrentInspectables(cl->cues->items[rowNumber]);
-    inspectorUI->repaint();
+    InspectableSelectionManager::mainSelectionManager->selectInspectable(cl->cues->items[rowNumber]);
 }
 
 void CuesTableModel::sortOrderChanged(int newSortColumnId, bool isForwards)
@@ -529,4 +525,17 @@ String CuesTableModel::valueToTimeString(double timeVal)
         return String::formatted("%02i:%02i:%0" + String(3 + numDecimals) + "." + String(numDecimals) + "f", hours, minutes, seconds);
 
     return String::formatted("%02i:%0" + String(3 + numDecimals) + "." + String(numDecimals) + "f", minutes, seconds);
+}
+
+void CuesTableModel::newMessage(const InspectableSelectionManager::SelectionEvent& e)
+{
+    if (e.type == InspectableSelectionManager::SelectionEvent::Type::SELECTION_CHANGED)
+    {
+        Cue* cue = e.selectionManager->getInspectableAs<Cue>();
+        if (cue == nullptr) {
+            tlb->deselectAllRows();
+            tlb->repaint();
+            return;
+        }
+    }
 }
