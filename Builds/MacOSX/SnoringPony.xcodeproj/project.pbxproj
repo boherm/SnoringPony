@@ -165,7 +165,6 @@
 		5D29EEEDC890B444EDE1F128 /* CuesTableModel.cpp */ /* CuesTableModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CuesTableModel.cpp; path = ../../src/Deck/ui/CuesTableModel.cpp; sourceTree = SOURCE_ROOT; };
 		5EBA8DAB8541FA76A5600A2E /* AboutWindow.h */ /* AboutWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AboutWindow.h; path = ../../src/ui/AboutWindow.h; sourceTree = SOURCE_ROOT; };
 		642CC9D7F5E1D204D1F6F61F /* ColorPresets.h */ /* ColorPresets.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ColorPresets.h; path = ../../src/ProjectSettings/ColorPresets.h; sourceTree = SOURCE_ROOT; };
-		64D566B29E72E2BDCB6B7102 /* auto-follow.png */ /* auto-follow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "auto-follow.png"; path = "../../resources/auto-follow.png"; sourceTree = SOURCE_ROOT; };
 		650E7B08E4274E2E2333F1B7 /* obs_interface.png */ /* obs_interface.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = obs_interface.png; path = ../../resources/obs_interface.png; sourceTree = SOURCE_ROOT; };
 		6619BD74FDE8206E3EB0488B /* ShowInfos.cpp */ /* ShowInfos.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ShowInfos.cpp; path = ../../src/ui/panels/ShowInfos.cpp; sourceTree = SOURCE_ROOT; };
 		673F84CF2C710E52F67D39CC /* MainIncludes.cpp */ /* MainIncludes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MainIncludes.cpp; path = ../../src/MainIncludes.cpp; sourceTree = SOURCE_ROOT; };
@@ -624,23 +623,22 @@
 			isa = PBXGroup;
 			children = (
 				36163ED5AF6DA8797DC10768,
-				64D566B29E72E2BDCB6B7102,
-				2E5C9488917DBA188FE28169,
-				650E7B08E4274E2E2333F1B7,
-				C2C9A35BFD9B29A4488257D9,
-				727E1333936FFA2682F9FD02,
-				1EC63C9F77D56F55E9F472B8,
-				7830E13782E5ED36A801F8F3,
-				42BDAAA899EBD58B4BFA1B61,
-				716F018CD03F3FD0677DA5C2,
 				9EA76F8BF77E318FC96D2635,
 				3443CCF22F295503CD4BE73D,
+				C2C9A35BFD9B29A4488257D9,
+				1EC63C9F77D56F55E9F472B8,
+				727E1333936FFA2682F9FD02,
 				EC23AB85A8A9F61A3D341DB0,
+				42BDAAA899EBD58B4BFA1B61,
+				2E5C9488917DBA188FE28169,
 				DE3BEE5252CD04A26A6220EB,
 				CDBB7969FAD4FAFF7902EE81,
 				54A055CF17E07652C896C573,
 				7CFFB66F5529DE07F5A2C12B,
 				F7FE0EEC28CEED3E1A1B1A16,
+				650E7B08E4274E2E2333F1B7,
+				7830E13782E5ED36A801F8F3,
+				716F018CD03F3FD0677DA5C2,
 			);
 			name = resources;
 			sourceTree = "<group>";

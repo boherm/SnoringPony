@@ -13,14 +13,14 @@
         "shifters": [
           {
             "type": 1,
-            "width": 382,
+            "width": 568,
             "height": 1176,
             "direction": 2,
             "shifters": [
               {
                 "type": 0,
-                "width": 382,
-                "height": 119,
+                "width": 568,
+                "height": 103,
                 "currentContent": "Clock",
                 "tabs": [
                   {
@@ -30,8 +30,8 @@
               },
               {
                 "type": 0,
-                "width": 382,
-                "height": 113,
+                "width": 568,
+                "height": 138,
                 "currentContent": "Show Control",
                 "tabs": [
                   {
@@ -41,16 +41,24 @@
               },
               {
                 "type": 0,
-                "width": 382,
-                "height": 458,
-                "currentContent": "Show Infos",
+                "width": 568,
+                "height": 154,
+                "currentContent": "Interfaces",
                 "tabs": [
                   {
                     "name": "Cuelists"
                   },
                   {
                     "name": "Interfaces"
-                  },
+                  }
+                ]
+              },
+              {
+                "type": 0,
+                "width": 568,
+                "height": 328,
+                "currentContent": "Show Infos",
+                "tabs": [
                   {
                     "name": "Show Infos"
                   }
@@ -58,8 +66,8 @@
               },
               {
                 "type": 0,
-                "width": 382,
-                "height": 468,
+                "width": 568,
+                "height": 429,
                 "currentContent": "Logger",
                 "tabs": [
                   {
@@ -74,14 +82,14 @@
           },
           {
             "type": 1,
-            "width": 1532,
+            "width": 1346,
             "height": 1176,
             "direction": 2,
             "shifters": [
               {
                 "type": 0,
-                "width": 1532,
-                "height": 702,
+                "width": 1346,
+                "height": 741,
                 "currentContent": "Deck A",
                 "tabs": [
                   {
@@ -103,8 +111,8 @@
               },
               {
                 "type": 0,
-                "width": 1532,
-                "height": 467,
+                "width": 1346,
+                "height": 428,
                 "currentContent": "Inspector",
                 "tabs": [
                   {

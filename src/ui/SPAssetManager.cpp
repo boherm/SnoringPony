@@ -64,10 +64,3 @@ Image SPAssetManager::getLoopIcon()
 {
     return ImageCache::getFromMemory(BinaryData::loop_png, BinaryData::loop_pngSize);
 }
-
-Image SPAssetManager::getAutoFollowIcon(bool withFading)
-{
-    if (withFading)
-        return ImageCache::getFromMemory(BinaryData::affade_png, BinaryData::affade_pngSize);
-    return ImageCache::getFromMemory(BinaryData::afdirect_png, BinaryData::afdirect_pngSize);
-}

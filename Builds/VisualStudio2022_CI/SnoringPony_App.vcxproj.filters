@@ -11243,40 +11243,28 @@
     <None Include="..\..\resources\about.png">
       <Filter>SnoringPony\resources</Filter>
     </None>
-    <None Include="..\..\resources\auto-follow.png">
-      <Filter>SnoringPony\resources</Filter>
-    </None>
-    <None Include="..\..\resources\loop.png">
-      <Filter>SnoringPony\resources</Filter>
-    </None>
-    <None Include="..\..\resources\obs_interface.png">
-      <Filter>SnoringPony\resources</Filter>
-    </None>
-    <None Include="..\..\resources\crash.png">
-      <Filter>SnoringPony\resources</Filter>
-    </None>
-    <None Include="..\..\resources\fade_cue.png">
-      <Filter>SnoringPony\resources</Filter>
-    </None>
-    <None Include="..\..\resources\default.ponylayout">
-      <Filter>SnoringPony\resources</Filter>
-    </None>
-    <None Include="..\..\resources\playlist_cue.png">
-      <Filter>SnoringPony\resources</Filter>
-    </None>
-    <None Include="..\..\resources\icon.png">
-      <Filter>SnoringPony\resources</Filter>
-    </None>
-    <None Include="..\..\resources\tray_icon.png">
-      <Filter>SnoringPony\resources</Filter>
-    </None>
     <None Include="..\..\resources\audio_cue.png">
       <Filter>SnoringPony\resources</Filter>
     </None>
     <None Include="..\..\resources\audio_interface.png">
       <Filter>SnoringPony\resources</Filter>
     </None>
+    <None Include="..\..\resources\crash.png">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
+    <None Include="..\..\resources\default.ponylayout">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
+    <None Include="..\..\resources\fade_cue.png">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
     <None Include="..\..\resources\group_cue.png">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
+    <None Include="..\..\resources\icon.png">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
+    <None Include="..\..\resources\loop.png">
       <Filter>SnoringPony\resources</Filter>
     </None>
     <None Include="..\..\resources\midi_interface.png">
@@ -11292,6 +11280,15 @@
       <Filter>SnoringPony\resources</Filter>
     </None>
     <None Include="..\..\resources\note_cue.png">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
+    <None Include="..\..\resources\obs_interface.png">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
+    <None Include="..\..\resources\playlist_cue.png">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
+    <None Include="..\..\resources\tray_icon.png">
       <Filter>SnoringPony\resources</Filter>
     </None>
     <None Include="..\..\modules\juce\modules\juce_audio_devices\native\oboe\src\common\README.md">

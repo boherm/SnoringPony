@@ -8,22 +8,16 @@
   <MAINGROUP id="QuL8Eu" name="SnoringPony">
     <GROUP id="{33CB39F8-43C1-5EE5-E27D-0A9CD562E541}" name="resources">
       <FILE id="TBBD6Q" name="about.png" compile="0" resource="1" file="resources/about.png"/>
-      <FILE id="oPVEVZ" name="auto-follow.png" compile="0" resource="1" file="resources/auto-follow.png"/>
-      <FILE id="KjgHZf" name="loop.png" compile="0" resource="1" file="resources/loop.png"/>
-      <FILE id="eJ3rrF" name="obs_interface.png" compile="0" resource="1"
-            file="resources/obs_interface.png"/>
-      <FILE id="WhxZqQ" name="crash.png" compile="0" resource="1" file="resources/crash.png"/>
-      <FILE id="xWkqPV" name="fade_cue.png" compile="0" resource="1" file="resources/fade_cue.png"/>
-      <FILE id="PpOxIR" name="default.ponylayout" compile="0" resource="1"
-            file="resources/default.ponylayout"/>
-      <FILE id="uDpLpc" name="playlist_cue.png" compile="0" resource="1"
-            file="resources/playlist_cue.png"/>
-      <FILE id="LR50Nt" name="icon.png" compile="0" resource="1" file="resources/icon.png"/>
-      <FILE id="BgHvX4" name="tray_icon.png" compile="0" resource="1" file="resources/tray_icon.png"/>
       <FILE id="DgS5vE" name="audio_cue.png" compile="0" resource="1" file="resources/audio_cue.png"/>
       <FILE id="HWcti6" name="audio_interface.png" compile="0" resource="1"
             file="resources/audio_interface.png"/>
+      <FILE id="WhxZqQ" name="crash.png" compile="0" resource="1" file="resources/crash.png"/>
+      <FILE id="PpOxIR" name="default.ponylayout" compile="0" resource="1"
+            file="resources/default.ponylayout"/>
+      <FILE id="xWkqPV" name="fade_cue.png" compile="0" resource="1" file="resources/fade_cue.png"/>
       <FILE id="ZfdlKT" name="group_cue.png" compile="0" resource="1" file="resources/group_cue.png"/>
+      <FILE id="LR50Nt" name="icon.png" compile="0" resource="1" file="resources/icon.png"/>
+      <FILE id="KjgHZf" name="loop.png" compile="0" resource="1" file="resources/loop.png"/>
       <FILE id="TDScj1" name="midi_interface.png" compile="0" resource="1"
             file="resources/midi_interface.png"/>
       <FILE id="cleTO9" name="mixer_interface.png" compile="0" resource="1"
@@ -32,6 +26,11 @@
             file="resources/network_interface.png"/>
       <FILE id="DfWkzh" name="noicon.png" compile="0" resource="1" file="resources/noicon.png"/>
       <FILE id="gJDjzp" name="note_cue.png" compile="0" resource="1" file="resources/note_cue.png"/>
+      <FILE id="eJ3rrF" name="obs_interface.png" compile="0" resource="1"
+            file="resources/obs_interface.png"/>
+      <FILE id="uDpLpc" name="playlist_cue.png" compile="0" resource="1"
+            file="resources/playlist_cue.png"/>
+      <FILE id="BgHvX4" name="tray_icon.png" compile="0" resource="1" file="resources/tray_icon.png"/>
     </GROUP>
     <GROUP id="{72D7B173-FD6A-E831-8382-81700F33CF69}" name="Source">
       <GROUP id="{C9606774-8254-F321-2D03-8A88FDBDEFE4}" name="Cue">

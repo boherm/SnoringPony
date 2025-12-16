@@ -11,41 +11,29 @@ namespace BinaryData
     extern const char*   about_png;
     const int            about_pngSize = 118622;
 
-    extern const char*   autofollow_png;
-    const int            autofollow_pngSize = 3805;
-
-    extern const char*   loop_png;
-    const int            loop_pngSize = 4572;
-
-    extern const char*   obs_interface_png;
-    const int            obs_interface_pngSize = 5953;
-
-    extern const char*   crash_png;
-    const int            crash_pngSize = 110194;
-
-    extern const char*   fade_cue_png;
-    const int            fade_cue_pngSize = 3977;
-
-    extern const char*   default_ponylayout;
-    const int            default_ponylayoutSize = 3038;
-
-    extern const char*   playlist_cue_png;
-    const int            playlist_cue_pngSize = 3123;
-
-    extern const char*   icon_png;
-    const int            icon_pngSize = 40809;
-
-    extern const char*   tray_icon_png;
-    const int            tray_icon_pngSize = 2548;
-
     extern const char*   audio_cue_png;
     const int            audio_cue_pngSize = 2581;
 
     extern const char*   audio_interface_png;
     const int            audio_interface_pngSize = 2882;
 
+    extern const char*   crash_png;
+    const int            crash_pngSize = 110194;
+
+    extern const char*   default_ponylayout;
+    const int            default_ponylayoutSize = 3258;
+
+    extern const char*   fade_cue_png;
+    const int            fade_cue_pngSize = 3977;
+
     extern const char*   group_cue_png;
     const int            group_cue_pngSize = 2036;
+
+    extern const char*   icon_png;
+    const int            icon_pngSize = 40809;
+
+    extern const char*   loop_png;
+    const int            loop_pngSize = 4572;
 
     extern const char*   midi_interface_png;
     const int            midi_interface_pngSize = 4238;
@@ -62,8 +50,17 @@ namespace BinaryData
     extern const char*   note_cue_png;
     const int            note_cue_pngSize = 1988;
 
+    extern const char*   obs_interface_png;
+    const int            obs_interface_pngSize = 5953;
+
+    extern const char*   playlist_cue_png;
+    const int            playlist_cue_pngSize = 3123;
+
+    extern const char*   tray_icon_png;
+    const int            tray_icon_pngSize = 2548;
+
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 18;
+    const int namedResourceListSize = 17;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];
