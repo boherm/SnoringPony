@@ -47,6 +47,8 @@ public:
 
     void fade(double targetGain, double duration) override;
 
+    String autoDescriptionInternal() override;
+
 private:
     void timerCallback() override;
 };

@@ -65,3 +65,19 @@ void OSCCue::itemsAdded(juce::Array<OSCCueMessage *> newItems)
         msg->warningResolveInspectable = this;
     }
 }
+
+String OSCCue::autoDescriptionInternal()
+{
+    String desc = "OSC Cue: ";
+
+    for (int i = 0; i < messagesManager->items.size(); i++)
+    {
+        if (i > 0)
+            desc += ", ";
+        OSCCueMessage* msg = messagesManager->items[i];
+        desc += msg->address->stringValue();
+
+    }
+
+    return desc;
+}

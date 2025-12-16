@@ -38,6 +38,8 @@ public:
 
     void parameterValueChanged(Parameter* p) override;
 
+    String autoDescriptionInternal() override;
+
 private:
     void timerCallback() override;
 };

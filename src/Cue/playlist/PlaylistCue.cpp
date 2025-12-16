@@ -347,3 +347,10 @@ void PlaylistCue::fade(double targetGain, double duration)
         audioFile->player->fade(targetGain, duration);
     }
 }
+
+String PlaylistCue::autoDescriptionInternal()
+{
+    String desc = "Playlist: ";
+    desc += String(filesManager->items.size()) + " audio file(s)";
+    return desc;
+}

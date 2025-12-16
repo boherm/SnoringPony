@@ -104,3 +104,23 @@ void FadeCue::parameterValueChanged(Parameter* p)
     }
     notifyWarningChanged();
 }
+
+String FadeCue::autoDescriptionInternal()
+{
+    String description = "Fade";
+
+    if (stopAtEnd->boolValue()) {
+        description += " and Stop";
+    }
+    description += ": ";
+
+    Cue* target = targetCue->getTargetContainerAs<Cue>();
+
+    if (target != nullptr) {
+        description += target->niceName + " - " + target->getDescription();
+    } else {
+        description += "(No Target)";
+    }
+
+    return description;
+}

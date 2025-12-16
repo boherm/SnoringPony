@@ -124,3 +124,18 @@ void AudioCue::fade(double targetGain, double duration)
         audioFile->player->fade(targetGain, duration);
     }
 }
+
+String AudioCue::autoDescriptionInternal()
+{
+    String description = "Play: ";
+
+    for (int i = 0; i < filesManager->items.size(); i++)
+    {
+        AudioFile* audioFile = filesManager->items[i];
+        if (i > 0)
+            description += ", ";
+        description += audioFile->niceName;
+    }
+
+    return description;
+}

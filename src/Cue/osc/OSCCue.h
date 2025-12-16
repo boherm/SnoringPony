@@ -34,4 +34,6 @@ public:
 
     void itemAdded(OSCCueMessage*) override;
     void itemsAdded(juce::Array<OSCCueMessage *>) override;
+
+    String autoDescriptionInternal() override;
 };

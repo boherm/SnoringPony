@@ -79,6 +79,8 @@ public:
     void newMessage(const ContainerAsyncEvent& e) override;
     void changeListenerCallback(ChangeBroadcaster* source) override;
 
+    String autoDescriptionInternal() override;
+
 private:
     void timerCallback() override;
 };
