@@ -70,6 +70,17 @@ void CuesTableModel::parameterValueChanged(Parameter* p)
 {
     if (p == cl->nextCue) {
         tlb->repaint();
+
+        // Ensure the next cue + 1 is visible (or the next cue if it's the last one)
+        if (cl->nextCue->getTargetContainerAs<Cue>() == nullptr)
+            return;
+
+        auto nextCueIndex = cl->cues->items.indexOf(cl->nextCue->getTargetContainerAs<Cue>());
+        if (nextCueIndex + 1 < cl->cues->items.size()) {
+            tlb->scrollToEnsureRowIsOnscreen(nextCueIndex + 1);
+        } else {
+            tlb->scrollToEnsureRowIsOnscreen(nextCueIndex);
+        }
     }
 }
 
