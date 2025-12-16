@@ -13,7 +13,6 @@
 #include "../../Cuelist/CuelistManager.h"
 #include "../../Cue/CueManager.h"
 #include "../../ui/SPAssetManager.h"
-#include "juce_graphics/juce_graphics.h"
 
 enum ColumnIds
 {
@@ -226,7 +225,7 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         if (cue->isAutoStartCue())
             g.setOpacity(0.4f);
 
-        g.drawText(cue->description->stringValue(), r.reduced(10, 0), Justification::centredLeft);
+        g.drawText(cue->getDescription(), r.reduced(10, 0), Justification::centredLeft);
         return;
     }
 }

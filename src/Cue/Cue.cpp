@@ -342,11 +342,6 @@ void Cue::setNextCue()
 
 void Cue::autoFollowProcess(AutoFollowType type)
 {
-    /*
-        if (parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
-            parentCuelist->currentCue->resetValue();
-        }
-    */
     if (!autoFollowCC->enabled->boolValue())
         return;
 
@@ -362,4 +357,12 @@ void Cue::autoFollowProcess(AutoFollowType type)
             autoFollowTimer->start(autoFollowDuration->floatValue(), autoFollowCurrentTime);
         }
     }
+}
+
+String Cue::getDescription()
+{
+    if (description->stringValue().isEmpty())
+        return autoDescriptionInternal();
+
+    return description->stringValue();
 }

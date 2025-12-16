@@ -67,7 +67,7 @@ void ShowInfos::paint(juce::Graphics &g)
     g.setColour(Colours::white);
     g.drawText(">", area, Justification::topLeft);
     if (currentCue != nullptr) {
-        g.drawText(currentCue->id->stringValue() + ": " + currentCue->description->stringValue(), area.withX(25), Justification::topLeft);
+        g.drawText(currentCue->id->stringValue() + ": " + currentCue->getDescription(), area.withX(25), Justification::topLeft);
     } else {
         g.setColour(Colours::white.darker(0.6f));
         g.drawText("(no cue now)", area.withX(25), Justification::topLeft);
@@ -78,7 +78,7 @@ void ShowInfos::paint(juce::Graphics &g)
     g.setColour(Colours::white.darker(0.6f));
     g.drawText("|", area.withX(5), Justification::topLeft);
     if (nextCue != nullptr) {
-        g.drawText(nextCue->id->stringValue() + ": " + nextCue->description->stringValue(), area.withX(25), Justification::topLeft);
+        g.drawText(nextCue->id->stringValue() + ": " + nextCue->getDescription(), area.withX(25), Justification::topLeft);
     } else {
         g.drawText("(no cue next)", area.withX(25), Justification::topLeft);
     }

@@ -103,6 +103,9 @@ public:
     void setNextCue();
     void autoFollowProcess(AutoFollowType type);
 
+    String getDescription();
+    virtual String autoDescriptionInternal() { return "Cue " + id->stringValue(); }
+
     void setGoNext();
     void onCueTimerFinished(Cue::CueTimer* timer);
 };
