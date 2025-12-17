@@ -7,39 +7,43 @@ on:
 
   # Pushes to main branch
   push:
-    branches:
-      - main
-
-  # Pull requests
-  # pull_request:
-  #   types: [opened, reopened, closed]
+    branches: [main]
 
   # Issues
-  # issues:
-  #   types: [opened, reopened, closed]
+  issues:
+     types: [opened]
+
+  # Pull requests
+  pull_request:
+    types: [opened]
 
 jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-      - name: Send notification for new star
-        if: ${{ github.event_name == 'watch' && github.event.action == 'started' }}
-        uses: Ilshidur/action-discord@master
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          DISCORD_EMBEDS: |
-            [
-              {
-                "title": "New Star! ⭐",
-                "description": "We have a new star on our project!\nThanks **${{ github.actor }}** for your support!\n_Pfplfplpflff!_",
-                "color": 16755762,
-                "fields": [
-                  { "name": "Repository", "value": "${{ github.repository }}", "inline": true }
-                ]
-              }
-            ]
 
-      - name: Build Discord embed (push + commits)
+      - name: Build embed for new star
+        if: ${{ github.event_name == 'watch' && github.event.action == 'started' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const repo = context.payload.repository;
+            const actor = context.actor;
+            const urlActor = actor ? `https://github.com/${actor}` : '#';
+
+            const embed = {
+              title: "🚀 New Star!",
+              description: `We have a new star on our project!\nThanks **[@${actor}](${urlActor})** for your support!\n_Pfplfplpflff!_`,
+              color: 16755762,
+              fields: [],
+              footer: { text: repo.full_name },
+              timestamp: new Date().toISOString(),
+            };
+
+            core.exportVariable("DISCORD_EMBEDS", JSON.stringify([embed]));
+            core.exportVariable("DISCORD_CONTENT", "");
+
+      - name: Build embed for push
         if: ${{ github.event_name == 'push' }}
         uses: actions/github-script@v7
         with:
@@ -47,6 +51,7 @@ jobs:
             const repo = context.payload.repository;
             const refName = context.ref.replace('refs/heads/', '');
             const actor = context.actor;
+            const urlActor = actor ? `https://github.com/${actor}` : '#';
 
             const commits = (context.payload.commits || []).slice(0, 10);
 
@@ -56,7 +61,8 @@ jobs:
                                .replace('/commits/', '/commit/');
               const msg = (c.message || '').split('\n')[0]; // 1ère ligne
               const author = c.author?.name || c.committer?.name || 'unknown';
-              return `• [\`${sha}\`](${url}) ${msg} — **${author}**`;
+              const urlAuthor = author != 'unknown' ? `https://github.com/${author}` : '#';
+              return `• [\`${sha}\`](${url}) ${msg} — **[@${author}](${urlAuthor})**`;
             });
 
             const more = (context.payload.commits || []).length - commits.length;
@@ -64,23 +70,72 @@ jobs:
 
             const embed = {
               title: "🚀 Push",
-              url: context.payload.compare, // lien compare GitHub
-              description: `**${actor}** pushed on **\`${refName}\`**`,
+              url: context.payload.compare,
+              description: `**[@${actor}](${urlActor})** pushed on **\`${refName}\`**`,
               color: 7440602,
               fields: [
-                { name: "Repo", value: repo.full_name, inline: true },
-                { name: "Commits", value: String((context.payload.commits || []).length), inline: true },
-                { name: "Refs", value: lines.join("\n") || "—" }
+                { name: "Commits", value: lines.join("\n") || "—" }
               ],
               footer: { text: repo.full_name },
               timestamp: new Date().toISOString(),
             };
 
             core.exportVariable("DISCORD_EMBEDS", JSON.stringify([embed]));
-            core.exportVariable("DISCORD_CONTENT", ""); // optionnel
+            core.exportVariable("DISCORD_CONTENT", "");
 
-      - name: Send notification for push main branch
-        if: ${{ github.event_name == 'push' }}
+      - name: Build embed for new issue
+        if: ${{ github.event_name == 'issues' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const repo = context.payload.repository;
+            const issue = context.payload.issue;
+            const actor = context.actor;
+            const urlActor = actor != 'unknown' ? `https://github.com/${actor}` : '#';
+            const urlIssue = issue.html_url;
+
+            const embed = {
+              title: `[Issue \#${issue.number}] ${issue.title}`,
+              url: urlIssue,
+              description: `${issue.body ? issue.body.substring(0, 2048) : "No description provided."}`,
+              color: 15426593,
+              fields: [
+                { name: "Author", value: `[@${actor}](${urlActor})`, inline: true },
+              ],
+              footer: { text: repo.full_name },
+              timestamp: new Date().toISOString(),
+            };
+
+            core.exportVariable("DISCORD_EMBEDS", JSON.stringify([embed]));
+            core.exportVariable("DISCORD_CONTENT", "");
+
+      - name: Build embed for new pull request
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const repo = context.payload.repository;
+            const pr = context.payload.pull_request;
+            const actor = context.actor;
+            const urlActor = actor != 'unknown' ? `https://github.com/${actor}` : '#';
+            const urlPr = pr.html_url;
+
+            const embed = {
+              title: `[PR \#${pr.number}] ${pr.title}`,
+              url: urlPr,
+              description: `${pr.body ? pr.body.substring(0, 2048) : "No description provided."}`,
+              color: 15426593,
+              fields: [
+                { name: "Author", value: `[@${actor}](${urlActor})`, inline: true },
+              ],
+              footer: { text: repo.full_name },
+              timestamp: new Date().toISOString(),
+            };
+
+            core.exportVariable("DISCORD_EMBEDS", JSON.stringify([embed]));
+            core.exportVariable("DISCORD_CONTENT", "");
+
+      - name: Send notification
         uses: Ilshidur/action-discord@master
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
