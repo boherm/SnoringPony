@@ -13,6 +13,7 @@
 #include "../../Cuelist/CuelistManager.h"
 #include "../../Cue/CueManager.h"
 #include "../../ui/SPAssetManager.h"
+#include "ReorderCuesWindow.h"
 
 enum ColumnIds
 {
@@ -454,6 +455,8 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
                         }
                     }
                 );
+            } else if (result == 6) {
+                ReorderCuesWindow::getInstance()->showWindow(this);
             }
         });
     } else {
