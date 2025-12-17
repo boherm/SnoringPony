@@ -1,0 +1,88 @@
+name: Discord GitHub Log
+
+on:
+  # Stars (like)
+  watch:
+    types: [started]
+
+  # Pushes to main branch
+  push:
+    branches:
+      - main
+
+  # Pull requests
+  # pull_request:
+  #   types: [opened, reopened, closed]
+
+  # Issues
+  # issues:
+  #   types: [opened, reopened, closed]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send notification for new star
+        if: ${{ github.event_name == 'watch' && github.event.action == 'started' }}
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_EMBEDS: |
+            [
+              {
+                "title": "New Star! ⭐",
+                "description": "We have a new star on our project!\nThanks **${{ github.actor }}** for your support!\n_Pfplfplpflff!_",
+                "color": 16755762,
+                "fields": [
+                  { "name": "Repository", "value": "${{ github.repository }}", "inline": true }
+                ]
+              }
+            ]
+
+      - name: Build Discord embed (push + commits)
+        if: ${{ github.event_name == 'push' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const repo = context.payload.repository;
+            const refName = context.ref.replace('refs/heads/', '');
+            const actor = context.actor;
+
+            const commits = (context.payload.commits || []).slice(0, 10);
+
+            const lines = commits.map(c => {
+              const sha = c.id.substring(0, 7);
+              const url = c.url.replace('api.github.com/repos', 'github.com')
+                               .replace('/commits/', '/commit/');
+              const msg = (c.message || '').split('\n')[0]; // 1ère ligne
+              const author = c.author?.name || c.committer?.name || 'unknown';
+              return `• [\`${sha}\`](${url}) ${msg} — **${author}**`;
+            });
+
+            const more = (context.payload.commits || []).length - commits.length;
+            if (more > 0) lines.push(`…and **${more}** more commits.`);
+
+            const embed = {
+              title: "🚀 Push",
+              url: context.payload.compare, // lien compare GitHub
+              description: `**${actor}** pushed on **\`${refName}\`**`,
+              color: 7440602,
+              fields: [
+                { name: "Repo", value: repo.full_name, inline: true },
+                { name: "Commits", value: String((context.payload.commits || []).length), inline: true },
+                { name: "Refs", value: lines.join("\n") || "—" }
+              ],
+              footer: { text: repo.full_name },
+              timestamp: new Date().toISOString(),
+            };
+
+            core.exportVariable("DISCORD_EMBEDS", JSON.stringify([embed]));
+            core.exportVariable("DISCORD_CONTENT", ""); // optionnel
+
+      - name: Send notification for push main branch
+        if: ${{ github.event_name == 'push' }}
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_CONTENT: ${{ env.DISCORD_CONTENT }}
+          DISCORD_EMBEDS: ${{ env.DISCORD_EMBEDS }}
