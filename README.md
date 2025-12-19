@@ -15,14 +15,17 @@ Feel free to join our [Discord community](https://discord.gg/7HNzrvuZUS) for sup
 
 ## How to build
 
-1. **Clone the Repository**:
-   ```bash
-   git clone --recurse-submodules
-    ```
-2. **Build via CMAKE (with Make command!)**:
-   ```bash
-   make
-   ```
+1. **Clone the Repository with submodules**:
+
+```bash
+git clone --recurse-submodules git@github.com:boherm/SnoringPony.git
+```
+
+2. **Build!**:
+
+```bash
+make
+```
 
 ## More open-source softwares for your live productions
 
