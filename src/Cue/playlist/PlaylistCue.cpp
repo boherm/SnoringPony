@@ -91,6 +91,7 @@ void PlaylistFile::changeListenerCallback(ChangeBroadcaster* source)
 PlaylistCue::PlaylistCue(var params) :
     Cue(params)
 {
+	itemDataType = "Playlist Cue";
     isFadable = true;
     duration->isSavable = false;
     duration->setEnabled(false);

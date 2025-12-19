@@ -17,6 +17,7 @@
 OSCCue::OSCCue(var params) :
     Cue(params)
 {
+	itemDataType = "OSC Cue";
     duration->isSavable = false;
     duration->hideInEditor = true;
     duration->hideInRemoteControl = true;

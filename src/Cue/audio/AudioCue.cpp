@@ -15,6 +15,7 @@
 
 AudioCue::AudioCue(var params)
 {
+	itemDataType = "Audio Cue";
     loop = addBoolParameter("Loop", "If enabled, audio files will loop when they reach the end.", false);
 
     formatManager.registerBasicFormats();

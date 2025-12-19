@@ -15,6 +15,7 @@
 FadeCue::FadeCue(var params) :
     Cue(params)
 {
+	itemDataType = "Fade Cue";
     targetCue = addTargetParameter("Target Cue", "Define the targeted cue");
     targetCue->targetType = TargetParameter::CONTAINER;
     targetCue->customGetTargetContainerFunc = &CuelistManager::showMenuForTargetCue;
