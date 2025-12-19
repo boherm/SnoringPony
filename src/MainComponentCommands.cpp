@@ -56,7 +56,7 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
 		result.setInfo("Go to website", "", "Help", result.readOnlyInKeyEditor);
 		break;
 	case PonyCommandIDs::gotoDiscord:
-		// result.setInfo("Go to Discord", "", "Help", result.readOnlyInKeyEditor);
+		result.setInfo("Go to Discord", "", "Help", result.readOnlyInKeyEditor);
 		break;
 
 	case PonyCommandIDs::gotoDocs:
@@ -109,7 +109,7 @@ void MainContentComponent::getAllCommands(Array<CommandID>& commands) {
 		PonyCommandIDs::donate,
 		PonyCommandIDs::sponsor,
 		PonyCommandIDs::gotoWebsite,
-		// PonyCommandIDs::gotoDiscord,
+		PonyCommandIDs::gotoDiscord,
 		PonyCommandIDs::gotoDocs,
 		PonyCommandIDs::gotoChangelog,
 		PonyCommandIDs::postGithubIssue,
@@ -142,7 +142,7 @@ PopupMenu MainContentComponent::getMenuForIndex(int topLevelMenuIndex, const Str
 		menu.addCommandItem(&getCommandManager(), PonyCommandIDs::sponsor);
 		menu.addSeparator();
 		menu.addCommandItem(&getCommandManager(), PonyCommandIDs::gotoWebsite);
-//		menu.addCommandItem(&getCommandManager(), PonyCommandIDs::gotoDiscord);
+		menu.addCommandItem(&getCommandManager(), PonyCommandIDs::gotoDiscord);
 		menu.addCommandItem(&getCommandManager(), PonyCommandIDs::gotoDocs);
 		menu.addCommandItem(&getCommandManager(), PonyCommandIDs::gotoChangelog);
 		menu.addCommandItem(&getCommandManager(), PonyCommandIDs::postGithubIssue);
@@ -180,11 +180,11 @@ bool MainContentComponent::perform(const InvocationInfo& info)
 		break;
 
 	case PonyCommandIDs::gotoWebsite:
-		URL("https://www.snoringpony.app/").launchInDefaultBrowser();
+		URL("https://snoringpony.app/").launchInDefaultBrowser();
 		break;
 
 	case PonyCommandIDs::gotoDiscord:
-		// Go to Discord
+		URL("https://discord.gg/7HNzrvuZUS").launchInDefaultBrowser();
 		break;
 
 	case PonyCommandIDs::gotoDocs:
@@ -192,11 +192,11 @@ bool MainContentComponent::perform(const InvocationInfo& info)
 		break;
 
 	case PonyCommandIDs::gotoChangelog:
-		URL("https://www.snoringpony.app/changelog").launchInDefaultBrowser();
+		URL("https://github.com/boherm/SnoringPony/releases").launchInDefaultBrowser();
 		break;
 
 	case PonyCommandIDs::postGithubIssue:
-		URL("http://github.com/boherm/SnoringPony/issues").launchInDefaultBrowser();
+		URL("https://github.com/boherm/SnoringPony/issues").launchInDefaultBrowser();
 		break;
 
 
