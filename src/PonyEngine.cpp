@@ -37,6 +37,8 @@ PonyEngine::PonyEngine() :
 	//init here
 	Engine::mainEngine = this;
 	addChildControllableContainer(CuelistManager::getInstance());
+    addChildControllableContainer(InterfaceManager::getInstance());
+    addChildControllableContainer(ShowControl::getInstance());
 
 	// Clean
 	getAppSettings()->hideInEditor = true;
