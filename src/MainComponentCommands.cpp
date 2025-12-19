@@ -12,9 +12,14 @@
 #include "MainComponent.h"
 #include "PonyEngine.h"
 #include "ui/AboutWindow.h"
+#include "Cuelist/CuelistManager.h"
 
 namespace PonyCommandIDs
 {
+    static const int newFile = 0x30003;
+	static const int open = 0x30000;
+	static const int openLastDocument = 0x30004;
+
 	static const int showAbout = 0x60000;
 	static const int gotoWebsite = 0x60001;
 	static const int gotoDiscord = 0x60002;
@@ -221,6 +226,28 @@ bool MainContentComponent::perform(const InvocationInfo& info)
     case PonyCommandIDs::keyPanic:
     {
         Brain::getInstance()->panic();
+    }
+    break;
+
+    case PonyCommandIDs::newFile:
+    case PonyCommandIDs::open:
+    case PonyCommandIDs::openLastDocument:
+    {
+        if (CuelistManager::getInstance()->haveOnePlaying()) {
+            AlertWindow::showAsync(MessageBoxOptions()
+                .withIconType(AlertWindow::WarningIcon)
+                .withTitle("Quit while playing?")
+                .withMessage("There is at least one cuelist playing. Are you sure you want to quit?")
+                .withButton("Quit")
+                .withButton("Cancel"),
+                [this,info](int result) {
+                    if (result == 1) { // Quit
+                        OrganicMainContentComponent::perform(info);
+                }
+            });
+        } else {
+            return OrganicMainContentComponent::perform(info);
+        }
     }
     break;
 
