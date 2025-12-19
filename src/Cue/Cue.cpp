@@ -234,6 +234,7 @@ void Cue::play()
 
     isPlaying->setValue(true);
     autoFollowProcess(PostWaitType::IMMEDIATE);
+    isPanicking = false;
 
     if (preWaitCC->enabled->boolValue()) {
         preWaitCurrentTime->setValue(0.0f);
@@ -247,6 +248,8 @@ void Cue::play()
 
 void Cue::panic()
 {
+    isPanicking = true;
+
     if ((preWaitActive->boolValue() || postWaitActive->boolValue()) && parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
         parentCuelist->currentCue->resetValue();
     }
@@ -262,7 +265,6 @@ void Cue::panic()
         postWaitTimer->stop();
         postWaitCurrentTime->setValue(0.0f);
         postWaitActive->setValue(false);
-        isPlaying->setValue(false);
     }
 
     panicInternal();
@@ -270,6 +272,9 @@ void Cue::panic()
 
 void Cue::stop()
 {
+    isPanicking = false;
+    NLOG(niceName, " Cue stop called");
+
     if ((preWaitActive->boolValue() || postWaitActive->boolValue()) && parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
         parentCuelist->currentCue->resetValue();
     }

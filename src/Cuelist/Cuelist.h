@@ -29,6 +29,7 @@ public:
     CueManager* cues;
 
     BoolParameter* isPlaying;
+    BoolParameter* isPanicking;
 
     TargetParameter* currentCue;
     TargetParameter* nextCue;
@@ -50,4 +51,6 @@ public:
     void triggerTriggered(Trigger* t) override;
 
     void newMessage(const ContainerAsyncEvent& e) override;
+
+    void checkIfPanickingNeeded();
 };

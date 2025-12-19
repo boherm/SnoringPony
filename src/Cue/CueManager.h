@@ -27,6 +27,7 @@ public:
     Cuelist* parentCuelist;
 
     bool hasCuePlaying();
+    bool hasCuePanickingPlaying();
 
     void addItemInternal(Cue* c, var data);
 

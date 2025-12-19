@@ -25,6 +25,7 @@ public:
     String objectType;
     var objectData;
     bool isFadable = false;
+    bool isPanicking = false;
 
     Cuelist* parentCuelist;
 

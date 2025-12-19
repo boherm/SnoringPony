@@ -42,6 +42,11 @@ Cuelist::Cuelist(var params) :
     isPlaying = addBoolParameter("Is Playing", "Indicates if a cue in this cuelist is currently playing", false, false);
     isPlaying->isSavable = false;
 
+    isPanicking = addBoolParameter("Is Panicking", "Indicates if a cue in this cuelist is currently panicking", false, false);
+    isPanicking->isSavable = false;
+    isPanicking->alwaysNotify = true;
+    isPanicking->hideInEditor = true;
+
     currentCue = addTargetParameter("Current cue", "Target the current cue", cues);
     currentCue->targetType = TargetParameter::CONTAINER;
     currentCue->maxDefaultSearchLevel = 0;
@@ -84,6 +89,7 @@ void Cuelist::stop()
 
 void Cuelist::panic()
 {
+    isPanicking->setValue(true);
     for (int i = 0; i < cues->items.size(); i++) {
         Cue* c = cues->items[i];
         if (c->isPlaying->boolValue() || c->preWaitActive->boolValue() || c->postWaitActive->boolValue()) {
@@ -131,5 +137,19 @@ void Cuelist::newMessage(const ContainerAsyncEvent& e)
         )
     {
         isPlaying->setValue(cues->hasCuePlaying());
+        checkIfPanickingNeeded();
+    }
+}
+
+void Cuelist::checkIfPanickingNeeded()
+{
+    if (!isPanicking->boolValue())
+        return;
+
+    bool inPanic = cues->hasCuePanickingPlaying();
+
+    if (inPanic != isPanicking->boolValue()) {
+        isPanicking->setValue(inPanic);
+        isPanicking->notifyValueChanged();
     }
 }

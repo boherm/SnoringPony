@@ -104,6 +104,7 @@ void AudioCue::changeListenerCallback(ChangeBroadcaster* source)
             isPlaying->setValue(false);
             stopTimer();
             currentTime->setValue(0.0);
+            isPanicking = false;
 
             if (loop->boolValue() && !askedToStop)
                 filesManager->resetCurrentTime();

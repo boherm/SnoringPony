@@ -53,6 +53,7 @@ void FadeCue::stopInternal()
     stopTimer();
     currentTime->setValue(0.0);
     isPlaying->setValue(false);
+    isPanicking = false;
 }
 
 void FadeCue::panicInternal()

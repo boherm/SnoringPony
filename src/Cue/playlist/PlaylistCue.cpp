@@ -310,6 +310,7 @@ void PlaylistCue::changeListenerCallback(ChangeBroadcaster* source)
                 isPlaying->setValue(false);
                 currentTime->setValue(0.0);
                 refreshGlobalDuration();
+                isPanicking = false;
 
                 for (auto& playlistFile : filesManager->items)
                 {

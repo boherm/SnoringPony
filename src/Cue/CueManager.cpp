@@ -101,3 +101,13 @@ bool CueManager::hasCuePlaying()
     }
     return false;
 }
+
+bool CueManager::hasCuePanickingPlaying()
+{
+    for (Cue* c : items) {
+        if (c->isPanicking && c->isPlaying->boolValue()) {
+            return true;
+        }
+    }
+    return false;
+}

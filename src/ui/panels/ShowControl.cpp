@@ -56,6 +56,7 @@ ShowControl::ShowControl():
     if (mainCuelist != nullptr) {
         mainCuelist->nextCue->addParameterListener(this);
         mainCuelist->isPlaying->addParameterListener(this);
+        mainCuelist->isPanicking->addParameterListener(this);
     }
 }
 
@@ -68,6 +69,7 @@ ShowControl::~ShowControl()
     if (mainCuelist != nullptr) {
         mainCuelist->nextCue->removeParameterListener(this);
         mainCuelist->isPlaying->removeParameterListener(this);
+        mainCuelist->isPanicking->removeParameterListener(this);
     }
 
     PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
@@ -101,6 +103,7 @@ void ShowControl::parameterValueChanged(Parameter *p)
         if (mainCuelist != nullptr) {
             mainCuelist->nextCue->removeParameterListener(this);
             mainCuelist->isPlaying->removeParameterListener(this);
+            mainCuelist->isPanicking->removeParameterListener(this);
         }
 
         mainCuelist = engine->showProperties.mainCuelist->getTargetContainerAs<Cuelist>();
@@ -108,6 +111,7 @@ void ShowControl::parameterValueChanged(Parameter *p)
         if (mainCuelist != nullptr) {
             mainCuelist->nextCue->addParameterListener(this);
             mainCuelist->isPlaying->addParameterListener(this);
+            mainCuelist->isPanicking->addParameterListener(this);
 
             TargetParameter* tp = dynamic_cast<TargetParameter*>(mainCuelist->nextCue);
             Cue* nextCue = tp->getTargetContainerAs<Cue>();
@@ -138,9 +142,15 @@ void ShowControl::parameterValueChanged(Parameter *p)
             paramPanic->setEnabled(true);
         } else {
             paramPanic->setEnabled(false);
-            stopPanicking();
         }
         repaint();
+    }
+
+    if (mainCuelist && p == mainCuelist->isPanicking) {
+        if (!mainCuelist->isPanicking->boolValue()) {
+            stopPanicking();
+            repaint();
+        }
     }
 }
 
