@@ -167,10 +167,12 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
 
         if (cue->preWaitDuration->doubleValue() > 0.0)
             g.strokePath(myPath, PathStrokeType(1));
-        g.setColour(color.withAlpha(0.3f));
+        g.setColour(color.withAlpha(0.6f));
+
+        if (cue->isAutoStartCue()) g.setOpacity(0.4f);
 
         g.fillRect(r.getX(), r.getY(), r.getWidth() * positionPercent, r.getHeight());
-        g.setColour(Colours::white.withAlpha(0.8f));
+        g.setColour(Colours::white);
 
         if (cue->isAutoStartCue()) g.setOpacity(0.5f);
 
@@ -217,10 +219,12 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
 
         if (cue->duration->doubleValue() > 0.0 || cue->isPlaying->boolValue() || cue->preWaitActive->boolValue() || cue->postWaitActive->boolValue() || cue->postWaitCC->enabled->boolValue())
             g.strokePath(myPath, PathStrokeType(1));
-        g.setColour(color.withAlpha(0.3f));
+        g.setColour(color.withAlpha(0.6f));
+
+        if (cue->isAutoStartCue()) g.setOpacity(0.4f);
 
         g.fillRect(r.getX(), r.getY(), r.getWidth() * positionPercent, r.getHeight());
-        g.setColour(Colours::white.withAlpha(0.8f));
+        g.setColour(Colours::white);
 
         if (cue->isAutoStartCue()) g.setOpacity(0.5f);
 
@@ -274,10 +278,12 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
 
         if (cue->postWaitDuration->doubleValue() > 0.0)
             g.strokePath(myPath, PathStrokeType(1));
-        g.setColour(color.withAlpha(0.3f));
+        g.setColour(color.withAlpha(0.6f));
+
+        if (cue->isAutoStartCue()) g.setOpacity(0.4f);
 
         g.fillRect(r.getX(), r.getY(), r.getWidth() * positionPercent, r.getHeight());
-        g.setColour(Colours::white.withAlpha(0.8f));
+        g.setColour(Colours::white);
 
         if (cue->isAutoStartCue()) g.setOpacity(0.5f);
 
