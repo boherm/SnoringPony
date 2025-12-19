@@ -37,8 +37,10 @@ public:
     void cellDoubleClicked(int rowNumber, int columnId, const MouseEvent& event) override;
     void selectedRowsChanged(int lastRowSelected) override;
     void backgroundClicked(const MouseEvent& event) override;
+    void deleteKeyPressed (int lastRowSelected) override;
 
     void inspectCue(int rowNumber);
+    void askDeleteSelectedCues();
 
     // Drag and drop support
     var getDragSourceDescription(const SparseSet<int>& selectedRows) override;

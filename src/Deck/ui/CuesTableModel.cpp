@@ -371,40 +371,7 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
                 }
 
             } else if (result == 4) {
-                // Delete action
-                String title = "Delete selected cues";
-                String message = "Are you sure you want to delete the selected cues?";
-                SparseSet<int> selected = tlb->getSelectedRows();
-
-                if (GlobalSettings::getInstance()->askBeforeRemovingItems->boolValue())
-                {
-                    if (tlb->getSelectedRows().size() == 1) {
-                        Cue* item = cl->cues->items[tlb->getSelectedRows()[0]];
-                        title = "Delete " + item->niceName;
-                        message = "Are you sure you want to delete this cue?";
-                    }
-
-                    AlertWindow::showAsync(
-                        MessageBoxOptions().withIconType(AlertWindow::QuestionIcon)
-                            .withTitle(title)
-                            .withMessage(message)
-                            .withButton("Delete")
-                            .withButton("Cancel"),
-                            [selected, this](int result)
-                            {
-                                if (result == 0) return;
-
-                                for (int i = selected.size() - 1; i >= 0; i--) {
-                                    int r = selected[i];
-                                    if (r < this->cl->cues->items.size()) {
-                                        Cue* item = this->cl->cues->items[r];
-                                        item->remove();
-                                    }
-                                }
-                            }
-                    );
-
-                }
+                askDeleteSelectedCues();
             } else if (result == 7 || result == 8) {
                 // Add new cue before/after
                 int newIndex = (result == 7) ? rowNumber : rowNumber + 1;
@@ -493,9 +460,52 @@ void CuesTableModel::backgroundClicked(const MouseEvent& event)
     }
 }
 
+void CuesTableModel::deleteKeyPressed(int lastRowSelected)
+{
+    askDeleteSelectedCues();
+}
+
 void CuesTableModel::inspectCue(int rowNumber)
 {
     InspectableSelectionManager::mainSelectionManager->selectInspectable(cl->cues->items[rowNumber]);
+}
+
+void CuesTableModel::askDeleteSelectedCues()
+{
+    // Delete action
+    String title = "Delete selected cues";
+    String message = "Are you sure you want to delete the selected cues?";
+    SparseSet<int> selected = tlb->getSelectedRows();
+
+    if (GlobalSettings::getInstance()->askBeforeRemovingItems->boolValue())
+    {
+        if (tlb->getSelectedRows().size() == 1) {
+            Cue* item = cl->cues->items[tlb->getSelectedRows()[0]];
+            title = "Delete " + item->niceName;
+            message = "Are you sure you want to delete this cue?";
+        }
+
+        AlertWindow::showAsync(
+            MessageBoxOptions().withIconType(AlertWindow::QuestionIcon)
+                .withTitle(title)
+                .withMessage(message)
+                .withButton("Delete")
+                .withButton("Cancel"),
+                [selected, this](int result)
+                {
+                    if (result == 0) return;
+
+                    for (int i = selected.size() - 1; i >= 0; i--) {
+                        int r = selected[i];
+                        if (r < this->cl->cues->items.size()) {
+                            Cue* item = this->cl->cues->items[r];
+                            item->remove();
+                        }
+                    }
+                }
+        );
+
+    }
 }
 
 void CuesTableModel::sortOrderChanged(int newSortColumnId, bool isForwards)
