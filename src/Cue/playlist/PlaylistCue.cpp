@@ -38,6 +38,7 @@ PlaylistFile::PlaylistFile(String name) :
     isPlaying = addBoolParameter("Is Playing", "Is this audio file currently playing", false);
     isPlaying->isSavable = false;
     isPlaying->setEnabled(false);
+    isPlaying->hideInEditor = true;
 }
 
 PlaylistFile::~PlaylistFile()

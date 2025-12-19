@@ -122,7 +122,7 @@ currentTime->hideInRemoteControl = true;
 
     preWaitActive = preWaitCC->addBoolParameter("Active", "Pre-wait currently active", false);
     preWaitActive->setEnabled(false);
-    // preWaitActive->hideInEditor = true;
+    preWaitActive->hideInEditor = true;
 
     // --- Post-Wait ----
     postWaitTimer = new Cue::CueTimer(this);
@@ -145,7 +145,7 @@ currentTime->hideInRemoteControl = true;
 
     postWaitActive = postWaitCC->addBoolParameter("Active", "Auto-follow currently active", false);
     postWaitActive->setEnabled(false);
-    // autoFollowActive->hideInEditor = true;
+    postWaitActive->hideInEditor = true;
 }
 
 Cue::~Cue()

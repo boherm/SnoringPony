@@ -11,7 +11,6 @@
 #pragma once
 
 #include "../MainIncludes.h"
-#include "juce_organicui/controllable/parameter/BoolParameter.h"
 
 class Cuelist;
 

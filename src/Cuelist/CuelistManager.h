@@ -31,7 +31,5 @@ public:
     void addItemInternal(Cuelist* cl, var data);
     void askForRemoveBaseItem(BaseItem* item);
 
-    Cue* getNextCue(Cue* c);
-
     bool haveOnePlaying();
 };
