@@ -34,4 +34,8 @@ public:
     void askForRemoveBaseItem(BaseItem* item) override;
 
     void loadJSONDataManagerInternal(var data) override;
+
+    void createOneAudioCueFromFiles(const StringArray& files);
+    void createMultipleAudioCueFromFiles(const StringArray& files);
+    void createPlaylistCueFromFiles(const StringArray& files);
 };

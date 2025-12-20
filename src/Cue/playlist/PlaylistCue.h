@@ -81,6 +81,8 @@ public:
 
     String autoDescriptionInternal() override;
 
+    void createFromFiles(const StringArray& files);
+
 private:
     void timerCallback() override;
 };

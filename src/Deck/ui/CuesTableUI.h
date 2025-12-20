@@ -23,6 +23,7 @@ class CuesTableUI :
     public ContainerAsyncListener,
     public DragAndDropContainer,
     public DragAndDropTarget,
+    public FileDragAndDropTarget,
     public WarningTarget::AsyncListener
 {
 public:
@@ -74,6 +75,17 @@ public:
     void itemDragMove(const SourceDetails& dragSourceDetails) override;
     void itemDragExit(const SourceDetails& dragSourceDetails) override;
     void itemDropped(const SourceDetails& dragSourceDetails) override;
+
+    // FileDragAndDropTarget
+    bool isInterestedInFileDrag (const juce::StringArray& files) override;
+
+    void fileDragMove (const juce::StringArray& /*files*/, int /*x*/, int /*y*/) override;
+
+    void fileDragEnter (const juce::StringArray& /*files*/, int /*x*/, int /*y*/) override;
+
+    void fileDragExit (const juce::StringArray& /*files*/) override;
+
+    void filesDropped (const juce::StringArray& files, int /*x*/, int /*y*/) override;
 
 private:
     int insertIndex = -1;

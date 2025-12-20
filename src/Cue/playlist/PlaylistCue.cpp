@@ -357,3 +357,13 @@ String PlaylistCue::autoDescriptionInternal()
     desc += String(filesManager->items.size()) + " audio file(s)";
     return desc;
 }
+
+void PlaylistCue::createFromFiles(const StringArray& files)
+{
+    filesManager->clear();
+    for (auto& f : files)
+    {
+        PlaylistFile* audioFile = filesManager->addItemFromData(var());
+        audioFile->audioFile->setValue(f);
+    }
+}

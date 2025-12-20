@@ -111,3 +111,30 @@ bool CueManager::hasCuePanickingPlaying()
     }
     return false;
 }
+
+
+void CueManager::createOneAudioCueFromFiles(const StringArray& files)
+{
+    AudioCue* newCue = dynamic_cast<AudioCue*>(factory.create("Audio Cue"));
+    if (newCue == nullptr) return;
+    newCue->createFromFiles(files);
+    addItem(newCue, var());
+}
+
+void CueManager::createMultipleAudioCueFromFiles(const StringArray& files)
+{
+    for (auto& file : files) {
+        AudioCue* newCue = dynamic_cast<AudioCue*>(factory.create("Audio Cue"));
+        if (newCue == nullptr) continue;
+        newCue->createFromFiles(file);
+        addItem(newCue, var());
+    }
+}
+
+void CueManager::createPlaylistCueFromFiles(const StringArray& files)
+{
+    PlaylistCue* newCue = dynamic_cast<PlaylistCue*>(factory.create("Playlist Cue"));
+    if (newCue == nullptr) return;
+    newCue->createFromFiles(files);
+    addItem(newCue, var());
+}

@@ -141,3 +141,13 @@ String AudioCue::autoDescriptionInternal()
 
     return description;
 }
+
+void AudioCue::createFromFiles(const StringArray& files)
+{
+    filesManager->clear();
+    for (auto& f : files)
+    {
+        AudioFile* audioFile = filesManager->addItemFromData(var());
+        audioFile->audioFile->setValue(f);
+    }
+}

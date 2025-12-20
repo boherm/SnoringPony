@@ -13,6 +13,7 @@
 #include "../../Cuelist/Cuelist.h"
 #include "../../Cue/CueManager.h"
 #include "../../ui/LookAndFeelTable.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
 enum ColumnIds
 {
@@ -311,4 +312,55 @@ void CuesTableUI::itemDropped(const SourceDetails& dragSourceDetails)
 
     insertIndex = -1;
     repaint();
+}
+
+bool CuesTableUI::isInterestedInFileDrag(const juce::StringArray& files)
+{
+    // Filtre optionnel : par extension, etc.
+    for (auto& f : files)
+        if (f.endsWithIgnoreCase(".mp3") || f.endsWithIgnoreCase(".wav") || f.endsWithIgnoreCase(".aiff") || f.endsWithIgnoreCase(".flac") || f.endsWithIgnoreCase(".ogg"))
+            return true;
+
+    return false; // ou true si tu acceptes tout
+}
+
+void CuesTableUI::fileDragMove (const juce::StringArray& /*files*/, int /*x*/, int /*y*/)
+{
+    // TODO: Implement this for placing new cues precisely in cuelist
+}
+
+void CuesTableUI::fileDragEnter (const juce::StringArray& /*files*/, int /*x*/, int /*y*/)
+{
+    // TODO: Implement this for visual feedback
+}
+
+void CuesTableUI::fileDragExit (const juce::StringArray& /*files*/)
+{
+    // TODO: Implement this for visual feedback
+}
+
+void CuesTableUI::filesDropped (const juce::StringArray& files, int /*x*/, int /*y*/)
+{
+    PopupMenu menu;
+    menu.addItem(1, "Add files to one Audio Cue");
+    menu.addItem(2, "Add files to multiple Audio Cues");
+    menu.addSeparator();
+    menu.addItem(3, "Add files to a Playlist Cue");
+
+    menu.showMenuAsync(PopupMenu::Options(),
+        [this, files](int result)
+        {
+            if (result == 0)
+                return; // User cancelled
+
+            if (result == 1)
+                cl->cues->createOneAudioCueFromFiles(files);
+            else if (result == 2)
+                cl->cues->createMultipleAudioCueFromFiles(files);
+            else if (result == 3)
+                cl->cues->createPlaylistCueFromFiles(files);
+
+            tableListBox.updateContent();
+            tableListBox.repaint();
+        });
 }
