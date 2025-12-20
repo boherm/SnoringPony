@@ -113,7 +113,6 @@ AudioPlayer::~AudioPlayer()
     player->setSource(nullptr);
     mixer->removeAllInputs();
     delete mixer;
-    delete readerSource;
     delete transport;
     delete player;
 }
@@ -159,10 +158,10 @@ void AudioPlayer::play(bool resetFade)
             if (readerSource != nullptr) {
                 transport->stop();
                 transport->setSource(nullptr);
-                delete readerSource;
+                readerSource.reset();
             }
-            readerSource = new AudioFormatReaderSource(reader.release(), true);
-            transport->setSource(readerSource, 0, nullptr, readerSource->getAudioFormatReader()->sampleRate);
+            readerSource.reset(new AudioFormatReaderSource(reader.release(), true));
+            transport->setSource(readerSource.get(), 0, nullptr, readerSource->getAudioFormatReader()->sampleRate);
             transport->setPosition(0.0);
             transport->start();
             mixer->resetPanicFade();

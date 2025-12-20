@@ -55,6 +55,9 @@ void CuesTableModel::paintRowBackground(Graphics& g, int rowNumber, int width, i
 {
     Cue* cue = cl->cues->items[rowNumber];
 
+    if (cue == nullptr)
+        return;
+
     if (rowIsSelected)
     {
         g.fillAll(cue->itemColor->getColor().brighter(0.1f));
@@ -152,7 +155,7 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
             return;
 
         double timeLeft = cue->preWaitDuration->doubleValue() - cue->preWaitCurrentTime->doubleValue();
-        double positionPercent = cue->preWaitCurrentTime->doubleValue() / cue->preWaitDuration->doubleValue();
+        double positionPercent = cue->preWaitDuration->doubleValue() == 0 ? 0 : cue->preWaitCurrentTime->doubleValue() / cue->preWaitDuration->doubleValue();
         auto color = Colours::darkgoldenrod;
         String text = CuesTableModel::valueToTimeString(jmax<double>(timeLeft, 0.0));
 
@@ -206,7 +209,7 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         r.reduce(4, 4);
 
         double timeLeft = cue->duration->doubleValue() - cue->currentTime->doubleValue();
-        double positionPercent = cue->currentTime->doubleValue() / cue->duration->doubleValue();
+        double positionPercent = cue->duration->doubleValue() == 0 ? 0 : cue->currentTime->doubleValue() / cue->duration->doubleValue();
         auto color = !cue->isPlaying->boolValue() || cue->preWaitActive->boolValue() || timeLeft > 10 ? Colours::green.brighter(0.2f) : Colours::red.brighter(0.2f);
         String text = CuesTableModel::valueToTimeString(jmax<double>(timeLeft, 0.0));
 
@@ -265,7 +268,7 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         r.reduce(4, 4);
 
         double timeLeft = cue->postWaitDuration->doubleValue() - cue->postWaitCurrentTime->doubleValue();
-        double positionPercent = cue->postWaitCurrentTime->doubleValue() / cue->postWaitDuration->doubleValue();
+        double positionPercent = cue->postWaitDuration->doubleValue() == 0 ? 0 : cue->postWaitCurrentTime->doubleValue() / cue->postWaitDuration->doubleValue();
         auto color = Colours::darkgoldenrod;
         String text = CuesTableModel::valueToTimeString(jmax<double>(timeLeft, 0.0));
 

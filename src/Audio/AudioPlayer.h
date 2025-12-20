@@ -59,7 +59,7 @@ public:
     AudioSourcePlayer* player;
     AudioPlayerMixer* mixer;
     AudioTransportSource* transport;
-    AudioFormatReaderSource* readerSource;
+    std::unique_ptr<AudioFormatReaderSource> readerSource;
 
     bool setFile(const File& audioFile);
     bool setOutput(AudioOutput* output);
