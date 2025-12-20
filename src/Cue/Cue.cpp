@@ -273,7 +273,6 @@ void Cue::panic()
 void Cue::stop()
 {
     isPanicking = false;
-    NLOG(niceName, " Cue stop called");
 
     if ((preWaitActive->boolValue() || postWaitActive->boolValue()) && parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
         parentCuelist->currentCue->resetValue();

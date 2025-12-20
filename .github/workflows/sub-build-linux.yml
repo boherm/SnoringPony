@@ -1,0 +1,57 @@
+name: Build linux
+on: [workflow_call]
+
+env:
+  ProjectName: SnoringPony
+
+jobs:
+  linux:
+    name: Linux
+    runs-on: ubuntu-22.04
+    container: tommagnier/chataigne-linux-x64-build:debian9
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+
+      - name: Set Suffix
+        id: set_variables
+        uses: ./.github/actions/set-suffix
+        with:
+          os: 'x64'
+
+      - name: Installing dependencies
+        id: install_deps
+        #shell: bash {0} # Opt out of fail-fast behavior (necessary to ignore fetch errors)
+        run: |
+          # Most dependencies are already installed in the Docker image. Uncomment the following lines if you need more
+          # apt-get update && apt-get install ...
+
+          cd $GITHUB_WORKSPACE
+          wget "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
+          chmod a+x appimagetool-x86_64.AppImage
+
+      - name: Build
+        run: |
+          cd $GITHUB_WORKSPACE/Builds/LinuxMakefile
+          gcc --version
+          make -j2 CONFIG=Release
+
+      - name: Create AppImage
+        id: create_package
+        run: |
+          mkdir -p ${{ env.ProjectName }}.AppDir/usr/bin/
+          cp build/${{ env.ProjectName }} ${{ env.ProjectName }}.AppDir/usr/bin/
+
+          PKGNAME=${{ env.ProjectName }}-linux-${{ steps.set_variables.outputs.suffix }}.AppImage
+          echo "pkg-name=$PKGNAME" >> $GITHUB_OUTPUT
+          ARCH=x86_64 $GITHUB_WORKSPACE/appimagetool-x86_64.AppImage --appimage-extract-and-run ${{ env.ProjectName }}.AppDir $PKGNAME
+        working-directory: ./Builds/LinuxMakefile
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: ./Builds/LinuxMakefile/${{ steps.create_package.outputs.pkg-name }}

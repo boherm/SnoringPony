@@ -1,0 +1,75 @@
+name: Build OSX
+on: [workflow_call]
+
+env:
+  ProjectName: SnoringPony
+  PackagesVersion: 1.2.10
+
+jobs:
+  osx:
+    # if: false # tmp disable
+    name: OSX
+    runs-on: macos-latest
+
+    strategy:
+      matrix:
+        include:
+        - arch: x86_64
+          suffix: intel
+          config: Release
+
+        - arch: arm64
+          suffix: silicon
+          config: ReleaseSilicon
+
+      fail-fast: false
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+
+      - name: Set Suffix
+        id: set_variables
+        uses: ./.github/actions/set-suffix
+        with:
+          os: 'osx-${{ matrix.suffix }}'
+
+      - name: Download Packages
+        run: |
+          curl -L -o Packages.dmg 'http://s.sudre.free.fr/Software/files/Packages.dmg'
+          hdiutil mount Packages.dmg
+          sudo installer -pkg "/Volumes/Packages ${{ env.PackagesVersion }}/Install Packages.pkg" -target /
+          hdiutil detach "/Volumes/Packages ${{ env.PackagesVersion }}/"
+
+      - name: Setup XCode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '16.4.0'
+
+      - name: Build
+        uses: sersoft-gmbh/xcodebuild-action@v2.0.1
+        with:
+          project: Builds/MacOSX_CI/${{ env.ProjectName }}.xcodeproj
+          destination: platform=macOS
+          jobs: 2
+          action: build
+          arch: ${{ matrix.arch }}
+          configuration: ${{ matrix.config }}
+          use-xcpretty: true
+
+      - name: Create Package
+        id: create_package
+        run:  |
+          packagesbuild ${{ env.ProjectName }}.pkgproj
+          PKGNAME=${{ env.ProjectName }}-${{ steps.set_variables.outputs.suffix }}.pkg
+          mv ${{ env.ProjectName }}.pkg $PKGNAME
+          echo "pkg-name=$PKGNAME" >> $GITHUB_OUTPUT
+        working-directory: ./Package
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: osx-${{ matrix.arch }}
+          path: ./Package/${{ steps.create_package.outputs.pkg-name }}

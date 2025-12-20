@@ -1,0 +1,72 @@
+name: Release on github
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  linux:
+    uses: ./.github/workflows/sub-build-osx.yml
+  osx:
+    uses: ./.github/workflows/sub-build-linux.yml
+  windows:
+    uses: ./.github/workflows/sub-build-win.yml
+    secrets:
+      DEPDIRURL: ${{ secrets.DEPDIRURL }}
+
+  upload_release:
+    name: Publish binaries in github
+    needs: [windows, osx, linux]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get win64 artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: win-x64
+
+      - name: Get osx-intel artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: osx-x86_64
+
+      - name: Get osx-silicon artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: osx-arm64
+
+      - name: Get linux artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: linux
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./*
+          tag: ${{ github.event.release.tag_name }}
+          overwrite: true
+          file_glob: true
+
+  rebuild_website:
+    name: Rebuild Website
+    needs: [upload_release]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Workflow in Another Repository
+        run: |
+          # Set the required variables
+          repo_owner="boherm"
+          repo_name="SnoringPony-web"
+          workflow_id="deploy.yml"
+
+          curl -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GH_PAT_WORKFLOW_WEB }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/$repo_owner/$repo_name/actions/workflows/$workflow_id/dispatches \
+            -d '{"ref":"main"}'
