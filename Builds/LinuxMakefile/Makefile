@@ -72,6 +72,12 @@ ifeq ($(CONFIG),Release)
 endif
 
 OBJECTS_APP := \
+  $(JUCE_OBJDIR)/AudioPlayer_a840e188.o \
+  $(JUCE_OBJDIR)/FadeCue_b47c1b80.o \
+  $(JUCE_OBJDIR)/OSCCueMessageEditor_79a451.o \
+  $(JUCE_OBJDIR)/OSCCue_6cd7e3c0.o \
+  $(JUCE_OBJDIR)/OSCCueMessage_fc4f0bb1.o \
+  $(JUCE_OBJDIR)/PlaylistCue_3b5dd40.o \
   $(JUCE_OBJDIR)/AudioCue_6b8f1412.o \
   $(JUCE_OBJDIR)/AudioFile_d20cdec7.o \
   $(JUCE_OBJDIR)/CueEditor_6ade7941.o \
@@ -88,12 +94,17 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/DeckUI_fc73c092.o \
   $(JUCE_OBJDIR)/DeckViewHeaderUI_ff918184.o \
   $(JUCE_OBJDIR)/DeckViewUI_e4afbb17.o \
+  $(JUCE_OBJDIR)/ReorderCuesWindow_464109e0.o \
   $(JUCE_OBJDIR)/AudioInterfaceHardwareEditor_d10a2fce.o \
   $(JUCE_OBJDIR)/AudioOutputEditor_dae63958.o \
   $(JUCE_OBJDIR)/AudioInterface_a266d812.o \
   $(JUCE_OBJDIR)/AudioOutput_1c8db912.o \
   $(JUCE_OBJDIR)/MIDIInterface_77dce880.o \
   $(JUCE_OBJDIR)/MixerInterface_4b8bd7ac.o \
+  $(JUCE_OBJDIR)/OSCCommandArgumentsEditor_32cb47c2.o \
+  $(JUCE_OBJDIR)/OSCCommandEditor_99163e38.o \
+  $(JUCE_OBJDIR)/OSCInputEditor_1e7922b7.o \
+  $(JUCE_OBJDIR)/OSCCommand_9cf21fd2.o \
   $(JUCE_OBJDIR)/OSCInterface_7d7d7a40.o \
   $(JUCE_OBJDIR)/InterfaceManagerUI_f9a324b7.o \
   $(JUCE_OBJDIR)/InterfaceUI_e393dec8.o \
@@ -102,6 +113,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/ColorPresets_884d5ac4.o \
   $(JUCE_OBJDIR)/DecksSettings_fe0d7724.o \
   $(JUCE_OBJDIR)/ShowProperties_a8318b43.o \
+  $(JUCE_OBJDIR)/VolumePresets_e2087271.o \
   $(JUCE_OBJDIR)/Clock_bf28f053.o \
   $(JUCE_OBJDIR)/ShowControl_5e188ae5.o \
   $(JUCE_OBJDIR)/ShowInfos_e95c3bcd.o \
@@ -154,6 +166,36 @@ $(JUCE_OUTDIR)/$(JUCE_TARGET_APP) : $(OBJECTS_APP) $(JUCE_OBJDIR)/execinfo.cmd $
 	-$(V_AT)mkdir -p $(JUCE_LIBDIR)
 	-$(V_AT)mkdir -p $(JUCE_OUTDIR)
 	$(V_AT)$(CXX) -o $(JUCE_OUTDIR)/$(JUCE_TARGET_APP) $(OBJECTS_APP) $(JUCE_LDFLAGS) $(shell cat $(JUCE_OBJDIR)/execinfo.cmd) $(JUCE_LDFLAGS_APP) $(RESOURCES) $(TARGET_ARCH)
+
+$(JUCE_OBJDIR)/AudioPlayer_a840e188.o: ../../src/Audio/AudioPlayer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling AudioPlayer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/FadeCue_b47c1b80.o: ../../src/Cue/fade/FadeCue.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling FadeCue.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/OSCCueMessageEditor_79a451.o: ../../src/Cue/osc/ui/OSCCueMessageEditor.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling OSCCueMessageEditor.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/OSCCue_6cd7e3c0.o: ../../src/Cue/osc/OSCCue.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling OSCCue.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/OSCCueMessage_fc4f0bb1.o: ../../src/Cue/osc/OSCCueMessage.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling OSCCueMessage.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/PlaylistCue_3b5dd40.o: ../../src/Cue/playlist/PlaylistCue.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling PlaylistCue.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/AudioCue_6b8f1412.o: ../../src/Cue/audio/AudioCue.cpp
 	-$(V_AT)mkdir -p $(@D)
@@ -235,6 +277,11 @@ $(JUCE_OBJDIR)/DeckViewUI_e4afbb17.o: ../../src/Deck/ui/DeckViewUI.cpp
 	@echo "Compiling DeckViewUI.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
+$(JUCE_OBJDIR)/ReorderCuesWindow_464109e0.o: ../../src/Deck/ui/ReorderCuesWindow.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling ReorderCuesWindow.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
 $(JUCE_OBJDIR)/AudioInterfaceHardwareEditor_d10a2fce.o: ../../src/Interface/audio/ui/AudioInterfaceHardwareEditor.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling AudioInterfaceHardwareEditor.cpp"
@@ -263,6 +310,26 @@ $(JUCE_OBJDIR)/MIDIInterface_77dce880.o: ../../src/Interface/midi/MIDIInterface.
 $(JUCE_OBJDIR)/MixerInterface_4b8bd7ac.o: ../../src/Interface/mixer/MixerInterface.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling MixerInterface.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/OSCCommandArgumentsEditor_32cb47c2.o: ../../src/Interface/osc/ui/OSCCommandArgumentsEditor.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling OSCCommandArgumentsEditor.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/OSCCommandEditor_99163e38.o: ../../src/Interface/osc/ui/OSCCommandEditor.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling OSCCommandEditor.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/OSCInputEditor_1e7922b7.o: ../../src/Interface/osc/ui/OSCInputEditor.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling OSCInputEditor.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/OSCCommand_9cf21fd2.o: ../../src/Interface/osc/OSCCommand.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling OSCCommand.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/OSCInterface_7d7d7a40.o: ../../src/Interface/osc/OSCInterface.cpp
@@ -303,6 +370,11 @@ $(JUCE_OBJDIR)/DecksSettings_fe0d7724.o: ../../src/ProjectSettings/DecksSettings
 $(JUCE_OBJDIR)/ShowProperties_a8318b43.o: ../../src/ProjectSettings/ShowProperties.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling ShowProperties.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/VolumePresets_e2087271.o: ../../src/ProjectSettings/VolumePresets.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling VolumePresets.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/Clock_bf28f053.o: ../../src/ui/panels/Clock.cpp

@@ -12,10 +12,9 @@
 
 #include "../Interface.h"
 #include "../../MainIncludes.h"
+#include "OSCCommand.h"
 
 using namespace servus;
-
-class OSCCommand;
 
 class OSCOutput :
 	public BaseItem,

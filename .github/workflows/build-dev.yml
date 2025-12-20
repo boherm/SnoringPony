@@ -1,3 +1,4 @@
+name: Build & Upload bleeding edge version
 on: [workflow_dispatch]
 
 env:
@@ -16,9 +17,9 @@ jobs:
           buildFolder: "VisualStudio2022_CI"
           installerName: install
 
-        - arch: win7-x64
-          buildFolder: "VisualStudio2022_Win7CI"
-          installerName: installWin7
+        # - arch: win7-x64
+        #   buildFolder: "VisualStudio2022_Win7CI"
+        #   installerName: installWin7
 
       fail-fast: false
 
@@ -78,21 +79,21 @@ jobs:
           name: ${{ matrix.arch }}
           path: ./Binaries/CI/App/${{ steps.create_package.outputs.pkg-name }}
 
-      - name: Rename PDB
-        if: ${{ steps.set_variables.outputs.config == 'Release' && matrix.arch == 'win-x64' }}
-        id: rename_pdb
-        shell: powershell
-        run: |
-          Rename-Item -Path "./${{ env.ProjectName }}.pdb" -NewName "${{ steps.create_package.outputs.pdb-name }}"
-        working-directory: ./Builds/${{ matrix.buildFolder }}/x64/${{ steps.set_variables.outputs.config }}/App
+      # - name: Rename PDB
+      #   if: ${{ steps.set_variables.outputs.config == 'Release' && matrix.arch == 'win-x64' }}
+      #   id: rename_pdb
+      #   shell: powershell
+      #   run: |
+      #     Rename-Item -Path "./${{ env.ProjectName }}.pdb" -NewName "${{ steps.create_package.outputs.pdb-name }}"
+      #   working-directory: ./Builds/${{ matrix.buildFolder }}/x64/${{ steps.set_variables.outputs.config }}/App
 
-      - name: Upload PDB
-        if: ${{ steps.set_variables.outputs.config == 'Release' && matrix.arch == 'win-x64' }}
-        uses: ./.github/actions/upload
-        with:
-          pkg-name: ./Builds/${{ matrix.buildFolder }}/x64/${{ steps.set_variables.outputs.config }}/App/${{ steps.create_package.outputs.pdb-name }}
-          url: ${{ secrets.PDBUPLOADURL }}
-          pass: ${{ secrets.UPLOADPASS }}
+      # - name: Upload PDB
+      #   if: ${{ steps.set_variables.outputs.config == 'Release' && matrix.arch == 'win-x64' }}
+      #   uses: ./.github/actions/upload
+      #   with:
+      #     pkg-name: ./Builds/${{ matrix.buildFolder }}/x64/${{ steps.set_variables.outputs.config }}/App/${{ steps.create_package.outputs.pdb-name }}
+      #     url: ${{ secrets.PDBUPLOADURL }}
+      #     pass: ${{ secrets.UPLOADPASS }}
 
   osx:
     # if: false # tmp disable
@@ -117,13 +118,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: 'recursive'
-
-#      - name: Checkout JUCE
-#        uses: actions/checkout@v2
-#        with:
-#          repository: boherm/JUCE
-#          ref: develop-local
-#          path: JUCE
 
       - name: Set Suffix
         id: set_variables
@@ -188,13 +182,6 @@ jobs:
         with:
           submodules: 'recursive'
 
-#      - name: Checkout JUCE
-#        uses: actions/checkout@v2
-#        with:
-#          repository: boherm/JUCE
-#          ref: develop-local
-#          path: JUCE
-
       - name: Set Suffix
         id: set_variables
         uses: ./.github/actions/set-suffix
@@ -211,22 +198,6 @@ jobs:
           cd $GITHUB_WORKSPACE
           wget "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
           chmod a+x appimagetool-x86_64.AppImage
-
-      # - name: Start SSH via ngrok
-      #   uses: P3TERX/ssh2actions@main
-      #   with:
-      #     mode: ngrok
-      #   env:
-      #     # After sign up on the https://ngrok.com
-      #     # You can find this token here: https://dashboard.ngrok.com/auth/your-authtoken
-      #     NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
-
-      #     # ngrok server region [us, eu, au, ap, sa, jp, in] (optional, default: us)
-      #     # You can find this server region here: https://ngrok.com/docs#global-locations
-      #     NGROK_REGION: us
-
-      #     # This password you will use when authorizing via SSH
-      #     SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
 
       - name: Build
         run: |
@@ -257,3 +228,58 @@ jobs:
         with:
           name: linux
           path: ./Builds/LinuxMakefile/${{ steps.create_package.outputs.pkg-name }}
+
+  uploads:
+    name: Uploads on S3
+    needs: [windows, osx, linux]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install s3cmd
+        run: sudo apt-get install -y s3cmd
+
+      - name: Install the Scaleway CLI
+        uses: scaleway/action-scw@v0
+        with:
+          version: v2.37.0
+
+      - name: Get win64 artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: win-x64
+
+      - name: Get osx-intel artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: osx-x86_64
+
+      - name: Get osx-silicon artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: osx-arm64
+
+      - name: Get linux artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: linux
+
+      # - name: Prepare files for upload
+      #   run: |
+      #     mkdir -p ./dist
+      #     mv win-x64/* ./dist/
+      #     mv osx-x86_64/* ./dist/
+      #     mv osx-arm64/* ./dist/
+      #     mv linux/* ./dist/
+
+      - name: Upload to Scaleway Object Storage
+        run: |
+          scw object config get type=s3cmd > /home/runner/.s3cfg
+          s3cmd --no-mime-magic --guess-mime-type sync ./* s3://${{ secrets.SCW_DEV_S3 }}/
+        env:
+          SCW_ACCESS_KEY: ${{ secrets.SCW_DEV_ACCESS_KEY }}
+          SCW_SECRET_KEY: ${{ secrets.SCW_DEV_SECRET_KEY }}
+          SCW_DEFAULT_PROJECT_ID: ${{ secrets.SCW_DEV_DEFAULT_PROJECT_ID }}
+          SCW_DEFAULT_ORGANIZATION_ID: ${{ secrets.SCW_DEV_DEFAULT_ORGANIZATION_ID }}

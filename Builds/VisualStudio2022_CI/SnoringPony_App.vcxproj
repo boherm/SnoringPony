@@ -157,6 +157,12 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\Audio\AudioPlayer.cpp"/>
+    <ClCompile Include="..\..\src\Cue\fade\FadeCue.cpp"/>
+    <ClCompile Include="..\..\src\Cue\osc\ui\OSCCueMessageEditor.cpp"/>
+    <ClCompile Include="..\..\src\Cue\osc\OSCCue.cpp"/>
+    <ClCompile Include="..\..\src\Cue\osc\OSCCueMessage.cpp"/>
+    <ClCompile Include="..\..\src\Cue\playlist\PlaylistCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\audio\AudioCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\audio\AudioFile.cpp"/>
     <ClCompile Include="..\..\src\Cue\ui\CueEditor.cpp"/>
@@ -173,12 +179,17 @@
     <ClCompile Include="..\..\src\Deck\ui\DeckUI.cpp"/>
     <ClCompile Include="..\..\src\Deck\ui\DeckViewHeaderUI.cpp"/>
     <ClCompile Include="..\..\src\Deck\ui\DeckViewUI.cpp"/>
+    <ClCompile Include="..\..\src\Deck\ui\ReorderCuesWindow.cpp"/>
     <ClCompile Include="..\..\src\Interface\audio\ui\AudioInterfaceHardwareEditor.cpp"/>
     <ClCompile Include="..\..\src\Interface\audio\ui\AudioOutputEditor.cpp"/>
     <ClCompile Include="..\..\src\Interface\audio\AudioInterface.cpp"/>
     <ClCompile Include="..\..\src\Interface\audio\AudioOutput.cpp"/>
     <ClCompile Include="..\..\src\Interface\midi\MIDIInterface.cpp"/>
     <ClCompile Include="..\..\src\Interface\mixer\MixerInterface.cpp"/>
+    <ClCompile Include="..\..\src\Interface\osc\ui\OSCCommandArgumentsEditor.cpp"/>
+    <ClCompile Include="..\..\src\Interface\osc\ui\OSCCommandEditor.cpp"/>
+    <ClCompile Include="..\..\src\Interface\osc\ui\OSCInputEditor.cpp"/>
+    <ClCompile Include="..\..\src\Interface\osc\OSCCommand.cpp"/>
     <ClCompile Include="..\..\src\Interface\osc\OSCInterface.cpp"/>
     <ClCompile Include="..\..\src\Interface\ui\InterfaceManagerUI.cpp"/>
     <ClCompile Include="..\..\src\Interface\ui\InterfaceUI.cpp"/>
@@ -187,6 +198,7 @@
     <ClCompile Include="..\..\src\ProjectSettings\ColorPresets.cpp"/>
     <ClCompile Include="..\..\src\ProjectSettings\DecksSettings.cpp"/>
     <ClCompile Include="..\..\src\ProjectSettings\ShowProperties.cpp"/>
+    <ClCompile Include="..\..\src\ProjectSettings\VolumePresets.cpp"/>
     <ClCompile Include="..\..\src\ui\panels\Clock.cpp"/>
     <ClCompile Include="..\..\src\ui\panels\ShowControl.cpp"/>
     <ClCompile Include="..\..\src\ui\panels\ShowInfos.cpp"/>
@@ -3318,6 +3330,12 @@
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_simpleweb2.cpp"/>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\Audio\AudioPlayer.h"/>
+    <ClInclude Include="..\..\src\Cue\fade\FadeCue.h"/>
+    <ClInclude Include="..\..\src\Cue\osc\ui\OSCCueMessageEditor.h"/>
+    <ClInclude Include="..\..\src\Cue\osc\OSCCue.h"/>
+    <ClInclude Include="..\..\src\Cue\osc\OSCCueMessage.h"/>
+    <ClInclude Include="..\..\src\Cue\playlist\PlaylistCue.h"/>
     <ClInclude Include="..\..\src\Cue\audio\AudioCue.h"/>
     <ClInclude Include="..\..\src\Cue\audio\AudioFile.h"/>
     <ClInclude Include="..\..\src\Cue\ui\CueEditor.h"/>
@@ -3334,12 +3352,17 @@
     <ClInclude Include="..\..\src\Deck\ui\DeckUI.h"/>
     <ClInclude Include="..\..\src\Deck\ui\DeckViewHeaderUI.h"/>
     <ClInclude Include="..\..\src\Deck\ui\DeckViewUI.h"/>
+    <ClInclude Include="..\..\src\Deck\ui\ReorderCuesWindow.h"/>
     <ClInclude Include="..\..\src\Interface\audio\ui\AudioInterfaceHardwareEditor.h"/>
     <ClInclude Include="..\..\src\Interface\audio\ui\AudioOutputEditor.h"/>
     <ClInclude Include="..\..\src\Interface\audio\AudioInterface.h"/>
     <ClInclude Include="..\..\src\Interface\audio\AudioOutput.h"/>
     <ClInclude Include="..\..\src\Interface\midi\MIDIInterface.h"/>
     <ClInclude Include="..\..\src\Interface\mixer\MixerInterface.h"/>
+    <ClInclude Include="..\..\src\Interface\osc\ui\OSCCommandArgumentsEditor.h"/>
+    <ClInclude Include="..\..\src\Interface\osc\ui\OSCCommandEditor.h"/>
+    <ClInclude Include="..\..\src\Interface\osc\ui\OSCInputEditor.h"/>
+    <ClInclude Include="..\..\src\Interface\osc\OSCCommand.h"/>
     <ClInclude Include="..\..\src\Interface\osc\OSCInterface.h"/>
     <ClInclude Include="..\..\src\Interface\ui\InterfaceManagerUI.h"/>
     <ClInclude Include="..\..\src\Interface\ui\InterfaceUI.h"/>
@@ -3348,6 +3371,7 @@
     <ClInclude Include="..\..\src\ProjectSettings\ColorPresets.h"/>
     <ClInclude Include="..\..\src\ProjectSettings\DecksSettings.h"/>
     <ClInclude Include="..\..\src\ProjectSettings\ShowProperties.h"/>
+    <ClInclude Include="..\..\src\ProjectSettings\VolumePresets.h"/>
     <ClInclude Include="..\..\src\ui\panels\Clock.h"/>
     <ClInclude Include="..\..\src\ui\panels\ShowControl.h"/>
     <ClInclude Include="..\..\src\ui\panels\ShowInfos.h"/>

@@ -12,8 +12,7 @@
 
 #include "../../MainIncludes.h"
 #include "../Cue.h"
-
-class OSCCueMessage;
+#include "OSCCueMessage.h"
 
 class OSCCue :
     public Cue,

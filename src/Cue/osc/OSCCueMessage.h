@@ -11,8 +11,8 @@
 #pragma once
 
 #include "../../MainIncludes.h"
-#include "OSCCue.h"
 
+class OSCCue;
 class OSCCommand;
 
 class OSCCueMessageArguments :

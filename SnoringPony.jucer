@@ -33,7 +33,32 @@
       <FILE id="BgHvX4" name="tray_icon.png" compile="0" resource="1" file="resources/tray_icon.png"/>
     </GROUP>
     <GROUP id="{72D7B173-FD6A-E831-8382-81700F33CF69}" name="Source">
+      <GROUP id="{2F1BEF25-E0C5-02ED-FCBE-D290A55B2990}" name="Audio">
+        <FILE id="qGtloU" name="AudioPlayer.cpp" compile="1" resource="0" file="src/Audio/AudioPlayer.cpp"/>
+        <FILE id="N0NRYb" name="AudioPlayer.h" compile="0" resource="0" file="src/Audio/AudioPlayer.h"/>
+      </GROUP>
       <GROUP id="{C9606774-8254-F321-2D03-8A88FDBDEFE4}" name="Cue">
+        <GROUP id="{D0E11F00-9B9D-8041-E669-BEB876862896}" name="fade">
+          <FILE id="Yzp118" name="FadeCue.cpp" compile="1" resource="0" file="src/Cue/fade/FadeCue.cpp"/>
+          <FILE id="ET5AGV" name="FadeCue.h" compile="0" resource="0" file="src/Cue/fade/FadeCue.h"/>
+        </GROUP>
+        <GROUP id="{83550C45-1AE0-0688-2361-6F609D7E87DC}" name="osc">
+          <GROUP id="{69C29FCB-522E-B1E9-8601-0CD9E11081D7}" name="ui">
+            <FILE id="wQQujM" name="OSCCueMessageEditor.cpp" compile="1" resource="0"
+                  file="src/Cue/osc/ui/OSCCueMessageEditor.cpp"/>
+            <FILE id="x2tL7N" name="OSCCueMessageEditor.h" compile="0" resource="0"
+                  file="src/Cue/osc/ui/OSCCueMessageEditor.h"/>
+          </GROUP>
+          <FILE id="ih7JWT" name="OSCCue.cpp" compile="1" resource="0" file="src/Cue/osc/OSCCue.cpp"/>
+          <FILE id="c1FUTC" name="OSCCue.h" compile="0" resource="0" file="src/Cue/osc/OSCCue.h"/>
+          <FILE id="d4DkIg" name="OSCCueMessage.cpp" compile="1" resource="0"
+                file="src/Cue/osc/OSCCueMessage.cpp"/>
+          <FILE id="rlkLxc" name="OSCCueMessage.h" compile="0" resource="0" file="src/Cue/osc/OSCCueMessage.h"/>
+        </GROUP>
+        <GROUP id="{4068D0A5-6066-814C-DC04-BD53D3C1D1B7}" name="playlist">
+          <FILE id="kU8oBb" name="PlaylistCue.cpp" compile="1" resource="0" file="src/Cue/playlist/PlaylistCue.cpp"/>
+          <FILE id="zNeXVg" name="PlaylistCue.h" compile="0" resource="0" file="src/Cue/playlist/PlaylistCue.h"/>
+        </GROUP>
         <GROUP id="{F6360A6C-7FC2-6FAA-7205-29D762DAEC42}" name="audio">
           <FILE id="TKPFyS" name="AudioCue.cpp" compile="1" resource="0" file="src/Cue/audio/AudioCue.cpp"/>
           <FILE id="lue5p9" name="AudioCue.h" compile="0" resource="0" file="src/Cue/audio/AudioCue.h"/>
@@ -90,6 +115,10 @@
                 file="src/Deck/ui/DeckViewHeaderUI.h"/>
           <FILE id="dOYfBo" name="DeckViewUI.cpp" compile="1" resource="0" file="src/Deck/ui/DeckViewUI.cpp"/>
           <FILE id="RVOWV4" name="DeckViewUI.h" compile="0" resource="0" file="src/Deck/ui/DeckViewUI.h"/>
+          <FILE id="vjLhBP" name="ReorderCuesWindow.cpp" compile="1" resource="0"
+                file="src/Deck/ui/ReorderCuesWindow.cpp"/>
+          <FILE id="rA6WJ3" name="ReorderCuesWindow.h" compile="0" resource="0"
+                file="src/Deck/ui/ReorderCuesWindow.h"/>
         </GROUP>
       </GROUP>
       <GROUP id="{9F996CF1-A83D-C302-1119-B731310571F8}" name="Interface">
@@ -123,6 +152,22 @@
                 file="src/Interface/mixer/MixerInterface.h"/>
         </GROUP>
         <GROUP id="{023D512E-62A3-4D02-81EE-EA28EB792660}" name="osc">
+          <GROUP id="{E92C2E37-6E69-A0C3-665F-AA65A2E19D37}" name="ui">
+            <FILE id="WRMYe1" name="OSCCommandArgumentsEditor.cpp" compile="1"
+                  resource="0" file="src/Interface/osc/ui/OSCCommandArgumentsEditor.cpp"/>
+            <FILE id="AdI9Cp" name="OSCCommandArgumentsEditor.h" compile="0" resource="0"
+                  file="src/Interface/osc/ui/OSCCommandArgumentsEditor.h"/>
+            <FILE id="FOrspY" name="OSCCommandEditor.cpp" compile="1" resource="0"
+                  file="src/Interface/osc/ui/OSCCommandEditor.cpp"/>
+            <FILE id="N14nRz" name="OSCCommandEditor.h" compile="0" resource="0"
+                  file="src/Interface/osc/ui/OSCCommandEditor.h"/>
+            <FILE id="fD1jxn" name="OSCInputEditor.cpp" compile="1" resource="0"
+                  file="src/Interface/osc/ui/OSCInputEditor.cpp"/>
+            <FILE id="dLJ0eh" name="OSCInputEditor.h" compile="0" resource="0"
+                  file="src/Interface/osc/ui/OSCInputEditor.h"/>
+          </GROUP>
+          <FILE id="sTFNnC" name="OSCCommand.cpp" compile="1" resource="0" file="src/Interface/osc/OSCCommand.cpp"/>
+          <FILE id="oweHCU" name="OSCCommand.h" compile="0" resource="0" file="src/Interface/osc/OSCCommand.h"/>
           <FILE id="ZYkzgO" name="OSCInterface.cpp" compile="1" resource="0"
                 file="src/Interface/osc/OSCInterface.cpp"/>
           <FILE id="Xqv4X9" name="OSCInterface.h" compile="0" resource="0" file="src/Interface/osc/OSCInterface.h"/>
@@ -153,6 +198,9 @@
               file="src/ProjectSettings/ShowProperties.cpp"/>
         <FILE id="MKxMiL" name="ShowProperties.h" compile="0" resource="0"
               file="src/ProjectSettings/ShowProperties.h"/>
+        <FILE id="XFRmAP" name="VolumePresets.cpp" compile="1" resource="0"
+              file="src/ProjectSettings/VolumePresets.cpp"/>
+        <FILE id="XOPaAx" name="VolumePresets.h" compile="0" resource="0" file="src/ProjectSettings/VolumePresets.h"/>
       </GROUP>
       <GROUP id="{20F5B4C7-57F7-331D-5146-37C2A16AA627}" name="ui">
         <GROUP id="{52B09711-0D0C-1791-CEAB-300CE209300E}" name="panels">
@@ -167,8 +215,6 @@
               file="src/ui/LookAndFeelTable.cpp"/>
         <FILE id="SCabv4" name="LookAndFeelTable.h" compile="0" resource="0"
               file="src/ui/LookAndFeelTable.h"/>
-      </GROUP>
-      <GROUP id="{EF871B6A-5B4C-AA4B-6777-DCDFF6A14C82}" name="ui">
         <FILE id="o733S0" name="AboutWindow.cpp" compile="1" resource="0" file="src/ui/AboutWindow.cpp"/>
         <FILE id="IwOBqF" name="AboutWindow.h" compile="0" resource="0" file="src/ui/AboutWindow.h"/>
         <FILE id="uc1jRw" name="SPAssetManager.cpp" compile="1" resource="0"
