@@ -21,7 +21,6 @@
 #include "ui/panels/ShowControl.h"
 #include "ui/panels/ShowInfos.h"
 #include "Interface/InterfaceManager.h"
-#include "Deck/ui/ReorderCuesWindow.h"
 
 ControllableContainer* getAppSettings();
 String getAppVersion();
@@ -68,7 +67,6 @@ PonyEngine::~PonyEngine()
 	OSCRemoteControl::getInstance()->removeRemoteControlListener(UserInputManager::getInstance());
 
     InterfaceManager::deleteInstance();
-    ReorderCuesWindow::deleteInstance();
 	CuelistManager::deleteInstance();
     CuelistFactory::deleteInstance();
 

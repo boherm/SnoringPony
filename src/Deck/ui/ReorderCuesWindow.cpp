@@ -10,35 +10,107 @@
 
 #include "ReorderCuesWindow.h"
 #include "CuesTableModel.h"
-#include "juce_gui_basics/juce_gui_basics.h"
+#include "../../Cue/Cue.h"
+#include "../../Cue/CueManager.h"
+#include "../../Cuelist/Cuelist.h"
 
-juce_ImplementSingleton(ReorderCuesWindow)
-
-ReorderCuesWindow::ReorderCuesWindow()
+ReorderCuesWindow::ReorderCuesWindow(CuesTableModel* caller)
 {
-    TextButton exitBtn("Close");
-    container.addAndMakeVisible(&exitBtn);
-}
+    this->caller = caller;
+    setSize(280, 120);
 
-ReorderCuesWindow::~ReorderCuesWindow()
-{
-}
+    closeBtn.addListener(this);
+    reorderBtn.addListener(this);
 
-void ReorderCuesWindow::paint(juce::Graphics& g)
-{
+    if (caller == nullptr || caller->tlb == nullptr || caller->cl == nullptr )
+        return;
+
+    if (caller->tlb->getNumSelectedRows() == 0)
+        return;
+
+    if (caller->tlb->getSelectedRow(0) >= caller->cl->cues->items.size())
+        return;
+
+    Cue* firstCueSelected = caller->cl->cues->items[caller->tlb->getSelectedRow(0)];
+
+    startIdEdit.setColour(startIdEdit.backgroundColourId, BG_COLOR.darker(0.1f));
+    startIdEdit.setColour(startIdEdit.outlineColourId, TEXT_COLOR.darker(0.1f));
+	startIdEdit.setColour(CaretComponent::caretColourId, Colours::orange);
+	startIdEdit.setColour(startIdEdit.textColourId, TEXT_COLOR);
+    startIdEdit.setText(firstCueSelected->id->stringValue(), dontSendNotification);
+    startIdEdit.setSelectAllWhenFocused(true);
+
+    incrementEdit.setColour(startIdEdit.backgroundColourId, BG_COLOR.darker(0.1f));
+    incrementEdit.setColour(startIdEdit.outlineColourId, TEXT_COLOR.darker(0.1f));
+	incrementEdit.setColour(CaretComponent::caretColourId, Colours::orange);
+	incrementEdit.setColour(startIdEdit.textColourId, TEXT_COLOR);
+    incrementEdit.setText("1.000", dontSendNotification);
+    incrementEdit.setSelectAllWhenFocused(true);
+
+    bottomArea.addAndMakeVisible(closeBtn);
+    bottomArea.addAndMakeVisible(reorderBtn);
+    addAndMakeVisible(bottomArea);
+
+    addAndMakeVisible(startIdLabel);
+    addAndMakeVisible(startIdEdit);
+    addAndMakeVisible(incrementLabel);
+    addAndMakeVisible(incrementEdit);
 }
 
 void ReorderCuesWindow::resized()
 {
+    auto area = getLocalBounds().reduced(10);
+
+    bottomArea.setBounds(area.removeFromBottom(40));
+    closeBtn.setBounds(10, 5, 100, 30);
+    reorderBtn.setBounds(bottomArea.getWidth() - 110, 5, 100, 30);
+
+    area.removeFromBottom(10);
+
+    auto rowH = 26;
+    auto labelW = 70;
+
+    auto row1 = area.removeFromTop(rowH);
+    startIdLabel.setBounds(row1.removeFromLeft(labelW));
+    startIdEdit.setBounds(row1);
+
+    area.removeFromTop(10);
+
+    auto row2 = area.removeFromTop(rowH);
+    incrementLabel.setBounds(row2.removeFromLeft(labelW));
+    incrementEdit.setBounds(row2);
 }
 
-void ReorderCuesWindow::showWindow(CuesTableModel* caller)
+void ReorderCuesWindow::buttonClicked(Button* btn)
 {
-    this->caller = caller;
-    setSize(250, 250);
-    DialogWindow::showDialog("Reordering cues", this, &ShapeShifterManager::getInstance()->mainContainer, BG_COLOR, true);
-    addAndMakeVisible(viewport);
-    viewport.setViewedComponent(&container);
-    viewport.setBounds(0, 0, 250, 250);
-    container.setSize(250 - 10, 200);
+    if (&closeBtn == btn) {
+        if (auto* dw = getTopLevelComponent())
+            dw->exitModalState(0);
+    }
+
+    if (&reorderBtn == btn) {
+        if (caller != nullptr) {
+            float startId = getFloatFromEditor(startIdEdit, -1.0f);
+            float increment = getFloatFromEditor(incrementEdit, -1.0f);
+
+            if (startId < 0.0f || increment < 0.0f)
+                return;
+
+            caller->reorderCues(startId, increment);
+
+            if (auto* dw = getTopLevelComponent())
+                dw->exitModalState(0);
+        }
+    }
+}
+
+float ReorderCuesWindow::getFloatFromEditor(const juce::TextEditor& ed, float fallback) const
+{
+    auto s = ed.getText().trim().replaceCharacter(',', '.');
+    auto v = s.getFloatValue();
+
+    if (s.isEmpty() || (! juce::CharacterFunctions::isDigit(s[0]) && s[0] != '-' && s[0] != '.'))
+        return fallback;
+
+    return v;
 }

@@ -14,6 +14,8 @@
 
 class Cuelist;
 
+class ReorderCuesWindow;
+
 class CuesTableModel :
     public TableListBoxModel,
     public ParameterListener,
@@ -27,6 +29,8 @@ public:
     Cuelist* cl = nullptr;
 
     void addListeners();
+
+    std::unique_ptr<ReorderCuesWindow> reorderWindow;
 
     int getNumRows() override;
     void paintRowBackground(Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override;
@@ -50,4 +54,6 @@ public:
     static String valueToTimeString(double timeVal);
 
     void newMessage(const InspectableSelectionManager::SelectionEvent& e) override;
+
+    void reorderCues(float startId, float increment);
 };

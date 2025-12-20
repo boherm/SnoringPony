@@ -12,49 +12,33 @@
 
 #include "../../MainIncludes.h"
 #include "CuesTableModel.h"
-#include "juce_gui_basics/juce_gui_basics.h"
 
 class Cuelist;
 
 class ReorderCuesWindow :
-    public Component //,
-    // public Button::Listener
+    public Component,
+    public Button::Listener
 {
 public:
-    juce_DeclareSingleton(ReorderCuesWindow, true);
-    ReorderCuesWindow();
-    ~ReorderCuesWindow() override;
+    ReorderCuesWindow(CuesTableModel* caller);
+    ~ReorderCuesWindow() {}
 
-    void paint (juce::Graphics&) override;
     void resized() override;
 
     CuesTableModel* caller = nullptr;
 
-    // void closeWindow();
-    // bool windowOpened = false;
+    TextButton closeBtn {"Close"};
+    TextButton reorderBtn {"Reorder Cues"};
+    Component bottomArea;
 
-    Viewport viewport;
-    Component container;
-    TextButton exitBtn;
+    Label startIdLabel { {}, "Start ID" };
+    TextEditor startIdEdit;
+    Label incrementLabel { {}, "Increment" };
+    TextEditor incrementEdit;
 
-    // void loadCuelist(Cuelist* c);
-    // void showWindow();
+    void buttonClicked(Button*);
 
-    // OwnedArray<TextButton> buttons;
-    // Array<float> cueIds;
-    // Cuelist* currentTarget = nullptr;
-
-    // TextButton exitBtn;
-    void showWindow(CuesTableModel* caller);
-    // void fillButtons(Cuelist * c);
-    // void loadCuelist(Cuelist * c, bool triggerGoWhenSelected = false);
-    // void buttonClicked(Button*);
-    // bool triggerGo = false;
-
-    // int posX = 0;
-    // int posY = 0;
-
-    // juce::CriticalSection buttonsLock;
+    float getFloatFromEditor(const juce::TextEditor& ed, float fallback) const;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ReorderCuesWindow)

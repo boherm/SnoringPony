@@ -9,11 +9,11 @@
 */
 
 #include "CuesTableModel.h"
+#include "ReorderCuesWindow.h"
 #include "../../Cuelist/Cuelist.h"
 #include "../../Cuelist/CuelistManager.h"
 #include "../../Cue/CueManager.h"
 #include "../../ui/SPAssetManager.h"
-#include "ReorderCuesWindow.h"
 
 enum ColumnIds
 {
@@ -432,7 +432,14 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
                     }
                 );
             } else if (result == 6) {
-                ReorderCuesWindow::getInstance()->showWindow(this);
+                reorderWindow.reset(new ReorderCuesWindow(this));
+                DialogWindow::LaunchOptions dw;
+                dw.content.set(reorderWindow.get(), false);
+                dw.dialogTitle = "Reorder cues ID";
+                dw.escapeKeyTriggersCloseButton = true;
+                dw.dialogBackgroundColour = BG_COLOR;
+                dw.resizable = false;
+                dw.launchAsync();
             }
         });
     } else {
@@ -560,4 +567,18 @@ void CuesTableModel::newMessage(const InspectableSelectionManager::SelectionEven
             return;
         }
     }
+}
+
+void CuesTableModel::reorderCues(float startId, float increment)
+{
+    float currentId = startId;
+    for (int i = 0; i < tlb->getNumRows(); i++) {
+        if (tlb->isRowSelected(i)) {
+            Cue* cue = cl->cues->items[i];
+            cue->id->setValue(currentId);
+            cue->id->notifyValueChanged();
+            currentId += increment;
+        }
+    }
+    tlb->repaint();
 }
