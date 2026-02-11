@@ -26,6 +26,7 @@ public:
     var objectData;
     bool isFadable = false;
     bool isPanicking = false;
+    bool isPreviewing = false;
 
     Cuelist* parentCuelist;
 
@@ -36,6 +37,7 @@ public:
     FloatParameter* duration;
     StringParameter* description;
     StringParameter* notes;
+    Trigger* previewBtn;
 
     class CueTimer :
         public Timer
@@ -89,14 +91,22 @@ public:
     void onControllableFeedbackUpdateInternal(ControllableContainer* cc, Controllable* c) override;
     void triggerTriggered(Trigger* t) override;
 
+    void preview();
+    virtual void previewInternal() { }
+    virtual bool canBePreviewed() { return false; }
+
     void play();
     virtual void playInternal() { }
     virtual bool canBePlayed() { return !isPlaying->boolValue(); }
+
     void stop();
     virtual void stopInternal() {}
+
     void panic();
     virtual void panicInternal() {}
+
     virtual void fade(double targetGain, double duration) {}
+
     void endCue();
     void playNextCue();
     bool isAutoStartCue();

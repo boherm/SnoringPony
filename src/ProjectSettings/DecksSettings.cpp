@@ -10,7 +10,6 @@
 
 #include "DecksSettings.h"
 #include "../Cuelist/CuelistManager.h"
-#include "juce_organicui/controllable/parameter/TargetParameter.h"
 
 DecksSettings::DecksSettings() :
     ControllableContainer("Decks Settings"),

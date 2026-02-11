@@ -65,6 +65,7 @@ public:
     bool setOutput(AudioOutput* output);
 
     void play(bool resetFade = true);
+    void preview(AudioOutput* previewOutput);
     void stop();
     void panic();
     void stopAndClean();

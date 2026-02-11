@@ -28,6 +28,7 @@ String getAppVersion();
 PonyEngine::PonyEngine() :
 	Engine("SnoringPony", ".indy"),
     showProperties(),
+    audioSettings(),
     colorPresets(),
     volumePresets(),
     decksSettings()
@@ -51,6 +52,7 @@ PonyEngine::PonyEngine() :
 
     // Set projects settings
     ProjectSettings::getInstance()->addChildControllableContainer(&showProperties);
+    ProjectSettings::getInstance()->addChildControllableContainer(&audioSettings);
     ProjectSettings::getInstance()->addChildControllableContainer(&colorPresets);
     ProjectSettings::getInstance()->addChildControllableContainer(&volumePresets);
     ProjectSettings::getInstance()->addChildControllableContainer(&decksSettings);
@@ -87,6 +89,7 @@ void PonyEngine::clearInternal()
 	CuelistManager::getInstance()->clear();
 
     showProperties.clear();
+    audioSettings.clear();
     colorPresets.clear();
     volumePresets.clear();
     decksSettings.clear();

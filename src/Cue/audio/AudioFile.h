@@ -51,10 +51,14 @@ public:
     AudioFile* createItem() override;
 
     void playAll();
+    void previewAll();
     void stopAll();
     void panicAll();
 
     void resetCurrentTime();
+    void setCurrentTime(double time);
 
     bool haveOnePlaying();
+
+    double getCurrentTime();
 };

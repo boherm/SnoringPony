@@ -12,6 +12,7 @@
 
 #include "MainIncludes.h"
 #include "ProjectSettings/ShowProperties.h"
+#include "ProjectSettings/AudioSettings.h"
 #include "ProjectSettings/ColorPresets.h"
 #include "ProjectSettings/VolumePresets.h"
 #include "ProjectSettings/DecksSettings.h"
@@ -23,6 +24,7 @@ public:
 	~PonyEngine();
 
     ShowProperties showProperties;
+    AudioSettings audioSettings;
     ColorPresets colorPresets;
     VolumePresets volumePresets;
     DecksSettings decksSettings;

@@ -10,15 +10,35 @@
 
 #include "AudioCue.h"
 #include "AudioFile.h"
+#include "AudioSlices.h"
+#include "AudioWaveformSlicer.h"
 #include "../../Cuelist/Cuelist.h"
 #include "../../Audio/AudioPlayer.h"
 
 AudioCue::AudioCue(var params)
 {
 	itemDataType = "Audio Cue";
+    formatManager.registerBasicFormats();
+
     loop = addBoolParameter("Loop", "If enabled, audio files will loop when they reach the end.", false);
 
-    formatManager.registerBasicFormats();
+    initialDuration = addFloatParameter("Initial Duration", "Initial duration for new audio files added to this cue.", 0.0f);
+    initialDuration->defaultUI = FloatParameter::TIME;
+    initialDuration->setEnabled(false);
+    initialDuration->hideInRemoteControl = true;
+    initialDuration->hideInEditor = true;
+
+    audioSlicer.reset(new ControllableContainer("Audio Slicer"));
+    audioSlicer->editorIsCollapsed = true;
+    audioSlicer->saveAndLoadRecursiveData = true;
+    addChildControllableContainer(audioSlicer.get());
+
+    slicesManager.reset(new AudioSlicesManager(this));
+    waveformSlicer.reset(new AudioWaveformSlicer(this));
+    slicesManager->addAsyncContainerListener(this);
+    audioSlicer->addChildControllableContainer(waveformSlicer.get());
+    audioSlicer->addChildControllableContainer(slicesManager.get());
+
     filesManager = new AudioFilesManager(this);
     filesManager->addAsyncContainerListener(this);
     addChildControllableContainer(filesManager);
@@ -34,6 +54,7 @@ AudioCue::AudioCue(var params)
 
 AudioCue::~AudioCue()
 {
+    slicesManager->removeAsyncContainerListener(this);
     filesManager->stopAll();
     filesManager->removeAsyncContainerListener(this);
     delete filesManager;
@@ -54,19 +75,44 @@ void AudioCue::newMessage(const ContainerAsyncEvent& e)
                 totalDuration = audioFile->duration->doubleValue();
             }
         }
-        duration->setValue(totalDuration);
+        initialDuration->setValue(totalDuration);
+        duration->setValue(slicesManager->getTotalDuration());
+    }
+
+    if (e.source == slicesManager.get()) {
+        duration->setValue(slicesManager->getTotalDuration());
     }
 }
 
 void AudioCue::playInternal()
 {
+    if (isPreviewing) {
+        filesManager->stopAll();
+        isPreviewing = false;
+    }
+
     askedToStop = false;
+    slicesManager->resetSlices();
     filesManager->playAll();
+}
+
+void AudioCue::previewInternal()
+{
+    if (isPreviewing) {
+        askedToStop = true;
+        filesManager->stopAll();
+        isPreviewing = false;
+    } else {
+        askedToStop = false;
+        isPreviewing = true;
+        filesManager->previewAll();
+    }
 }
 
 void AudioCue::stopInternal()
 {
     filesManager->stopAll();
+    slicesManager->resetSlices();
     askedToStop = true;
 }
 
@@ -78,16 +124,17 @@ void AudioCue::panicInternal()
 
 void AudioCue::timerCallback()
 {
-    double maxCurrentTime = 0.0;
-    for (auto& audioFile : filesManager->items)
-    {
-        if (audioFile->player->transport != nullptr)
-        {
-            double currentTime = audioFile->player->transport->getCurrentPosition();
-            maxCurrentTime = jmax(maxCurrentTime, currentTime);
+    double time = slicesManager->processTime(filesManager->getCurrentTime());
+    currentTime->setValue(jmax(0.0, time));
+
+    if (time >= duration->doubleValue()) {
+        if (isPreviewing) {
+            askedToStop = true;
         }
+        filesManager->stopAll();
+        filesManager->resetCurrentTime();
+        slicesManager->resetSlices();
     }
-    currentTime->setValue(maxCurrentTime);
 }
 
 void AudioCue::changeListenerCallback(ChangeBroadcaster* source)
@@ -105,11 +152,13 @@ void AudioCue::changeListenerCallback(ChangeBroadcaster* source)
             stopTimer();
             currentTime->setValue(0.0);
             isPanicking = false;
+            isPreviewing = false;
+            slicesManager->resetSlices();
 
             if (loop->boolValue() && !askedToStop)
                 filesManager->resetCurrentTime();
 
-            if (!loop->boolValue() && !askedToStop)
+            if (!loop->boolValue() && !askedToStop && !isPreviewing)
                 endCue();
 
             if (askedToStop && parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {

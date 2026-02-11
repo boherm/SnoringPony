@@ -105,6 +105,9 @@ currentTime->hideInRemoteControl = true;
     notes->lockManualControlMode = true;
     notes->multiline = true;
 
+    previewBtn = addTrigger("Preview", "Preview this cue");
+    previewBtn->hideInEditor = true;
+
     // --- Pre-wait ----
     preWaitTimer = new Cue::CueTimer(this);
     preWaitCC = new EnablingControllableContainer("Pre-wait");
@@ -210,6 +213,9 @@ void Cue::triggerTriggered(Trigger* t)
     if (t == setNextBtn) {
         setGoNext();
     }
+    if (t == previewBtn) {
+        preview();
+    }
 }
 
 void Cue::onCueTimerFinished(Cue::CueTimer* timer)
@@ -246,6 +252,14 @@ void Cue::play()
     setNextCue();
 }
 
+void Cue::preview()
+{
+    if (!canBePreviewed())
+        return;
+
+    previewInternal();
+}
+
 void Cue::panic()
 {
     isPanicking = true;
@@ -273,6 +287,7 @@ void Cue::panic()
 void Cue::stop()
 {
     isPanicking = false;
+    isPreviewing = false;
 
     if ((preWaitActive->boolValue() || postWaitActive->boolValue()) && parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
         parentCuelist->currentCue->resetValue();
@@ -299,6 +314,11 @@ void Cue::stop()
 
 void Cue::endCue()
 {
+    if (isPreviewing) {
+        isPreviewing = false;
+        return;
+    }
+
     isPlaying->setValue(false);
     autoFollowProcess(PostWaitType::AFTER_CUE);
 

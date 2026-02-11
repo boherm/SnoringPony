@@ -10,9 +10,11 @@
 
 #include "AudioFile.h"
 #include "AudioCue.h"
+#include "AudioSlices.h"
 #include "../../Audio/AudioPlayer.h"
 #include "../../Interface/InterfaceManager.h"
 #include "../../Interface/audio/AudioOutput.h"
+#include "../../ProjectSettings/AudioSettings.h"
 
 AudioFilesManager::AudioFilesManager(AudioCue* audioCue) :
     BaseManager("Audio Files"),
@@ -39,6 +41,20 @@ void AudioFilesManager::playAll()
         AudioOutput* audioOutput = audioFile->targetAudioInterface->getTargetContainerAs<AudioOutput>();
         audioFile->player->setOutput(audioOutput);
         audioFile->player->play();
+        audioFile->player->transport->setPosition(this->audioCue->slicesManager->startTime->doubleValue());
+    }
+}
+
+void AudioFilesManager::previewAll()
+{
+    for (int i = 0; i < items.size(); ++i)
+    {
+        AudioFile* audioFile = items[i];
+
+        AudioSettings* audioProperties = dynamic_cast<AudioSettings*>(ProjectSettings::getInstance()->getControllableContainerByName("audioSettings"));
+        AudioOutput* previewOutput = audioProperties->previewOutput->getTargetContainerAs<AudioOutput>();
+        audioFile->player->preview(previewOutput);
+        audioFile->player->transport->setPosition(this->audioCue->slicesManager->startTime->doubleValue());
     }
 }
 
@@ -71,12 +87,36 @@ bool AudioFilesManager::haveOnePlaying()
     return false;
 }
 
+double AudioFilesManager::getCurrentTime()
+{
+    double maxCurrentTime = 0.0;
+    for (auto& audioFile : items)
+    {
+        if (audioFile->player->transport != nullptr)
+        {
+            double currentTime = audioFile->player->transport->getCurrentPosition();
+            maxCurrentTime = jmax(maxCurrentTime, currentTime);
+        }
+    }
+    return maxCurrentTime;
+}
+
 void AudioFilesManager::resetCurrentTime()
 {
     for (int i = 0; i < items.size(); ++i)
     {
         AudioFile* audioFile = items[i];
-        audioFile->player->transport->setPosition(0.0);
+        audioFile->player->transport->setPosition(this->audioCue->slicesManager->startTime->doubleValue());
+        audioFile->player->transport->start();
+    }
+}
+
+void AudioFilesManager::setCurrentTime(double time)
+{
+    for (int i = 0; i < items.size(); ++i)
+    {
+        AudioFile* audioFile = items[i];
+        audioFile->player->transport->setPosition(time);
         audioFile->player->transport->start();
     }
 }

@@ -12,10 +12,11 @@
 
 #include "../../MainIncludes.h"
 #include "../Cue.h"
-#include "juce_organicui/controllable/parameter/BoolParameter.h"
 
 class AudioFilesManager;
 class AudioOutput;
+class AudioSlicesManager;
+class AudioWaveformSlicer;
 
 class AudioCue :
     public Cue,
@@ -27,11 +28,16 @@ public:
     AudioCue(var params = var());
     virtual ~AudioCue();
 
+    std::unique_ptr<ControllableContainer> audioSlicer;
+    std::unique_ptr<AudioWaveformSlicer> waveformSlicer;
+    std::unique_ptr<AudioSlicesManager> slicesManager;
+
     AudioFilesManager* filesManager;
     AudioFormatManager formatManager;
 
     bool askedToStop = false;
 
+    FloatParameter* initialDuration;
     BoolParameter* loop;
 
     String getTypeString() const override { return "Audio Cue"; }
@@ -42,6 +48,8 @@ public:
     void changeListenerCallback(ChangeBroadcaster* source) override;
 
     void playInternal() override;
+    void previewInternal() override;
+    bool canBePreviewed() override { return true; }
     void stopInternal() override;
     void panicInternal() override;
 

@@ -162,13 +162,18 @@ void AudioPlayer::play(bool resetFade)
             }
             readerSource.reset(new AudioFormatReaderSource(reader.release(), true));
             transport->setSource(readerSource.get(), 0, nullptr, readerSource->getAudioFormatReader()->sampleRate);
-            transport->setPosition(0.0);
             transport->start();
             mixer->resetPanicFade();
             if (resetFade)
                 mixer->resetFade();
         }
     }
+}
+
+void AudioPlayer::preview(AudioOutput* previewOutput)
+{
+    setOutput(previewOutput);
+    play();
 }
 
 void AudioPlayer::stop()
