@@ -78,6 +78,20 @@ String OSCCue::autoDescriptionInternal()
         OSCCueMessage* msg = messagesManager->items[i];
         desc += msg->address->stringValue();
 
+        if (!msg->argumentsContainer->items.isEmpty()) {
+            desc += " (";
+
+            for (int y = 0; y < msg->argumentsContainer->items.size(); y++) {
+                if (y > 0)
+                    desc += ", ";
+
+                GenericControllableItem* p = static_cast<GenericControllableItem*>(msg->argumentsContainer->items[y]);
+                auto param = static_cast<Parameter*>(p->controllable);
+                desc += param->stringValue();
+            }
+
+            desc += ")";
+        }
     }
 
     return desc;
