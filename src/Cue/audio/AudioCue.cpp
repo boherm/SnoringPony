@@ -149,22 +149,27 @@ void AudioCue::timerCallback()
     double time = slicesManager->processTime(filesManager->getCurrentTime());
     currentTime->setValue(jmax(0.0, time));
 
-    double fadeOutTime = slicesManager->fadeOutDuration->doubleValue();
-    double totalDuration = duration->doubleValue();
+    bool isLooping = slicesManager->hasLoopingSlice();
 
-    if (fadeOutTime > 0.0 && !slicesManager->fadeOutTriggered && time >= totalDuration - fadeOutTime)
+    if (!isLooping)
     {
-        slicesManager->fadeOutTriggered = true;
-        fadeOut(fadeOutTime, false);
-    }
+        double fadeOutTime = slicesManager->fadeOutDuration->doubleValue();
+        double totalDuration = duration->doubleValue();
 
-    if (time >= totalDuration) {
-        if (isPreviewing) {
-            askedToStop = true;
+        if (fadeOutTime > 0.0 && !slicesManager->fadeOutTriggered && time >= totalDuration - fadeOutTime)
+        {
+            slicesManager->fadeOutTriggered = true;
+            fadeOut(fadeOutTime, false);
         }
-        filesManager->stopAll();
-        filesManager->resetCurrentTime();
-        slicesManager->resetSlices();
+
+        if (time >= totalDuration) {
+            if (isPreviewing) {
+                askedToStop = true;
+            }
+            filesManager->stopAll();
+            filesManager->resetCurrentTime();
+            slicesManager->resetSlices();
+        }
     }
 }
 

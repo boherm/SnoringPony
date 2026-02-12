@@ -61,6 +61,7 @@ public:
 
     double getTotalDuration();
     double processTime(double realCurrentTime);
+    bool hasLoopingSlice();
     void resetSlices();
 
     AudioSlice* createItem() override;

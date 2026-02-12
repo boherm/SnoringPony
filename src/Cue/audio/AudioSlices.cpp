@@ -136,16 +136,33 @@ double AudioSlicesManager::processTime(double realCurrentTime)
         double sliceDuration = slice->duration->doubleValue();
         int repetitions = slice->repetitions->intValue();
 
-        if (realCurrentTime >= slice->endTime->doubleValue() && slice->playedRepetitions < slice->repetitions->intValue() - 1) {
-            audioCue->filesManager->setCurrentTime(slice->startTime->doubleValue());
-            slice->playedRepetitions += 1;
-            realCurrentTime = slice->startTime->doubleValue();
+        if (realCurrentTime >= slice->endTime->doubleValue())
+        {
+            bool shouldLoop = slice->loopSlice->boolValue() || slice->playedRepetitions < slice->repetitions->intValue() - 1;
+            if (shouldLoop) {
+                audioCue->filesManager->setCurrentTime(slice->startTime->doubleValue());
+                slice->playedRepetitions += 1;
+                realCurrentTime = slice->startTime->doubleValue();
+            }
         }
-        realCurrentTime += slice->playedRepetitions * slice->duration->doubleValue();
+
+        if (!slice->loopSlice->boolValue())
+            realCurrentTime += slice->playedRepetitions * slice->duration->doubleValue();
     }
 
     realCurrentTime -= startTime->doubleValue();
     return realCurrentTime;
+}
+
+bool AudioSlicesManager::hasLoopingSlice()
+{
+    for (int i = 0; i < items.size(); i++)
+    {
+        AudioSlice* slice = items.getUnchecked(i);
+        if (slice->isEnabled() && slice->loopSlice->boolValue())
+            return true;
+    }
+    return false;
 }
 
 void AudioSlicesManager::resetSlices()
