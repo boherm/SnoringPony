@@ -104,17 +104,33 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
 
     // Status column
     if (StatusColumn == columnId) {
-        Path myPath;
+        bool isCuePlaying = cue->isPlaying->boolValue() || cue->preWaitActive->boolValue() || cue->postWaitActive->boolValue();
+        bool isNextCue = (nextCue == cue);
 
-        if (nextCue == cue) {
+        if (isCuePlaying && isNextCue) {
+            float midY = height * 0.5f;
+            float tipX = 10.0f;
+
+            Path topHalf;
+            topHalf.addRectangle(0, 0, 5, midY);
+            topHalf.addTriangle(5, 0, 5, midY, tipX, midY);
+            g.setColour(Colours::green.brighter(0.2f));
+            g.fillPath(topHalf);
+
+            Path bottomHalf;
+            bottomHalf.addRectangle(0, midY, 5, midY);
+            bottomHalf.addTriangle(5, midY, 5, (float)height, tipX, midY);
             g.setColour(Colours::orange.brighter(0.2f));
+            g.fillPath(bottomHalf);
+        } else if (isCuePlaying) {
+            Path myPath;
+            g.setColour(Colours::green.brighter(0.2f));
             myPath.addRectangle(0, 0, 5, height);
             myPath.addTriangle(5, 0, 5, height, 10, height * 0.5f);
             g.fillPath(myPath);
-        }
-
-        if (cue->isPlaying->boolValue() || cue->preWaitActive->boolValue() || cue->postWaitActive->boolValue()) {
-            g.setColour(Colours::green.brighter(0.2f));
+        } else if (isNextCue) {
+            Path myPath;
+            g.setColour(Colours::orange.brighter(0.2f));
             myPath.addRectangle(0, 0, 5, height);
             myPath.addTriangle(5, 0, 5, height, 10, height * 0.5f);
             g.fillPath(myPath);
