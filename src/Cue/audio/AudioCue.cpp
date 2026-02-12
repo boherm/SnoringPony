@@ -93,7 +93,18 @@ void AudioCue::playInternal()
 
     askedToStop = false;
     slicesManager->resetSlices();
-    filesManager->playAll();
+
+    double fadeInTime = slicesManager->fadeInDuration->doubleValue();
+    if (fadeInTime > 0.0)
+    {
+        for (auto& audioFile : filesManager->items)
+            audioFile->player->mixer->fadeIn(fadeInTime);
+        filesManager->playAll(false);
+    }
+    else
+    {
+        filesManager->playAll();
+    }
 }
 
 void AudioCue::previewInternal()
@@ -105,7 +116,18 @@ void AudioCue::previewInternal()
     } else {
         askedToStop = false;
         isPreviewing = true;
-        filesManager->previewAll();
+
+        double fadeInTime = slicesManager->fadeInDuration->doubleValue();
+        if (fadeInTime > 0.0)
+        {
+            for (auto& audioFile : filesManager->items)
+                audioFile->player->mixer->fadeIn(fadeInTime);
+            filesManager->previewAll(false);
+        }
+        else
+        {
+            filesManager->previewAll();
+        }
     }
 }
 
@@ -127,7 +149,16 @@ void AudioCue::timerCallback()
     double time = slicesManager->processTime(filesManager->getCurrentTime());
     currentTime->setValue(jmax(0.0, time));
 
-    if (time >= duration->doubleValue()) {
+    double fadeOutTime = slicesManager->fadeOutDuration->doubleValue();
+    double totalDuration = duration->doubleValue();
+
+    if (fadeOutTime > 0.0 && !slicesManager->fadeOutTriggered && time >= totalDuration - fadeOutTime)
+    {
+        slicesManager->fadeOutTriggered = true;
+        fadeOut(fadeOutTime, false);
+    }
+
+    if (time >= totalDuration) {
         if (isPreviewing) {
             askedToStop = true;
         }
@@ -173,6 +204,22 @@ void AudioCue::fade(double targetGain, double duration)
     for (auto& audioFile : filesManager->items)
     {
         audioFile->player->fade(targetGain, duration);
+    }
+}
+
+void AudioCue::fadeIn(double duration)
+{
+    for (auto& audioFile : filesManager->items)
+    {
+        audioFile->player->fadeIn(duration);
+    }
+}
+
+void AudioCue::fadeOut(double duration, bool stopAfterFade)
+{
+    for (auto& audioFile : filesManager->items)
+    {
+        audioFile->player->fadeOut(duration, stopAfterFade);
     }
 }
 

@@ -54,6 +54,8 @@ public:
     void panicInternal() override;
 
     void fade(double targetGain, double duration) override;
+    void fadeIn(double duration);
+    void fadeOut(double duration, bool stopAfterFade = true);
 
     String autoDescriptionInternal() override;
 

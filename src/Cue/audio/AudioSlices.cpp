@@ -84,10 +84,15 @@ AudioSlicesManager::AudioSlicesManager(AudioCue* audioCue) :
     startTime->defaultUI = FloatParameter::TIME;
     startTime->defaultValue = 0.0f;
 
+    fadeInDuration = addFloatParameter("Fade In", "Fade in duration in seconds.", 0.0f, 0.0f);
+    fadeInDuration->defaultUI = FloatParameter::TIME;
+
     endTime = addFloatParameter("End Time", "End audio at", this->audioCue->initialDuration->doubleValue(), 0.0f, this->audioCue->initialDuration->doubleValue());
     endTime->defaultUI = FloatParameter::TIME;
     endTime->defaultValue = this->audioCue->initialDuration->doubleValue();
-    // TODO: fade in & out parameters
+
+    fadeOutDuration = addFloatParameter("Fade Out", "Fade out duration in seconds.", 0.0f, 0.0f);
+    fadeOutDuration->defaultUI = FloatParameter::TIME;
 
     this->audioCue->initialDuration->addParameterListener(this);
 }
@@ -145,6 +150,7 @@ double AudioSlicesManager::processTime(double realCurrentTime)
 
 void AudioSlicesManager::resetSlices()
 {
+    fadeOutTriggered = false;
     for (int i = 0 ; i < items.size() ; i++)
     {
         AudioSlice* slice = items.getUnchecked(i);

@@ -32,7 +32,7 @@ AudioFile* AudioFilesManager::createItem()
 	return new AudioFile(var(), audioCue);
 }
 
-void AudioFilesManager::playAll()
+void AudioFilesManager::playAll(bool resetFade)
 {
     for (int i = 0; i < items.size(); ++i)
     {
@@ -40,12 +40,12 @@ void AudioFilesManager::playAll()
 
         AudioOutput* audioOutput = audioFile->targetAudioInterface->getTargetContainerAs<AudioOutput>();
         audioFile->player->setOutput(audioOutput);
-        audioFile->player->play();
+        audioFile->player->play(resetFade);
         audioFile->player->transport->setPosition(this->audioCue->slicesManager->startTime->doubleValue());
     }
 }
 
-void AudioFilesManager::previewAll()
+void AudioFilesManager::previewAll(bool resetFade)
 {
     for (int i = 0; i < items.size(); ++i)
     {
@@ -53,7 +53,8 @@ void AudioFilesManager::previewAll()
 
         AudioSettings* audioProperties = dynamic_cast<AudioSettings*>(ProjectSettings::getInstance()->getControllableContainerByName("audioSettings"));
         AudioOutput* previewOutput = audioProperties->previewOutput->getTargetContainerAs<AudioOutput>();
-        audioFile->player->preview(previewOutput);
+        audioFile->player->setOutput(previewOutput);
+        audioFile->player->play(resetFade);
         audioFile->player->transport->setPosition(this->audioCue->slicesManager->startTime->doubleValue());
     }
 }

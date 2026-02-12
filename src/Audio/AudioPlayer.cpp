@@ -39,11 +39,30 @@ void AudioPlayerMixer::fade(double targetGain, double duration)
     isFading = true;
 }
 
+void AudioPlayerMixer::fadeIn(double duration)
+{
+    fadingGain.reset(sampleRate, 0.0);
+    fadingGain.setTargetValue(0.0f);
+    fadingGain.reset(sampleRate, duration);
+    fadingGain.setTargetValue(1.0f);
+    isFading = true;
+    fadeStopAfterComplete = false;
+}
+
+void AudioPlayerMixer::fadeOut(double duration, bool stopAfterFade)
+{
+    fadingGain.reset(sampleRate, duration);
+    fadingGain.setTargetValue(0.0f);
+    isFading = true;
+    fadeStopAfterComplete = stopAfterFade;
+}
+
 void AudioPlayerMixer::resetFade()
 {
     fadingGain.reset(sampleRate, 0.0);
     fadingGain.setTargetValue(1.0f);
     isFading = false;
+    fadeStopAfterComplete = false;
 }
 
 void AudioPlayerMixer::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
@@ -70,7 +89,7 @@ void AudioPlayerMixer::getNextAudioBlock(const AudioSourceChannelInfo& info)
 
     if (isPanicking && !panicFadingGain.isSmoothing() && panicFadingGain.getCurrentValue() <= 0.0f)
     {
-        fadeStopPending = true;
+        fadeStopAfterComplete = false;
         isPanicking = false;
 
         if (transportSource != nullptr)
@@ -87,9 +106,27 @@ void AudioPlayerMixer::getNextAudioBlock(const AudioSourceChannelInfo& info)
         }
     }
 
-    if (!isPanicking && isFading && !fadingGain.isSmoothing() && fadingGain.getCurrentValue() < 0.0f)
+    if (!isPanicking && isFading && !fadingGain.isSmoothing())
     {
         isFading = false;
+
+        if (fadeStopAfterComplete && fadingGain.getCurrentValue() <= 0.01f)
+        {
+            fadeStopAfterComplete = false;
+
+            if (transportSource != nullptr)
+            {
+                AudioTransportSource* transportToStop = transportSource;
+                MessageManager::callAsync([transportToStop]()
+                {
+                    if (transportToStop != nullptr)
+                    {
+                        transportToStop->stop();
+                        transportToStop->setPosition(0.0);
+                    }
+                });
+            }
+        }
     }
 
 }
@@ -198,4 +235,15 @@ void AudioPlayer::stopAndClean()
 void AudioPlayer::fade(double targetGain, double duration)
 {
     mixer->fade(targetGain, duration);
+}
+
+void AudioPlayer::fadeIn(double duration)
+{
+    mixer->fadeIn(duration);
+    play(false);
+}
+
+void AudioPlayer::fadeOut(double duration, bool stopAfterFade)
+{
+    mixer->fadeOut(duration, stopAfterFade);
 }

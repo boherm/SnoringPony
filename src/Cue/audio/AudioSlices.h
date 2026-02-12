@@ -54,6 +54,10 @@ public:
     AudioCue* audioCue;
     FloatParameter* startTime;
     FloatParameter* endTime;
+    FloatParameter* fadeInDuration;
+    FloatParameter* fadeOutDuration;
+
+    bool fadeOutTriggered = false;
 
     double getTotalDuration();
     double processTime(double realCurrentTime);

@@ -50,8 +50,8 @@ public:
 
     AudioFile* createItem() override;
 
-    void playAll();
-    void previewAll();
+    void playAll(bool resetFade = true);
+    void previewAll(bool resetFade = true);
     void stopAll();
     void panicAll();
 

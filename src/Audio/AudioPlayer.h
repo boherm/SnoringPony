@@ -20,7 +20,7 @@ class AudioPlayerMixer:
 public:
     bool isPanicking = false;
     bool isFading = false;
-    bool fadeStopPending = false;
+    bool fadeStopAfterComplete = false;
     double sampleRate = 44100.0;
     AudioTransportSource* transportSource = nullptr;
     LinearSmoothedValue<float> panicFadingGain { 1.0f };
@@ -42,6 +42,8 @@ public:
     void panicFade();
     void resetPanicFade();
     void fade(double targetGain, double duration);
+    void fadeIn(double duration);
+    void fadeOut(double duration, bool stopAfterFade = true);
     void resetFade();
 };
 
@@ -71,6 +73,8 @@ public:
     void stopAndClean();
 
     void fade(double targetGain, double duration);
+    void fadeIn(double duration);
+    void fadeOut(double duration, bool stopAfterFade = true);
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPlayer)
