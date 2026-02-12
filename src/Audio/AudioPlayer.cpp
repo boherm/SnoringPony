@@ -34,7 +34,7 @@ void AudioPlayerMixer::resetPanicFade()
 
 void AudioPlayerMixer::fade(double targetGain, double duration)
 {
-    fadingGain.reset(sampleRate, duration + 2.5f); // ?
+    fadingGain.reset(sampleRate, duration);
     fadingGain.setTargetValue(targetGain);
     isFading = true;
 }
@@ -78,13 +78,16 @@ void AudioPlayerMixer::getNextAudioBlock(const AudioSourceChannelInfo& info)
     auto start   = info.startSample;
     auto num     = info.numSamples;
 
-    for (int ch = 0; ch < buffer->getNumChannels(); ++ch)
+    auto numChannels = buffer->getNumChannels();
+
+    for (int i = 0; i < num; ++i)
     {
-        float* data = buffer->getWritePointer (ch, start);
-        for (int i = 0; i < num; ++i) {
-            data[i] *= panicFadingGain.getNextValue();
-            data[i] *= fadingGain.getNextValue();
-        }
+        float panicGain = panicFadingGain.getNextValue();
+        float fadeGain = fadingGain.getNextValue();
+        float gain = panicGain * fadeGain;
+
+        for (int ch = 0; ch < numChannels; ++ch)
+            buffer->getWritePointer(ch, start)[i] *= gain;
     }
 
     if (isPanicking && !panicFadingGain.isSmoothing() && panicFadingGain.getCurrentValue() <= 0.0f)
