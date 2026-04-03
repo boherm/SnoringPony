@@ -177,9 +177,16 @@ AudioSlice* AudioSlicesManager::createItem()
 void AudioSlicesManager::parameterValueChanged(Parameter* p)
 {
     if (this->audioCue->initialDuration == p) {
-        startTime->maximumValue = this->audioCue->initialDuration->doubleValue();
-        endTime->maximumValue = this->audioCue->initialDuration->doubleValue();
-        endTime->defaultValue = this->audioCue->initialDuration->doubleValue();
+        double newDuration = this->audioCue->initialDuration->doubleValue();
+        double previousMax = endTime->maximumValue;
+
+        startTime->maximumValue = newDuration;
+        endTime->maximumValue = newDuration;
+        endTime->defaultValue = newDuration;
+
+        // Update endTime to new duration if it was at the previous max (not manually adjusted)
+        if (endTime->doubleValue() == 0.0 || endTime->doubleValue() == previousMax)
+            endTime->setValue(newDuration);
     }
 
     if (Engine::mainEngine->isLoadingFile)
