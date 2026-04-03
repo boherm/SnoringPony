@@ -8,9 +8,9 @@ permissions:
   contents: write
 
 jobs:
-  linux:
-    uses: ./.github/workflows/sub-build-osx.yml
   osx:
+    uses: ./.github/workflows/sub-build-osx.yml
+  linux:
     uses: ./.github/workflows/sub-build-linux.yml
   windows:
     uses: ./.github/workflows/sub-build-win.yml
