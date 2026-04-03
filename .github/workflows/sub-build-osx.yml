@@ -3,7 +3,7 @@ on: [workflow_call]
 
 env:
   ProjectName: SnoringPony
-  PackagesVersion: 1.2.10
+  PackagesVersion: 1.2.11
 
 jobs:
   osx:
