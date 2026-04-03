@@ -130,12 +130,6 @@ double AudioSlicesManager::processTime(double realCurrentTime)
         if (!slice->isEnabled())
             continue;
 
-        // if (realCurrentTime < slice->startTime->doubleValue())
-        //     break;
-
-        double sliceDuration = slice->duration->doubleValue();
-        int repetitions = slice->repetitions->intValue();
-
         if (realCurrentTime >= slice->endTime->doubleValue())
         {
             bool shouldLoop = slice->loopSlice->boolValue() || slice->playedRepetitions < slice->repetitions->intValue() - 1;
