@@ -27,6 +27,7 @@ AudioWaveform::AudioWaveform(AudioCue* audioCue) :
     formatManager.registerBasicFormats();
     thumbnail.addChangeListener(this);
     this->audioCue->slicesManager->addAsyncContainerListener(this);
+    this->audioCue->filesManager->addAsyncContainerListener(this);
 
     zoomLevel = 1;
 }
@@ -35,6 +36,7 @@ AudioWaveform::~AudioWaveform()
 {
     stopTimer();
     this->audioCue->slicesManager->removeAsyncContainerListener(this);
+    this->audioCue->filesManager->removeAsyncContainerListener(this);
 }
 
 void AudioWaveform::paint(Graphics& g)
@@ -371,6 +373,15 @@ void AudioWaveform::modifierKeysChanged(const ModifierKeys& modifiers)
 
 void AudioWaveform::newMessage(const ContainerAsyncEvent& e)
 {
+    if (e.source == audioCue->filesManager
+        && e.type == ContainerAsyncEvent::EventType::ControllableFeedbackUpdate
+        && e.targetControllable->niceName == "Audio File")
+    {
+        File f = audioCue->filesManager->items.getFirst()->audioFile->getFile();
+        if (f.existsAsFile())
+            loadFile(f);
+    }
+
     repaint();
 }
 
