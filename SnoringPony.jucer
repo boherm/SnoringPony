@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="yG6FOt" name="SnoringPony" projectType="guiapp" jucerFormatVersion="1"
-              version="1.0.0b1" projectLineFeed="&#10;" companyName="boherm"
+              version="1.0.0b2" projectLineFeed="&#10;" companyName="boherm"
               companyCopyright="Boris Hermans" companyWebsite="https://snoringpony.app"
               companyEmail="dev@snoringpony.app" defines="VST_LOGGING=0" headerPath="../../src&#10;../../external/asio&#10;../../external/asiodriver&#10;../../external/servus/include"
               bundleIdentifier="boherm.SnoringPony">
@@ -60,6 +60,18 @@
           <FILE id="zNeXVg" name="PlaylistCue.h" compile="0" resource="0" file="src/Cue/playlist/PlaylistCue.h"/>
         </GROUP>
         <GROUP id="{F6360A6C-7FC2-6FAA-7205-29D762DAEC42}" name="audio">
+          <GROUP id="{030E42BF-9636-8527-42BA-56EF3EEF1C0B}" name="ui">
+            <FILE id="q4wXEZ" name="AudioWaveformSlicerEditor.cpp" compile="1"
+                  resource="0" file="src/Cue/audio/ui/AudioWaveformSlicerEditor.cpp"/>
+            <FILE id="eRTt8p" name="AudioWaveformSlicerEditor.h" compile="0" resource="0"
+                  file="src/Cue/audio/ui/AudioWaveformSlicerEditor.h"/>
+          </GROUP>
+          <FILE id="tPtu6L" name="AudioSlices.cpp" compile="1" resource="0" file="src/Cue/audio/AudioSlices.cpp"/>
+          <FILE id="KZ7bMn" name="AudioSlices.h" compile="0" resource="0" file="src/Cue/audio/AudioSlices.h"/>
+          <FILE id="YtRBuB" name="AudioWaveformSlicer.cpp" compile="1" resource="0"
+                file="src/Cue/audio/AudioWaveformSlicer.cpp"/>
+          <FILE id="pNOywZ" name="AudioWaveformSlicer.h" compile="0" resource="0"
+                file="src/Cue/audio/AudioWaveformSlicer.h"/>
           <FILE id="TKPFyS" name="AudioCue.cpp" compile="1" resource="0" file="src/Cue/audio/AudioCue.cpp"/>
           <FILE id="lue5p9" name="AudioCue.h" compile="0" resource="0" file="src/Cue/audio/AudioCue.h"/>
           <FILE id="DwTgkP" name="AudioFile.cpp" compile="1" resource="0" file="src/Cue/audio/AudioFile.cpp"/>
@@ -188,6 +200,9 @@
               file="src/Interface/InterfaceManager.h"/>
       </GROUP>
       <GROUP id="{570BE9DA-F47D-33C6-807F-BA4F0F848B72}" name="ProjectSettings">
+        <FILE id="XodudM" name="AudioSettings.h" compile="0" resource="0" file="src/ProjectSettings/AudioSettings.h"/>
+        <FILE id="nQBTUc" name="AudioSettings.cpp" compile="1" resource="0"
+              file="src/ProjectSettings/AudioSettings.cpp"/>
         <FILE id="dBwppK" name="ColorPresets.cpp" compile="1" resource="0"
               file="src/ProjectSettings/ColorPresets.cpp"/>
         <FILE id="Opsyyz" name="ColorPresets.h" compile="0" resource="0" file="src/ProjectSettings/ColorPresets.h"/>

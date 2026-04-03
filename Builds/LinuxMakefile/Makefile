@@ -39,7 +39,7 @@ ifeq ($(CONFIG),Debug)
     TARGET_ARCH := -m64
   endif
 
-  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DDEBUG=1" "-D_DEBUG=1" "-DVST_LOGGING=0" "-DLINK_PLATFORM_LINUX=1" "-DGDK_BACKEND=x11" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0b1" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags alsa freetype2 gl libcurl webkit2gtk-4.0 gtk+-x11-3.0) -pthread -I../../JuceLibraryCode -I../../modules/juce/modules -I../../modules -I../../src -I../../external/asio -I../../external/asiodriver -I../../external/servus/include $(CPPFLAGS)
+  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DDEBUG=1" "-D_DEBUG=1" "-DVST_LOGGING=0" "-DLINK_PLATFORM_LINUX=1" "-DGDK_BACKEND=x11" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0b2" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags alsa freetype2 gl libcurl webkit2gtk-4.0 gtk+-x11-3.0) -pthread -I../../JuceLibraryCode -I../../modules/juce/modules -I../../modules -I../../src -I../../external/asio -I../../external/asiodriver -I../../external/servus/include $(CPPFLAGS)
   JUCE_CPPFLAGS_APP :=  "-DJucePlugin_Build_VST=0" "-DJucePlugin_Build_VST3=0" "-DJucePlugin_Build_AU=0" "-DJucePlugin_Build_AUv3=0" "-DJucePlugin_Build_AAX=0" "-DJucePlugin_Build_Standalone=0" "-DJucePlugin_Build_Unity=0" "-DJucePlugin_Build_LV2=0"
   JUCE_TARGET_APP := SnoringPony
 
@@ -60,7 +60,7 @@ ifeq ($(CONFIG),Release)
     TARGET_ARCH := -m64
   endif
 
-  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DNDEBUG=1" "-DVST_LOGGING=0" "-DLINK_PLATFORM_LINUX=1" "-DGDK_BACKEND=x11" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0b1" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags alsa freetype2 gl libcurl webkit2gtk-4.0 gtk+-x11-3.0) -pthread -I../../JuceLibraryCode -I../../modules/juce/modules -I../../modules -I../../src -I../../external/asio -I../../external/asiodriver -I../../external/servus/include $(CPPFLAGS)
+  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DNDEBUG=1" "-DVST_LOGGING=0" "-DLINK_PLATFORM_LINUX=1" "-DGDK_BACKEND=x11" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0b2" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags alsa freetype2 gl libcurl webkit2gtk-4.0 gtk+-x11-3.0) -pthread -I../../JuceLibraryCode -I../../modules/juce/modules -I../../modules -I../../src -I../../external/asio -I../../external/asiodriver -I../../external/servus/include $(CPPFLAGS)
   JUCE_CPPFLAGS_APP :=  "-DJucePlugin_Build_VST=0" "-DJucePlugin_Build_VST3=0" "-DJucePlugin_Build_AU=0" "-DJucePlugin_Build_AUv3=0" "-DJucePlugin_Build_AAX=0" "-DJucePlugin_Build_Standalone=0" "-DJucePlugin_Build_Unity=0" "-DJucePlugin_Build_LV2=0"
   JUCE_TARGET_APP := SnoringPony
 
@@ -78,6 +78,9 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/OSCCue_6cd7e3c0.o \
   $(JUCE_OBJDIR)/OSCCueMessage_fc4f0bb1.o \
   $(JUCE_OBJDIR)/PlaylistCue_3b5dd40.o \
+  $(JUCE_OBJDIR)/AudioWaveformSlicerEditor_302e651a.o \
+  $(JUCE_OBJDIR)/AudioSlices_6406366c.o \
+  $(JUCE_OBJDIR)/AudioWaveformSlicer_8710d808.o \
   $(JUCE_OBJDIR)/AudioCue_6b8f1412.o \
   $(JUCE_OBJDIR)/AudioFile_d20cdec7.o \
   $(JUCE_OBJDIR)/CueEditor_6ade7941.o \
@@ -110,6 +113,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/InterfaceUI_e393dec8.o \
   $(JUCE_OBJDIR)/Interface_9e38c80d.o \
   $(JUCE_OBJDIR)/InterfaceManager_8001f36a.o \
+  $(JUCE_OBJDIR)/AudioSettings_1417810.o \
   $(JUCE_OBJDIR)/ColorPresets_884d5ac4.o \
   $(JUCE_OBJDIR)/DecksSettings_fe0d7724.o \
   $(JUCE_OBJDIR)/ShowProperties_a8318b43.o \
@@ -195,6 +199,21 @@ $(JUCE_OBJDIR)/OSCCueMessage_fc4f0bb1.o: ../../src/Cue/osc/OSCCueMessage.cpp
 $(JUCE_OBJDIR)/PlaylistCue_3b5dd40.o: ../../src/Cue/playlist/PlaylistCue.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling PlaylistCue.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/AudioWaveformSlicerEditor_302e651a.o: ../../src/Cue/audio/ui/AudioWaveformSlicerEditor.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling AudioWaveformSlicerEditor.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/AudioSlices_6406366c.o: ../../src/Cue/audio/AudioSlices.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling AudioSlices.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/AudioWaveformSlicer_8710d808.o: ../../src/Cue/audio/AudioWaveformSlicer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling AudioWaveformSlicer.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/AudioCue_6b8f1412.o: ../../src/Cue/audio/AudioCue.cpp
@@ -355,6 +374,11 @@ $(JUCE_OBJDIR)/Interface_9e38c80d.o: ../../src/Interface/Interface.cpp
 $(JUCE_OBJDIR)/InterfaceManager_8001f36a.o: ../../src/Interface/InterfaceManager.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling InterfaceManager.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/AudioSettings_1417810.o: ../../src/ProjectSettings/AudioSettings.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling AudioSettings.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/ColorPresets_884d5ac4.o: ../../src/ProjectSettings/ColorPresets.cpp

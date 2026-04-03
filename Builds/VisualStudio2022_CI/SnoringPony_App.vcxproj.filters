@@ -20,6 +20,9 @@
     <Filter Include="SnoringPony\Source\Cue\playlist">
       <UniqueIdentifier>{FE6F7955-A108-981C-5662-A26E8676FF94}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SnoringPony\Source\Cue\audio\ui">
+      <UniqueIdentifier>{4614EE1F-4BC3-A64A-8484-59E34A9F6B78}</UniqueIdentifier>
+    </Filter>
     <Filter Include="SnoringPony\Source\Cue\audio">
       <UniqueIdentifier>{586B47B9-6DE2-2958-EDF9-A258A0B33EBA}</UniqueIdentifier>
     </Filter>
@@ -1069,6 +1072,15 @@
     <ClCompile Include="..\..\src\Cue\playlist\PlaylistCue.cpp">
       <Filter>SnoringPony\Source\Cue\playlist</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Cue\audio\ui\AudioWaveformSlicerEditor.cpp">
+      <Filter>SnoringPony\Source\Cue\audio\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cue\audio\AudioSlices.cpp">
+      <Filter>SnoringPony\Source\Cue\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cue\audio\AudioWaveformSlicer.cpp">
+      <Filter>SnoringPony\Source\Cue\audio</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Cue\audio\AudioCue.cpp">
       <Filter>SnoringPony\Source\Cue\audio</Filter>
     </ClCompile>
@@ -1164,6 +1176,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Interface\InterfaceManager.cpp">
       <Filter>SnoringPony\Source\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ProjectSettings\AudioSettings.cpp">
+      <Filter>SnoringPony\Source\ProjectSettings</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\ProjectSettings\ColorPresets.cpp">
       <Filter>SnoringPony\Source\ProjectSettings</Filter>
@@ -4590,6 +4605,15 @@
     <ClInclude Include="..\..\src\Cue\playlist\PlaylistCue.h">
       <Filter>SnoringPony\Source\Cue\playlist</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Cue\audio\ui\AudioWaveformSlicerEditor.h">
+      <Filter>SnoringPony\Source\Cue\audio\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cue\audio\AudioSlices.h">
+      <Filter>SnoringPony\Source\Cue\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cue\audio\AudioWaveformSlicer.h">
+      <Filter>SnoringPony\Source\Cue\audio</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Cue\audio\AudioCue.h">
       <Filter>SnoringPony\Source\Cue\audio</Filter>
     </ClInclude>
@@ -4685,6 +4709,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Interface\InterfaceManager.h">
       <Filter>SnoringPony\Source\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ProjectSettings\AudioSettings.h">
+      <Filter>SnoringPony\Source\ProjectSettings</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\ProjectSettings\ColorPresets.h">
       <Filter>SnoringPony\Source\ProjectSettings</Filter>

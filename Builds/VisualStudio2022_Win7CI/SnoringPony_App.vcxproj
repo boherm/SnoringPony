@@ -66,7 +66,7 @@
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalIncludeDirectories>..\..\JuceLibraryCode;..\..\modules\juce\modules;..\..\modules;../../src;../../external/asio;../../external/asiodriver;../../external/servus/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;DEBUG;_DEBUG;VST_LOGGING=0;BLE_SUPPORT=0;PING_SUPPORT=0;OS_SYSINFO_SUPPORT=0;JUCER_VS2022_BA4A4C2=1;JUCE_APP_VERSION=1.0.0b1;JUCE_APP_VERSION_HEX=0x10000;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;JucePlugin_Build_Unity=0;JucePlugin_Build_LV2=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;DEBUG;_DEBUG;VST_LOGGING=0;BLE_SUPPORT=0;PING_SUPPORT=0;OS_SYSINFO_SUPPORT=0;JUCER_VS2022_BA4A4C2=1;JUCE_APP_VERSION=1.0.0b2;JUCE_APP_VERSION_HEX=0x10000;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;JucePlugin_Build_Unity=0;JucePlugin_Build_LV2=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -81,7 +81,7 @@
     </ClCompile>
     <ResourceCompile>
       <AdditionalIncludeDirectories>..\..\JuceLibraryCode;..\..\modules\juce\modules;..\..\modules;../../src;../../external/asio;../../external/asiodriver;../../external/servus/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;DEBUG;_DEBUG;VST_LOGGING=0;BLE_SUPPORT=0;PING_SUPPORT=0;OS_SYSINFO_SUPPORT=0;JUCER_VS2022_BA4A4C2=1;JUCE_APP_VERSION=1.0.0b1;JUCE_APP_VERSION_HEX=0x10000;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;JucePlugin_Build_Unity=0;JucePlugin_Build_LV2=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;DEBUG;_DEBUG;VST_LOGGING=0;BLE_SUPPORT=0;PING_SUPPORT=0;OS_SYSINFO_SUPPORT=0;JUCER_VS2022_BA4A4C2=1;JUCE_APP_VERSION=1.0.0b2;JUCE_APP_VERSION_HEX=0x10000;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;JucePlugin_Build_Unity=0;JucePlugin_Build_LV2=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
       <OutputFile>$(OutDir)\SnoringPony.exe</OutputFile>
@@ -115,7 +115,7 @@
     <ClCompile>
       <Optimization>Full</Optimization>
       <AdditionalIncludeDirectories>..\..\JuceLibraryCode;..\..\modules\juce\modules;..\..\modules;../../src;../../external/asio;../../external/asiodriver;../../external/servus/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;NDEBUG;VST_LOGGING=0;BLE_SUPPORT=0;PING_SUPPORT=0;OS_SYSINFO_SUPPORT=0;JUCER_VS2022_BA4A4C2=1;JUCE_APP_VERSION=1.0.0b1;JUCE_APP_VERSION_HEX=0x10000;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;JucePlugin_Build_Unity=0;JucePlugin_Build_LV2=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;NDEBUG;VST_LOGGING=0;BLE_SUPPORT=0;PING_SUPPORT=0;OS_SYSINFO_SUPPORT=0;JUCER_VS2022_BA4A4C2=1;JUCE_APP_VERSION=1.0.0b2;JUCE_APP_VERSION_HEX=0x10000;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;JucePlugin_Build_Unity=0;JucePlugin_Build_LV2=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -130,7 +130,7 @@
     </ClCompile>
     <ResourceCompile>
       <AdditionalIncludeDirectories>..\..\JuceLibraryCode;..\..\modules\juce\modules;..\..\modules;../../src;../../external/asio;../../external/asiodriver;../../external/servus/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;NDEBUG;VST_LOGGING=0;BLE_SUPPORT=0;PING_SUPPORT=0;OS_SYSINFO_SUPPORT=0;JUCER_VS2022_BA4A4C2=1;JUCE_APP_VERSION=1.0.0b1;JUCE_APP_VERSION_HEX=0x10000;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;JucePlugin_Build_Unity=0;JucePlugin_Build_LV2=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;NDEBUG;VST_LOGGING=0;BLE_SUPPORT=0;PING_SUPPORT=0;OS_SYSINFO_SUPPORT=0;JUCER_VS2022_BA4A4C2=1;JUCE_APP_VERSION=1.0.0b2;JUCE_APP_VERSION_HEX=0x10000;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;JucePlugin_Build_Unity=0;JucePlugin_Build_LV2=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
       <OutputFile>$(OutDir)\SnoringPony.exe</OutputFile>
@@ -163,6 +163,9 @@
     <ClCompile Include="..\..\src\Cue\osc\OSCCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\osc\OSCCueMessage.cpp"/>
     <ClCompile Include="..\..\src\Cue\playlist\PlaylistCue.cpp"/>
+    <ClCompile Include="..\..\src\Cue\audio\ui\AudioWaveformSlicerEditor.cpp"/>
+    <ClCompile Include="..\..\src\Cue\audio\AudioSlices.cpp"/>
+    <ClCompile Include="..\..\src\Cue\audio\AudioWaveformSlicer.cpp"/>
     <ClCompile Include="..\..\src\Cue\audio\AudioCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\audio\AudioFile.cpp"/>
     <ClCompile Include="..\..\src\Cue\ui\CueEditor.cpp"/>
@@ -195,6 +198,7 @@
     <ClCompile Include="..\..\src\Interface\ui\InterfaceUI.cpp"/>
     <ClCompile Include="..\..\src\Interface\Interface.cpp"/>
     <ClCompile Include="..\..\src\Interface\InterfaceManager.cpp"/>
+    <ClCompile Include="..\..\src\ProjectSettings\AudioSettings.cpp"/>
     <ClCompile Include="..\..\src\ProjectSettings\ColorPresets.cpp"/>
     <ClCompile Include="..\..\src\ProjectSettings\DecksSettings.cpp"/>
     <ClCompile Include="..\..\src\ProjectSettings\ShowProperties.cpp"/>
@@ -3336,6 +3340,9 @@
     <ClInclude Include="..\..\src\Cue\osc\OSCCue.h"/>
     <ClInclude Include="..\..\src\Cue\osc\OSCCueMessage.h"/>
     <ClInclude Include="..\..\src\Cue\playlist\PlaylistCue.h"/>
+    <ClInclude Include="..\..\src\Cue\audio\ui\AudioWaveformSlicerEditor.h"/>
+    <ClInclude Include="..\..\src\Cue\audio\AudioSlices.h"/>
+    <ClInclude Include="..\..\src\Cue\audio\AudioWaveformSlicer.h"/>
     <ClInclude Include="..\..\src\Cue\audio\AudioCue.h"/>
     <ClInclude Include="..\..\src\Cue\audio\AudioFile.h"/>
     <ClInclude Include="..\..\src\Cue\ui\CueEditor.h"/>
@@ -3368,6 +3375,7 @@
     <ClInclude Include="..\..\src\Interface\ui\InterfaceUI.h"/>
     <ClInclude Include="..\..\src\Interface\Interface.h"/>
     <ClInclude Include="..\..\src\Interface\InterfaceManager.h"/>
+    <ClInclude Include="..\..\src\ProjectSettings\AudioSettings.h"/>
     <ClInclude Include="..\..\src\ProjectSettings\ColorPresets.h"/>
     <ClInclude Include="..\..\src\ProjectSettings\DecksSettings.h"/>
     <ClInclude Include="..\..\src\ProjectSettings\ShowProperties.h"/>
