@@ -93,11 +93,13 @@ void CuelistManager::showMenuForTargetCue(ControllableContainer* startFromCC, st
 void CuelistManager::addItemInternal(Cuelist* cl, var data)
 {
     PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
-    // if not loading file, we set the first cuelist automatically to main cuelist to be controlled
     if (!engine->isLoadingFile) {
-        if (items.size() == 1) {
+        if (engine->showProperties.mainCuelist->getTargetContainer() == nullptr) {
             engine->showProperties.mainCuelist->setTarget(cl);
             engine->showProperties.mainCuelist->notifyValueChanged();
+        }
+        if (engine->showProperties.startupMainCuelist->getTargetContainer() == nullptr) {
+            engine->showProperties.startupMainCuelist->setTarget(cl);
         }
     }
 }
