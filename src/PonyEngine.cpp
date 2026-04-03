@@ -58,6 +58,10 @@ PonyEngine::PonyEngine() :
     ProjectSettings::getInstance()->addChildControllableContainer(&decksSettings);
     ProjectSettings::getInstance()->customValuesCC.hideInEditor = true;
     ProjectSettings::getInstance()->dashboardCC.editorIsCollapsed = true;
+
+    // Warm up CoreAudio HAL on a background thread so that
+    // creating an Audio interface later is instant
+    std::thread([]() { AudioDeviceManager warmup; }).detach();
 }
 
 PonyEngine::~PonyEngine()
