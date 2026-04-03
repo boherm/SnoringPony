@@ -149,6 +149,15 @@ currentTime->hideInRemoteControl = true;
     postWaitActive = postWaitCC->addBoolParameter("Active", "Auto-follow currently active", false);
     postWaitActive->setEnabled(false);
     postWaitActive->hideInEditor = true;
+
+    // --- Stop on retrigger ---
+    retriggerStopCC = new EnablingControllableContainer("Stop on retrigger");
+    retriggerStopCC->enabled->setValue(false);
+    retriggerStopCC->editorIsCollapsed = true;
+    addChildControllableContainer(retriggerStopCC, true);
+
+    retriggerStopFadeOut = retriggerStopCC->addFloatParameter("Fade Out", "Fade out duration before stopping", 0.0, 0.0);
+    retriggerStopFadeOut->defaultUI = FloatParameter::TIME;
 }
 
 Cue::~Cue()
@@ -205,6 +214,9 @@ void Cue::onControllableFeedbackUpdateInternal(ControllableContainer* cc, Contro
         if (postWaitCC == cc && c == postWaitCC->enabled) {
             postWaitCC->editorIsCollapsed = !postWaitCC->enabled->boolValue();
         }
+        if (retriggerStopCC == cc && c == retriggerStopCC->enabled) {
+            retriggerStopCC->editorIsCollapsed = !retriggerStopCC->enabled->boolValue();
+        }
     }
 }
 
@@ -235,6 +247,13 @@ void Cue::onCueTimerFinished(Cue::CueTimer* timer)
 
 void Cue::play()
 {
+    if (isPlaying->boolValue() && retriggerStopCC->enabled->boolValue())
+    {
+        retriggerStop();
+        setNextCue();
+        return;
+    }
+
     if (!canBePlayed())
         return;
 
@@ -249,7 +268,9 @@ void Cue::play()
     } else {
         playInternal();
     }
-    setNextCue();
+
+    if (!retriggerStopCC->enabled->boolValue())
+        setNextCue();
 }
 
 void Cue::preview()
@@ -282,6 +303,14 @@ void Cue::panic()
     }
 
     panicInternal();
+}
+
+void Cue::retriggerStop()
+{
+    isRetriggerStopping = true;
+    stop();
+    isRetriggerStopping = false;
+    endCue();
 }
 
 void Cue::stop()

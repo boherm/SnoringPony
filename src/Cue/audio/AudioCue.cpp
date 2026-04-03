@@ -138,6 +138,24 @@ void AudioCue::stopInternal()
     askedToStop = true;
 }
 
+void AudioCue::retriggerStop()
+{
+    isRetriggerStopping = true;
+    double fadeOutTime = retriggerStopFadeOut->doubleValue();
+    if (fadeOutTime > 0.0)
+    {
+        askedToStop = true;
+        retriggerFadeStartTime = Time::getMillisecondCounterHiRes();
+        duration->setValue(fadeOutTime);
+        currentTime->setValue(0.0);
+        fadeOut(fadeOutTime, true);
+    }
+    else
+    {
+        stop();
+    }
+}
+
 void AudioCue::panicInternal()
 {
     filesManager->panicAll();
@@ -146,6 +164,13 @@ void AudioCue::panicInternal()
 
 void AudioCue::timerCallback()
 {
+    if (isRetriggerStopping)
+    {
+        double elapsed = (Time::getMillisecondCounterHiRes() - retriggerFadeStartTime) / 1000.0;
+        currentTime->setValue(jmin(elapsed, duration->doubleValue()));
+        return;
+    }
+
     double time = slicesManager->processTime(filesManager->getCurrentTime());
     currentTime->setValue(jmax(0.0, time));
 
@@ -197,8 +222,14 @@ void AudioCue::changeListenerCallback(ChangeBroadcaster* source)
             if (!loop->boolValue() && !askedToStop && !isPreviewing)
                 endCue();
 
-            if (askedToStop && parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
-                parentCuelist->currentCue->resetValue();
+            if (askedToStop) {
+                if (isRetriggerStopping) {
+                    isRetriggerStopping = false;
+                    duration->setValue(slicesManager->getTotalDuration());
+                    endCue();
+                } else if (parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
+                    parentCuelist->currentCue->resetValue();
+                }
             }
         }
     }

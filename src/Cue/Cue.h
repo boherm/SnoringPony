@@ -27,6 +27,8 @@ public:
     bool isFadable = false;
     bool isPanicking = false;
     bool isPreviewing = false;
+    bool isRetriggerStopping = false;
+    double retriggerFadeStartTime = 0.0;
 
     Cuelist* parentCuelist;
 
@@ -75,6 +77,9 @@ public:
     EnumParameter* postWaitType;
     BoolParameter* postWaitActive;
 
+    EnablingControllableContainer* retriggerStopCC;
+    FloatParameter* retriggerStopFadeOut;
+
     CueTimer* preWaitTimer = nullptr;
     CueTimer* postWaitTimer = nullptr;
 
@@ -101,6 +106,7 @@ public:
 
     void stop();
     virtual void stopInternal() {}
+    virtual void retriggerStop();
 
     void panic();
     virtual void panicInternal() {}

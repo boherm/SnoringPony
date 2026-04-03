@@ -281,6 +281,13 @@ void PlaylistCue::newMessage(const ContainerAsyncEvent& e)
 
 void PlaylistCue::timerCallback()
 {
+    if (isRetriggerStopping)
+    {
+        double elapsed = (Time::getMillisecondCounterHiRes() - retriggerFadeStartTime) / 1000.0;
+        currentTime->setValue(jmin(elapsed, duration->doubleValue()));
+        return;
+    }
+
     double maxCurrentTime = 0.0;
     for (auto& audioFile : filesManager->items)
     {
@@ -321,7 +328,11 @@ void PlaylistCue::changeListenerCallback(ChangeBroadcaster* source)
                 }
                 queuedNotifier.addMessage(new ContainerAsyncEvent(ContainerAsyncEvent::ControllableContainerNeedsRebuild, this));
 
-                if (parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
+                if (isRetriggerStopping) {
+                    isRetriggerStopping = false;
+                    refreshGlobalDuration();
+                    endCue();
+                } else if (parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
                     parentCuelist->currentCue->resetValue();
                 }
 
@@ -341,6 +352,30 @@ void PlaylistCue::changeListenerCallback(ChangeBroadcaster* source)
             nextFile->player->transport->addChangeListener(this);
         }
     }
+}
+
+void PlaylistCue::retriggerStop()
+{
+    isRetriggerStopping = true;
+    double fadeOutTime = retriggerStopFadeOut->doubleValue();
+    if (fadeOutTime > 0.0)
+    {
+        askedToStop = true;
+        retriggerFadeStartTime = Time::getMillisecondCounterHiRes();
+        duration->setValue(fadeOutTime);
+        currentTime->setValue(0.0);
+        fadeOut(fadeOutTime, true);
+    }
+    else
+    {
+        stop();
+    }
+}
+
+void PlaylistCue::fadeOut(double duration, bool stopAfterFade)
+{
+    for (auto& file : filesManager->items)
+        file->player->fadeOut(duration, stopAfterFade);
 }
 
 void PlaylistCue::fade(double targetGain, double duration)

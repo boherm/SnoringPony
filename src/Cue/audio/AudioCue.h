@@ -51,6 +51,7 @@ public:
     void previewInternal() override;
     bool canBePreviewed() override { return true; }
     void stopInternal() override;
+    void retriggerStop() override;
     void panicInternal() override;
 
     void fade(double targetGain, double duration) override;
