@@ -58,6 +58,13 @@ PonyEngine::PonyEngine() :
     ProjectSettings::getInstance()->addChildControllableContainer(&decksSettings);
     ProjectSettings::getInstance()->customValuesCC.hideInEditor = true;
     ProjectSettings::getInstance()->dashboardCC.editorIsCollapsed = true;
+
+    // Warm up audio HAL so that creating an Audio interface later is instant.
+    // On macOS, AudioDeviceManager can be constructed on a background thread,
+    // so we do it without blocking startup.
+    #if JUCE_MAC
+        std::thread([]() { AudioDeviceManager warmup; }).detach();
+    #endif
 }
 
 PonyEngine::~PonyEngine()
