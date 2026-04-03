@@ -8,6 +8,16 @@ on:
         required: false
         type: boolean
         default: false
+      platform:
+        description: 'Platform to build'
+        required: false
+        type: choice
+        options:
+          - all
+          - osx
+          - linux
+          - windows
+        default: 'all'
 
 env:
   ProjectName: SnoringPony
@@ -15,17 +25,20 @@ env:
 
 jobs:
   osx:
+    if: ${{ github.event.inputs.platform == 'all' || github.event.inputs.platform == 'osx' }}
     uses: ./.github/workflows/sub-build-osx.yml
   linux:
+    if: ${{ github.event.inputs.platform == 'all' || github.event.inputs.platform == 'linux' }}
     uses: ./.github/workflows/sub-build-linux.yml
   windows:
+    if: ${{ github.event.inputs.platform == 'all' || github.event.inputs.platform == 'windows' }}
     uses: ./.github/workflows/sub-build-win.yml
     secrets:
       DEPDIRURL: ${{ secrets.DEPDIRURL }}
 
   uploads:
     name: Uploads on S3
-    if: ${{ github.event.inputs.dry_run == 'false' }}
+    if: ${{ github.event.inputs.dry_run == 'false' && !failure() && !cancelled() }}
     needs: [windows, osx, linux]
     runs-on: ubuntu-latest
     steps:
@@ -38,21 +51,25 @@ jobs:
           version: v2.37.0
 
       - name: Get win64 artifacts
+        if: ${{ github.event.inputs.platform == 'all' || github.event.inputs.platform == 'windows' }}
         uses: actions/download-artifact@v4
         with:
           name: win-x64
 
       - name: Get osx-intel artifacts
+        if: ${{ github.event.inputs.platform == 'all' || github.event.inputs.platform == 'osx' }}
         uses: actions/download-artifact@v4
         with:
           name: osx-x86_64
 
       - name: Get osx-silicon artifacts
+        if: ${{ github.event.inputs.platform == 'all' || github.event.inputs.platform == 'osx' }}
         uses: actions/download-artifact@v4
         with:
           name: osx-arm64
 
       - name: Get linux artifacts
+        if: ${{ github.event.inputs.platform == 'all' || github.event.inputs.platform == 'linux' }}
         uses: actions/download-artifact@v4
         with:
           name: linux
