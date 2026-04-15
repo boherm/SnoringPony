@@ -543,10 +543,20 @@ namespace
             editor.setText(initial, dontSendNotification);
             editor.setSelectAllWhenFocused(true);
             editor.setEscapeAndReturnKeysConsumed(true);
+            editor.setColour(TextEditor::backgroundColourId, BG_COLOR.darker(.1f));
+            editor.setColour(TextEditor::textColourId, TEXT_COLOR);
+            editor.setColour(TextEditor::outlineColourId, Colours::transparentBlack);
+            editor.setColour(TextEditor::focusedOutlineColourId, BG_COLOR.brighter(.3f));
+            editor.setColour(TextEditor::highlightColourId, BG_COLOR.brighter(.2f));
+            editor.setColour(TextEditor::highlightedTextColourId, TEXT_COLOR);
+            editor.setColour(CaretComponent::caretColourId, TEXT_COLOR);
+            editor.applyColourToAllText(TEXT_COLOR, true);
             editor.addListener(this);
             addAndMakeVisible(editor);
             setSize(200, 28);
         }
+
+        void paint(Graphics& g) override { g.fillAll(BG_COLOR); }
 
     private:
         TextEditor editor;

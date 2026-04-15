@@ -32,9 +32,9 @@ public:
     DCACue* cue;
     DCAAssignment* assignment;
 
-    std::unique_ptr<juce::Label> titleLabel;
     std::unique_ptr<juce::Label> nameLabel;
     std::unique_ptr<juce::TextEditor> nameEditor;
+    std::unique_ptr<juce::Label> charactersLabel;
     std::unique_ptr<juce::Viewport> listViewport;
     std::unique_ptr<juce::Component> listContent;
     juce::OwnedArray<juce::ToggleButton> charButtons;

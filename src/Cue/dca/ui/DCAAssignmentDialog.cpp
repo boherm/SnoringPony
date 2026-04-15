@@ -17,15 +17,40 @@
 
 using namespace juce;
 
+namespace
+{
+    class DarkPanel : public Component
+    {
+    public:
+        void paint(Graphics& g) override { g.fillAll(BG_COLOR.darker(.3f)); }
+    };
+
+    class HighlightToggleButton : public ToggleButton
+    {
+    public:
+        HighlightToggleButton(const String& t) : ToggleButton(t) {}
+        void paintButton(Graphics& g, bool over, bool down) override
+        {
+            auto bounds = getLocalBounds().toFloat().reduced(1.0f);
+            if (getToggleState() && isEnabled())
+            {
+                g.setColour(Colours::limegreen.withAlpha(0.35f));
+                g.fillRoundedRectangle(bounds, 3.0f);
+            }
+            else if (isEnabled())
+            {
+                g.setColour(BG_COLOR.brighter(.06f));
+                g.fillRoundedRectangle(bounds, 3.0f);
+            }
+            ToggleButton::paintButton(g, over, down);
+        }
+    };
+}
+
 DCAAssignmentDialog::DCAAssignmentDialog(DCACue* cue, DCAAssignment* assignment) :
     cue(cue),
     assignment(assignment)
 {
-    titleLabel = std::make_unique<Label>("title", "Characters for DCA " + String(assignment->dcaNumber->intValue()));
-    titleLabel->setFont(Font(15.0f, Font::bold));
-    titleLabel->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(titleLabel.get());
-
     nameLabel = std::make_unique<Label>("nameLabel", "Display name:");
     nameLabel->setColour(Label::textColourId, Colours::lightgrey);
     addAndMakeVisible(nameLabel.get());
@@ -33,10 +58,22 @@ DCAAssignmentDialog::DCAAssignmentDialog(DCACue* cue, DCAAssignment* assignment)
     nameEditor = std::make_unique<TextEditor>();
     nameEditor->setText(assignment->displayName->stringValue(), dontSendNotification);
     nameEditor->setTextToShowWhenEmpty("(auto from selected characters)", Colours::grey);
+    nameEditor->setColour(TextEditor::backgroundColourId, BG_COLOR.darker(.1f));
+    nameEditor->setColour(TextEditor::textColourId, TEXT_COLOR);
+    nameEditor->setColour(TextEditor::outlineColourId, Colours::transparentBlack);
+    nameEditor->setColour(TextEditor::focusedOutlineColourId, BG_COLOR.brighter(.3f));
+    nameEditor->setColour(TextEditor::highlightColourId, BG_COLOR.brighter(.2f));
+    nameEditor->setColour(TextEditor::highlightedTextColourId, TEXT_COLOR);
+    nameEditor->setColour(CaretComponent::caretColourId, TEXT_COLOR);
+    nameEditor->applyColourToAllText(TEXT_COLOR, true);
     nameEditor->addListener(this);
     addAndMakeVisible(nameEditor.get());
 
-    listContent = std::make_unique<Component>();
+    charactersLabel = std::make_unique<Label>("charactersLabel", "Characters:");
+    charactersLabel->setColour(Label::textColourId, Colours::lightgrey);
+    addAndMakeVisible(charactersLabel.get());
+
+    listContent = std::make_unique<DarkPanel>();
     listViewport = std::make_unique<Viewport>();
     listViewport->setViewedComponent(listContent.get(), false);
     listViewport->setScrollBarsShown(true, false);
@@ -81,7 +118,8 @@ void DCAAssignmentDialog::rebuildCharacterList()
         characters.add(row.character);
 
         String label = "Ch " + String(row.channelNum) + "  —  " + row.character->characterName->stringValue();
-        auto* btn = new ToggleButton(label);
+        auto* btn = new HighlightToggleButton(label);
+        btn->setColour(ToggleButton::textColourId, TEXT_COLOR);
         btn->setToggleState(assignment->hasCharacter(row.character), dontSendNotification);
 
         // Grey out if another character on the same channel is already in another DCA of this cue
@@ -169,12 +207,13 @@ void DCAAssignmentDialog::paint(Graphics& g)
 void DCAAssignmentDialog::resized()
 {
     auto r = getLocalBounds().reduced(10);
-    titleLabel->setBounds(r.removeFromTop(24));
-    r.removeFromTop(6);
 
     nameLabel->setBounds(r.removeFromTop(18));
     nameEditor->setBounds(r.removeFromTop(26));
     r.removeFromTop(10);
+
+    charactersLabel->setBounds(r.removeFromTop(18));
+    r.removeFromTop(4);
 
     auto bottom = r.removeFromBottom(32);
     closeBtn->setBounds(bottom.removeFromRight(80));
