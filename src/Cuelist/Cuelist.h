@@ -13,6 +13,7 @@
 #include "../MainIncludes.h"
 
 class CueManager;
+class Cue;
 
 class Cuelist :
     public BaseItem,
@@ -22,6 +23,8 @@ class Cuelist :
 public:
     Cuelist(var params = var());
     virtual ~Cuelist();
+
+    virtual void registerCueTypes(Factory<Cue>& f);
 
     String objectType;
     var objectData;

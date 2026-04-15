@@ -11,7 +11,10 @@
 #include "CuesTableUI.h"
 #include "CuesTableModel.h"
 #include "../../Cuelist/Cuelist.h"
+#include "../../Cuelist/dca/DCAMixingCuelist.h"
 #include "../../Cue/CueManager.h"
+#include "../../Cue/dca/DCACue.h"
+#include "../../Interface/mixer/MixerInterface.h"
 #include "../../ui/LookAndFeelTable.h"
 #include "juce_gui_basics/juce_gui_basics.h"
 
@@ -23,8 +26,25 @@ enum ColumnIds
     DescriptionColumn = 4,
     TimeColumn = 5,
     PreWaitColumn = 6,
-    PostWaitColumn = 7
+    PostWaitColumn = 7,
+    FirstDCAColumn = 100,
+    LastDCAColumn = 115
 };
+
+static int deriveDCACount(Cuelist* cl)
+{
+    if (dynamic_cast<DCAMixingCuelist*>(cl) == nullptr) return 0;
+
+    for (auto* c : cl->cues->items)
+    {
+        if (auto* dc = dynamic_cast<DCACue*>(c))
+        {
+            if (auto* m = dc->getMixer())
+                return m->numDCAs->intValue();
+        }
+    }
+    return 8;
+}
 
 CuesTableUI::CuesTableUI(Cuelist* cl)
 {
@@ -44,12 +64,24 @@ CuesTableUI::CuesTableUI(Cuelist* cl)
     tableListBox.setModel(tableModel.get());
     tableListBox.setRowHeight(35);
     int flags = TableHeaderComponent::visible | TableHeaderComponent::resizable | TableHeaderComponent::appearsOnColumnMenu;
+    int numDCAs = deriveDCACount(cl);
+    bool isDCAMixing = numDCAs > 0;
+
     tableListBox.getHeader().addColumn("", StatusColumn, 10, 10, 10, flags & ~TableHeaderComponent::appearsOnColumnMenu | ~TableHeaderComponent::resizable);
     tableListBox.getHeader().addColumn("#", IdColumn, 60, 60, 100, flags & ~TableHeaderComponent::appearsOnColumnMenu);
     tableListBox.getHeader().addColumn("Type", TypeColumn, 40, 40, 40, flags & ~TableHeaderComponent::resizable);
     tableListBox.getHeader().addColumn("Description", DescriptionColumn, 200, 200, 5000, flags & ~TableHeaderComponent::appearsOnColumnMenu);
     tableListBox.getHeader().addColumn("Pre-wait", PreWaitColumn, 130, 130, 130, flags & ~TableHeaderComponent::resizable);
-    tableListBox.getHeader().addColumn("Time", TimeColumn, 130, 130, 130, flags & ~TableHeaderComponent::resizable);
+
+    for (int i = 1; i <= numDCAs; ++i)
+    {
+        tableListBox.getHeader().addColumn("DCA " + String(i),
+            FirstDCAColumn + i - 1, 100, 60, 300,
+            flags & ~TableHeaderComponent::appearsOnColumnMenu);
+    }
+
+    if (!isDCAMixing)
+        tableListBox.getHeader().addColumn("Time", TimeColumn, 130, 130, 130, flags & ~TableHeaderComponent::resizable);
     tableListBox.getHeader().addColumn("Post-wait", PostWaitColumn, 130, 130, 130, flags & ~TableHeaderComponent::resizable);
 
     addAndMakeVisible(tableListBox);
@@ -125,7 +157,13 @@ void CuesTableUI::resized()
         width -= 130;
     }
 
-    tableListBox.getHeader().setColumnWidth(DescriptionColumn, width);
+    for (int id = FirstDCAColumn; id <= LastDCAColumn; ++id)
+    {
+        if (tableListBox.getHeader().isColumnVisible(id))
+            width -= tableListBox.getHeader().getColumnWidth(id);
+    }
+
+    tableListBox.getHeader().setColumnWidth(DescriptionColumn, jmax(80, width));
 }
 
 bool CuesTableUI::isInterestedInDragSource(const SourceDetails& dragSourceDetails)
@@ -215,14 +253,16 @@ void CuesTableUI::itemDropped(const SourceDetails& dragSourceDetails)
         return;
     }
 
-    // Get the cues to move
+    // Get the cues to move (skip protected cues — they are pinned in place)
     Array<Cue*> cuesToMove;
     for (int i = 0; i < sourceRows.size(); i++)
     {
         int rowIndex = sourceRows[i];
         if (rowIndex >= 0 && rowIndex < cl->cues->items.size())
         {
-            cuesToMove.add(cl->cues->items[rowIndex]);
+            Cue* c = cl->cues->items[rowIndex];
+            if (!c->canBeReorderedInEditor) continue;
+            cuesToMove.add(c);
         }
     }
 
@@ -235,6 +275,10 @@ void CuesTableUI::itemDropped(const SourceDetails& dragSourceDetails)
 
     // Calculate the correct insert position
     int targetIndex = insertIndex;
+
+    // Prevent inserting above a pinned cue at index 0
+    if (!cl->cues->items.isEmpty() && !cl->cues->items.getFirst()->canBeReorderedInEditor)
+        targetIndex = jmax(targetIndex, 1);
 
     // Track the new indices for re-selection
     SparseSet<int> newSelection;

@@ -12,7 +12,12 @@
 #include "ReorderCuesWindow.h"
 #include "../../Cuelist/Cuelist.h"
 #include "../../Cuelist/CuelistManager.h"
+#include "../../Cuelist/dca/DCAMixingCuelist.h"
 #include "../../Cue/CueManager.h"
+#include "../../Cue/dca/DCACue.h"
+#include "../../Cue/dca/DCAAssignment.h"
+#include "../../Cue/dca/ui/DCAAssignmentDialog.h"
+#include "../../Interface/mixer/MixerChannel.h"
 #include "../../ui/SPAssetManager.h"
 
 enum ColumnIds
@@ -23,7 +28,9 @@ enum ColumnIds
     DescriptionColumn = 4,
     TimeColumn = 5,
     PreWaitColumn = 6,
-    PostWaitColumn = 7
+    PostWaitColumn = 7,
+    FirstDCAColumn = 100,    // 100..115 reserved for DCAs 1..16
+    LastDCAColumn = 115
 };
 
 CuesTableModel::CuesTableModel(TableListBox* tlb, Cuelist* cl)
@@ -313,6 +320,61 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         return;
     }
 
+    // DCA columns (DCA Mixing Cuelist)
+    if (columnId >= FirstDCAColumn && columnId <= LastDCAColumn) {
+        int dcaIdx = columnId - FirstDCAColumn + 1;
+        DCACue* dcaCue = dynamic_cast<DCACue*>(cue);
+        if (dcaCue != nullptr) {
+            DCAAssignment* a = dcaCue->findAssignment(dcaIdx);
+            if (a != nullptr && !a->characters->items.isEmpty()) {
+                Array<int> distinctChannels;
+                for (auto* r : a->characters->items)
+                    if (auto* ch = r->getChannel())
+                        distinctChannels.addIfNotAlreadyThere(ch->channelNumber->intValue());
+
+                // Same assignment as the next DCA cue? (not on the last occurrence)
+                bool sameAsNext = false;
+                if (rowNumber + 1 < cl->cues->items.size())
+                {
+                    if (auto* nextDCA = dynamic_cast<DCACue*>(cl->cues->items[rowNumber + 1]))
+                    {
+                        if (auto* nextA = nextDCA->findAssignment(dcaIdx))
+                        {
+                            Array<int> nextChannels;
+                            for (auto* r : nextA->characters->items)
+                                if (auto* ch = r->getChannel())
+                                    nextChannels.addIfNotAlreadyThere(ch->channelNumber->intValue());
+
+                            if (nextChannels.size() == distinctChannels.size() && !nextChannels.isEmpty())
+                            {
+                                sameAsNext = true;
+                                for (int c : distinctChannels)
+                                    if (!nextChannels.contains(c)) { sameAsNext = false; break; }
+                            }
+                        }
+                    }
+                }
+
+                if (sameAsNext)
+                {
+                    g.setColour(Colours::green.withAlpha(0.4f));
+                    g.fillRect(0, 0, width, height);
+                }
+                else if (distinctChannels.size() > 1)
+                {
+                    g.setColour(Colours::grey.withAlpha(0.4f));
+                    g.fillRect(0, 0, width, height);
+                }
+
+                g.setColour(Colours::white);
+                if (cue->isAutoStartCue()) g.setOpacity(0.5f);
+                g.drawText(a->getEffectiveDisplayName(), 4, 0, width - 8, height,
+                           Justification::centred, true);
+            }
+        }
+        return;
+    }
+
     // Description Column
     if (DescriptionColumn == columnId) {
         Rectangle<float> r = Rectangle<float>(0, 0, width, height);
@@ -324,6 +386,9 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         g.setOpacity(1.0f);
         if (cue->isAutoStartCue())
             g.setOpacity(0.4f);
+
+        if (!cue->userCanRemove)
+            g.setFont(Font(14.0f, Font::italic));
 
         g.drawText(cue->getDescription(), r.reduced(10, 0), Justification::centredLeft);
         return;
@@ -348,6 +413,7 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
     {
         PopupMenu p;
 
+        bool canDelete = true;
         if (tlb->getSelectedRows().size() == 1) {
             Cue* selectedCue = cl->cues->items[rowNumber];
             p.addSectionHeader("Cue " + selectedCue->id->stringValue() + " - " + selectedCue->getCueType());
@@ -356,10 +422,12 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
             p.addSeparator();
             p.addItem(3, "Edit this cue");
             p.addItem(9, "Replace with new cue");
+            canDelete = selectedCue->userCanRemove;
         } else {
             p.addItem(6, "Reorder selected cues ids...");
         }
-        p.addColouredItem(4, tlb->getSelectedRows().size() > 1 ? "Delete selected cues" : "Delete this cue", Colours::red);
+        if (canDelete)
+            p.addColouredItem(4, tlb->getSelectedRows().size() > 1 ? "Delete selected cues" : "Delete this cue", Colours::red);
 
         if (tlb->getSelectedRows().size() == 1) {
             p.addSeparator();
@@ -466,6 +534,29 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
 
 void CuesTableModel::cellDoubleClicked(int rowNumber, int columnId, const MouseEvent& event)
 {
+    if (columnId >= FirstDCAColumn && columnId <= LastDCAColumn)
+    {
+        if (rowNumber < 0 || rowNumber >= cl->cues->items.size()) return;
+
+        int dcaIdx = columnId - FirstDCAColumn + 1;
+        DCACue* dcaCue = dynamic_cast<DCACue*>(cl->cues->items[rowNumber]);
+        if (dcaCue == nullptr) return;
+
+        DCAAssignment* a = dcaCue->findAssignment(dcaIdx);
+        if (a == nullptr) a = dcaCue->createAssignment(dcaIdx);
+        if (a == nullptr) return;
+
+        DialogWindow::LaunchOptions dw;
+        dw.content.setOwned(new DCAAssignmentDialog(dcaCue, a));
+        dw.dialogTitle = "DCA " + String(dcaIdx) + " — characters";
+        dw.dialogBackgroundColour = BG_COLOR;
+        dw.escapeKeyTriggersCloseButton = true;
+        dw.useNativeTitleBar = false;
+        dw.resizable = false;
+        dw.launchAsync();
+        return;
+    }
+
     cl->nextCue->setTarget(cl->cues->items[rowNumber]);
     cl->nextCue->notifyValueChanged();
 }
@@ -503,11 +594,22 @@ void CuesTableModel::askDeleteSelectedCues()
     String message = "Are you sure you want to delete the selected cues?";
     SparseSet<int> selected = tlb->getSelectedRows();
 
+    // Filter: keep only cues that can be removed
+    Array<Cue*> removable;
+    for (int i = 0; i < selected.size(); ++i)
+    {
+        int r = selected[i];
+        if (r < 0 || r >= cl->cues->items.size()) continue;
+        Cue* item = cl->cues->items[r];
+        if (item->userCanRemove) removable.add(item);
+    }
+
+    if (removable.isEmpty()) return;
+
     if (GlobalSettings::getInstance()->askBeforeRemovingItems->boolValue())
     {
-        if (tlb->getSelectedRows().size() == 1) {
-            Cue* item = cl->cues->items[tlb->getSelectedRows()[0]];
-            title = "Delete " + item->niceName;
+        if (removable.size() == 1) {
+            title = "Delete " + removable[0]->niceName;
             message = "Are you sure you want to delete this cue?";
         }
 
@@ -517,20 +619,16 @@ void CuesTableModel::askDeleteSelectedCues()
                 .withMessage(message)
                 .withButton("Delete")
                 .withButton("Cancel"),
-                [selected, this](int result)
+                [removable](int result)
                 {
                     if (result == 0) return;
-
-                    for (int i = selected.size() - 1; i >= 0; i--) {
-                        int r = selected[i];
-                        if (r < this->cl->cues->items.size()) {
-                            Cue* item = this->cl->cues->items[r];
-                            item->remove();
-                        }
-                    }
+                    for (Cue* item : removable) item->remove();
                 }
         );
-
+    }
+    else
+    {
+        for (Cue* item : removable) item->remove();
     }
 }
 

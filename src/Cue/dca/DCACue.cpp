@@ -1,0 +1,178 @@
+/*
+  ==============================================================================
+
+    DCACue.cpp
+    Created: 14 Apr 2026
+    Author:  boherm
+
+  ==============================================================================
+*/
+
+#include "DCACue.h"
+#include "../../Interface/mixer/MixerInterface.h"
+#include "../../Interface/mixer/MixerChannel.h"
+#include "../../Interface/mixer/Character.h"
+#include "../../Interface/InterfaceManager.h"
+
+DCACue::DCACue(var params) :
+    Cue(params)
+{
+    itemDataType = "DCA Cue";
+    duration->isSavable = false;
+    duration->hideInEditor = true;
+    duration->hideInRemoteControl = true;
+    retriggerStopCC->hideInEditor = true;
+
+    targetMixer = addTargetParameter("Target Mixer", "Mixing console interface to apply this DCA assignment to", InterfaceManager::getInstance());
+    targetMixer->targetType = TargetParameter::CONTAINER;
+    targetMixer->maxDefaultSearchLevel = 1;
+
+    dcaAssignments.reset(new BaseManager<DCAAssignment>("DCA Assignments"));
+    dcaAssignments->selectItemWhenCreated = false;
+    dcaAssignments->addBaseManagerListener(this);
+    addChildControllableContainer(dcaAssignments.get());
+
+    if (!Engine::mainEngine->isLoadingFile)
+    {
+        Array<MixerInterface*> mixers = InterfaceManager::getInstance()->getItemsWithType<MixerInterface>();
+        if (!mixers.isEmpty())
+            targetMixer->setValueFromTarget(mixers[0]);
+    }
+}
+
+DCACue::~DCACue()
+{
+    if (dcaAssignments != nullptr) dcaAssignments->removeBaseManagerListener(this);
+}
+
+MixerInterface* DCACue::getMixer() const
+{
+    return targetMixer->getTargetContainerAs<MixerInterface>();
+}
+
+int DCACue::getMixerNumDCAs() const
+{
+    if (auto* m = getMixer()) return m->numDCAs->intValue();
+    return 0;
+}
+
+DCAAssignment* DCACue::findAssignment(int dcaNumber) const
+{
+    for (auto* a : dcaAssignments->items)
+        if (a->dcaNumber->intValue() == dcaNumber) return a;
+    return nullptr;
+}
+
+DCAAssignment* DCACue::createAssignment(int dcaNumber)
+{
+    DCAAssignment* a = new DCAAssignment();
+    a->dcaNumber->setValue(dcaNumber);
+    dcaAssignments->addItem(a);
+    return a;
+}
+
+void DCACue::itemAdded(DCAAssignment* a)
+{
+    if (a == nullptr) return;
+    if (Engine::mainEngine != nullptr && Engine::mainEngine->isLoadingFile) return;
+
+    // If another assignment already owns this DCA number, bump to the next free slot
+    int current = a->dcaNumber->intValue();
+    bool conflict = false;
+    for (auto* other : dcaAssignments->items)
+    {
+        if (other == a) continue;
+        if (other->dcaNumber->intValue() == current) { conflict = true; break; }
+    }
+
+    if (conflict)
+    {
+        int maxDCA = getMixerNumDCAs();
+        if (maxDCA <= 0) maxDCA = 16;
+        for (int k = 1; k <= maxDCA; ++k)
+        {
+            bool used = false;
+            for (auto* other : dcaAssignments->items)
+            {
+                if (other == a) continue;
+                if (other->dcaNumber->intValue() == k) { used = true; break; }
+            }
+            if (!used) { a->dcaNumber->setValue(k); current = k; break; }
+        }
+    }
+
+    a->setNiceName("DCA " + String(current));
+}
+
+bool DCACue::isCharacterUsedInOtherDCA(Character* c, DCAAssignment* excluding) const
+{
+    for (auto* a : dcaAssignments->items)
+    {
+        if (a == excluding) continue;
+        if (a->hasCharacter(c)) return true;
+    }
+    return false;
+}
+
+DCAAssignment* DCACue::findAssignmentContaining(Character* c) const
+{
+    for (auto* a : dcaAssignments->items)
+        if (a->hasCharacter(c)) return a;
+    return nullptr;
+}
+
+bool DCACue::isChannelUsedInOtherDCA(MixerChannel* ch, DCAAssignment* excluding) const
+{
+    if (ch == nullptr) return false;
+    for (auto* a : dcaAssignments->items)
+    {
+        if (a == excluding) continue;
+        for (auto* r : a->characters->items)
+            if (r->getChannel() == ch) return true;
+    }
+    return false;
+}
+
+void DCACue::playInternal()
+{
+    auto* mixer = getMixer();
+    if (mixer == nullptr) { endCue(); return; }
+
+    const int n = mixer->numDCAs->intValue();
+    Array<Array<int>> membership;
+    for (int i = 0; i < n; ++i) membership.add(Array<int>());
+
+    StringArray names;
+    for (int i = 0; i < n; ++i) names.add(String());
+
+    for (auto* a : dcaAssignments->items)
+    {
+        int idx = a->dcaNumber->intValue() - 1;
+        if (idx < 0 || idx >= n) continue;
+
+        for (auto* r : a->characters->items)
+            if (auto* ch = r->getChannel())
+                membership.getReference(idx).addIfNotAlreadyThere(ch->channelNumber->intValue());
+
+        names.set(idx, a->getEffectiveDisplayName());
+    }
+
+    mixer->applyDCAMembership(membership, names);
+    endCue();
+}
+
+void DCACue::onContainerParameterChangedInternal(Parameter* /*p*/)
+{
+}
+
+String DCACue::autoDescriptionInternal()
+{
+    StringArray names;
+    for (auto* a : dcaAssignments->items)
+    {
+        for (auto* r : a->characters->items)
+            if (auto* c = r->getCharacter())
+                names.addIfNotAlreadyThere(c->characterName->stringValue());
+    }
+    return names.joinIntoString(", ");
+}

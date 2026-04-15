@@ -361,7 +361,7 @@ void Cue::endCue()
 void Cue::playNextCue()
 {
     auto idx = parentCuelist->cues->items.indexOf(this);
-    if (idx + 2 < parentCuelist->cues->items.size()) {
+    if (idx + 1 < parentCuelist->cues->items.size()) {
         Cue* nextCue = parentCuelist->cues->items[idx + 1];
         nextCue->play();
 

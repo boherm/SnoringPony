@@ -11,43 +11,48 @@
 #pragma once
 
 #include "../Interface.h"
+#include "../../MainIncludes.h"
+#include "MixerChannel.h"
+#include "MixerConnectionService.h"
 
 class MixerInterface :
-    public Interface
+    public Interface,
+    public BaseManager<MixerChannel>::ManagerListener
 {
 public:
     MixerInterface();
     ~MixerInterface();
 
-    // MIDIDeviceParameter* deviceParam;
+    EnumParameter* vendor;
+    StringParameter* remoteHost;
+    IntParameter* remotePort;
+    IntParameter* numDCAs;
+    BoolParameter* isConnected;
 
-    // MIDIMappingManager mappingManager;
-    // MIDIFeedbackManager feedbackManager;
-    // MIDIInputDevice* inputDevice;
-    // MIDIOutputDevice* outputDevice;
+    std::unique_ptr<BaseManager<MixerChannel>> channels;
+    std::unique_ptr<MixerConnectionService> connection;
 
-    // BoolParameter* autoAdd;
+    void attemptConnect();
+    void attemptDisconnect();
 
-    // IntParameter* numBytes;
-    // ControllableContainer dataContainer;
+    void loadJSONDataInternal(var data) override;
 
-    // StringParameter* infos;
-    // HashMap<String, juce::uint32> TSLastReceived;
-    // HashMap<String, int> delayedValue;
+    // Pushes the effective (joined) name of a channel to /ch/<n>/name.
+    void pushChannel(MixerChannel* c);
+    void pushAllChannels();
 
-    // void updateDevices();
-    // void updateBytesParams();
-    // void onContainerParameterChangedInternal(Parameter *) override;
+    // Finds the MixerChannel that contains this Character, or nullptr.
+    MixerChannel* getChannelOfCharacter(Character* c) const;
 
-    // void sendStartupBytes();
+    // Called by DCACue::playInternal.
+    void applyDCAMembership(const Array<Array<int>>& membership,
+                            const StringArray& dcaNames);
 
-    // void noteOnReceived(const int &channel, const int &pitch, const int &velocity) override;
-    // void noteOffReceived(const int &channel, const int &pitch, const int &velocity) override;
-    // void controlChangeReceived(const int& channel, const int& number, const int& value) override;
-    // void pitchWheelReceived(const int& channel, const int& value) override;
+    void itemAdded(MixerChannel* c) override;
+    void itemsAdded(Array<MixerChannel*> items) override;
 
-    // void feedback(String address, var value, String origin);
+    void onContainerParameterChangedInternal(Parameter* p) override;
 
     String getTypeString() const override { return "Mixer"; }
-    static MixerInterface* create(var params) { return new MixerInterface(); };
+    static MixerInterface* create(var /*params*/) { return new MixerInterface(); }
 };

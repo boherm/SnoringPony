@@ -26,6 +26,8 @@ public:
 
     Cuelist* parentCuelist;
 
+    void bindFactoryFromCuelist();
+
     bool hasCuePlaying();
     bool hasCuePanickingPlaying();
 

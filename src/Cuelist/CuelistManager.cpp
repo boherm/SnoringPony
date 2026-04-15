@@ -9,6 +9,7 @@
 */
 
 #include "CuelistManager.h"
+#include "CuelistFactory.h"
 #include "../Cue//CueManager.h"
 #include "../ui/SPAssetManager.h"
 #include "../PonyEngine.h"
@@ -19,7 +20,7 @@ CuelistManager::CuelistManager() :
     itemDataType = "Cuelist";
     // selectItemWhenCreated = true;
     // saveAndLoadRecursiveData = true;
-    // managerFactory = CuelistFactory::getInstance();
+    managerFactory = CuelistFactory::getInstance();
 }
 
 CuelistManager::~CuelistManager()

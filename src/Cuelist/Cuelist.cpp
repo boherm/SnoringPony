@@ -11,6 +11,11 @@
 #include "Cuelist.h"
 #include "CuelistManager.h"
 #include "../Cue/CueManager.h"
+#include "../Cue/audio/AudioCue.h"
+#include "../Cue/osc/OSCCue.h"
+#include "../Cue/playlist/PlaylistCue.h"
+#include "../Cue/fade/FadeCue.h"
+#include "../ui/SPAssetManager.h"
 #include "juce_organicui/inspectable/ui/InspectableEditor.h"
 #include "ui/CuelistEditor.h"
 
@@ -21,6 +26,7 @@ Cuelist::Cuelist(var params) :
 {
     cues = new CueManager();
     cues->parentCuelist = this;
+    cues->bindFactoryFromCuelist();
     cues->hideInEditor = true;
     cues->addAsyncContainerListener(this);
 
@@ -96,6 +102,14 @@ void Cuelist::panic()
             c->panic();
         }
     }
+}
+
+void Cuelist::registerCueTypes(Factory<Cue>& f)
+{
+    f.defs.add(Factory<Cue>::Definition::createDef("Audio", "Audio Cue", &AudioCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Audio")));
+    f.defs.add(Factory<Cue>::Definition::createDef("Audio", "Playlist Cue", &PlaylistCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Playlist")));
+    f.defs.add(Factory<Cue>::Definition::createDef("Playback", "Fade Cue", &FadeCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Fade")));
+    f.defs.add(Factory<Cue>::Definition::createDef("Network", "OSC Cue", &OSCCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("OSC")));
 }
 
 InspectableEditor* Cuelist::getEditorInternal(bool isRoot, Array<Inspectable*> inspectables)

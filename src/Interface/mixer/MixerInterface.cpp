@@ -9,12 +9,142 @@
 */
 
 #include "MixerInterface.h"
+#include "wing/WingProtocol.h"
 
 MixerInterface::MixerInterface() :
     Interface("Mixer Interface 1")
 {
+    logIncomingData->hideInEditor = true;
+
+    vendor = addEnumParameter("Vendor", "Mixing console brand/model");
+    vendor->addOption("Behringer Wing", "Wing");
+
+    remoteHost = addStringParameter("Remote Host", "IP address of the mixing console", "192.168.1.10");
+    remoteHost->autoTrim = true;
+
+    remotePort = addIntParameter("Remote Port", "OSC send port on the console",
+                                 WingProtocol::DEFAULT_SEND_PORT, 1, 65535);
+
+    numDCAs = addIntParameter("Num DCAs", "Number of DCAs to expose for mixing cues",
+                              8, 1, WingProtocol::MAX_DCAS);
+
+    isConnected = addBoolParameter("Connected", "Connection status", false);
+    isConnected->setControllableFeedbackOnly(true);
+
+    connection.reset(new MixerConnectionService());
+    connection->setVendor(vendor->getValueData().toString());
+    connection->logSent = [this](const OSCMessage& m)
+    {
+        if (!logOutgoingData->boolValue()) return;
+        String s;
+        for (auto& a : m) s += " " + OSCHelpers::getStringArg(a);
+        NLOG(niceName, "Send OSC: " << m.getAddressPattern().toString() << " :" << s);
+    };
+
+    channels.reset(new BaseManager<MixerChannel>("Channels"));
+    channels->selectItemWhenCreated = false;
+    channels->addBaseManagerListener(this);
+    addChildControllableContainer(channels.get());
 }
 
 MixerInterface::~MixerInterface()
 {
+    if (channels != nullptr) channels->removeBaseManagerListener(this);
+    if (connection != nullptr) connection->disconnect();
+}
+
+void MixerInterface::attemptConnect()
+{
+    if (connection == nullptr) return;
+    connection->setVendor(vendor->getValueData().toString());
+    bool ok = connection->connect(remoteHost->stringValue(), remotePort->intValue(), 0);
+    isConnected->setValue(ok);
+
+    if (ok)
+    {
+        NLOG(niceName, "Connected to " << remoteHost->stringValue() << ":" << remotePort->intValue());
+        pushAllChannels();
+    }
+    else
+    {
+        NLOGWARNING(niceName, "Failed to connect to " << remoteHost->stringValue() << ":" << remotePort->intValue());
+    }
+}
+
+void MixerInterface::attemptDisconnect()
+{
+    if (connection == nullptr) return;
+    connection->disconnect();
+    isConnected->setValue(false);
+}
+
+void MixerInterface::pushChannel(MixerChannel* c)
+{
+    if (connection == nullptr || !connection->isConnected()) return;
+    if (c == nullptr) return;
+    connection->sendChannelName(c->channelNumber->intValue(), c->getEffectiveName());
+}
+
+void MixerInterface::pushAllChannels()
+{
+    if (channels == nullptr) return;
+    for (auto* c : channels->items) pushChannel(c);
+}
+
+MixerChannel* MixerInterface::getChannelOfCharacter(Character* c) const
+{
+    if (c == nullptr || channels == nullptr) return nullptr;
+    for (auto* ch : channels->items)
+        if (ch->characters->items.indexOf(c) >= 0) return ch;
+    return nullptr;
+}
+
+void MixerInterface::applyDCAMembership(const Array<Array<int>>& membership,
+                                        const StringArray& dcaNames)
+{
+    if (connection == nullptr) return;
+
+    Array<int> definedChannels;
+    if (channels != nullptr)
+    {
+        for (auto* ch : channels->items)
+            definedChannels.addIfNotAlreadyThere(ch->channelNumber->intValue());
+    }
+
+    connection->applyDCAMembership(membership, dcaNames, definedChannels);
+}
+
+void MixerInterface::itemAdded(MixerChannel* c)
+{
+    c->parentMixer = this;
+    if (!Engine::mainEngine->isLoadingFile) pushChannel(c);
+}
+
+void MixerInterface::itemsAdded(Array<MixerChannel*> items)
+{
+    for (auto* c : items)
+    {
+        c->parentMixer = this;
+        if (!Engine::mainEngine->isLoadingFile) pushChannel(c);
+    }
+}
+
+void MixerInterface::onContainerParameterChangedInternal(Parameter* p)
+{
+    if (Engine::mainEngine != nullptr && Engine::mainEngine->isLoadingFile) return;
+
+    if (p == vendor && connection != nullptr)
+    {
+        connection->setVendor(vendor->getValueData().toString());
+    }
+    else if ((p == remoteHost || p == remotePort) && connection != nullptr)
+    {
+        attemptConnect();
+    }
+}
+
+void MixerInterface::loadJSONDataInternal(var data)
+{
+    Interface::loadJSONDataInternal(data);
+    attemptConnect();
 }

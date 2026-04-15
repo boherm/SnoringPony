@@ -9,10 +9,12 @@
 */
 
 #include "CuelistFactory.h"
+#include "dca/DCAMixingCuelist.h"
 
 CuelistFactory::CuelistFactory()
 {
     defs.add(Factory<Cuelist>::Definition::createDef("", "Cuelist", &Cuelist::create));
+    defs.add(Factory<Cuelist>::Definition::createDef("", "DCA Mixing Cuelist", &DCAMixingCuelist::create));
 }
 
 // void CuelistFactory::buildPopupMenu(int startOffset)
