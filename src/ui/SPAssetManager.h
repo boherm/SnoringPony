@@ -16,8 +16,6 @@ class SPAssetManager
 {
 public:
 	juce_DeclareSingleton(SPAssetManager, true)
-	//SPAssetManager();
-	//virtual ~SPAssetManager();
 
 	Image getAboutImage();
     Image getInterfaceIcon(String type);
