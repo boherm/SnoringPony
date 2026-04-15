@@ -34,10 +34,13 @@ public:
 
     std::unique_ptr<juce::Label> nameLabel;
     std::unique_ptr<juce::TextEditor> nameEditor;
+    std::unique_ptr<juce::Label> globalFXLabel;
+    std::unique_ptr<juce::TextButton> globalFXBtn;
     std::unique_ptr<juce::Label> charactersLabel;
     std::unique_ptr<juce::Viewport> listViewport;
     std::unique_ptr<juce::Component> listContent;
     juce::OwnedArray<juce::ToggleButton> charButtons;
+    juce::OwnedArray<juce::TextButton> fxButtons;
     juce::Array<Character*> characters;
     std::unique_ptr<juce::TextButton> closeBtn;
 

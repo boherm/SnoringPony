@@ -52,6 +52,13 @@ juce::OSCMessage WingProtocol::channelCustomLinkMessage(int channelNum, bool lin
     return m;
 }
 
+juce::OSCMessage WingProtocol::channelSendOnMessage(int channelNum, int busNum, bool on)
+{
+    juce::OSCMessage m("/ch/" + juce::String(channelNum) + "/send/" + juce::String(busNum) + "/on");
+    m.addInt32(on ? 1 : 0);
+    return m;
+}
+
 juce::OSCMessage WingProtocol::dcaNameMessage(int dcaNum, const juce::String& name)
 {
     juce::OSCMessage m("/dca/" + juce::String(dcaNum) + "/name");

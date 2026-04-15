@@ -48,6 +48,9 @@ public:
 
     void itemAdded(DCAAssignment* a) override;
 
+    void refreshCharacterRefRoots();
+    void loadJSONDataInternal(var data) override;
+
     void playInternal() override;
 
     String getTypeString() const override { return "DCA Cue"; }

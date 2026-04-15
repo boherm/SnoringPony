@@ -328,9 +328,12 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
             DCAAssignment* a = dcaCue->findAssignment(dcaIdx);
             if (a != nullptr && !a->characters->items.isEmpty()) {
                 Array<int> distinctChannels;
-                for (auto* r : a->characters->items)
+                bool hasFX = false;
+                for (auto* r : a->characters->items) {
                     if (auto* ch = r->getChannel())
                         distinctChannels.addIfNotAlreadyThere(ch->channelNumber->intValue());
+                    if (r->getFX() != nullptr) hasFX = true;
+                }
 
                 // Same assignment as the next DCA cue? (not on the last occurrence)
                 bool sameAsNext = false;
@@ -370,6 +373,13 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
                 if (cue->isAutoStartCue()) g.setOpacity(0.5f);
                 g.drawText(a->getEffectiveDisplayName(), 4, 0, width - 8, height,
                            Justification::centred, true);
+
+                if (hasFX) {
+                    g.setOpacity(1.0f);
+                    g.setFont(Font(10.0f, Font::bold));
+                    g.setColour(Colours::lightblue);
+                    g.drawText("FX", width - 22, 2, 20, 12, Justification::topRight, false);
+                }
             }
         }
         return;

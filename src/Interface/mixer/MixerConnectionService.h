@@ -16,6 +16,7 @@
 #include <JuceHeader.h>
 #include <functional>
 #include <map>
+#include <set>
 
 class MixerConnectionService
 {
@@ -45,7 +46,10 @@ public:
     void applyDCAMembership(const juce::Array<juce::Array<int>>& membership,
                             const juce::StringArray& dcaNames,
                             const juce::Array<int>& definedChannels,
-                            const std::map<int, juce::String>& activeChannelNames);
+                            const std::map<int, juce::String>& activeChannelNames,
+                            const std::map<int, std::set<int>>& channelFXBuses,
+                            const juce::Array<int>& definedBuses,
+                            const juce::Array<bool>& dcaHasFX);
 
 private:
     void send(const juce::OSCMessage& m);

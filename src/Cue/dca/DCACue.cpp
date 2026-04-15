@@ -12,7 +12,9 @@
 #include "../../Interface/mixer/MixerInterface.h"
 #include "../../Interface/mixer/MixerChannel.h"
 #include "../../Interface/mixer/Character.h"
+#include "../../Interface/mixer/MixerFX.h"
 #include "../../Interface/InterfaceManager.h"
+#include <set>
 
 DCACue::DCACue(var params) :
     Cue(params)
@@ -150,6 +152,9 @@ void DCACue::playInternal()
     for (int i = 0; i < n; ++i) names.add(String());
 
     std::map<int, String> activeChannelNames;
+    std::map<int, std::set<int>> channelFXBuses;
+    Array<bool> dcaHasFX;
+    for (int i = 0; i < n; ++i) dcaHasFX.add(false);
 
     for (auto* a : dcaAssignments->items)
     {
@@ -166,17 +171,37 @@ void DCACue::playInternal()
             membership.getReference(idx).addIfNotAlreadyThere(chNum);
             if (character != nullptr)
                 activeChannelNames[chNum] = character->characterName->stringValue();
+
+            if (auto* fx = r->getFX())
+            {
+                channelFXBuses[chNum].insert(fx->busNumber->intValue());
+                dcaHasFX.set(idx, true);
+            }
         }
 
         names.set(idx, a->getEffectiveDisplayName());
     }
 
-    mixer->applyDCAMembership(membership, names, activeChannelNames);
+    mixer->applyDCAMembership(membership, names, activeChannelNames, channelFXBuses, dcaHasFX);
     endCue();
 }
 
-void DCACue::onContainerParameterChangedInternal(Parameter* /*p*/)
+void DCACue::onContainerParameterChangedInternal(Parameter* p)
 {
+    if (p == targetMixer) refreshCharacterRefRoots();
+}
+
+void DCACue::refreshCharacterRefRoots()
+{
+    for (auto* a : dcaAssignments->items)
+        for (auto* r : a->characters->items)
+            r->updateRootFromCue();
+}
+
+void DCACue::loadJSONDataInternal(var data)
+{
+    Cue::loadJSONDataInternal(data);
+    refreshCharacterRefRoots();
 }
 
 String DCACue::autoDescriptionInternal()

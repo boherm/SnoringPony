@@ -60,7 +60,10 @@ void MixerConnectionService::sendDCAName(int dcaNum, const juce::String& name)
 void MixerConnectionService::applyDCAMembership(const juce::Array<juce::Array<int>>& membership,
                                                 const juce::StringArray& dcaNames,
                                                 const juce::Array<int>& definedChannels,
-                                                const std::map<int, juce::String>& activeChannelNames)
+                                                const std::map<int, juce::String>& activeChannelNames,
+                                                const std::map<int, std::set<int>>& channelFXBuses,
+                                                const juce::Array<int>& definedBuses,
+                                                const juce::Array<bool>& dcaHasFX)
 {
     if (!connected) return;
     if (vendor != "Wing") return;
@@ -85,15 +88,15 @@ void MixerConnectionService::applyDCAMembership(const juce::Array<juce::Array<in
     for (int ch : definedChannels)
     {
         int dcaChannelCount = 0;
-        for (const auto& dcaList : membership)
+        for (int d = 0; d < membership.size(); ++d)
         {
-            if (dcaList.contains(ch)) { dcaChannelCount = dcaList.size(); break; }
+            if (membership[d].contains(ch)) { dcaChannelCount = membership[d].size(); break; }
         }
         bool isActive = dcaChannelCount > 0;
 
-        int channelColor = WingProtocol::COLOR_GREEN;
-        if (dcaChannelCount == 1)      channelColor = WingProtocol::COLOR_DCA_SINGLE;
-        else if (dcaChannelCount > 1)  channelColor = WingProtocol::COLOR_DCA_MULTI;
+        int channelColor = WingProtocol::COLOR_CHANNEL_OFF;
+        if (dcaChannelCount == 1)       channelColor = WingProtocol::COLOR_DCA_SINGLE;
+        else if (dcaChannelCount > 1)   channelColor = WingProtocol::COLOR_DCA_MULTI;
 
         send(WingProtocol::channelCustomLinkMessage(ch, false));
         send(WingProtocol::channelMuteMessage(ch, !isActive));
@@ -105,6 +108,15 @@ void MixerConnectionService::applyDCAMembership(const juce::Array<juce::Array<in
             auto it = activeChannelNames.find(ch);
             if (it != activeChannelNames.end())
                 send(WingProtocol::channelNameMessage(ch, it->second));
+        }
+
+        // FX sends: for each declared bus, enable if this channel has it active, disable otherwise.
+        auto fxIt = channelFXBuses.find(ch);
+        const std::set<int>* activeBuses = (fxIt != channelFXBuses.end()) ? &fxIt->second : nullptr;
+        for (int busNum : definedBuses)
+        {
+            bool on = (activeBuses != nullptr) && activeBuses->count(busNum) > 0;
+            send(WingProtocol::channelSendOnMessage(ch, busNum, on));
         }
     }
 }

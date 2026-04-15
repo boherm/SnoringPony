@@ -77,6 +77,7 @@ void DCAAssignment::addCharacter(Character* c)
     CharacterRef* r = new CharacterRef();
     r->characterRef->setValueFromTarget(c);
     characters->addItem(r);
+    r->updateRootFromCue();
 }
 
 void DCAAssignment::removeCharacter(Character* c)

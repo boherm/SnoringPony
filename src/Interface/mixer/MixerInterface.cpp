@@ -45,6 +45,10 @@ MixerInterface::MixerInterface() :
     channels->selectItemWhenCreated = false;
     channels->addBaseManagerListener(this);
     addChildControllableContainer(channels.get());
+
+    fxs.reset(new BaseManager<MixerFX>("FX"));
+    fxs->selectItemWhenCreated = false;
+    addChildControllableContainer(fxs.get());
 }
 
 MixerInterface::~MixerInterface()
@@ -100,7 +104,9 @@ MixerChannel* MixerInterface::getChannelOfCharacter(Character* c) const
 
 void MixerInterface::applyDCAMembership(const Array<Array<int>>& membership,
                                         const StringArray& dcaNames,
-                                        const std::map<int, String>& activeChannelNames)
+                                        const std::map<int, String>& activeChannelNames,
+                                        const std::map<int, std::set<int>>& channelFXBuses,
+                                        const Array<bool>& dcaHasFX)
 {
     if (connection == nullptr) return;
 
@@ -111,7 +117,16 @@ void MixerInterface::applyDCAMembership(const Array<Array<int>>& membership,
             definedChannels.addIfNotAlreadyThere(ch->channelNumber->intValue());
     }
 
-    connection->applyDCAMembership(membership, dcaNames, definedChannels, activeChannelNames);
+    Array<int> definedBuses;
+    if (fxs != nullptr)
+    {
+        for (auto* fx : fxs->items)
+            definedBuses.addIfNotAlreadyThere(fx->busNumber->intValue());
+    }
+
+    connection->applyDCAMembership(membership, dcaNames, definedChannels,
+                                   activeChannelNames, channelFXBuses,
+                                   definedBuses, dcaHasFX);
 }
 
 void MixerInterface::applyLineCheckBaseline()

@@ -9,11 +9,13 @@
 */
 
 #include "DCAAssignmentDialog.h"
+#include "../CharacterRef.h"
 #include "../DCACue.h"
 #include "../DCAAssignment.h"
 #include "../../../Interface/mixer/MixerInterface.h"
 #include "../../../Interface/mixer/MixerChannel.h"
 #include "../../../Interface/mixer/Character.h"
+#include "../../../Interface/mixer/MixerFX.h"
 
 using namespace juce;
 
@@ -69,6 +71,17 @@ DCAAssignmentDialog::DCAAssignmentDialog(DCACue* cue, DCAAssignment* assignment)
     nameEditor->addListener(this);
     addAndMakeVisible(nameEditor.get());
 
+    globalFXLabel = std::make_unique<Label>("globalFXLabel", "Apply FX to all selected:");
+    globalFXLabel->setColour(Label::textColourId, Colours::lightgrey);
+    addAndMakeVisible(globalFXLabel.get());
+
+    globalFXBtn = std::make_unique<TextButton>("-");
+    globalFXBtn->setTooltip("Apply the chosen FX (or clear) to every selected character");
+    globalFXBtn->setColour(TextButton::buttonColourId, BG_COLOR.brighter(.06f));
+    globalFXBtn->setColour(TextButton::textColourOffId, TEXT_COLOR);
+    globalFXBtn->addListener(this);
+    addAndMakeVisible(globalFXBtn.get());
+
     charactersLabel = std::make_unique<Label>("charactersLabel", "Characters:");
     charactersLabel->setColour(Label::textColourId, Colours::lightgrey);
     addAndMakeVisible(charactersLabel.get());
@@ -97,10 +110,29 @@ DCAAssignmentDialog::~DCAAssignmentDialog()
 void DCAAssignmentDialog::rebuildCharacterList()
 {
     charButtons.clear();
+    fxButtons.clear();
     characters.clear();
 
     MixerInterface* mixer = cue != nullptr ? cue->getMixer() : nullptr;
     if (mixer == nullptr) return;
+
+    // Compute shared FX across selected characters (nullptr = none / mixed)
+    MixerFX* sharedFX = nullptr;
+    bool hasAny = false, mixed = false;
+    for (auto* r : assignment->characters->items)
+    {
+        MixerFX* fx = r->getFX();
+        if (!hasAny) { sharedFX = fx; hasAny = true; }
+        else if (sharedFX != fx) { mixed = true; }
+    }
+    if (globalFXBtn != nullptr)
+    {
+        String label = "-";
+        if (mixed) label = "(mixed)";
+        else if (sharedFX != nullptr) label = sharedFX->niceName;
+        globalFXBtn->setButtonText(label);
+        globalFXBtn->setEnabled(!assignment->characters->items.isEmpty());
+    }
 
     struct Row { Character* character; int channelNum; };
     Array<Row> rows;
@@ -117,7 +149,7 @@ void DCAAssignmentDialog::rebuildCharacterList()
     {
         characters.add(row.character);
 
-        String label = "Ch " + String(row.channelNum) + "  —  " + row.character->characterName->stringValue();
+        String label = "Ch " + String(row.channelNum) + "  -  " + row.character->characterName->stringValue();
         auto* btn = new HighlightToggleButton(label);
         btn->setColour(ToggleButton::textColourId, TEXT_COLOR);
         btn->setToggleState(assignment->hasCharacter(row.character), dontSendNotification);
@@ -163,12 +195,33 @@ void DCAAssignmentDialog::rebuildCharacterList()
         btn->addListener(this);
         listContent->addAndMakeVisible(btn);
         charButtons.add(btn);
+
+        // FX selector button (enabled only if the character is selected)
+        auto* fxBtn = new TextButton();
+        CharacterRef* existingRef = nullptr;
+        for (auto* r : assignment->characters->items)
+            if (r->getCharacter() == row.character) { existingRef = r; break; }
+
+        MixerFX* currentFX = existingRef != nullptr ? existingRef->getFX() : nullptr;
+        fxBtn->setButtonText(currentFX != nullptr ? currentFX->niceName : "-");
+        fxBtn->setTooltip("Pick an FX for this character");
+        fxBtn->setEnabled(existingRef != nullptr);
+        fxBtn->setColour(TextButton::buttonColourId, BG_COLOR.brighter(.06f));
+        fxBtn->setColour(TextButton::textColourOffId, TEXT_COLOR);
+        fxBtn->addListener(this);
+        listContent->addAndMakeVisible(fxBtn);
+        fxButtons.add(fxBtn);
     }
 
     const int rowH = 28;
+    const int fxWidth = 110;
     listContent->setSize(getWidth() - 20, jmax(1, charButtons.size()) * rowH);
     for (int i = 0; i < charButtons.size(); ++i)
-        charButtons[i]->setBounds(4, i * rowH, listContent->getWidth() - 8, rowH - 2);
+    {
+        int w = listContent->getWidth() - 8;
+        charButtons[i]->setBounds(4, i * rowH, w - fxWidth - 6, rowH - 2);
+        fxButtons[i]->setBounds(4 + w - fxWidth, i * rowH, fxWidth, rowH - 2);
+    }
 }
 
 void DCAAssignmentDialog::buttonClicked(Button* b)
@@ -177,6 +230,88 @@ void DCAAssignmentDialog::buttonClicked(Button* b)
     {
         if (auto* w = findParentComponentOfClass<DialogWindow>())
             w->exitModalState(0);
+        return;
+    }
+
+    if (b == globalFXBtn.get())
+    {
+        MixerInterface* mixer = cue != nullptr ? cue->getMixer() : nullptr;
+        if (mixer == nullptr) return;
+
+        PopupMenu m;
+        m.addItem(1, "(none)");
+        m.addSeparator();
+        for (int i = 0; i < mixer->fxs->items.size(); ++i)
+        {
+            MixerFX* fx = mixer->fxs->items[i];
+            m.addItem(10 + i, fx->niceName + " (bus " + fx->busNumber->stringValue() + ")");
+        }
+
+        Component::SafePointer<DCAAssignmentDialog> self(this);
+        m.showMenuAsync(PopupMenu::Options().withTargetComponent(globalFXBtn.get()),
+            [self, mixer](int result)
+            {
+                if (self == nullptr || result <= 0) return;
+                MixerFX* picked = nullptr;
+                if (result >= 10)
+                {
+                    int idx = result - 10;
+                    if (idx >= 0 && idx < mixer->fxs->items.size())
+                        picked = mixer->fxs->items[idx];
+                }
+                for (auto* r : self->assignment->characters->items)
+                {
+                    if (picked != nullptr) r->fxRef->setValueFromTarget(picked);
+                    else r->fxRef->resetValue();
+                }
+                self->rebuildCharacterList();
+                self->resized();
+            });
+        return;
+    }
+
+    // FX selector buttons
+    int fxIdx = fxButtons.indexOf(dynamic_cast<TextButton*>(b));
+    if (fxIdx >= 0 && fxIdx < characters.size())
+    {
+        Character* c = characters[fxIdx];
+        CharacterRef* ref = nullptr;
+        for (auto* r : assignment->characters->items)
+            if (r->getCharacter() == c) { ref = r; break; }
+        if (ref == nullptr) return;
+
+        MixerInterface* mixer = cue != nullptr ? cue->getMixer() : nullptr;
+        if (mixer == nullptr) return;
+
+        PopupMenu m;
+        m.addItem(1, "(none)");
+        m.addSeparator();
+        for (int i = 0; i < mixer->fxs->items.size(); ++i)
+        {
+            MixerFX* fx = mixer->fxs->items[i];
+            bool ticked = (ref->getFX() == fx);
+            m.addItem(10 + i, fx->niceName + " (bus " + fx->busNumber->stringValue() + ")", true, ticked);
+        }
+
+        Component::SafePointer<DCAAssignmentDialog> self(this);
+        auto* fxBtn = fxButtons[fxIdx];
+        m.showMenuAsync(PopupMenu::Options().withTargetComponent(fxBtn),
+            [self, ref, mixer](int result)
+            {
+                if (self == nullptr || result <= 0) return;
+                if (result == 1)
+                {
+                    ref->fxRef->resetValue();
+                }
+                else
+                {
+                    int idx = result - 10;
+                    if (idx >= 0 && idx < mixer->fxs->items.size())
+                        ref->fxRef->setValueFromTarget(mixer->fxs->items[idx]);
+                }
+                self->rebuildCharacterList();
+                self->resized();
+            });
         return;
     }
 
@@ -209,7 +344,13 @@ void DCAAssignmentDialog::resized()
     auto r = getLocalBounds().reduced(10);
 
     nameLabel->setBounds(r.removeFromTop(18));
+    r.removeFromTop(4);
     nameEditor->setBounds(r.removeFromTop(26));
+    r.removeFromTop(10);
+
+    auto fxRow = r.removeFromTop(26);
+    globalFXLabel->setBounds(fxRow.removeFromLeft(180));
+    globalFXBtn->setBounds(fxRow.reduced(4, 0));
     r.removeFromTop(10);
 
     charactersLabel->setBounds(r.removeFromTop(18));
@@ -222,8 +363,14 @@ void DCAAssignmentDialog::resized()
     listViewport->setBounds(r);
 
     const int rowH = 28;
+    const int fxWidth = 110;
     listContent->setSize(listViewport->getWidth() - listViewport->getScrollBarThickness(),
                          jmax(1, charButtons.size()) * rowH);
     for (int i = 0; i < charButtons.size(); ++i)
-        charButtons[i]->setBounds(4, i * rowH, listContent->getWidth() - 8, rowH - 2);
+    {
+        int w = listContent->getWidth() - 8;
+        charButtons[i]->setBounds(4, i * rowH, w - fxWidth - 6, rowH - 2);
+        if (i < fxButtons.size())
+            fxButtons[i]->setBounds(4 + w - fxWidth, i * rowH, fxWidth, rowH - 2);
+    }
 }
