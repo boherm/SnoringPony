@@ -63,7 +63,6 @@ void MixerInterface::attemptConnect()
     if (ok)
     {
         NLOG(niceName, "Connected to " << remoteHost->stringValue() << ":" << remotePort->intValue());
-        pushAllChannels();
     }
     else
     {
@@ -100,7 +99,8 @@ MixerChannel* MixerInterface::getChannelOfCharacter(Character* c) const
 }
 
 void MixerInterface::applyDCAMembership(const Array<Array<int>>& membership,
-                                        const StringArray& dcaNames)
+                                        const StringArray& dcaNames,
+                                        const std::map<int, String>& activeChannelNames)
 {
     if (connection == nullptr) return;
 
@@ -111,7 +111,23 @@ void MixerInterface::applyDCAMembership(const Array<Array<int>>& membership,
             definedChannels.addIfNotAlreadyThere(ch->channelNumber->intValue());
     }
 
-    connection->applyDCAMembership(membership, dcaNames, definedChannels);
+    connection->applyDCAMembership(membership, dcaNames, definedChannels, activeChannelNames);
+}
+
+void MixerInterface::applyLineCheckBaseline()
+{
+    if (connection == nullptr || channels == nullptr) return;
+
+    for (auto* ch : channels->items)
+    {
+        int chNum = ch->channelNumber->intValue();
+        String firstName;
+        if (!ch->characters->items.isEmpty())
+            firstName = ch->characters->items[0]->characterName->stringValue();
+
+        connection->sendChannelIcon(chNum, 0);
+        connection->sendChannelName(chNum, firstName);
+    }
 }
 
 void MixerInterface::itemAdded(MixerChannel* c)

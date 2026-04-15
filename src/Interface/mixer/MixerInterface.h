@@ -45,8 +45,14 @@ public:
     MixerChannel* getChannelOfCharacter(Character* c) const;
 
     // Called by DCACue::playInternal.
+    // activeChannelNames maps channel number → active character name for this cue.
     void applyDCAMembership(const Array<Array<int>>& membership,
-                            const StringArray& dcaNames);
+                            const StringArray& dcaNames,
+                            const std::map<int, String>& activeChannelNames);
+
+    // Called by the "Line check" cue: resets channel icons and pushes the first
+    // character name of each declared channel as its base label.
+    void applyLineCheckBaseline();
 
     void itemAdded(MixerChannel* c) override;
     void itemsAdded(Array<MixerChannel*> items) override;

@@ -17,6 +17,41 @@ juce::OSCMessage WingProtocol::channelNameMessage(int channelNum, const juce::St
     return m;
 }
 
+juce::OSCMessage WingProtocol::channelMuteMessage(int channelNum, bool muted)
+{
+    juce::OSCMessage m("/ch/" + juce::String(channelNum) + "/mute");
+    m.addInt32(muted ? 1 : 0);
+    return m;
+}
+
+juce::OSCMessage WingProtocol::channelColorMessage(int channelNum, int color)
+{
+    juce::OSCMessage m("/ch/" + juce::String(channelNum) + "/col");
+    m.addInt32(color);
+    return m;
+}
+
+juce::OSCMessage WingProtocol::channelLedMessage(int channelNum, bool on)
+{
+    juce::OSCMessage m("/ch/" + juce::String(channelNum) + "/led");
+    m.addInt32(on ? 1 : 0);
+    return m;
+}
+
+juce::OSCMessage WingProtocol::channelIconMessage(int channelNum, int icon)
+{
+    juce::OSCMessage m("/ch/" + juce::String(channelNum) + "/icon");
+    m.addInt32(icon);
+    return m;
+}
+
+juce::OSCMessage WingProtocol::channelCustomLinkMessage(int channelNum, bool linked)
+{
+    juce::OSCMessage m("/ch/" + juce::String(channelNum) + "/clink");
+    m.addInt32(linked ? 1 : 0);
+    return m;
+}
+
 juce::OSCMessage WingProtocol::dcaNameMessage(int dcaNum, const juce::String& name)
 {
     juce::OSCMessage m("/dca/" + juce::String(dcaNum) + "/name");

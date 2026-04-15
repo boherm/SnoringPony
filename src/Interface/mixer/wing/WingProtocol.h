@@ -22,7 +22,20 @@ public:
     static constexpr int MAX_CHANNELS = 40;
     static constexpr int MAX_DCAS = 16;
 
+    // Wing colour palette values.
+    static constexpr int COLOR_OFF = 0;
+    static constexpr int COLOR_BLUE = 2;
+    static constexpr int COLOR_GREEN = 5;
+    static constexpr int COLOR_RED = 9;
+    static constexpr int COLOR_DCA_SINGLE = 9;   // one channel in the DCA
+    static constexpr int COLOR_DCA_MULTI = 7;    // multiple channels in the DCA
+
     static juce::OSCMessage channelNameMessage(int channelNum, const juce::String& name);
+    static juce::OSCMessage channelMuteMessage(int channelNum, bool muted);
+    static juce::OSCMessage channelColorMessage(int channelNum, int color);
+    static juce::OSCMessage channelLedMessage(int channelNum, bool on);
+    static juce::OSCMessage channelIconMessage(int channelNum, int icon);
+    static juce::OSCMessage channelCustomLinkMessage(int channelNum, bool linked);
     static juce::OSCMessage dcaNameMessage(int dcaNum, const juce::String& name);
     static juce::OSCMessage dcaColorMessage(int dcaNum, int color);
     static juce::OSCMessage dcaLedMessage(int dcaNum, bool on);

@@ -138,6 +138,10 @@ void DCACue::playInternal()
     auto* mixer = getMixer();
     if (mixer == nullptr) { endCue(); return; }
 
+    // Line check cue (non-removable baseline): reset icons and push first
+    // character name for each declared channel before applying DCA state.
+    if (!userCanRemove) mixer->applyLineCheckBaseline();
+
     const int n = mixer->numDCAs->intValue();
     Array<Array<int>> membership;
     for (int i = 0; i < n; ++i) membership.add(Array<int>());
@@ -145,19 +149,29 @@ void DCACue::playInternal()
     StringArray names;
     for (int i = 0; i < n; ++i) names.add(String());
 
+    std::map<int, String> activeChannelNames;
+
     for (auto* a : dcaAssignments->items)
     {
         int idx = a->dcaNumber->intValue() - 1;
         if (idx < 0 || idx >= n) continue;
 
         for (auto* r : a->characters->items)
-            if (auto* ch = r->getChannel())
-                membership.getReference(idx).addIfNotAlreadyThere(ch->channelNumber->intValue());
+        {
+            auto* character = r->getCharacter();
+            auto* ch = r->getChannel();
+            if (ch == nullptr) continue;
+
+            int chNum = ch->channelNumber->intValue();
+            membership.getReference(idx).addIfNotAlreadyThere(chNum);
+            if (character != nullptr)
+                activeChannelNames[chNum] = character->characterName->stringValue();
+        }
 
         names.set(idx, a->getEffectiveDisplayName());
     }
 
-    mixer->applyDCAMembership(membership, names);
+    mixer->applyDCAMembership(membership, names, activeChannelNames);
     endCue();
 }
 

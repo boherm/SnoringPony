@@ -15,6 +15,7 @@
 
 #include <JuceHeader.h>
 #include <functional>
+#include <map>
 
 class MixerConnectionService
 {
@@ -32,14 +33,19 @@ public:
     bool isConnected() const { return connected; }
 
     void sendChannelName(int channelNum, const juce::String& name);
+    void sendChannelIcon(int channelNum, int icon);
     void sendDCAName(int dcaNum, const juce::String& name);
 
-    // membership[i]   = channel numbers assigned to DCA i+1
-    // dcaNames[i]     = display name to push to /dca/<i+1>/name
-    // definedChannels = list of channel numbers to push tags for (those configured in the mixer)
+    // membership[i]      = channel numbers assigned to DCA i+1
+    // dcaNames[i]        = display name to push to /dca/<i+1>/name
+    // definedChannels    = list of channel numbers to push tags for (those configured in the mixer)
+    // activeChannelNames = channel number → character name for channels used in any DCA.
+    //                      Unused declared channels are muted; used ones are unmuted, coloured
+    //                      red, and renamed to the active character.
     void applyDCAMembership(const juce::Array<juce::Array<int>>& membership,
                             const juce::StringArray& dcaNames,
-                            const juce::Array<int>& definedChannels);
+                            const juce::Array<int>& definedChannels,
+                            const std::map<int, juce::String>& activeChannelNames);
 
 private:
     void send(const juce::OSCMessage& m);
