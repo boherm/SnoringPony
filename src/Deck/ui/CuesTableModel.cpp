@@ -532,8 +532,110 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
 }
 
 
+namespace
+{
+    class CellEditBubble : public Component, private TextEditor::Listener
+    {
+    public:
+        CellEditBubble(const String& initial, std::function<void(const String&)> commit) :
+            onCommit(std::move(commit))
+        {
+            editor.setText(initial, dontSendNotification);
+            editor.setSelectAllWhenFocused(true);
+            editor.setEscapeAndReturnKeysConsumed(true);
+            editor.addListener(this);
+            addAndMakeVisible(editor);
+            setSize(200, 28);
+        }
+
+    private:
+        TextEditor editor;
+        std::function<void(const String&)> onCommit;
+        bool committed = false;
+
+        void resized() override { editor.setBounds(getLocalBounds().reduced(2)); }
+        void visibilityChanged() override { if (isVisible()) editor.grabKeyboardFocus(); }
+
+        void commitAndDismiss()
+        {
+            if (committed) return;
+            committed = true;
+            if (onCommit) onCommit(editor.getText());
+            if (auto* box = findParentComponentOfClass<CallOutBox>()) box->dismiss();
+        }
+
+        void textEditorReturnKeyPressed(TextEditor&) override { commitAndDismiss(); }
+        void textEditorEscapeKeyPressed(TextEditor&) override
+        {
+            committed = true;
+            if (auto* box = findParentComponentOfClass<CallOutBox>()) box->dismiss();
+        }
+        void textEditorFocusLost(TextEditor&) override { commitAndDismiss(); }
+    };
+}
+
 void CuesTableModel::cellDoubleClicked(int rowNumber, int columnId, const MouseEvent& event)
 {
+    if (columnId == IdColumn || columnId == DescriptionColumn
+        || columnId == PreWaitColumn || columnId == PostWaitColumn)
+    {
+        if (rowNumber < 0 || rowNumber >= cl->cues->items.size()) return;
+
+        Cue* c = cl->cues->items[rowNumber];
+        String initial;
+        std::function<void(const String&)> onCommit;
+
+        if (columnId == IdColumn)
+        {
+            initial = c->id->stringValue();
+            onCommit = [c](const String& t) {
+                c->id->setValue(t.getFloatValue());
+                c->id->notifyValueChanged();
+            };
+        }
+        else if (columnId == DescriptionColumn)
+        {
+            initial = c->description->stringValue();
+            onCommit = [c](const String& t) { c->description->setValue(t); };
+        }
+        else if (columnId == PreWaitColumn)
+        {
+            initial = c->preWaitCC->enabled->boolValue() ? String(c->preWaitDuration->floatValue()) : String();
+            onCommit = [c](const String& t) {
+                if (t.trim().isEmpty())
+                {
+                    c->preWaitCC->enabled->setValue(false);
+                }
+                else
+                {
+                    c->preWaitDuration->setValue(jmax(0.0f, t.getFloatValue()));
+                    c->preWaitCC->enabled->setValue(true);
+                }
+            };
+        }
+        else // PostWaitColumn
+        {
+            initial = c->postWaitCC->enabled->boolValue() ? String(c->postWaitDuration->floatValue()) : String();
+            onCommit = [c](const String& t) {
+                if (t.trim().isEmpty())
+                {
+                    c->postWaitCC->enabled->setValue(false);
+                }
+                else
+                {
+                    c->postWaitDuration->setValue(jmax(0.0f, t.getFloatValue()));
+                    c->postWaitCC->enabled->setValue(true);
+                }
+            };
+        }
+
+        auto cellRect = tlb->getCellPosition(columnId, rowNumber, true);
+        auto screenRect = tlb->localAreaToGlobal(cellRect);
+        auto bubble = std::make_unique<CellEditBubble>(initial, std::move(onCommit));
+        CallOutBox::launchAsynchronously(std::move(bubble), screenRect, nullptr);
+        return;
+    }
+
     if (columnId >= FirstDCAColumn && columnId <= LastDCAColumn)
     {
         if (rowNumber < 0 || rowNumber >= cl->cues->items.size()) return;
