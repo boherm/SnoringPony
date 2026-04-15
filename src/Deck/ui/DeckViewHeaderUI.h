@@ -26,8 +26,11 @@ public:
     std::unique_ptr<juce::ImageButton> addItemBT;
     std::unique_ptr<juce::TextButton> goBtnUI;
     std::unique_ptr<juce::TextButton> panicBtnUI;
+    std::unique_ptr<juce::TextButton> mainToggleBT;
     Component* parent;
     Cuelist* currentCuelist;
+
+    void updateMainToggleState();
 
     void setParent(Component* p) { parent = p; }
 

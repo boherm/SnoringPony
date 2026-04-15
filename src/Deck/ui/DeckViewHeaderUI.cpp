@@ -11,12 +11,17 @@
 #include "DeckViewHeaderUI.h"
 #include "../../Cuelist/Cuelist.h"
 #include "../../Cue/CueManager.h"
+#include "../../PonyEngine.h"
+#include "../../ProjectSettings/ShowProperties.h"
 
 
 DeckViewHeaderUI::DeckViewHeaderUI(Cuelist* cl) :
     currentCuelist(cl)
 {
     currentCuelist->addAsyncContainerListener(this);
+
+    if (auto* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine))
+        engine->showProperties.addAsyncContainerListener(this);
 
     addItemBT.reset(AssetManager::getInstance()->getAddBT());
     addItemBT->setWantsKeyboardFocus(false);
@@ -37,11 +42,25 @@ DeckViewHeaderUI::DeckViewHeaderUI(Cuelist* cl) :
     panicBtnUI->setTooltip("Stop all playing cues immediately");
     panicBtnUI->addListener(this);
     addAndMakeVisible(panicBtnUI.get());
+
+    mainToggleBT = std::make_unique<TextButton>("M");
+    mainToggleBT->setTooltip("Set as main cuelist (controlled by Show Control panel)");
+    mainToggleBT->setClickingTogglesState(false);
+    mainToggleBT->setColour(TextButton::buttonColourId, BG_COLOR.brighter(.1f));
+    mainToggleBT->setColour(TextButton::buttonOnColourId, Colours::orange.darker(.3f));
+    mainToggleBT->setColour(TextButton::textColourOffId, Colours::white);
+    mainToggleBT->setColour(TextButton::textColourOnId, Colours::white);
+    mainToggleBT->addListener(this);
+    addAndMakeVisible(mainToggleBT.get());
+
+    updateMainToggleState();
 }
 
 DeckViewHeaderUI::~DeckViewHeaderUI()
 {
     currentCuelist->removeAsyncContainerListener(this);
+    if (auto* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine))
+        engine->showProperties.removeAsyncContainerListener(this);
 }
 
 void DeckViewHeaderUI::paint(Graphics& g)
@@ -56,6 +75,7 @@ void DeckViewHeaderUI::paint(Graphics& g)
 void DeckViewHeaderUI::resized()
 {
     addItemBT->setBounds(getWidth() - 24, 4, 20, 20);
+    mainToggleBT->setBounds(getWidth() - 24 - 28, 4, 24, 22);
     goBtnUI->setBounds(4, 4, 60, 22);
     panicBtnUI->setBounds(68, 4, 70, 22);
 }
@@ -65,6 +85,20 @@ void DeckViewHeaderUI::newMessage(const ContainerAsyncEvent& e)
     if (e.targetControllable == currentCuelist->itemColor) {
         repaint();
     }
+
+    if (auto* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine))
+    {
+        if (e.targetControllable == engine->showProperties.mainCuelist)
+            updateMainToggleState();
+    }
+}
+
+void DeckViewHeaderUI::updateMainToggleState()
+{
+    auto* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
+    if (engine == nullptr || mainToggleBT == nullptr) return;
+    bool isMain = engine->showProperties.mainCuelist->getTargetContainerAs<Cuelist>() == currentCuelist;
+    mainToggleBT->setToggleState(isMain, dontSendNotification);
 }
 
 void DeckViewHeaderUI::buttonClicked(Button* button)
@@ -87,6 +121,22 @@ void DeckViewHeaderUI::buttonClicked(Button* button)
     else if (button == panicBtnUI.get() && currentCuelist)
     {
         currentCuelist->panic();
+    }
+    else if (button == mainToggleBT.get() && currentCuelist)
+    {
+        auto* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
+        if (engine == nullptr) return;
+
+        bool isCurrentlyMain = engine->showProperties.mainCuelist->getTargetContainerAs<Cuelist>() == currentCuelist;
+        if (isCurrentlyMain)
+        {
+            engine->showProperties.mainCuelist->resetValue();
+        }
+        else
+        {
+            engine->showProperties.mainCuelist->setValueFromTarget(currentCuelist);
+        }
+        engine->showProperties.mainCuelist->notifyValueChanged();
     }
 }
 
