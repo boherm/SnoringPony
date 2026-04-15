@@ -564,7 +564,14 @@ namespace
         bool committed = false;
 
         void resized() override { editor.setBounds(getLocalBounds().reduced(2)); }
-        void visibilityChanged() override { if (isVisible()) editor.grabKeyboardFocus(); }
+        void parentHierarchyChanged() override
+        {
+            if (isShowing())
+            {
+                Component::SafePointer<TextEditor> safeEd(&editor);
+                MessageManager::callAsync([safeEd] { if (safeEd != nullptr) safeEd->grabKeyboardFocus(); });
+            }
+        }
 
         void commitAndDismiss()
         {
