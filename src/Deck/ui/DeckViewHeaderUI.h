@@ -17,11 +17,16 @@ class Cuelist;
 class DeckViewHeaderUI :
     public Component,
     public Button::Listener,
-	public ContainerAsyncListener
+	public ContainerAsyncListener,
+    public juce::Timer
 {
 public:
     DeckViewHeaderUI(Cuelist* cl);
     ~DeckViewHeaderUI() override;
+
+    void timerCallback() override;
+    void updatePanicAnimation();
+    bool panicFlashState = false;
 
     std::unique_ptr<juce::ImageButton> addItemBT;
     std::unique_ptr<juce::TextButton> goBtnUI;

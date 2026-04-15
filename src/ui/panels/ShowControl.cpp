@@ -147,10 +147,12 @@ void ShowControl::parameterValueChanged(Parameter *p)
     }
 
     if (mainCuelist && p == mainCuelist->isPanicking) {
-        if (!mainCuelist->isPanicking->boolValue()) {
+        if (mainCuelist->isPanicking->boolValue()) {
+            startPanicking();
+        } else {
             stopPanicking();
-            repaint();
         }
+        repaint();
     }
 }
 

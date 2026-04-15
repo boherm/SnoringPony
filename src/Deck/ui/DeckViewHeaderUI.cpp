@@ -41,9 +41,10 @@ DeckViewHeaderUI::DeckViewHeaderUI(Cuelist* cl) :
     panicBtnUI->setColour(TextButton::textColourOffId, Colours::white);
     panicBtnUI->setTooltip("Stop all playing cues immediately");
     panicBtnUI->addListener(this);
+    panicBtnUI->setEnabled(currentCuelist->isPlaying->boolValue());
     addAndMakeVisible(panicBtnUI.get());
 
-    mainToggleBT = std::make_unique<TextButton>("M");
+    mainToggleBT = std::make_unique<TextButton>("Main");
     mainToggleBT->setTooltip("Set as main cuelist (controlled by Show Control panel)");
     mainToggleBT->setClickingTogglesState(false);
     mainToggleBT->setColour(TextButton::buttonColourId, BG_COLOR.brighter(.1f));
@@ -75,7 +76,7 @@ void DeckViewHeaderUI::paint(Graphics& g)
 void DeckViewHeaderUI::resized()
 {
     addItemBT->setBounds(getWidth() - 24, 4, 20, 20);
-    mainToggleBT->setBounds(getWidth() - 24 - 28, 4, 24, 22);
+    mainToggleBT->setBounds(getWidth() - 24 - 60, 4, 56, 22);
     goBtnUI->setBounds(4, 4, 60, 22);
     panicBtnUI->setBounds(68, 4, 70, 22);
 }
@@ -86,11 +87,49 @@ void DeckViewHeaderUI::newMessage(const ContainerAsyncEvent& e)
         repaint();
     }
 
+    if (e.targetControllable == currentCuelist->isPanicking) {
+        updatePanicAnimation();
+    }
+
+    if (e.targetControllable == currentCuelist->isPlaying) {
+        if (panicBtnUI != nullptr)
+            panicBtnUI->setEnabled(currentCuelist->isPlaying->boolValue());
+    }
+
     if (auto* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine))
     {
         if (e.targetControllable == engine->showProperties.mainCuelist)
             updateMainToggleState();
     }
+}
+
+void DeckViewHeaderUI::updatePanicAnimation()
+{
+    if (panicBtnUI == nullptr) return;
+    if (currentCuelist->isPanicking->boolValue())
+    {
+        startTimer(150);
+    }
+    else
+    {
+        stopTimer();
+        panicFlashState = false;
+        panicBtnUI->setColour(TextButton::buttonColourId, Colours::red.darker(.3f));
+        panicBtnUI->repaint();
+    }
+}
+
+void DeckViewHeaderUI::timerCallback()
+{
+    if (!currentCuelist->isPanicking->boolValue())
+    {
+        stopTimer();
+        return;
+    }
+    panicFlashState = !panicFlashState;
+    panicBtnUI->setColour(TextButton::buttonColourId,
+        panicFlashState ? Colours::red.brighter(.2f) : Colours::red.darker(.3f));
+    panicBtnUI->repaint();
 }
 
 void DeckViewHeaderUI::updateMainToggleState()
