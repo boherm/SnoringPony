@@ -13,8 +13,14 @@
 
 CuelistFactory::CuelistFactory()
 {
-    defs.add(Factory<Cuelist>::Definition::createDef("", "Cuelist", &Cuelist::create));
+    defs.add(Factory<Cuelist>::Definition::createDef("", "Playback Cuelist", &Cuelist::create));
     defs.add(Factory<Cuelist>::Definition::createDef("", "DCA Mixing Cuelist", &DCAMixingCuelist::create));
+}
+
+Cuelist* CuelistFactory::create(const juce::String& type)
+{
+    if (type == "Cuelist") return Factory<Cuelist>::create("Playback Cuelist");
+    return Factory<Cuelist>::create(type);
 }
 
 // void CuelistFactory::buildPopupMenu(int startOffset)

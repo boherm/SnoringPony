@@ -22,7 +22,6 @@ public:
     CuelistFactory();
     ~CuelistFactory() {}
 
-    // void buildPopupMenu(int startOffset = 0) override;
-    // void showCreateMenu(std::function<void(Cuelist *)> returnFunc) override;
-    // Cuelist * createFromMenuResult(int result) override;
+    // Backward-compat: old saves used the type "Cuelist" before renaming to "Playback Cuelist".
+    Cuelist* create(const juce::String& type) override;
 };

@@ -44,7 +44,7 @@ public:
     void stop();
     void panic();
 
-    juce::String getTypeString() const override { return "Cuelist"; }
+    juce::String getTypeString() const override { return "Playback Cuelist"; }
     static Cuelist *create(var params) { return new Cuelist(params); }
 
     InspectableEditor* getEditorInternal(bool isRoot, Array<Inspectable*> inspectables);
