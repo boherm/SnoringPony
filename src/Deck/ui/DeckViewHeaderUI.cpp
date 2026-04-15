@@ -23,6 +23,20 @@ DeckViewHeaderUI::DeckViewHeaderUI(Cuelist* cl) :
     addItemBT->setTooltip("Add a new Cue");
     addAndMakeVisible(addItemBT.get());
     addItemBT->addListener(this);
+
+    goBtnUI = std::make_unique<TextButton>("GO");
+    goBtnUI->setColour(TextButton::buttonColourId, Colours::green.darker(.3f));
+    goBtnUI->setColour(TextButton::textColourOffId, Colours::white);
+    goBtnUI->setTooltip("Trigger next cue");
+    goBtnUI->addListener(this);
+    addAndMakeVisible(goBtnUI.get());
+
+    panicBtnUI = std::make_unique<TextButton>("PANIC");
+    panicBtnUI->setColour(TextButton::buttonColourId, Colours::red.darker(.3f));
+    panicBtnUI->setColour(TextButton::textColourOffId, Colours::white);
+    panicBtnUI->setTooltip("Stop all playing cues immediately");
+    panicBtnUI->addListener(this);
+    addAndMakeVisible(panicBtnUI.get());
 }
 
 DeckViewHeaderUI::~DeckViewHeaderUI()
@@ -42,6 +56,8 @@ void DeckViewHeaderUI::paint(Graphics& g)
 void DeckViewHeaderUI::resized()
 {
     addItemBT->setBounds(getWidth() - 24, 4, 20, 20);
+    goBtnUI->setBounds(4, 4, 60, 22);
+    panicBtnUI->setBounds(68, 4, 70, 22);
 }
 
 void DeckViewHeaderUI::newMessage(const ContainerAsyncEvent& e)
@@ -63,6 +79,14 @@ void DeckViewHeaderUI::buttonClicked(Button* button)
 				}
 			}
 		);
+    }
+    else if (button == goBtnUI.get() && currentCuelist)
+    {
+        currentCuelist->goBtn->trigger();
+    }
+    else if (button == panicBtnUI.get() && currentCuelist)
+    {
+        currentCuelist->panic();
     }
 }
 

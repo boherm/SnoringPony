@@ -24,6 +24,8 @@ public:
     ~DeckViewHeaderUI() override;
 
     std::unique_ptr<juce::ImageButton> addItemBT;
+    std::unique_ptr<juce::TextButton> goBtnUI;
+    std::unique_ptr<juce::TextButton> panicBtnUI;
     Component* parent;
     Cuelist* currentCuelist;
 
