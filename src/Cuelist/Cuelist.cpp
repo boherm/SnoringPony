@@ -15,6 +15,7 @@
 #include "../Cue/osc/OSCCue.h"
 #include "../Cue/playlist/PlaylistCue.h"
 #include "../Cue/fade/FadeCue.h"
+#include "../Cue/go/GoCue.h"
 #include "../ui/SPAssetManager.h"
 #include "juce_organicui/inspectable/ui/InspectableEditor.h"
 #include "ui/CuelistEditor.h"
@@ -109,6 +110,7 @@ void Cuelist::registerCueTypes(Factory<Cue>& f)
     f.defs.add(Factory<Cue>::Definition::createDef("Audio", "Audio Cue", &AudioCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Audio")));
     f.defs.add(Factory<Cue>::Definition::createDef("Audio", "Playlist Cue", &PlaylistCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Playlist")));
     f.defs.add(Factory<Cue>::Definition::createDef("Playback", "Fade Cue", &FadeCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Fade")));
+    f.defs.add(Factory<Cue>::Definition::createDef("Playback", "Go Cue", &GoCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Go")));
     f.defs.add(Factory<Cue>::Definition::createDef("Network", "OSC Cue", &OSCCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("OSC")));
 }
 
