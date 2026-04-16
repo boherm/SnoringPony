@@ -12,6 +12,8 @@
 
 #include "MainIncludes.h"
 
+class Cuelist;
+
 class Brain
 {
 public:
@@ -21,4 +23,9 @@ public:
 
     void go();
     void panic();
+    void selectNextCue();
+    void selectPreviousCue();
+
+    static void selectNextCueOn(Cuelist* cl);
+    static void selectPreviousCueOn(Cuelist* cl);
 };

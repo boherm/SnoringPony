@@ -10,6 +10,8 @@
 
 #include "Cuelist/CuelistFactory.h"
 #include "Cuelist/CuelistManager.h"
+#include "Interface/action/MappingActionFactory.h"
+#include "Interface/midi/MIDIManager.h"
 #include "MainIncludes.h"
 #include "PonyEngine.h"
 #include "Brain.h"
@@ -36,6 +38,7 @@ PonyEngine::PonyEngine() :
 {
 	//init here
 	Engine::mainEngine = this;
+	MIDIManager::getInstance(); // Init MIDI device tracking early
 	addChildControllableContainer(CuelistManager::getInstance());
     addChildControllableContainer(InterfaceManager::getInstance());
     addChildControllableContainer(ShowControl::getInstance());
@@ -76,6 +79,8 @@ PonyEngine::~PonyEngine()
 	OSCRemoteControl::getInstance()->removeRemoteControlListener(UserInputManager::getInstance());
 
     InterfaceManager::deleteInstance();
+    MIDIManager::deleteInstance();
+    MappingActionFactory::deleteInstance();
 	CuelistManager::deleteInstance();
     CuelistFactory::deleteInstance();
 

@@ -24,7 +24,7 @@ InterfaceManager::InterfaceManager() :
     managerFactory = &factory;
 
     factory.defs.add(Factory<Interface>::Definition::createDef("", "Audio", &AudioInterface::create)->addIcon(SPAssetManager::getInstance()->getInterfaceIcon("Audio")));
-    // factory.defs.add(Factory<Interface>::Definition::createDef("", "MIDI", &MIDIInterface::create)->addIcon(SPAssetManager::getInstance()->getInterfaceIcon("MIDI")));
+    factory.defs.add(Factory<Interface>::Definition::createDef("", "MIDI", &MIDIInterface::create)->addIcon(SPAssetManager::getInstance()->getInterfaceIcon("MIDI")));
     factory.defs.add(Factory<Interface>::Definition::createDef("", "OSC", &OSCInterface::create)->addIcon(SPAssetManager::getInstance()->getInterfaceIcon("OSC")));
     factory.defs.add(Factory<Interface>::Definition::createDef("", "Mixer", &MixerInterface::create)->addIcon(SPAssetManager::getInstance()->getInterfaceIcon("Mixer")));
 }

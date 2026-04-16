@@ -5,49 +5,51 @@
     Created: 19 Oct 2025 12:29:00am
     Author:  boherm
 
+    MIDI input interface: listens on a selected MIDI device and dispatches
+    incoming messages to MIDIMappings which trigger MappingActions.
+
   ==============================================================================
 */
 
 #pragma once
 
 #include "../Interface.h"
+#include "MIDIMapping.h"
+#include "MIDIManager.h"
 
 class MIDIInterface :
-    public Interface
+    public Interface,
+    public MIDIManager::Listener,
+    public MIDIInputDevice::Listener
 {
 public:
     MIDIInterface();
     ~MIDIInterface();
 
-    // MIDIDeviceParameter* deviceParam;
+    StringParameter* deviceName;
+    StringParameter* deviceIdentifier;
+    Trigger* selectDeviceBtn;
+    BoolParameter* autoAdd;
 
-    // MIDIMappingManager mappingManager;
-    // MIDIFeedbackManager feedbackManager;
-    // MIDIInputDevice* inputDevice;
-    // MIDIOutputDevice* outputDevice;
+    MIDIInputDevice* currentDevice = nullptr;
 
-    // BoolParameter* autoAdd;
+    std::unique_ptr<BaseManager<MIDIMapping>> mappings;
 
-    // IntParameter* numBytes;
-    // ControllableContainer dataContainer;
+    void setInputDevice(MIDIInputDevice* device);
 
-    // StringParameter* infos;
-    // HashMap<String, juce::uint32> TSLastReceived;
-    // HashMap<String, int> delayedValue;
+    // MIDIManager::Listener
+    void midiDeviceInAdded(MIDIInputDevice* d) override;
+    void midiDeviceInRemoved(MIDIInputDevice* d) override;
 
-    // void updateDevices();
-    // void updateBytesParams();
-    // void onContainerParameterChangedInternal(Parameter *) override;
+    // MIDIInputDevice::Listener
+    void midiMessageReceived(const juce::MidiMessage& message) override;
 
-    // void sendStartupBytes();
+    MIDIMapping* findExistingMapping(const juce::MidiMessage& msg) const;
+    MIDIMapping* createMappingFromMessage(const juce::MidiMessage& msg);
 
-    // void noteOnReceived(const int &channel, const int &pitch, const int &velocity) override;
-    // void noteOffReceived(const int &channel, const int &pitch, const int &velocity) override;
-    // void controlChangeReceived(const int& channel, const int& number, const int& value) override;
-    // void pitchWheelReceived(const int& channel, const int& value) override;
-
-    // void feedback(String address, var value, String origin);
+    void triggerTriggered(Trigger* t) override;
+    void loadJSONDataInternal(var data) override;
 
     String getTypeString() const override { return "MIDI"; }
-    static MIDIInterface* create(var params) { return new MIDIInterface(); };
+    static MIDIInterface* create(var params) { return new MIDIInterface(); }
 };
