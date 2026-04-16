@@ -36,10 +36,11 @@ void Character::onContainerParameterChangedInternal(Parameter* p)
 {
     if (p == characterName)
     {
+        if (Engine::mainEngine->isLoadingFile) return;
+
         String n = characterName->stringValue();
         if (n.isNotEmpty()) setNiceName(n);
 
-        if (Engine::mainEngine->isLoadingFile) return;
         if (auto* ch = getChannel()) ch->notifyNameChanged();
     }
 }

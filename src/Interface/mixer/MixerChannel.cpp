@@ -51,8 +51,10 @@ void MixerChannel::onContainerParameterChangedInternal(Parameter* p)
 {
     if (p == channelNumber)
     {
+        if (Engine::mainEngine->isLoadingFile) return;
+
         setNiceName("Ch " + channelNumber->stringValue());
-        if (!Engine::mainEngine->isLoadingFile && parentMixer != nullptr)
+        if (parentMixer != nullptr)
             parentMixer->pushChannel(this);
     }
 }

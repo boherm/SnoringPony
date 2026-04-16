@@ -193,7 +193,28 @@ void DCACue::playInternal()
 
 void DCACue::onContainerParameterChangedInternal(Parameter* p)
 {
-    if (p == targetMixer) refreshCharacterRefRoots();
+    if (p == targetMixer)
+    {
+        refreshCharacterRefRoots();
+        checkBrokenRefs();
+    }
+}
+
+void DCACue::onControllableFeedbackUpdateInternal(ControllableContainer* cc, Controllable* c)
+{
+    Cue::onControllableFeedbackUpdateInternal(cc, c);
+
+    for (auto* a : dcaAssignments->items)
+    {
+        for (auto* r : a->characters->items)
+        {
+            if (c == r->characterRef)
+            {
+                checkBrokenRefs();
+                return;
+            }
+        }
+    }
 }
 
 void DCACue::refreshCharacterRefRoots()
@@ -203,10 +224,27 @@ void DCACue::refreshCharacterRefRoots()
             r->updateRootFromCue();
 }
 
+void DCACue::checkBrokenRefs()
+{
+    for (auto* a : dcaAssignments->items)
+    {
+        for (auto* r : a->characters->items)
+        {
+            if (r->getCharacter() == nullptr && r->characterRef->stringValue().isNotEmpty())
+            {
+                setWarningMessage("Broken character reference in DCA " + String(a->dcaNumber->intValue()));
+                return;
+            }
+        }
+    }
+    clearWarning();
+}
+
 void DCACue::loadJSONDataInternal(var data)
 {
     Cue::loadJSONDataInternal(data);
     refreshCharacterRefRoots();
+    checkBrokenRefs();
 }
 
 String DCACue::autoDescriptionInternal()

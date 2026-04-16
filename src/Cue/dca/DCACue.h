@@ -49,6 +49,7 @@ public:
     void itemAdded(DCAAssignment* a) override;
 
     void refreshCharacterRefRoots();
+    void checkBrokenRefs();
     void loadJSONDataInternal(var data) override;
 
     void playInternal() override;
@@ -58,6 +59,7 @@ public:
     static DCACue* create(var params) { return new DCACue(params); }
 
     void onContainerParameterChangedInternal(Parameter* p) override;
+    void onControllableFeedbackUpdateInternal(ControllableContainer* cc, Controllable* c) override;
 
     String autoDescriptionInternal() override;
 };
