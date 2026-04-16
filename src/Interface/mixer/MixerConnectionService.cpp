@@ -63,7 +63,8 @@ void MixerConnectionService::applyDCAMembership(const juce::Array<juce::Array<in
                                                 const std::map<int, juce::String>& activeChannelNames,
                                                 const std::map<int, std::set<int>>& channelFXBuses,
                                                 const juce::Array<int>& definedBuses,
-                                                const juce::Array<bool>& dcaHasFX)
+                                                const juce::Array<bool>& dcaHasFX,
+                                                const std::map<int, float>& dcaForcedFaders)
 {
     if (!connected) return;
     if (vendor != "Wing") return;
@@ -83,6 +84,10 @@ void MixerConnectionService::applyDCAMembership(const juce::Array<juce::Array<in
         send(WingProtocol::dcaNameMessage(i + 1, dcaNames[i]));
         send(WingProtocol::dcaColorMessage(i + 1, color));
         send(WingProtocol::dcaLedMessage(i + 1, hasMembers));
+
+        auto fdrIt = dcaForcedFaders.find(i);
+        if (fdrIt != dcaForcedFaders.end())
+            send(WingProtocol::dcaFaderMessage(i + 1, fdrIt->second));
     }
 
     for (int ch : definedChannels)

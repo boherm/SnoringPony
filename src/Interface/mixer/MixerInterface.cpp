@@ -106,7 +106,8 @@ void MixerInterface::applyDCAMembership(const Array<Array<int>>& membership,
                                         const StringArray& dcaNames,
                                         const std::map<int, String>& activeChannelNames,
                                         const std::map<int, std::set<int>>& channelFXBuses,
-                                        const Array<bool>& dcaHasFX)
+                                        const Array<bool>& dcaHasFX,
+                                        const std::map<int, float>& dcaForcedFaders)
 {
     if (connection == nullptr) return;
 
@@ -126,7 +127,7 @@ void MixerInterface::applyDCAMembership(const Array<Array<int>>& membership,
 
     connection->applyDCAMembership(membership, dcaNames, definedChannels,
                                    activeChannelNames, channelFXBuses,
-                                   definedBuses, dcaHasFX);
+                                   definedBuses, dcaHasFX, dcaForcedFaders);
 }
 
 void MixerInterface::applyLineCheckBaseline()

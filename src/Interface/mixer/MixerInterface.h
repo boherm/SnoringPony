@@ -56,7 +56,8 @@ public:
                             const StringArray& dcaNames,
                             const std::map<int, String>& activeChannelNames,
                             const std::map<int, std::set<int>>& channelFXBuses,
-                            const Array<bool>& dcaHasFX);
+                            const Array<bool>& dcaHasFX,
+                            const std::map<int, float>& dcaForcedFaders);
 
     // Called by the "Line check" cue: resets channel icons and pushes the first
     // character name of each declared channel as its base label.

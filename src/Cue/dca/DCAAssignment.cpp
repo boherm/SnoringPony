@@ -25,6 +25,10 @@ DCAAssignment::DCAAssignment(var params) :
 
     displayName = addStringParameter("Display Name", "Custom name shown on the console and cuelist. Leave empty to use the character name (single character) or a comma-separated list.", "");
 
+    forceFader = addBoolParameter("Force Fader", "When enabled, force the DCA fader to a specific position on Go", false);
+    faderPosition = addFloatParameter("Fader Position", "Fader level in dB (-144 to +10)", 0.f, -144.f, 10.f);
+    faderPosition->defaultUI = FloatParameter::SLIDER;
+
     characters.reset(new BaseManager<CharacterRef>("Characters"));
     characters->userCanAddItemsManually = false;
     addChildControllableContainer(characters.get());

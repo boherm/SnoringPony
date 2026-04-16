@@ -80,6 +80,13 @@ juce::OSCMessage WingProtocol::dcaLedMessage(int dcaNum, bool on)
     return m;
 }
 
+juce::OSCMessage WingProtocol::dcaFaderMessage(int dcaNum, float dB)
+{
+    juce::OSCMessage m("/dca/" + juce::String(dcaNum) + "/fdr");
+    m.addFloat32(dB);
+    return m;
+}
+
 juce::Array<juce::OSCMessage> WingProtocol::dcaMembershipMessages(
     const juce::Array<juce::Array<int>>& membership,
     const juce::Array<int>& channels)

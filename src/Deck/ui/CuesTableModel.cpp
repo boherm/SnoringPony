@@ -374,6 +374,13 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
                 g.drawText(a->getEffectiveDisplayName(), 4, 0, width - 8, height,
                            Justification::centred, true);
 
+                if (a->forceFader->boolValue()) {
+                    g.setOpacity(1.0f);
+                    g.setFont(Font(10.0f, Font::bold));
+                    g.setColour(Colours::red);
+                    g.drawText("FDR", 2, 2, 24, 12, Justification::topLeft, false);
+                }
+
                 if (hasFX) {
                     g.setOpacity(1.0f);
                     g.setFont(Font(10.0f, Font::bold));

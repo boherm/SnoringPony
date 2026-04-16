@@ -156,6 +156,8 @@ void DCACue::playInternal()
     Array<bool> dcaHasFX;
     for (int i = 0; i < n; ++i) dcaHasFX.add(false);
 
+    std::map<int, float> dcaForcedFaders;
+
     for (auto* a : dcaAssignments->items)
     {
         int idx = a->dcaNumber->intValue() - 1;
@@ -180,9 +182,12 @@ void DCACue::playInternal()
         }
 
         names.set(idx, a->getEffectiveDisplayName());
+
+        if (a->forceFader->boolValue())
+            dcaForcedFaders[idx] = a->faderPosition->floatValue();
     }
 
-    mixer->applyDCAMembership(membership, names, activeChannelNames, channelFXBuses, dcaHasFX);
+    mixer->applyDCAMembership(membership, names, activeChannelNames, channelFXBuses, dcaHasFX, dcaForcedFaders);
     endCue();
 }
 

@@ -92,13 +92,35 @@ DCAAssignmentDialog::DCAAssignmentDialog(DCACue* cue, DCAAssignment* assignment)
     listViewport->setScrollBarsShown(true, false);
     addAndMakeVisible(listViewport.get());
 
+    forceFaderBtn = std::make_unique<ToggleButton>("Force fader");
+    forceFaderBtn->setColour(ToggleButton::textColourId, TEXT_COLOR);
+    forceFaderBtn->setToggleState(assignment->forceFader->boolValue(), dontSendNotification);
+    forceFaderBtn->addListener(this);
+    addAndMakeVisible(forceFaderBtn.get());
+
+    faderSlider = std::make_unique<Slider>(Slider::LinearHorizontal, Slider::TextBoxLeft);
+    faderSlider->setRange(-144.0, 10.0, 0.1);
+    faderSlider->setSkewFactorFromMidPoint(-20.0);
+    faderSlider->setValue(assignment->faderPosition->floatValue(), dontSendNotification);
+    faderSlider->setTextBoxStyle(Slider::TextBoxLeft, false, 60, 22);
+    faderSlider->setColour(Slider::backgroundColourId, BG_COLOR.darker(.1f));
+    faderSlider->setColour(Slider::trackColourId, Colours::limegreen.withAlpha(0.6f));
+    faderSlider->setColour(Slider::thumbColourId, Colours::lightgrey);
+    faderSlider->setColour(Slider::textBoxBackgroundColourId, BG_COLOR.darker(.1f));
+    faderSlider->setColour(Slider::textBoxTextColourId, TEXT_COLOR);
+    faderSlider->setColour(Slider::textBoxOutlineColourId, Colours::transparentBlack);
+    faderSlider->setTextValueSuffix(" dB");
+    faderSlider->setEnabled(assignment->forceFader->boolValue());
+    faderSlider->addListener(this);
+    addAndMakeVisible(faderSlider.get());
+
     closeBtn = std::make_unique<TextButton>("Close");
     closeBtn->addListener(this);
     addAndMakeVisible(closeBtn.get());
 
     rebuildCharacterList();
 
-    setSize(420, 520);
+    setSize(420, 570);
 }
 
 DCAAssignmentDialog::~DCAAssignmentDialog()
@@ -315,6 +337,14 @@ void DCAAssignmentDialog::buttonClicked(Button* b)
         return;
     }
 
+    if (b == forceFaderBtn.get())
+    {
+        bool state = forceFaderBtn->getToggleState();
+        assignment->forceFader->setValue(state);
+        faderSlider->setEnabled(state);
+        return;
+    }
+
     int idx = charButtons.indexOf(dynamic_cast<ToggleButton*>(b));
     if (idx < 0 || idx >= characters.size()) return;
 
@@ -334,6 +364,12 @@ void DCAAssignmentDialog::textEditorTextChanged(TextEditor& te)
         assignment->displayName->setValue(nameEditor->getText());
 }
 
+void DCAAssignmentDialog::sliderValueChanged(Slider* slider)
+{
+    if (slider == faderSlider.get())
+        assignment->faderPosition->setValue(slider->getValue());
+}
+
 void DCAAssignmentDialog::paint(Graphics& g)
 {
     g.fillAll(BG_COLOR);
@@ -351,6 +387,11 @@ void DCAAssignmentDialog::resized()
     auto fxRow = r.removeFromTop(26);
     globalFXLabel->setBounds(fxRow.removeFromLeft(180));
     globalFXBtn->setBounds(fxRow.reduced(4, 0));
+    r.removeFromTop(10);
+
+    auto faderRow = r.removeFromTop(26);
+    forceFaderBtn->setBounds(faderRow.removeFromLeft(130));
+    faderSlider->setBounds(faderRow.reduced(4, 0));
     r.removeFromTop(10);
 
     charactersLabel->setBounds(r.removeFromTop(18));

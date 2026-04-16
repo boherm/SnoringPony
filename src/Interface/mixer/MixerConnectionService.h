@@ -49,7 +49,8 @@ public:
                             const std::map<int, juce::String>& activeChannelNames,
                             const std::map<int, std::set<int>>& channelFXBuses,
                             const juce::Array<int>& definedBuses,
-                            const juce::Array<bool>& dcaHasFX);
+                            const juce::Array<bool>& dcaHasFX,
+                            const std::map<int, float>& dcaForcedFaders);
 
 private:
     void send(const juce::OSCMessage& m);

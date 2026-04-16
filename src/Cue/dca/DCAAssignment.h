@@ -30,6 +30,8 @@ public:
 
     IntParameter* dcaNumber;
     StringParameter* displayName;
+    BoolParameter* forceFader;
+    FloatParameter* faderPosition;
 
     std::unique_ptr<BaseManager<CharacterRef>> characters;
 

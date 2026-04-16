@@ -43,6 +43,7 @@ public:
     static juce::OSCMessage dcaNameMessage(int dcaNum, const juce::String& name);
     static juce::OSCMessage dcaColorMessage(int dcaNum, int color);
     static juce::OSCMessage dcaLedMessage(int dcaNum, bool on);
+    static juce::OSCMessage dcaFaderMessage(int dcaNum, float dB);
 
     // Build one OSC message per channel in `channels` encoding its DCA membership
     // as a comma-separated string of tags ("#D1,#D2" for channels in DCA 1 and 2, empty if none).
