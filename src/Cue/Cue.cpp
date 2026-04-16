@@ -348,6 +348,8 @@ void Cue::endCue()
         return;
     }
 
+    bool wasRetriggerStop = isRetriggerStopping;
+
     isPlaying->setValue(false);
     autoFollowProcess(PostWaitType::AFTER_CUE);
 
@@ -356,6 +358,11 @@ void Cue::endCue()
             parentCuelist->currentCue->resetValue();
         }
     }
+
+    // When a cue with "Stop on retrigger" finishes naturally (not by retrigger),
+    // advance the nextCue pointer so the operator sees the next cue ready.
+    if (retriggerStopCC->enabled->boolValue() && !wasRetriggerStop)
+        setNextCue();
 }
 
 void Cue::playNextCue()

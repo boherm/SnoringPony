@@ -96,6 +96,17 @@ void Cuelist::stop()
 
 void Cuelist::panic()
 {
+    bool hasCueToPanic = false;
+    for (int i = 0; i < cues->items.size(); i++) {
+        Cue* c = cues->items[i];
+        if (c->isPlaying->boolValue() || c->preWaitActive->boolValue() || c->postWaitActive->boolValue()) {
+            hasCueToPanic = true;
+            break;
+        }
+    }
+
+    if (!hasCueToPanic) return;
+
     isPanicking->setValue(true);
     for (int i = 0; i < cues->items.size(); i++) {
         Cue* c = cues->items[i];
@@ -103,6 +114,7 @@ void Cuelist::panic()
             c->panic();
         }
     }
+    checkIfPanickingNeeded();
 }
 
 void Cuelist::registerCueTypes(Factory<Cue>& f)
