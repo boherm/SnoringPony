@@ -54,7 +54,7 @@ MixerInterface* DCACue::getMixer() const
 
 int DCACue::getMixerNumDCAs() const
 {
-    if (auto* m = getMixer()) return m->numDCAs->intValue();
+    if (auto* m = getMixer()) return m->getNumDCAs();
     return 0;
 }
 
@@ -144,7 +144,7 @@ void DCACue::playInternal()
     // character name for each declared channel before applying DCA state.
     if (!userCanRemove) mixer->applyLineCheckBaseline();
 
-    const int n = mixer->numDCAs->intValue();
+    const int n = mixer->getNumDCAs();
     Array<Array<int>> membership;
     for (int i = 0; i < n; ++i) membership.add(Array<int>());
 

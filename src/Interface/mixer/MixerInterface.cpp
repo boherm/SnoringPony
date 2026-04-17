@@ -9,37 +9,17 @@
 */
 
 #include "MixerInterface.h"
-#include "wing/WingProtocol.h"
+#include "wing/WingMixerSettings.h"
 
 MixerInterface::MixerInterface() :
     Interface("Mixer Interface 1")
 {
     logIncomingData->hideInEditor = true;
 
-    vendor = addEnumParameter("Vendor", "Mixing console brand/model");
+    vendor = addEnumParameter("Mixer", "Mixing console brand/model");
     vendor->addOption("Behringer Wing", "Wing");
 
-    remoteHost = addStringParameter("Remote Host", "IP address of the mixing console", "192.168.1.10");
-    remoteHost->autoTrim = true;
-
-    remotePort = addIntParameter("Remote Port", "OSC send port on the console",
-                                 WingProtocol::DEFAULT_SEND_PORT, 1, 65535);
-
-    numDCAs = addIntParameter("Num DCAs", "Number of DCAs to expose for mixing cues",
-                              8, 1, WingProtocol::MAX_DCAS);
-
-    isConnected = addBoolParameter("Connected", "Connection status", false);
-    isConnected->setControllableFeedbackOnly(true);
-
-    connection.reset(new MixerConnectionService());
-    connection->setVendor(vendor->getValueData().toString());
-    connection->logSent = [this](const OSCMessage& m)
-    {
-        if (!logOutgoingData->boolValue()) return;
-        String s;
-        for (auto& a : m) s += " " + OSCHelpers::getStringArg(a);
-        NLOG(niceName, "Send OSC: " << m.getAddressPattern().toString() << " :" << s);
-    };
+    rebuildMixerSettings();
 
     channels.reset(new BaseManager<MixerChannel>("Channels"));
     channels->selectItemWhenCreated = false;
@@ -54,38 +34,62 @@ MixerInterface::MixerInterface() :
 MixerInterface::~MixerInterface()
 {
     if (channels != nullptr) channels->removeBaseManagerListener(this);
-    if (connection != nullptr) connection->disconnect();
+    if (mixerSettings != nullptr) mixerSettings->disconnect();
+}
+
+int MixerInterface::getNumDCAs() const
+{
+    if (mixerSettings != nullptr) return mixerSettings->getNumDCAs();
+    return 0;
+}
+
+void MixerInterface::rebuildMixerSettings()
+{
+    if (mixerSettings != nullptr)
+    {
+        mixerSettings->disconnect();
+        removeChildControllableContainer(mixerSettings.get());
+        mixerSettings.reset();
+    }
+
+    String v = vendor->getValueData().toString();
+
+    if (v == "Wing")
+        mixerSettings.reset(new WingMixerSettings());
+
+    if (mixerSettings != nullptr)
+    {
+        mixerSettings->logOutgoing = [this](const String& msg)
+        {
+            if (logOutgoingData->boolValue())
+                NLOG(niceName, "Send: " << msg);
+        };
+        addChildControllableContainer(mixerSettings.get(), false, 1);
+    }
 }
 
 void MixerInterface::attemptConnect()
 {
-    if (connection == nullptr) return;
-    connection->setVendor(vendor->getValueData().toString());
-    bool ok = connection->connect(remoteHost->stringValue(), remotePort->intValue(), 0);
-    isConnected->setValue(ok);
+    if (mixerSettings == nullptr) return;
+    mixerSettings->connect();
 
-    if (ok)
-    {
-        NLOG(niceName, "Connected to " << remoteHost->stringValue() << ":" << remotePort->intValue());
-    }
+    if (mixerSettings->isConnected())
+        NLOG(niceName, "Connected");
     else
-    {
-        NLOGWARNING(niceName, "Failed to connect to " << remoteHost->stringValue() << ":" << remotePort->intValue());
-    }
+        NLOGWARNING(niceName, "Failed to connect");
 }
 
 void MixerInterface::attemptDisconnect()
 {
-    if (connection == nullptr) return;
-    connection->disconnect();
-    isConnected->setValue(false);
+    if (mixerSettings == nullptr) return;
+    mixerSettings->disconnect();
 }
 
 void MixerInterface::pushChannel(MixerChannel* c)
 {
-    if (connection == nullptr || !connection->isConnected()) return;
+    if (mixerSettings == nullptr || !mixerSettings->isConnected()) return;
     if (c == nullptr) return;
-    connection->sendChannelName(c->channelNumber->intValue(), c->getEffectiveName());
+    mixerSettings->sendChannelName(c->channelNumber->intValue(), c->getEffectiveName());
 }
 
 void MixerInterface::pushAllChannels()
@@ -109,7 +113,7 @@ void MixerInterface::applyDCAMembership(const Array<Array<int>>& membership,
                                         const Array<bool>& dcaHasFX,
                                         const std::map<int, float>& dcaForcedFaders)
 {
-    if (connection == nullptr) return;
+    if (mixerSettings == nullptr) return;
 
     Array<int> definedChannels;
     if (channels != nullptr)
@@ -125,14 +129,14 @@ void MixerInterface::applyDCAMembership(const Array<Array<int>>& membership,
             definedBuses.addIfNotAlreadyThere(fx->busNumber->intValue());
     }
 
-    connection->applyDCAMembership(membership, dcaNames, definedChannels,
-                                   activeChannelNames, channelFXBuses,
-                                   definedBuses, dcaHasFX, dcaForcedFaders);
+    mixerSettings->applyDCAMembership(membership, dcaNames, definedChannels,
+                                      activeChannelNames, channelFXBuses,
+                                      definedBuses, dcaHasFX, dcaForcedFaders);
 }
 
 void MixerInterface::applyLineCheckBaseline()
 {
-    if (connection == nullptr || channels == nullptr) return;
+    if (mixerSettings == nullptr || channels == nullptr) return;
 
     for (auto* ch : channels->items)
     {
@@ -141,8 +145,8 @@ void MixerInterface::applyLineCheckBaseline()
         if (!ch->characters->items.isEmpty())
             firstName = ch->characters->items[0]->characterName->stringValue();
 
-        connection->sendChannelIcon(chNum, 0);
-        connection->sendChannelName(chNum, firstName);
+        mixerSettings->sendChannelIcon(chNum, 0);
+        mixerSettings->sendChannelName(chNum, firstName);
     }
 }
 
@@ -165,11 +169,18 @@ void MixerInterface::onContainerParameterChangedInternal(Parameter* p)
 {
     if (Engine::mainEngine != nullptr && Engine::mainEngine->isLoadingFile) return;
 
-    if (p == vendor && connection != nullptr)
+    if (p == vendor)
     {
-        connection->setVendor(vendor->getValueData().toString());
+        rebuildMixerSettings();
     }
-    else if ((p == remoteHost || p == remotePort) && connection != nullptr)
+}
+
+void MixerInterface::onControllableFeedbackUpdateInternal(ControllableContainer* cc, Controllable* c)
+{
+    if (Engine::mainEngine != nullptr && Engine::mainEngine->isLoadingFile) return;
+
+    if (mixerSettings != nullptr && cc == mixerSettings.get()
+        && mixerSettings->shouldReconnectOnChange(c))
     {
         attemptConnect();
     }

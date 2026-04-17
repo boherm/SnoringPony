@@ -1,77 +1,99 @@
 /*
   ==============================================================================
 
-    MixerConnectionService.cpp
-    Created: 14 Apr 2026
+    WingMixerSettings.cpp
+    Created: 17 Apr 2026
     Author:  boherm
 
   ==============================================================================
 */
 
-#include "MixerConnectionService.h"
-#include "wing/WingProtocol.h"
+#include "WingMixerSettings.h"
 
-MixerConnectionService::MixerConnectionService()
+WingMixerSettings::WingMixerSettings() : MixerSettings("Mixer Settings")
 {
+    remoteHost = addStringParameter("Remote Host", "IP address of the mixing console", "192.168.1.10");
+    remoteHost->autoTrim = true;
+
+    remotePort = addIntParameter("Remote Port", "OSC send port on the console",
+                                 WingProtocol::DEFAULT_SEND_PORT, 1, 65535);
+
+    numDCAs = addIntParameter("Num DCAs", "Number of DCAs to expose for mixing cues",
+                              8, 1, WingProtocol::MAX_DCAS);
+
+    connectedParam = addBoolParameter("Connected", "Connection status", false);
+    connectedParam->setControllableFeedbackOnly(true);
 }
 
-MixerConnectionService::~MixerConnectionService()
+WingMixerSettings::~WingMixerSettings()
 {
     disconnect();
 }
 
-bool MixerConnectionService::connect(const juce::String& host, int sendPort, int /*recvPort*/)
+void WingMixerSettings::connect()
 {
     disconnect();
-    connected = sender.connect(host, sendPort);
-    return connected;
+    connected = sender.connect(remoteHost->stringValue(), remotePort->intValue());
+    connectedParam->setValue(connected);
 }
 
-void MixerConnectionService::disconnect()
+void WingMixerSettings::disconnect()
 {
     if (connected) sender.disconnect();
     connected = false;
+    connectedParam->setValue(false);
 }
 
-void MixerConnectionService::send(const juce::OSCMessage& m)
+bool WingMixerSettings::isConnected() const
 {
-    if (logSent) logSent(m);
+    return connected;
+}
+
+bool WingMixerSettings::shouldReconnectOnChange(Controllable* c) const
+{
+    return c == remoteHost || c == remotePort;
+}
+
+void WingMixerSettings::send(const juce::OSCMessage& m)
+{
+    if (!connected) return;
+
+    if (logOutgoing)
+    {
+        juce::String s;
+        for (auto& a : m) s += " " + OSCHelpers::getStringArg(a);
+        logOutgoing(m.getAddressPattern().toString() + " :" + s);
+    }
+
     sender.send(m);
 }
 
-void MixerConnectionService::sendChannelName(int channelNum, const juce::String& name)
+void WingMixerSettings::sendChannelName(int channelNum, const juce::String& name)
 {
-    if (!connected) return;
-    if (vendor == "Wing") send(WingProtocol::channelNameMessage(channelNum, name));
+    send(WingProtocol::channelNameMessage(channelNum, name));
 }
 
-void MixerConnectionService::sendChannelIcon(int channelNum, int icon)
+void WingMixerSettings::sendChannelIcon(int channelNum, int icon)
 {
-    if (!connected) return;
-    if (vendor == "Wing") send(WingProtocol::channelIconMessage(channelNum, icon));
+    send(WingProtocol::channelIconMessage(channelNum, icon));
 }
 
-void MixerConnectionService::sendDCAName(int dcaNum, const juce::String& name)
+void WingMixerSettings::applyDCAMembership(const juce::Array<juce::Array<int>>& membership,
+                                           const juce::StringArray& dcaNames,
+                                           const juce::Array<int>& definedChannels,
+                                           const std::map<int, juce::String>& activeChannelNames,
+                                           const std::map<int, std::set<int>>& channelFXBuses,
+                                           const juce::Array<int>& definedBuses,
+                                           const juce::Array<bool>& dcaHasFX,
+                                           const std::map<int, float>& dcaForcedFaders)
 {
     if (!connected) return;
-    if (vendor == "Wing") send(WingProtocol::dcaNameMessage(dcaNum, name));
-}
 
-void MixerConnectionService::applyDCAMembership(const juce::Array<juce::Array<int>>& membership,
-                                                const juce::StringArray& dcaNames,
-                                                const juce::Array<int>& definedChannels,
-                                                const std::map<int, juce::String>& activeChannelNames,
-                                                const std::map<int, std::set<int>>& channelFXBuses,
-                                                const juce::Array<int>& definedBuses,
-                                                const juce::Array<bool>& dcaHasFX,
-                                                const std::map<int, float>& dcaForcedFaders)
-{
-    if (!connected) return;
-    if (vendor != "Wing") return;
-
+    // DCA membership tags per channel
     for (const auto& m : WingProtocol::dcaMembershipMessages(membership, definedChannels))
         send(m);
 
+    // DCA names, colors, LEDs, and forced faders
     for (int i = 0; i < dcaNames.size(); ++i)
     {
         int channelCount = i < membership.size() ? membership[i].size() : 0;
@@ -90,6 +112,7 @@ void MixerConnectionService::applyDCAMembership(const juce::Array<juce::Array<in
             send(WingProtocol::dcaFaderMessage(i + 1, fdrIt->second));
     }
 
+    // Channel state: mute, color, LED, name, FX sends
     for (int ch : definedChannels)
     {
         int dcaChannelCount = 0;
@@ -115,7 +138,6 @@ void MixerConnectionService::applyDCAMembership(const juce::Array<juce::Array<in
                 send(WingProtocol::channelNameMessage(ch, it->second));
         }
 
-        // FX sends: for each declared bus, enable if this channel has it active, disable otherwise.
         auto fxIt = channelFXBuses.find(ch);
         const std::set<int>* activeBuses = (fxIt != channelFXBuses.end()) ? &fxIt->second : nullptr;
         for (int busNum : definedBuses)

@@ -40,7 +40,7 @@ static int deriveDCACount(Cuelist* cl)
         if (auto* dc = dynamic_cast<DCACue*>(c))
         {
             if (auto* m = dc->getMixer())
-                return m->numDCAs->intValue();
+                return m->getNumDCAs();
         }
     }
     return 8;
