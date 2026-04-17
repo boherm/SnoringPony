@@ -54,6 +54,10 @@ public:
 
     void applyLineCheckBaseline();
 
+    // Reset the console to a clean state: line-check baseline + clear all DCA assignments.
+    // Called after a file load so the Wing reflects the loaded project from the start.
+    void applyLoadBaseline();
+
     void itemAdded(MixerChannel* c) override;
     void itemsAdded(Array<MixerChannel*> items) override;
 

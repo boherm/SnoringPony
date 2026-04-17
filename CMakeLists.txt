@@ -66,12 +66,14 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/servus/include/)
 
 if (WIN32)
     set(OPENSSL_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/modules/juce_simpleweb/libs/VisualStudio2022/x64/MD/")
+    set(WAPI_LIB "${CMAKE_CURRENT_SOURCE_DIR}/external/wapi/windows/libwapi.a")
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
         set(SERVUS_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/servus/lib/win/x64/debug/")
     else()
         set(SERVUS_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/servus/lib/win/x64/release/")
     endif()
 elseif (APPLE)
+    set(WAPI_LIB "${CMAKE_CURRENT_SOURCE_DIR}/external/wapi/macos/libwapi.a")
     if (CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
         set(CMAKE_OSX_ARCHITECTURES "arm64")
         set(OPENSSL_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/modules/juce_simpleweb/libs/MacOSX/arm64/")
@@ -92,6 +94,7 @@ elseif (APPLE)
 elseif (UNIX)
     set(OPENSSL_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/modules/juce_simpleweb/libs/Linux/x86_64/")
     set(SERVUS_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/servus/lib/linux/")
+    set(WAPI_LIB "${CMAKE_CURRENT_SOURCE_DIR}/external/wapi/linux/libwapi.a")
 endif()
 
 target_link_directories(${PROJECT_NAME} PRIVATE
@@ -118,6 +121,7 @@ target_link_libraries("${PROJECT_NAME}"
         juce_organicui
         juce_simpleweb
         Servus
+        ${WAPI_LIB}
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags

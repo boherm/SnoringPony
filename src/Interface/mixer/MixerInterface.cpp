@@ -9,7 +9,8 @@
 */
 
 #include "MixerInterface.h"
-#include "wing/WingMixerSettings.h"
+#include "wingosc/WingOscMixerSettings.h"
+#include "wingtcp/WingTcpMixerSettings.h"
 
 MixerInterface::MixerInterface() :
     Interface("Mixer Interface 1")
@@ -17,7 +18,8 @@ MixerInterface::MixerInterface() :
     logIncomingData->hideInEditor = true;
 
     vendor = addEnumParameter("Mixer", "Mixing console brand/model");
-    vendor->addOption("Behringer Wing", "Wing");
+    vendor->addOption("Behringer Wing (OSC)", "WingOsc");
+    vendor->addOption("Behringer Wing (TCP/wapi)", "WingTcp");
 
     rebuildMixerSettings();
 
@@ -54,8 +56,10 @@ void MixerInterface::rebuildMixerSettings()
 
     String v = vendor->getValueData().toString();
 
-    if (v == "Wing")
-        mixerSettings.reset(new WingMixerSettings());
+    if (v == "WingOsc")
+        mixerSettings.reset(new WingOscMixerSettings());
+    else if (v == "WingTcp")
+        mixerSettings.reset(new WingTcpMixerSettings());
 
     if (mixerSettings != nullptr)
     {
@@ -64,7 +68,7 @@ void MixerInterface::rebuildMixerSettings()
             if (logOutgoingData->boolValue())
                 NLOG(niceName, "Send: " << msg);
         };
-        addChildControllableContainer(mixerSettings.get(), false, 1);
+        addChildControllableContainer(mixerSettings.get(), false, 0);
     }
 }
 
@@ -150,6 +154,33 @@ void MixerInterface::applyLineCheckBaseline()
     }
 }
 
+void MixerInterface::applyLoadBaseline()
+{
+    if (mixerSettings == nullptr || channels == nullptr) return;
+
+    // 1. Channel names/icons → default (first character per channel)
+    applyLineCheckBaseline();
+
+    // 2. Clear every DCA: empty membership, empty names, no FX.
+    const int n = getNumDCAs();
+    Array<Array<int>> membership;
+    StringArray names;
+    Array<bool> dcaHasFX;
+    for (int i = 0; i < n; ++i)
+    {
+        membership.add(Array<int>());
+        names.add(String());
+        dcaHasFX.add(false);
+    }
+
+    std::map<int, String>            activeChannelNames;
+    std::map<int, std::set<int>>     channelFXBuses;
+    std::map<int, float>             dcaForcedFaders;
+
+    applyDCAMembership(membership, names, activeChannelNames,
+                       channelFXBuses, dcaHasFX, dcaForcedFaders);
+}
+
 void MixerInterface::itemAdded(MixerChannel* c)
 {
     c->parentMixer = this;
@@ -167,12 +198,16 @@ void MixerInterface::itemsAdded(Array<MixerChannel*> items)
 
 void MixerInterface::onContainerParameterChangedInternal(Parameter* p)
 {
-    if (Engine::mainEngine != nullptr && Engine::mainEngine->isLoadingFile) return;
-
+    // Vendor changes must rebuild immediately, even during file load, so the
+    // child "Mixer Settings" container exists with the correct type before its
+    // saved parameters are loaded into it.
     if (p == vendor)
     {
         rebuildMixerSettings();
+        return;
     }
+
+    if (Engine::mainEngine != nullptr && Engine::mainEngine->isLoadingFile) return;
 }
 
 void MixerInterface::onControllableFeedbackUpdateInternal(ControllableContainer* cc, Controllable* c)
@@ -190,4 +225,7 @@ void MixerInterface::loadJSONDataInternal(var data)
 {
     Interface::loadJSONDataInternal(data);
     attemptConnect();
+    // After connect, push a clean baseline so the console reflects the loaded project.
+    // No-op if the connection failed (the settings subclass guards against that).
+    applyLoadBaseline();
 }
