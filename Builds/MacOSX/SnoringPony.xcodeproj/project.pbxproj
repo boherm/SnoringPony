@@ -74,6 +74,7 @@
 		81FE5838DBC11A9078C405D2 /* AudioSlices.cpp */ = {isa = PBXBuildFile; fileRef = 9EEFB9110B3658EDE53F472D; };
 		8272C0A8DC4A2709F17B52BF /* SPAssetManager.cpp */ = {isa = PBXBuildFile; fileRef = E48700BF2954893CBBD80843; };
 		861C0D0614917BC594AEEB29 /* include_juce_graphics.mm */ = {isa = PBXBuildFile; fileRef = 98B6243B9688467B02657902; };
+		8736D6D0ADE3FDE437CBE84A /* wapi_mingw_shim.cpp */ = {isa = PBXBuildFile; fileRef = E21B427DB0AB7282CD09B282; };
 		8932CFA5EFCF00512D00A816 /* include_juce_audio_utils.mm */ = {isa = PBXBuildFile; fileRef = 728AD40B0B1140BEEEC4B9F8; };
 		8963305DB6F73051102C1BEF /* GoCue.cpp */ = {isa = PBXBuildFile; fileRef = CF78ECFA21F0F737C765F30D; };
 		8A27C79968FD8D0502F18C89 /* OSCInputEditor.cpp */ = {isa = PBXBuildFile; fileRef = 1D30B81A9130B655246E8DDE; };
@@ -359,6 +360,7 @@
 		DE3BEE5252CD04A26A6220EB /* midi_interface.png */ /* midi_interface.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = midi_interface.png; path = ../../resources/midi_interface.png; sourceTree = SOURCE_ROOT; };
 		E1D74C2A085FDE009832E6EA /* CuelistEditor.h */ /* CuelistEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CuelistEditor.h; path = ../../src/Cuelist/ui/CuelistEditor.h; sourceTree = SOURCE_ROOT; };
 		E207EA8EDA2E4FBC93775A1F /* AudioOutputEditor.h */ /* AudioOutputEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AudioOutputEditor.h; path = ../../src/Interface/audio/ui/AudioOutputEditor.h; sourceTree = SOURCE_ROOT; };
+		E21B427DB0AB7282CD09B282 /* wapi_mingw_shim.cpp */ /* wapi_mingw_shim.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = wapi_mingw_shim.cpp; path = ../../src/Interface/mixer/wingtcp/wapi_mingw_shim.cpp; sourceTree = SOURCE_ROOT; };
 		E278CF626246005B7AB8F2C9 /* MappingAction.cpp */ /* MappingAction.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MappingAction.cpp; path = ../../src/Interface/action/MappingAction.cpp; sourceTree = SOURCE_ROOT; };
 		E3C0EB93E370790B3CC467C9 /* ShowProperties.h */ /* ShowProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ShowProperties.h; path = ../../src/ProjectSettings/ShowProperties.h; sourceTree = SOURCE_ROOT; };
 		E41D2753012C45EBB8892861 /* LookAndFeelTable.cpp */ /* LookAndFeelTable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LookAndFeelTable.cpp; path = ../../src/ui/LookAndFeelTable.cpp; sourceTree = SOURCE_ROOT; };
@@ -657,6 +659,7 @@
 			children = (
 				EB59C3D4C96AA6C5C404328F,
 				8BA2FDBFD258A70443041C0C,
+				E21B427DB0AB7282CD09B282,
 				CE01FDB47DE124494507B545,
 				67C83CB21E375CF0A1780D5F,
 			);
@@ -1128,6 +1131,7 @@
 				6401B854C6A168E434C3D11F,
 				978744C52A3F141F9CFB270A,
 				97D89858E236B10E5033A379,
+				8736D6D0ADE3FDE437CBE84A,
 				12DA2A7A6CA57A16ED15D78D,
 				AE034C5EEC39E5E547FA98F2,
 				D714A6543DAEAB3DEC109D85,

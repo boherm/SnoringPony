@@ -122,6 +122,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/MIDIMapping_98fde15.o \
   $(JUCE_OBJDIR)/WingOscMixerSettings_bbefb8f.o \
   $(JUCE_OBJDIR)/WingOscProtocol_319ae8ff.o \
+  $(JUCE_OBJDIR)/wapi_mingw_shim_56476567.o \
   $(JUCE_OBJDIR)/WingTcpMixerSettings_e9b7dc4b.o \
   $(JUCE_OBJDIR)/Character_4db51f37.o \
   $(JUCE_OBJDIR)/MixerChannel_ff00e9f6.o \
@@ -442,6 +443,11 @@ $(JUCE_OBJDIR)/WingOscMixerSettings_bbefb8f.o: ../../src/Interface/mixer/wingosc
 $(JUCE_OBJDIR)/WingOscProtocol_319ae8ff.o: ../../src/Interface/mixer/wingosc/WingOscProtocol.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling WingOscProtocol.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/wapi_mingw_shim_56476567.o: ../../src/Interface/mixer/wingtcp/wapi_mingw_shim.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling wapi_mingw_shim.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/WingTcpMixerSettings_e9b7dc4b.o: ../../src/Interface/mixer/wingtcp/WingTcpMixerSettings.cpp

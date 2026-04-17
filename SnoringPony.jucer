@@ -235,6 +235,8 @@
           <GROUP id="{B7456C94-73C1-389E-216B-D625FF712A67}" name="wingtcp">
             <FILE id="JnKpmf" name="wapi.h" compile="0" resource="0" file="src/Interface/mixer/wingtcp/wapi.h"/>
             <FILE id="XQ7SG0" name="wext.h" compile="0" resource="0" file="src/Interface/mixer/wingtcp/wext.h"/>
+            <FILE id="m2LLKn" name="wapi_mingw_shim.cpp" compile="1" resource="0"
+                  file="src/Interface/mixer/wingtcp/wapi_mingw_shim.cpp"/>
             <FILE id="p1gYnM" name="WingTcpMixerSettings.cpp" compile="1" resource="0"
                   file="src/Interface/mixer/wingtcp/WingTcpMixerSettings.cpp"/>
             <FILE id="MWl3ge" name="WingTcpMixerSettings.h" compile="0" resource="0"

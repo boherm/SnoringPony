@@ -207,6 +207,7 @@
     <ClCompile Include="..\..\src\Interface\midi\MIDIMapping.cpp"/>
     <ClCompile Include="..\..\src\Interface\mixer\wingosc\WingOscMixerSettings.cpp"/>
     <ClCompile Include="..\..\src\Interface\mixer\wingosc\WingOscProtocol.cpp"/>
+    <ClCompile Include="..\..\src\Interface\mixer\wingtcp\wapi_mingw_shim.cpp"/>
     <ClCompile Include="..\..\src\Interface\mixer\wingtcp\WingTcpMixerSettings.cpp"/>
     <ClCompile Include="..\..\src\Interface\mixer\Character.cpp"/>
     <ClCompile Include="..\..\src\Interface\mixer\MixerChannel.cpp"/>
