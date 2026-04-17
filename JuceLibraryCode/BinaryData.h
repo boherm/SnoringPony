@@ -23,8 +23,11 @@ namespace BinaryData
     extern const char*   default_ponylayout;
     const int            default_ponylayoutSize = 3258;
 
+    extern const char*   go_cue_png;
+    const int            go_cue_pngSize = 4097;
+
     extern const char*   fade_cue_png;
-    const int            fade_cue_pngSize = 3977;
+    const int            fade_cue_pngSize = 3388;
 
     extern const char*   group_cue_png;
     const int            group_cue_pngSize = 2036;
@@ -39,7 +42,7 @@ namespace BinaryData
     const int            midi_interface_pngSize = 4238;
 
     extern const char*   mixer_interface_png;
-    const int            mixer_interface_pngSize = 4283;
+    const int            mixer_interface_pngSize = 3977;
 
     extern const char*   network_interface_png;
     const int            network_interface_pngSize = 2011;
@@ -60,7 +63,7 @@ namespace BinaryData
     const int            tray_icon_pngSize = 2548;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 17;
+    const int namedResourceListSize = 18;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];

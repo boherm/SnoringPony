@@ -14,6 +14,7 @@
       <FILE id="WhxZqQ" name="crash.png" compile="0" resource="1" file="resources/crash.png"/>
       <FILE id="PpOxIR" name="default.ponylayout" compile="0" resource="1"
             file="resources/default.ponylayout"/>
+      <FILE id="Dma1kB" name="go_cue.png" compile="0" resource="1" file="resources/go_cue.png"/>
       <FILE id="xWkqPV" name="fade_cue.png" compile="0" resource="1" file="resources/fade_cue.png"/>
       <FILE id="ZfdlKT" name="group_cue.png" compile="0" resource="1" file="resources/group_cue.png"/>
       <FILE id="LR50Nt" name="icon.png" compile="0" resource="1" file="resources/icon.png"/>
@@ -81,12 +82,48 @@
           <FILE id="YOOYkS" name="CueEditor.cpp" compile="1" resource="0" file="src/Cue/ui/CueEditor.cpp"/>
           <FILE id="cjtZkz" name="CueEditor.h" compile="0" resource="0" file="src/Cue/ui/CueEditor.h"/>
         </GROUP>
+        <GROUP id="{422C886B-829D-F205-7A7A-F8A63C40A5A6}" name="dca">
+          <GROUP id="{110FB668-8B6E-AAEE-BAA8-ACFE2B5CC316}" name="ui">
+            <FILE id="OudpB7" name="DCAAssignmentDialog.cpp" compile="1" resource="0"
+                  file="src/Cue/dca/ui/DCAAssignmentDialog.cpp"/>
+            <FILE id="AFOyhH" name="DCAAssignmentDialog.h" compile="0" resource="0"
+                  file="src/Cue/dca/ui/DCAAssignmentDialog.h"/>
+            <FILE id="im0zBx" name="DCAAssignmentEditor.cpp" compile="1" resource="0"
+                  file="src/Cue/dca/ui/DCAAssignmentEditor.cpp"/>
+            <FILE id="DppsCL" name="DCAAssignmentEditor.h" compile="0" resource="0"
+                  file="src/Cue/dca/ui/DCAAssignmentEditor.h"/>
+          </GROUP>
+          <FILE id="yyhLs1" name="CharacterRef.cpp" compile="1" resource="0"
+                file="src/Cue/dca/CharacterRef.cpp"/>
+          <FILE id="hO34bb" name="CharacterRef.h" compile="0" resource="0" file="src/Cue/dca/CharacterRef.h"/>
+          <FILE id="TKOevM" name="DCAAssignment.cpp" compile="1" resource="0"
+                file="src/Cue/dca/DCAAssignment.cpp"/>
+          <FILE id="xaxV84" name="DCAAssignment.h" compile="0" resource="0" file="src/Cue/dca/DCAAssignment.h"/>
+          <FILE id="Fo1LLn" name="DCACue.cpp" compile="1" resource="0" file="src/Cue/dca/DCACue.cpp"/>
+          <FILE id="lxKHco" name="DCACue.h" compile="0" resource="0" file="src/Cue/dca/DCACue.h"/>
+        </GROUP>
+        <GROUP id="{5033644A-F6A6-8505-A81B-2A023DBD29ED}" name="go">
+          <FILE id="BKQLmE" name="GoCue.cpp" compile="1" resource="0" file="src/Cue/go/GoCue.cpp"/>
+          <FILE id="vGcRza" name="GoCue.h" compile="0" resource="0" file="src/Cue/go/GoCue.h"/>
+        </GROUP>
         <FILE id="oAPlTB" name="Cue.cpp" compile="1" resource="0" file="src/Cue/Cue.cpp"/>
         <FILE id="fbA1vU" name="Cue.h" compile="0" resource="0" file="src/Cue/Cue.h"/>
         <FILE id="mlLRPB" name="CueManager.cpp" compile="1" resource="0" file="src/Cue/CueManager.cpp"/>
         <FILE id="cajy7m" name="CueManager.h" compile="0" resource="0" file="src/Cue/CueManager.h"/>
       </GROUP>
       <GROUP id="{A1CBA1D4-C593-3C3B-C209-A3456A62F1DE}" name="Cuelist">
+        <GROUP id="{17036F61-6499-9F42-F448-FE1F5B29D362}" name="dca">
+          <GROUP id="{E57E08A7-F14C-B8ED-E492-E1190A63D23E}" name="ui">
+            <FILE id="ipJDLJ" name="DCAMixingCuelistEditor.cpp" compile="1" resource="0"
+                  file="src/Cuelist/dca/ui/DCAMixingCuelistEditor.cpp"/>
+            <FILE id="jnAM6b" name="DCAMixingCuelistEditor.h" compile="0" resource="0"
+                  file="src/Cuelist/dca/ui/DCAMixingCuelistEditor.h"/>
+          </GROUP>
+          <FILE id="gYIvQ2" name="DCAMixingCuelist.cpp" compile="1" resource="0"
+                file="src/Cuelist/dca/DCAMixingCuelist.cpp"/>
+          <FILE id="URg9hD" name="DCAMixingCuelist.h" compile="0" resource="0"
+                file="src/Cuelist/dca/DCAMixingCuelist.h"/>
+        </GROUP>
         <GROUP id="{F3CC0BC2-FFB2-A43E-E5AA-07341BABD1CF}" name="ui">
           <FILE id="VdMVii" name="CuelistEditor.cpp" compile="1" resource="0"
                 file="src/Cuelist/ui/CuelistEditor.cpp"/>
@@ -134,6 +171,27 @@
         </GROUP>
       </GROUP>
       <GROUP id="{9F996CF1-A83D-C302-1119-B731310571F8}" name="Interface">
+        <GROUP id="{0C674538-CB23-3638-7097-BC1A32BE67FA}" name="action">
+          <FILE id="Joew6r" name="GoAction.cpp" compile="1" resource="0" file="src/Interface/action/GoAction.cpp"/>
+          <FILE id="Se5Wk0" name="GoAction.h" compile="0" resource="0" file="src/Interface/action/GoAction.h"/>
+          <FILE id="JTXtRS" name="MappingAction.cpp" compile="1" resource="0"
+                file="src/Interface/action/MappingAction.cpp"/>
+          <FILE id="Z5apR3" name="MappingAction.h" compile="0" resource="0" file="src/Interface/action/MappingAction.h"/>
+          <FILE id="uP6PkE" name="MappingActionFactory.cpp" compile="1" resource="0"
+                file="src/Interface/action/MappingActionFactory.cpp"/>
+          <FILE id="RPgdnZ" name="MappingActionFactory.h" compile="0" resource="0"
+                file="src/Interface/action/MappingActionFactory.h"/>
+          <FILE id="e6WULf" name="PanicAction.cpp" compile="1" resource="0" file="src/Interface/action/PanicAction.cpp"/>
+          <FILE id="NslAcI" name="PanicAction.h" compile="0" resource="0" file="src/Interface/action/PanicAction.h"/>
+          <FILE id="H6VYaT" name="SelectNextCueAction.cpp" compile="1" resource="0"
+                file="src/Interface/action/SelectNextCueAction.cpp"/>
+          <FILE id="UkzBPJ" name="SelectNextCueAction.h" compile="0" resource="0"
+                file="src/Interface/action/SelectNextCueAction.h"/>
+          <FILE id="iK0KpW" name="SelectPreviousCueAction.cpp" compile="1" resource="0"
+                file="src/Interface/action/SelectPreviousCueAction.cpp"/>
+          <FILE id="HEAkhY" name="SelectPreviousCueAction.h" compile="0" resource="0"
+                file="src/Interface/action/SelectPreviousCueAction.h"/>
+        </GROUP>
         <GROUP id="{A28FFC92-0B84-4D12-4A6B-18C2962903CA}" name="audio">
           <GROUP id="{B4C077E1-6C64-BD6E-B889-7B6A3E11DF46}" name="ui">
             <FILE id="O0a94E" name="AudioInterfaceHardwareEditor.cpp" compile="1"
@@ -155,13 +213,45 @@
         <GROUP id="{5EC76B7A-E8F9-2806-70BF-1F75BB336122}" name="midi">
           <FILE id="JPmpFq" name="MIDIInterface.cpp" compile="1" resource="0"
                 file="src/Interface/midi/MIDIInterface.cpp"/>
+          <FILE id="vVtAac" name="MIDIDevice.cpp" compile="1" resource="0" file="src/Interface/midi/MIDIDevice.cpp"/>
+          <FILE id="GkAF7y" name="MIDIDevice.h" compile="0" resource="0" file="src/Interface/midi/MIDIDevice.h"/>
           <FILE id="nvLph3" name="MIDIInterface.h" compile="0" resource="0" file="src/Interface/midi/MIDIInterface.h"/>
+          <FILE id="m7tVMa" name="MIDIManager.cpp" compile="1" resource="0" file="src/Interface/midi/MIDIManager.cpp"/>
+          <FILE id="etgnw8" name="MIDIManager.h" compile="0" resource="0" file="src/Interface/midi/MIDIManager.h"/>
+          <FILE id="VhXd1K" name="MIDIMapping.cpp" compile="1" resource="0" file="src/Interface/midi/MIDIMapping.cpp"/>
+          <FILE id="lEMkYk" name="MIDIMapping.h" compile="0" resource="0" file="src/Interface/midi/MIDIMapping.h"/>
         </GROUP>
         <GROUP id="{AF426437-FBAB-194E-56D2-9A20BD4CBD62}" name="mixer">
+          <GROUP id="{9B3A8471-C144-138B-466A-945FF95125DD}" name="wingosc">
+            <FILE id="xEbd2D" name="WingOscMixerSettings.cpp" compile="1" resource="0"
+                  file="src/Interface/mixer/wingosc/WingOscMixerSettings.cpp"/>
+            <FILE id="li6urO" name="WingOscMixerSettings.h" compile="0" resource="0"
+                  file="src/Interface/mixer/wingosc/WingOscMixerSettings.h"/>
+            <FILE id="HL8plN" name="WingOscProtocol.cpp" compile="1" resource="0"
+                  file="src/Interface/mixer/wingosc/WingOscProtocol.cpp"/>
+            <FILE id="Apsa7n" name="WingOscProtocol.h" compile="0" resource="0"
+                  file="src/Interface/mixer/wingosc/WingOscProtocol.h"/>
+          </GROUP>
+          <GROUP id="{B7456C94-73C1-389E-216B-D625FF712A67}" name="wingtcp">
+            <FILE id="JnKpmf" name="wapi.h" compile="0" resource="0" file="src/Interface/mixer/wingtcp/wapi.h"/>
+            <FILE id="XQ7SG0" name="wext.h" compile="0" resource="0" file="src/Interface/mixer/wingtcp/wext.h"/>
+            <FILE id="p1gYnM" name="WingTcpMixerSettings.cpp" compile="1" resource="0"
+                  file="src/Interface/mixer/wingtcp/WingTcpMixerSettings.cpp"/>
+            <FILE id="MWl3ge" name="WingTcpMixerSettings.h" compile="0" resource="0"
+                  file="src/Interface/mixer/wingtcp/WingTcpMixerSettings.h"/>
+          </GROUP>
+          <FILE id="W01kRa" name="Character.cpp" compile="1" resource="0" file="src/Interface/mixer/Character.cpp"/>
+          <FILE id="BhcaDw" name="Character.h" compile="0" resource="0" file="src/Interface/mixer/Character.h"/>
+          <FILE id="YyTVVH" name="MixerChannel.cpp" compile="1" resource="0"
+                file="src/Interface/mixer/MixerChannel.cpp"/>
+          <FILE id="OQjgTO" name="MixerChannel.h" compile="0" resource="0" file="src/Interface/mixer/MixerChannel.h"/>
+          <FILE id="qHF7eb" name="MixerFX.cpp" compile="1" resource="0" file="src/Interface/mixer/MixerFX.cpp"/>
+          <FILE id="X9yoyg" name="MixerFX.h" compile="0" resource="0" file="src/Interface/mixer/MixerFX.h"/>
           <FILE id="nIGXOu" name="MixerInterface.cpp" compile="1" resource="0"
                 file="src/Interface/mixer/MixerInterface.cpp"/>
           <FILE id="vx7LBa" name="MixerInterface.h" compile="0" resource="0"
                 file="src/Interface/mixer/MixerInterface.h"/>
+          <FILE id="KiZEVp" name="MixerSettings.h" compile="0" resource="0" file="src/Interface/mixer/MixerSettings.h"/>
         </GROUP>
         <GROUP id="{023D512E-62A3-4D02-81EE-EA28EB792660}" name="osc">
           <GROUP id="{E92C2E37-6E69-A0C3-665F-AA65A2E19D37}" name="ui">
@@ -289,11 +379,12 @@
   <EXPORTFORMATS>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile" extraDefs="LINK_PLATFORM_LINUX=1&#10;GDK_BACKEND=x11"
                 extraCompilerFlags="-Wno-multichar" extraLinkerFlags="-Wl,-rpath,&quot;lib&quot;&#10;-Wl,--as-needed&#10;-Wl,--export-dynamic&#10;-fvisibility=default"
-                externalLibraries="Servus&#10;curl" smallIcon="LR50Nt" bigIcon="LR50Nt">
+                externalLibraries="Servus&#10;curl&#10;wapi" smallIcon="LR50Nt"
+                bigIcon="LR50Nt">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="SnoringPony" libraryPath="../../external/servus/lib/linux&#10;/usr/lib/x86_64-linux-gnu/"
+        <CONFIGURATION isDebug="1" name="Debug" targetName="SnoringPony" libraryPath="../../external/servus/lib/linux&#10;/usr/lib/x86_64-linux-gnu/&#10;../../external/wapi/linux"
                        optimisation="3" linuxArchitecture="-m64"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="SnoringPony" libraryPath="../../external/servus/lib/linux&#10;/usr/lib/x86_64-linux-gnu/"
+        <CONFIGURATION isDebug="0" name="Release" targetName="SnoringPony" libraryPath="../../external/servus/lib/linux&#10;/usr/lib/x86_64-linux-gnu/&#10;../../external/wapi/linux"
                        optimisation="3" linuxArchitecture="-m64"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
@@ -318,11 +409,12 @@
     </LINUX_MAKE>
     <VS2022 targetFolder="Builds/VisualStudio2022_CI" extraDefs="LINK_PLATFORM_WINDOWS=1&#10;BLE_SUPPORT=0"
             extraCompilerFlags="/Zm1000 /bigobj" extraLinkerFlags="/HEAP:0x400000,0x10000"
-            externalLibraries="Servus.lib" smallIcon="LR50Nt" bigIcon="LR50Nt">
+            externalLibraries="Servus.lib&#10;libwapi.a" smallIcon="LR50Nt"
+            bigIcon="LR50Nt">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" winArchitecture="x64" libraryPath="../../external/servus/lib/win/x64/debug"
+        <CONFIGURATION isDebug="1" name="Debug" winArchitecture="x64" libraryPath="../../external/servus/lib/win/x64/debug&#10;../../external/wapi/win"
                        binaryPath="Binaries/CI"/>
-        <CONFIGURATION isDebug="0" name="Release" libraryPath="../../external/servus/lib/win/x64/release"
+        <CONFIGURATION isDebug="0" name="Release" libraryPath="../../external/servus/lib/win/x64/release&#10;../../external/wapi/win"
                        winArchitecture="x64" binaryPath="Binaries/CI"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
@@ -346,13 +438,13 @@
       </MODULEPATHS>
     </VS2022>
     <XCODE_MAC targetFolder="Builds/MacOSX" extraDefs="JUCE_SUPPORT_CARBON=0&#10;JUCE_COREGRAPHICS_DRAW_ASYNC=1&#10;LINK_PLATFORM_MACOSX=1"
-               externalLibraries="Servus" smallIcon="LR50Nt" bigIcon="LR50Nt"
+               externalLibraries="Servus&#10;wapi" smallIcon="LR50Nt" bigIcon="LR50Nt"
                documentExtensions="indy" xcodeValidArchs="arm64,x86_64" customPList="&lt;plist&gt;&#10;&lt;dict&gt;&#10;&lt;key&gt;NSAppTransportSecurity&lt;/key&gt;&#10;&#9;&lt;dict&gt;&#10;&#9;&#9;&lt;key&gt;NSAllowsArbitraryLoads&lt;/key&gt;&#10;&#9;&#9;&lt;true/&gt;&#10;&#9;&lt;/dict&gt;&#10;&lt;/dict&gt;&#10;&lt;/plist&gt;">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="SnoringPony" libraryPath="../../external/servus/lib/osx/debug"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="SnoringPony" libraryPath="../../external/servus/lib/osx/release"/>
-        <CONFIGURATION isDebug="1" name="DebugSilicon" targetName="SnoringPony" libraryPath="../../external/servus/lib/silicon/debug"/>
-        <CONFIGURATION isDebug="0" name="ReleaseSilicon" targetName="SnoringPony" libraryPath="../../external/servus/lib/silicon/release"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="SnoringPony" libraryPath="../../external/servus/lib/osx/debug&#10;../../external/wapi/osx"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="SnoringPony" libraryPath="../../external/servus/lib/osx/release&#10;../../external/wapi/osx"/>
+        <CONFIGURATION isDebug="1" name="DebugSilicon" targetName="SnoringPony" libraryPath="../../external/servus/lib/silicon/debug&#10;../../external/wapi/osx"/>
+        <CONFIGURATION isDebug="0" name="ReleaseSilicon" targetName="SnoringPony" libraryPath="../../external/servus/lib/silicon/release&#10;../../external/wapi/osx"/>
         <CONFIGURATION isDebug="0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
@@ -376,13 +468,13 @@
       </MODULEPATHS>
     </XCODE_MAC>
     <XCODE_MAC targetFolder="Builds/MacOSX_CI" extraDefs="JUCE_SUPPORT_CARBON=0&#10;JUCE_COREGRAPHICS_DRAW_ASYNC=1&#10;LINK_PLATFORM_MACOSX=1"
-               externalLibraries="Servus" smallIcon="LR50Nt" bigIcon="LR50Nt"
+               externalLibraries="Servus&#10;wapi" smallIcon="LR50Nt" bigIcon="LR50Nt"
                documentExtensions="indy" xcodeValidArchs="arm64,x86_64" customPList="&lt;plist&gt;&#10;&lt;dict&gt;&#10;&lt;key&gt;NSAppTransportSecurity&lt;/key&gt;&#10;&#9;&lt;dict&gt;&#10;&#9;&#9;&lt;key&gt;NSAllowsArbitraryLoads&lt;/key&gt;&#10;&#9;&#9;&lt;true/&gt;&#10;&#9;&lt;/dict&gt;&#10;&lt;/dict&gt;&#10;&lt;/plist&gt;"
                extraFrameworks="IOBluetooth, ForceFeedback, IOKit">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="0" name="Release" binaryPath="Release" libraryPath="../../external/servus/lib/osx/release"
+        <CONFIGURATION isDebug="0" name="Release" binaryPath="Release" libraryPath="../../external/servus/lib/osx/release&#10;../../external/wapi/osx"
                        macOSDeploymentTarget="10.10" osxCompatibility="10.10 SDK"/>
-        <CONFIGURATION isDebug="0" name="ReleaseSilicon" binaryPath="Release" libraryPath="../../external/servus/lib/silicon/release"
+        <CONFIGURATION isDebug="0" name="ReleaseSilicon" binaryPath="Release" libraryPath="../../external/servus/lib/silicon/release&#10;../../external/wapi/osx"
                        macOSDeploymentTarget="10.10" osxCompatibility="10.10 SDK"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
@@ -407,11 +499,12 @@
     </XCODE_MAC>
     <VS2022 targetFolder="Builds/VisualStudio2022_Win7CI" extraDefs="BLE_SUPPORT=0&#10;PING_SUPPORT=0&#10;OS_SYSINFO_SUPPORT=0"
             extraCompilerFlags="/Zm1000 /bigobj" extraLinkerFlags="/HEAP:0x400000,0x10000"
-            externalLibraries="Servus.lib" smallIcon="LR50Nt" bigIcon="LR50Nt">
+            externalLibraries="Servus.lib&#10;libwapi.a" smallIcon="LR50Nt"
+            bigIcon="LR50Nt">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" binaryPath="Binaries/CI" libraryPath="../../external/servus/lib/win/x64/debug"
+        <CONFIGURATION isDebug="1" name="Debug" binaryPath="Binaries/CI" libraryPath="../../external/servus/lib/win/x64/debug&#10;../../external/wapi/win"
                        winArchitecture="x64"/>
-        <CONFIGURATION isDebug="0" name="Release" binaryPath="Binaries/CI" libraryPath="../../external/servus/lib/win/x64/release"
+        <CONFIGURATION isDebug="0" name="Release" binaryPath="Binaries/CI" libraryPath="../../external/servus/lib/win/x64/release&#10;../../external/wapi/win"
                        winArchitecture="x64"/>
       </CONFIGURATIONS>
       <MODULEPATHS>

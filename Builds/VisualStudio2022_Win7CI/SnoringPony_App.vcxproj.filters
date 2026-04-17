@@ -29,8 +29,23 @@
     <Filter Include="SnoringPony\Source\Cue\ui">
       <UniqueIdentifier>{A33F64B7-148A-9A87-E435-EA1CB4CF18A2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SnoringPony\Source\Cue\dca\ui">
+      <UniqueIdentifier>{42EB2A4D-8022-BCA6-21D0-E20592AB3974}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Cue\dca">
+      <UniqueIdentifier>{590C700F-D284-F0F8-7570-B8A372F05805}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Cue\go">
+      <UniqueIdentifier>{81130B15-1CE3-AB3F-E213-1DBBA6E5FDCD}</UniqueIdentifier>
+    </Filter>
     <Filter Include="SnoringPony\Source\Cue">
       <UniqueIdentifier>{1905EC52-9019-6EE7-5E81-B4EB086C2B7C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Cuelist\dca\ui">
+      <UniqueIdentifier>{187CD407-81CA-B6DE-1A69-4DE8FC1521EE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Cuelist\dca">
+      <UniqueIdentifier>{2BDA0FE8-5581-474E-1763-69D93A73AD69}</UniqueIdentifier>
     </Filter>
     <Filter Include="SnoringPony\Source\Cuelist\ui">
       <UniqueIdentifier>{5C035158-CBCB-F322-EB85-4E09FE8110C8}</UniqueIdentifier>
@@ -44,6 +59,9 @@
     <Filter Include="SnoringPony\Source\Deck">
       <UniqueIdentifier>{72EB24D3-D564-E4E3-2A66-30D0DF267D3B}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SnoringPony\Source\Interface\action">
+      <UniqueIdentifier>{F7DE9E17-D4D6-80B1-1A14-817055A3008D}</UniqueIdentifier>
+    </Filter>
     <Filter Include="SnoringPony\Source\Interface\audio\ui">
       <UniqueIdentifier>{B7338DCB-8D7C-2C8A-1FAE-C24C05DEA962}</UniqueIdentifier>
     </Filter>
@@ -52,6 +70,12 @@
     </Filter>
     <Filter Include="SnoringPony\Source\Interface\midi">
       <UniqueIdentifier>{6C9D08FA-276B-D99C-E11E-4084A6CBACB7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Interface\mixer\wingosc">
+      <UniqueIdentifier>{916D2EA2-37DE-7EBC-01ED-28E7879A887B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Interface\mixer\wingtcp">
+      <UniqueIdentifier>{B7C722D2-CBC0-6A57-4DAB-93187E581DC9}</UniqueIdentifier>
     </Filter>
     <Filter Include="SnoringPony\Source\Interface\mixer">
       <UniqueIdentifier>{FF1CAC50-0D2E-ADE5-39D1-76963CD94C73}</UniqueIdentifier>
@@ -1090,11 +1114,35 @@
     <ClCompile Include="..\..\src\Cue\ui\CueEditor.cpp">
       <Filter>SnoringPony\Source\Cue\ui</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Cue\dca\ui\DCAAssignmentDialog.cpp">
+      <Filter>SnoringPony\Source\Cue\dca\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cue\dca\ui\DCAAssignmentEditor.cpp">
+      <Filter>SnoringPony\Source\Cue\dca\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cue\dca\CharacterRef.cpp">
+      <Filter>SnoringPony\Source\Cue\dca</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cue\dca\DCAAssignment.cpp">
+      <Filter>SnoringPony\Source\Cue\dca</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cue\dca\DCACue.cpp">
+      <Filter>SnoringPony\Source\Cue\dca</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cue\go\GoCue.cpp">
+      <Filter>SnoringPony\Source\Cue\go</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Cue\Cue.cpp">
       <Filter>SnoringPony\Source\Cue</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Cue\CueManager.cpp">
       <Filter>SnoringPony\Source\Cue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cuelist\dca\ui\DCAMixingCuelistEditor.cpp">
+      <Filter>SnoringPony\Source\Cuelist\dca\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cuelist\dca\DCAMixingCuelist.cpp">
+      <Filter>SnoringPony\Source\Cuelist\dca</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Cuelist\ui\CuelistEditor.cpp">
       <Filter>SnoringPony\Source\Cuelist\ui</Filter>
@@ -1132,6 +1180,24 @@
     <ClCompile Include="..\..\src\Deck\ui\ReorderCuesWindow.cpp">
       <Filter>SnoringPony\Source\Deck\ui</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Interface\action\GoAction.cpp">
+      <Filter>SnoringPony\Source\Interface\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\action\MappingAction.cpp">
+      <Filter>SnoringPony\Source\Interface\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\action\MappingActionFactory.cpp">
+      <Filter>SnoringPony\Source\Interface\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\action\PanicAction.cpp">
+      <Filter>SnoringPony\Source\Interface\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\action\SelectNextCueAction.cpp">
+      <Filter>SnoringPony\Source\Interface\action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\action\SelectPreviousCueAction.cpp">
+      <Filter>SnoringPony\Source\Interface\action</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Interface\audio\ui\AudioInterfaceHardwareEditor.cpp">
       <Filter>SnoringPony\Source\Interface\audio\ui</Filter>
     </ClCompile>
@@ -1146,6 +1212,33 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Interface\midi\MIDIInterface.cpp">
       <Filter>SnoringPony\Source\Interface\midi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\midi\MIDIDevice.cpp">
+      <Filter>SnoringPony\Source\Interface\midi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\midi\MIDIManager.cpp">
+      <Filter>SnoringPony\Source\Interface\midi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\midi\MIDIMapping.cpp">
+      <Filter>SnoringPony\Source\Interface\midi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\mixer\wingosc\WingOscMixerSettings.cpp">
+      <Filter>SnoringPony\Source\Interface\mixer\wingosc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\mixer\wingosc\WingOscProtocol.cpp">
+      <Filter>SnoringPony\Source\Interface\mixer\wingosc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\mixer\wingtcp\WingTcpMixerSettings.cpp">
+      <Filter>SnoringPony\Source\Interface\mixer\wingtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\mixer\Character.cpp">
+      <Filter>SnoringPony\Source\Interface\mixer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\mixer\MixerChannel.cpp">
+      <Filter>SnoringPony\Source\Interface\mixer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\mixer\MixerFX.cpp">
+      <Filter>SnoringPony\Source\Interface\mixer</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Interface\mixer\MixerInterface.cpp">
       <Filter>SnoringPony\Source\Interface\mixer</Filter>
@@ -4623,11 +4716,35 @@
     <ClInclude Include="..\..\src\Cue\ui\CueEditor.h">
       <Filter>SnoringPony\Source\Cue\ui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Cue\dca\ui\DCAAssignmentDialog.h">
+      <Filter>SnoringPony\Source\Cue\dca\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cue\dca\ui\DCAAssignmentEditor.h">
+      <Filter>SnoringPony\Source\Cue\dca\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cue\dca\CharacterRef.h">
+      <Filter>SnoringPony\Source\Cue\dca</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cue\dca\DCAAssignment.h">
+      <Filter>SnoringPony\Source\Cue\dca</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cue\dca\DCACue.h">
+      <Filter>SnoringPony\Source\Cue\dca</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cue\go\GoCue.h">
+      <Filter>SnoringPony\Source\Cue\go</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Cue\Cue.h">
       <Filter>SnoringPony\Source\Cue</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Cue\CueManager.h">
       <Filter>SnoringPony\Source\Cue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cuelist\dca\ui\DCAMixingCuelistEditor.h">
+      <Filter>SnoringPony\Source\Cuelist\dca\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cuelist\dca\DCAMixingCuelist.h">
+      <Filter>SnoringPony\Source\Cuelist\dca</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Cuelist\ui\CuelistEditor.h">
       <Filter>SnoringPony\Source\Cuelist\ui</Filter>
@@ -4665,6 +4782,24 @@
     <ClInclude Include="..\..\src\Deck\ui\ReorderCuesWindow.h">
       <Filter>SnoringPony\Source\Deck\ui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Interface\action\GoAction.h">
+      <Filter>SnoringPony\Source\Interface\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\action\MappingAction.h">
+      <Filter>SnoringPony\Source\Interface\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\action\MappingActionFactory.h">
+      <Filter>SnoringPony\Source\Interface\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\action\PanicAction.h">
+      <Filter>SnoringPony\Source\Interface\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\action\SelectNextCueAction.h">
+      <Filter>SnoringPony\Source\Interface\action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\action\SelectPreviousCueAction.h">
+      <Filter>SnoringPony\Source\Interface\action</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Interface\audio\ui\AudioInterfaceHardwareEditor.h">
       <Filter>SnoringPony\Source\Interface\audio\ui</Filter>
     </ClInclude>
@@ -4677,10 +4812,46 @@
     <ClInclude Include="..\..\src\Interface\audio\AudioOutput.h">
       <Filter>SnoringPony\Source\Interface\audio</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Interface\midi\MIDIDevice.h">
+      <Filter>SnoringPony\Source\Interface\midi</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Interface\midi\MIDIInterface.h">
       <Filter>SnoringPony\Source\Interface\midi</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Interface\midi\MIDIManager.h">
+      <Filter>SnoringPony\Source\Interface\midi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\midi\MIDIMapping.h">
+      <Filter>SnoringPony\Source\Interface\midi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\mixer\wingosc\WingOscMixerSettings.h">
+      <Filter>SnoringPony\Source\Interface\mixer\wingosc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\mixer\wingosc\WingOscProtocol.h">
+      <Filter>SnoringPony\Source\Interface\mixer\wingosc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\mixer\wingtcp\wapi.h">
+      <Filter>SnoringPony\Source\Interface\mixer\wingtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\mixer\wingtcp\wext.h">
+      <Filter>SnoringPony\Source\Interface\mixer\wingtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\mixer\wingtcp\WingTcpMixerSettings.h">
+      <Filter>SnoringPony\Source\Interface\mixer\wingtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\mixer\Character.h">
+      <Filter>SnoringPony\Source\Interface\mixer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\mixer\MixerChannel.h">
+      <Filter>SnoringPony\Source\Interface\mixer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\mixer\MixerFX.h">
+      <Filter>SnoringPony\Source\Interface\mixer</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Interface\mixer\MixerInterface.h">
+      <Filter>SnoringPony\Source\Interface\mixer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\mixer\MixerSettings.h">
       <Filter>SnoringPony\Source\Interface\mixer</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Interface\osc\ui\OSCCommandArgumentsEditor.h">
@@ -11367,6 +11538,9 @@
       <Filter>SnoringPony\resources</Filter>
     </None>
     <None Include="..\..\resources\default.ponylayout">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
+    <None Include="..\..\resources\go_cue.png">
       <Filter>SnoringPony\resources</Filter>
     </None>
     <None Include="..\..\resources\fade_cue.png">

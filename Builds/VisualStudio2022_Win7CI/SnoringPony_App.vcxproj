@@ -47,12 +47,12 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\App\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">SnoringPony</TargetName>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(LibraryPath);../../external/servus/lib/win/x64/debug;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MDd</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(LibraryPath);../../external/servus/lib/win/x64/debug;../../external/wapi/win;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MDd</LibraryPath>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\..\..\Binaries\CI\App\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\App\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">SnoringPony</TargetName>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(LibraryPath);../../external/servus/lib/win/x64/release;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MD</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(LibraryPath);../../external/servus/lib/win/x64/release;../../external/wapi/win;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MD</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Midl>
@@ -90,9 +90,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(IntDir)\SnoringPony.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>../../external/servus/lib/win/x64/debug;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MDd;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../external/servus/lib/win/x64/debug;../../external/wapi/win;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MDd;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalDependencies>Servus.lib;libssl.lib;libcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Servus.lib;libwapi.a;libssl.lib;libcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/HEAP:0x400000,0x10000 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Bscmake>
@@ -100,8 +100,8 @@
       <OutputFile>$(IntDir)\SnoringPony.bsc</OutputFile>
     </Bscmake>
     <Lib>
-      <AdditionalDependencies>Servus.lib;libssl.lib;libcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../external/servus/lib/win/x64/debug;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MDd;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Servus.lib;libwapi.a;libssl.lib;libcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../external/servus/lib/win/x64/debug;../../external/wapi/win;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MDd;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -141,10 +141,10 @@
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <AdditionalLibraryDirectories>../../external/servus/lib/win/x64/release;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MD;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../external/servus/lib/win/x64/release;../../external/wapi/win;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MD;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <LargeAddressAware>true</LargeAddressAware>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-      <AdditionalDependencies>Servus.lib;libssl.lib;libcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Servus.lib;libwapi.a;libssl.lib;libcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/HEAP:0x400000,0x10000 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Bscmake>
@@ -152,8 +152,8 @@
       <OutputFile>$(IntDir)\SnoringPony.bsc</OutputFile>
     </Bscmake>
     <Lib>
-      <AdditionalDependencies>Servus.lib;libssl.lib;libcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../external/servus/lib/win/x64/release;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MD;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Servus.lib;libwapi.a;libssl.lib;libcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../external/servus/lib/win/x64/release;../../external/wapi/win;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MD;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -169,8 +169,16 @@
     <ClCompile Include="..\..\src\Cue\audio\AudioCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\audio\AudioFile.cpp"/>
     <ClCompile Include="..\..\src\Cue\ui\CueEditor.cpp"/>
+    <ClCompile Include="..\..\src\Cue\dca\ui\DCAAssignmentDialog.cpp"/>
+    <ClCompile Include="..\..\src\Cue\dca\ui\DCAAssignmentEditor.cpp"/>
+    <ClCompile Include="..\..\src\Cue\dca\CharacterRef.cpp"/>
+    <ClCompile Include="..\..\src\Cue\dca\DCAAssignment.cpp"/>
+    <ClCompile Include="..\..\src\Cue\dca\DCACue.cpp"/>
+    <ClCompile Include="..\..\src\Cue\go\GoCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\Cue.cpp"/>
     <ClCompile Include="..\..\src\Cue\CueManager.cpp"/>
+    <ClCompile Include="..\..\src\Cuelist\dca\ui\DCAMixingCuelistEditor.cpp"/>
+    <ClCompile Include="..\..\src\Cuelist\dca\DCAMixingCuelist.cpp"/>
     <ClCompile Include="..\..\src\Cuelist\ui\CuelistEditor.cpp"/>
     <ClCompile Include="..\..\src\Cuelist\ui\CuelistManagerItemUI.cpp"/>
     <ClCompile Include="..\..\src\Cuelist\ui\CuelistManagerUI.cpp"/>
@@ -183,11 +191,26 @@
     <ClCompile Include="..\..\src\Deck\ui\DeckViewHeaderUI.cpp"/>
     <ClCompile Include="..\..\src\Deck\ui\DeckViewUI.cpp"/>
     <ClCompile Include="..\..\src\Deck\ui\ReorderCuesWindow.cpp"/>
+    <ClCompile Include="..\..\src\Interface\action\GoAction.cpp"/>
+    <ClCompile Include="..\..\src\Interface\action\MappingAction.cpp"/>
+    <ClCompile Include="..\..\src\Interface\action\MappingActionFactory.cpp"/>
+    <ClCompile Include="..\..\src\Interface\action\PanicAction.cpp"/>
+    <ClCompile Include="..\..\src\Interface\action\SelectNextCueAction.cpp"/>
+    <ClCompile Include="..\..\src\Interface\action\SelectPreviousCueAction.cpp"/>
     <ClCompile Include="..\..\src\Interface\audio\ui\AudioInterfaceHardwareEditor.cpp"/>
     <ClCompile Include="..\..\src\Interface\audio\ui\AudioOutputEditor.cpp"/>
     <ClCompile Include="..\..\src\Interface\audio\AudioInterface.cpp"/>
     <ClCompile Include="..\..\src\Interface\audio\AudioOutput.cpp"/>
     <ClCompile Include="..\..\src\Interface\midi\MIDIInterface.cpp"/>
+    <ClCompile Include="..\..\src\Interface\midi\MIDIDevice.cpp"/>
+    <ClCompile Include="..\..\src\Interface\midi\MIDIManager.cpp"/>
+    <ClCompile Include="..\..\src\Interface\midi\MIDIMapping.cpp"/>
+    <ClCompile Include="..\..\src\Interface\mixer\wingosc\WingOscMixerSettings.cpp"/>
+    <ClCompile Include="..\..\src\Interface\mixer\wingosc\WingOscProtocol.cpp"/>
+    <ClCompile Include="..\..\src\Interface\mixer\wingtcp\WingTcpMixerSettings.cpp"/>
+    <ClCompile Include="..\..\src\Interface\mixer\Character.cpp"/>
+    <ClCompile Include="..\..\src\Interface\mixer\MixerChannel.cpp"/>
+    <ClCompile Include="..\..\src\Interface\mixer\MixerFX.cpp"/>
     <ClCompile Include="..\..\src\Interface\mixer\MixerInterface.cpp"/>
     <ClCompile Include="..\..\src\Interface\osc\ui\OSCCommandArgumentsEditor.cpp"/>
     <ClCompile Include="..\..\src\Interface\osc\ui\OSCCommandEditor.cpp"/>
@@ -3346,8 +3369,16 @@
     <ClInclude Include="..\..\src\Cue\audio\AudioCue.h"/>
     <ClInclude Include="..\..\src\Cue\audio\AudioFile.h"/>
     <ClInclude Include="..\..\src\Cue\ui\CueEditor.h"/>
+    <ClInclude Include="..\..\src\Cue\dca\ui\DCAAssignmentDialog.h"/>
+    <ClInclude Include="..\..\src\Cue\dca\ui\DCAAssignmentEditor.h"/>
+    <ClInclude Include="..\..\src\Cue\dca\CharacterRef.h"/>
+    <ClInclude Include="..\..\src\Cue\dca\DCAAssignment.h"/>
+    <ClInclude Include="..\..\src\Cue\dca\DCACue.h"/>
+    <ClInclude Include="..\..\src\Cue\go\GoCue.h"/>
     <ClInclude Include="..\..\src\Cue\Cue.h"/>
     <ClInclude Include="..\..\src\Cue\CueManager.h"/>
+    <ClInclude Include="..\..\src\Cuelist\dca\ui\DCAMixingCuelistEditor.h"/>
+    <ClInclude Include="..\..\src\Cuelist\dca\DCAMixingCuelist.h"/>
     <ClInclude Include="..\..\src\Cuelist\ui\CuelistEditor.h"/>
     <ClInclude Include="..\..\src\Cuelist\ui\CuelistManagerItemUI.h"/>
     <ClInclude Include="..\..\src\Cuelist\ui\CuelistManagerUI.h"/>
@@ -3360,12 +3391,30 @@
     <ClInclude Include="..\..\src\Deck\ui\DeckViewHeaderUI.h"/>
     <ClInclude Include="..\..\src\Deck\ui\DeckViewUI.h"/>
     <ClInclude Include="..\..\src\Deck\ui\ReorderCuesWindow.h"/>
+    <ClInclude Include="..\..\src\Interface\action\GoAction.h"/>
+    <ClInclude Include="..\..\src\Interface\action\MappingAction.h"/>
+    <ClInclude Include="..\..\src\Interface\action\MappingActionFactory.h"/>
+    <ClInclude Include="..\..\src\Interface\action\PanicAction.h"/>
+    <ClInclude Include="..\..\src\Interface\action\SelectNextCueAction.h"/>
+    <ClInclude Include="..\..\src\Interface\action\SelectPreviousCueAction.h"/>
     <ClInclude Include="..\..\src\Interface\audio\ui\AudioInterfaceHardwareEditor.h"/>
     <ClInclude Include="..\..\src\Interface\audio\ui\AudioOutputEditor.h"/>
     <ClInclude Include="..\..\src\Interface\audio\AudioInterface.h"/>
     <ClInclude Include="..\..\src\Interface\audio\AudioOutput.h"/>
+    <ClInclude Include="..\..\src\Interface\midi\MIDIDevice.h"/>
     <ClInclude Include="..\..\src\Interface\midi\MIDIInterface.h"/>
+    <ClInclude Include="..\..\src\Interface\midi\MIDIManager.h"/>
+    <ClInclude Include="..\..\src\Interface\midi\MIDIMapping.h"/>
+    <ClInclude Include="..\..\src\Interface\mixer\wingosc\WingOscMixerSettings.h"/>
+    <ClInclude Include="..\..\src\Interface\mixer\wingosc\WingOscProtocol.h"/>
+    <ClInclude Include="..\..\src\Interface\mixer\wingtcp\wapi.h"/>
+    <ClInclude Include="..\..\src\Interface\mixer\wingtcp\wext.h"/>
+    <ClInclude Include="..\..\src\Interface\mixer\wingtcp\WingTcpMixerSettings.h"/>
+    <ClInclude Include="..\..\src\Interface\mixer\Character.h"/>
+    <ClInclude Include="..\..\src\Interface\mixer\MixerChannel.h"/>
+    <ClInclude Include="..\..\src\Interface\mixer\MixerFX.h"/>
     <ClInclude Include="..\..\src\Interface\mixer\MixerInterface.h"/>
+    <ClInclude Include="..\..\src\Interface\mixer\MixerSettings.h"/>
     <ClInclude Include="..\..\src\Interface\osc\ui\OSCCommandArgumentsEditor.h"/>
     <ClInclude Include="..\..\src\Interface\osc\ui\OSCCommandEditor.h"/>
     <ClInclude Include="..\..\src\Interface\osc\ui\OSCInputEditor.h"/>
@@ -5596,6 +5645,7 @@
     <None Include="..\..\resources\audio_interface.png"/>
     <None Include="..\..\resources\crash.png"/>
     <None Include="..\..\resources\default.ponylayout"/>
+    <None Include="..\..\resources\go_cue.png"/>
     <None Include="..\..\resources\fade_cue.png"/>
     <None Include="..\..\resources\group_cue.png"/>
     <None Include="..\..\resources\icon.png"/>

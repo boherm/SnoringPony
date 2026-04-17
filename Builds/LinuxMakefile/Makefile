@@ -45,7 +45,7 @@ ifeq ($(CONFIG),Debug)
 
   JUCE_CFLAGS += $(JUCE_CPPFLAGS) $(TARGET_ARCH) -g -ggdb -O3 -Wno-multichar $(CFLAGS)
   JUCE_CXXFLAGS += $(JUCE_CFLAGS) -std=c++17 $(CXXFLAGS)
-  JUCE_LDFLAGS += $(TARGET_ARCH) -L$(JUCE_BINDIR) -L$(JUCE_LIBDIR) -L../../external/servus/lib/linux -L/usr/lib/x86_64-linux-gnu/ -L../../modules/juce_simpleweb/libs/Linux/x86_64 $(shell $(PKG_CONFIG) --libs alsa freetype2 gl libcurl) -fvisibility=hidden -Wl,-rpath,"lib" -Wl,--as-needed -Wl,--export-dynamic -fvisibility=default -lrt -ldl -lpthread -lssl -lcrypto -lServus -lcurl $(LDFLAGS)
+  JUCE_LDFLAGS += $(TARGET_ARCH) -L$(JUCE_BINDIR) -L$(JUCE_LIBDIR) -L../../external/servus/lib/linux -L/usr/lib/x86_64-linux-gnu/ -L../../external/wapi/linux -L../../modules/juce_simpleweb/libs/Linux/x86_64 $(shell $(PKG_CONFIG) --libs alsa freetype2 gl libcurl) -fvisibility=hidden -Wl,-rpath,"lib" -Wl,--as-needed -Wl,--export-dynamic -fvisibility=default -lrt -ldl -lpthread -lssl -lcrypto -lServus -lcurl -lwapi $(LDFLAGS)
 
   CLEANCMD = rm -rf $(JUCE_OUTDIR)/$(JUCE_TARGET_APP) $(JUCE_OBJDIR)
 endif
@@ -66,7 +66,7 @@ ifeq ($(CONFIG),Release)
 
   JUCE_CFLAGS += $(JUCE_CPPFLAGS) $(TARGET_ARCH) -O3 -Wno-multichar $(CFLAGS)
   JUCE_CXXFLAGS += $(JUCE_CFLAGS) -std=c++17 $(CXXFLAGS)
-  JUCE_LDFLAGS += $(TARGET_ARCH) -L$(JUCE_BINDIR) -L$(JUCE_LIBDIR) -L../../external/servus/lib/linux -L/usr/lib/x86_64-linux-gnu/ -L../../modules/juce_simpleweb/libs/Linux/x86_64 $(shell $(PKG_CONFIG) --libs alsa freetype2 gl libcurl) -fvisibility=hidden -Wl,-rpath,"lib" -Wl,--as-needed -Wl,--export-dynamic -fvisibility=default -lrt -ldl -lpthread -lssl -lcrypto -lServus -lcurl $(LDFLAGS)
+  JUCE_LDFLAGS += $(TARGET_ARCH) -L$(JUCE_BINDIR) -L$(JUCE_LIBDIR) -L../../external/servus/lib/linux -L/usr/lib/x86_64-linux-gnu/ -L../../external/wapi/linux -L../../modules/juce_simpleweb/libs/Linux/x86_64 $(shell $(PKG_CONFIG) --libs alsa freetype2 gl libcurl) -fvisibility=hidden -Wl,-rpath,"lib" -Wl,--as-needed -Wl,--export-dynamic -fvisibility=default -lrt -ldl -lpthread -lssl -lcrypto -lServus -lcurl -lwapi $(LDFLAGS)
 
   CLEANCMD = rm -rf $(JUCE_OUTDIR)/$(JUCE_TARGET_APP) $(JUCE_OBJDIR)
 endif
@@ -84,8 +84,16 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/AudioCue_6b8f1412.o \
   $(JUCE_OBJDIR)/AudioFile_d20cdec7.o \
   $(JUCE_OBJDIR)/CueEditor_6ade7941.o \
+  $(JUCE_OBJDIR)/DCAAssignmentDialog_62e17685.o \
+  $(JUCE_OBJDIR)/DCAAssignmentEditor_58ab002a.o \
+  $(JUCE_OBJDIR)/CharacterRef_390d4313.o \
+  $(JUCE_OBJDIR)/DCAAssignment_a075f530.o \
+  $(JUCE_OBJDIR)/DCACue_2d8b60fa.o \
+  $(JUCE_OBJDIR)/GoCue_f384cdc0.o \
   $(JUCE_OBJDIR)/Cue_4c4af201.o \
   $(JUCE_OBJDIR)/CueManager_4c7e6ef6.o \
+  $(JUCE_OBJDIR)/DCAMixingCuelistEditor_2970c9d0.o \
+  $(JUCE_OBJDIR)/DCAMixingCuelist_50adf7d4.o \
   $(JUCE_OBJDIR)/CuelistEditor_b29c701.o \
   $(JUCE_OBJDIR)/CuelistManagerItemUI_efa5716a.o \
   $(JUCE_OBJDIR)/CuelistManagerUI_4123bb77.o \
@@ -98,11 +106,26 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/DeckViewHeaderUI_ff918184.o \
   $(JUCE_OBJDIR)/DeckViewUI_e4afbb17.o \
   $(JUCE_OBJDIR)/ReorderCuesWindow_464109e0.o \
+  $(JUCE_OBJDIR)/GoAction_75b04dcb.o \
+  $(JUCE_OBJDIR)/MappingAction_5677e781.o \
+  $(JUCE_OBJDIR)/MappingActionFactory_2ba27453.o \
+  $(JUCE_OBJDIR)/PanicAction_2c2e03ea.o \
+  $(JUCE_OBJDIR)/SelectNextCueAction_16dbc2d7.o \
+  $(JUCE_OBJDIR)/SelectPreviousCueAction_ba949353.o \
   $(JUCE_OBJDIR)/AudioInterfaceHardwareEditor_d10a2fce.o \
   $(JUCE_OBJDIR)/AudioOutputEditor_dae63958.o \
   $(JUCE_OBJDIR)/AudioInterface_a266d812.o \
   $(JUCE_OBJDIR)/AudioOutput_1c8db912.o \
   $(JUCE_OBJDIR)/MIDIInterface_77dce880.o \
+  $(JUCE_OBJDIR)/MIDIDevice_de7e8239.o \
+  $(JUCE_OBJDIR)/MIDIManager_52484d74.o \
+  $(JUCE_OBJDIR)/MIDIMapping_98fde15.o \
+  $(JUCE_OBJDIR)/WingOscMixerSettings_bbefb8f.o \
+  $(JUCE_OBJDIR)/WingOscProtocol_319ae8ff.o \
+  $(JUCE_OBJDIR)/WingTcpMixerSettings_e9b7dc4b.o \
+  $(JUCE_OBJDIR)/Character_4db51f37.o \
+  $(JUCE_OBJDIR)/MixerChannel_ff00e9f6.o \
+  $(JUCE_OBJDIR)/MixerFX_b07eb3e9.o \
   $(JUCE_OBJDIR)/MixerInterface_4b8bd7ac.o \
   $(JUCE_OBJDIR)/OSCCommandArgumentsEditor_32cb47c2.o \
   $(JUCE_OBJDIR)/OSCCommandEditor_99163e38.o \
@@ -231,6 +254,36 @@ $(JUCE_OBJDIR)/CueEditor_6ade7941.o: ../../src/Cue/ui/CueEditor.cpp
 	@echo "Compiling CueEditor.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
+$(JUCE_OBJDIR)/DCAAssignmentDialog_62e17685.o: ../../src/Cue/dca/ui/DCAAssignmentDialog.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling DCAAssignmentDialog.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/DCAAssignmentEditor_58ab002a.o: ../../src/Cue/dca/ui/DCAAssignmentEditor.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling DCAAssignmentEditor.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/CharacterRef_390d4313.o: ../../src/Cue/dca/CharacterRef.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling CharacterRef.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/DCAAssignment_a075f530.o: ../../src/Cue/dca/DCAAssignment.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling DCAAssignment.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/DCACue_2d8b60fa.o: ../../src/Cue/dca/DCACue.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling DCACue.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/GoCue_f384cdc0.o: ../../src/Cue/go/GoCue.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling GoCue.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
 $(JUCE_OBJDIR)/Cue_4c4af201.o: ../../src/Cue/Cue.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling Cue.cpp"
@@ -239,6 +292,16 @@ $(JUCE_OBJDIR)/Cue_4c4af201.o: ../../src/Cue/Cue.cpp
 $(JUCE_OBJDIR)/CueManager_4c7e6ef6.o: ../../src/Cue/CueManager.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling CueManager.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/DCAMixingCuelistEditor_2970c9d0.o: ../../src/Cuelist/dca/ui/DCAMixingCuelistEditor.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling DCAMixingCuelistEditor.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/DCAMixingCuelist_50adf7d4.o: ../../src/Cuelist/dca/DCAMixingCuelist.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling DCAMixingCuelist.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/CuelistEditor_b29c701.o: ../../src/Cuelist/ui/CuelistEditor.cpp
@@ -301,6 +364,36 @@ $(JUCE_OBJDIR)/ReorderCuesWindow_464109e0.o: ../../src/Deck/ui/ReorderCuesWindow
 	@echo "Compiling ReorderCuesWindow.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
+$(JUCE_OBJDIR)/GoAction_75b04dcb.o: ../../src/Interface/action/GoAction.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling GoAction.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MappingAction_5677e781.o: ../../src/Interface/action/MappingAction.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MappingAction.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MappingActionFactory_2ba27453.o: ../../src/Interface/action/MappingActionFactory.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MappingActionFactory.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/PanicAction_2c2e03ea.o: ../../src/Interface/action/PanicAction.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling PanicAction.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/SelectNextCueAction_16dbc2d7.o: ../../src/Interface/action/SelectNextCueAction.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling SelectNextCueAction.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/SelectPreviousCueAction_ba949353.o: ../../src/Interface/action/SelectPreviousCueAction.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling SelectPreviousCueAction.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
 $(JUCE_OBJDIR)/AudioInterfaceHardwareEditor_d10a2fce.o: ../../src/Interface/audio/ui/AudioInterfaceHardwareEditor.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling AudioInterfaceHardwareEditor.cpp"
@@ -324,6 +417,51 @@ $(JUCE_OBJDIR)/AudioOutput_1c8db912.o: ../../src/Interface/audio/AudioOutput.cpp
 $(JUCE_OBJDIR)/MIDIInterface_77dce880.o: ../../src/Interface/midi/MIDIInterface.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling MIDIInterface.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MIDIDevice_de7e8239.o: ../../src/Interface/midi/MIDIDevice.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MIDIDevice.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MIDIManager_52484d74.o: ../../src/Interface/midi/MIDIManager.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MIDIManager.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MIDIMapping_98fde15.o: ../../src/Interface/midi/MIDIMapping.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MIDIMapping.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/WingOscMixerSettings_bbefb8f.o: ../../src/Interface/mixer/wingosc/WingOscMixerSettings.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling WingOscMixerSettings.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/WingOscProtocol_319ae8ff.o: ../../src/Interface/mixer/wingosc/WingOscProtocol.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling WingOscProtocol.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/WingTcpMixerSettings_e9b7dc4b.o: ../../src/Interface/mixer/wingtcp/WingTcpMixerSettings.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling WingTcpMixerSettings.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/Character_4db51f37.o: ../../src/Interface/mixer/Character.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling Character.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MixerChannel_ff00e9f6.o: ../../src/Interface/mixer/MixerChannel.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MixerChannel.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MixerFX_b07eb3e9.o: ../../src/Interface/mixer/MixerFX.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MixerFX.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/MixerInterface_4b8bd7ac.o: ../../src/Interface/mixer/MixerInterface.cpp
