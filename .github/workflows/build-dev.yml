@@ -77,7 +77,7 @@ jobs:
       - name: Upload to Scaleway Object Storage
         run: |
           scw object config get type=s3cmd > /home/runner/.s3cfg
-          s3cmd --no-mime-magic --guess-mime-type sync ./* s3://${{ secrets.SCW_DEV_S3 }}/
+          s3cmd --acl-public --no-mime-magic --guess-mime-type sync ./* s3://${{ secrets.SCW_DEV_S3 }}/
         env:
           SCW_ACCESS_KEY: ${{ secrets.SCW_DEV_ACCESS_KEY }}
           SCW_SECRET_KEY: ${{ secrets.SCW_DEV_SECRET_KEY }}
