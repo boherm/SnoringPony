@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="yG6FOt" name="SnoringPony" projectType="guiapp" jucerFormatVersion="1"
-              version="1.0.0b3" projectLineFeed="&#10;" companyName="boherm"
+              version="1.0.0b4" projectLineFeed="&#10;" companyName="boherm"
               companyCopyright="Boris Hermans" companyWebsite="https://snoringpony.app"
               companyEmail="dev@snoringpony.app" defines="VST_LOGGING=0" headerPath="../../src&#10;../../external/asio&#10;../../external/asiodriver&#10;../../external/servus/include"
               bundleIdentifier="boherm.SnoringPony">
