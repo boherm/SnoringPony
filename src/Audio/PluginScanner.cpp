@@ -11,43 +11,56 @@
 #include "PluginScanner.h"
 
 //==============================================================================
-// PluginSearchPath
+// PluginSearchPaths
 //==============================================================================
 
-PluginSearchPath::PluginSearchPath(var params) :
-    BaseItem("Search Path")
+PluginSearchPaths::PluginSearchPaths() :
+    ControllableContainer("Search Paths")
 {
-    userCanRemove = true;
-    path = addFileParameter("Path", "Plugin search directory");
-    path->directoryMode = true;
+    saveAndLoadRecursiveData = true;
+    userCanAddControllables = true;
+    userAddControllablesFilters.add(FileParameter::getTypeStringStatic());
+    customUserCreateControllableFunc = &PluginSearchPaths::createItem;
 }
 
-//==============================================================================
-// PluginSearchPathManager
-//==============================================================================
-
-PluginSearchPathManager::PluginSearchPathManager() :
-    BaseManager("Search Paths")
+void PluginSearchPaths::createItem(ControllableContainer* cc)
 {
-    selectItemWhenCreated = false;
+    FileParameter* fp = new FileParameter("Search Path", "Plugin search directory", "");
+    fp->directoryMode = true;
+    fp->userCanChangeName = true;
+    fp->isRemovableByUser = true;
+    fp->saveValueOnly = false;
+    cc->addControllable(fp);
 }
 
-PluginSearchPath* PluginSearchPathManager::createItem()
+void PluginSearchPaths::onControllableAdded(Controllable* c)
 {
-    return new PluginSearchPath();
+    if (auto* fp = dynamic_cast<FileParameter*>(c))
+    {
+        fp->userCanChangeName = true;
+        fp->directoryMode = true;
+    }
 }
 
-FileSearchPath PluginSearchPathManager::getSearchPaths() const
+FileSearchPath PluginSearchPaths::getSearchPaths() const
 {
     FileSearchPath paths;
 
-    for (auto* item : items)
+    for (auto* c : controllables)
     {
-        File f = item->path->getFile();
-        if (f.isDirectory())
-            paths.add(f);
-    }
+        if (auto* fp = dynamic_cast<FileParameter*>(c))
+        {
+            String val = fp->stringValue();
+            if (val.isEmpty()) continue;
 
+            File f = fp->getFile();
+            if (!f.isDirectory())
+                f = File(val);
+
+            if (f.isDirectory())
+                paths.add(f);
+        }
+    }
     return paths;
 }
 
@@ -58,8 +71,7 @@ FileSearchPath PluginSearchPathManager::getSearchPaths() const
 juce_ImplementSingleton(PluginScanner)
 
 PluginScanner::PluginScanner() :
-    ControllableContainer("Plugin Scanner"),
-    Thread("Plugin Scanner Thread")
+    ControllableContainer("Plugin Scanner")
 {
     formatManager.addDefaultFormats();
 
@@ -73,7 +85,7 @@ PluginScanner::PluginScanner() :
 
 PluginScanner::~PluginScanner()
 {
-    stopThread(5000);
+    stopTimer();
     savePluginList();
     clearSingletonInstance();
 }
@@ -108,68 +120,82 @@ void PluginScanner::savePluginList()
 
 void PluginScanner::startScan()
 {
-    if (isThreadRunning())
+    if (isTimerRunning())
         return;
 
+    knownPluginList.clear();
     pluginsFound = 0;
     currentPluginBeingScanned = "Starting...";
+    cancelled = false;
+    currentFormatIndex = 0;
+    activeScanner.reset();
 
-    MessageManager::callAsync([this]()
-    {
-        scanWindow = std::make_unique<PluginScanWindow>(this);
-    });
-
-    startThread();
+    scanWindow = std::make_unique<PluginScanWindow>(this);
+    startTimer(50);
 }
 
-void PluginScanner::run()
+void PluginScanner::timerCallback()
 {
-    knownPluginList.clear();
-
-    for (auto* format : formatManager.getFormats())
+    if (cancelled)
     {
-        if (threadShouldExit())
-            break;
+        stopTimer();
+        activeScanner.reset();
+        savePluginList();
+        scanWindow.reset();
+        NLOG("Plugin Scanner", "Scan cancelled. " + String(knownPluginList.getNumTypes()) + " plugins found.");
+        return;
+    }
+
+    auto formats = formatManager.getFormats();
+
+    // Need a new scanner for the next format?
+    if (activeScanner == nullptr)
+    {
+        if (currentFormatIndex >= formats.size())
+        {
+            // All formats done
+            stopTimer();
+            activeScanner.reset();
+            savePluginList();
+            pluginsFound = knownPluginList.getNumTypes();
+
+            scanWindow.reset();
+            NLOG("Plugin Scanner", String(pluginsFound) + " plugins found.");
+            return;
+        }
+
+        auto* format = formats[currentFormatIndex];
 
         FileSearchPath paths = searchPaths.getSearchPaths();
-
         auto defaultLocations = format->getDefaultLocationsToSearch();
         for (int i = 0; i < defaultLocations.getNumPaths(); i++)
             paths.addIfNotAlreadyThere(defaultLocations[i]);
 
-        PluginDirectoryScanner scanner(
-            knownPluginList,
-            *format,
-            paths,
-            true,
-            File()
-        );
-
-        String pluginName;
-        while (scanner.scanNextFile(true, pluginName))
-        {
-            if (threadShouldExit())
-                break;
-
-            currentPluginBeingScanned = pluginName;
-            pluginsFound = knownPluginList.getNumTypes();
-        }
+        activeScanner = std::make_unique<PluginDirectoryScanner>(
+            knownPluginList, *format, paths, true, File());
     }
 
-    savePluginList();
-    pluginsFound = knownPluginList.getNumTypes();
-    currentPluginBeingScanned = "";
-
-    MessageManager::callAsync([this]()
+    // Scan one plugin
+    String pluginName;
+    if (activeScanner->scanNextFile(true, pluginName))
     {
-        scanWindow.reset();
-        NLOG("Plugin Scanner", String(knownPluginList.getNumTypes()) + " plugins found.");
-    });
+        currentPluginBeingScanned = pluginName;
+        pluginsFound = knownPluginList.getNumTypes();
+
+        if (scanWindow != nullptr)
+            scanWindow->updateStatus(pluginName, pluginsFound);
+    }
+    else
+    {
+        // This format is done, move to the next
+        activeScanner.reset();
+        currentFormatIndex++;
+    }
 }
 
 void PluginScanner::showPluginMenu(std::function<void(PluginDescription)> callback)
 {
-    if (knownPluginList.getNumTypes() == 0 && !isThreadRunning())
+    if (knownPluginList.getNumTypes() == 0 && !isTimerRunning())
     {
         startScan();
         return;
@@ -239,29 +265,19 @@ PluginScanWindow::PluginScanWindow(PluginScanner* scanner) :
     centreWithSize(getWidth(), getHeight());
     setVisible(true);
     setAlwaysOnTop(true);
-
-    startTimerHz(10);
 }
 
 PluginScanWindow::~PluginScanWindow()
 {
-    stopTimer();
 }
 
 void PluginScanWindow::closeButtonPressed()
 {
-    scanner->signalThreadShouldExit();
+    scanner->cancelled = true;
 }
 
-void PluginScanWindow::timerCallback()
+void PluginScanWindow::updateStatus(const String& pluginName, int found)
 {
-    String pluginName = scanner->currentPluginBeingScanned;
-    int found = scanner->pluginsFound;
-
-    if (pluginName.isNotEmpty())
-        statusLabel.setText("Scanning: " + pluginName + " (" + String(found) + " found)", dontSendNotification);
-    else
-        statusLabel.setText("Finishing... (" + String(found) + " found)", dontSendNotification);
-
-    progress = -1.0; // indeterminate
+    statusLabel.setText("Scanning: " + pluginName + " (" + String(found) + " found)", dontSendNotification);
+    progress = -1.0;
 }

@@ -12,27 +12,16 @@
 
 #include "../MainIncludes.h"
 
-class PluginSearchPath :
-    public BaseItem
+class PluginSearchPaths :
+    public ControllableContainer
 {
 public:
-    PluginSearchPath(var params = var());
-    virtual ~PluginSearchPath() {}
+    PluginSearchPaths();
+    ~PluginSearchPaths() {}
 
-    FileParameter* path;
+    static void createItem(ControllableContainer* cc);
+    void onControllableAdded(Controllable* c) override;
 
-    String getTypeString() const override { return "PluginSearchPath"; }
-    static PluginSearchPath* create(var params) { return new PluginSearchPath(params); }
-};
-
-class PluginSearchPathManager :
-    public BaseManager<PluginSearchPath>
-{
-public:
-    PluginSearchPathManager();
-    virtual ~PluginSearchPathManager() {}
-
-    PluginSearchPath* createItem() override;
     FileSearchPath getSearchPaths() const;
 };
 
@@ -40,9 +29,11 @@ public:
 
 class PluginScanWindow;
 
+class PluginScanWindow;
+
 class PluginScanner :
     public ControllableContainer,
-    public Thread
+    public Timer
 {
 public:
     juce_DeclareSingleton(PluginScanner, true)
@@ -53,11 +44,11 @@ public:
     AudioPluginFormatManager formatManager;
     KnownPluginList knownPluginList;
 
-    PluginSearchPathManager searchPaths;
+    PluginSearchPaths searchPaths;
     Trigger* scanBtn;
 
     void startScan();
-    void run() override;
+    void timerCallback() override;
 
     void savePluginList();
     void loadPluginList();
@@ -71,20 +62,23 @@ public:
     std::unique_ptr<PluginScanWindow> scanWindow;
     String currentPluginBeingScanned;
     int pluginsFound = 0;
+    bool cancelled = false;
 
 private:
+    std::unique_ptr<PluginDirectoryScanner> activeScanner;
+    int currentFormatIndex = 0;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginScanner)
 };
 
-class PluginScanWindow : public DocumentWindow, public Timer
+class PluginScanWindow : public DocumentWindow
 {
 public:
     PluginScanWindow(PluginScanner* scanner);
     ~PluginScanWindow();
 
     void closeButtonPressed() override;
-    void timerCallback() override;
+    void updateStatus(const String& pluginName, int found);
 
 private:
     PluginScanner* scanner;
