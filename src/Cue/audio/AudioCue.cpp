@@ -15,6 +15,7 @@
 #include "../../Cuelist/Cuelist.h"
 #include "../../Audio/AudioPlayer.h"
 #include "../../Audio/PluginSlot.h"
+#include "../../Interface/audio/AudioOutput.h"
 
 AudioCue::AudioCue(var params)
 {
@@ -40,13 +41,13 @@ AudioCue::AudioCue(var params)
     audioSlicer->addChildControllableContainer(waveformSlicer.get());
     audioSlicer->addChildControllableContainer(slicesManager.get());
 
-    filesManager = new AudioFilesManager(this);
-    filesManager->addAsyncContainerListener(this);
-    addChildControllableContainer(filesManager);
-
     pluginChainManager = new PluginChainManager();
     pluginChainManager->editorIsCollapsed = true;
     pluginChainManager->addAsyncContainerListener(this);
+
+    filesManager = new AudioFilesManager(this);
+    filesManager->addAsyncContainerListener(this);
+    addChildControllableContainer(filesManager);
     addChildControllableContainer(pluginChainManager);
 
     showWarningInUI = true;
@@ -72,6 +73,35 @@ AudioCue::~AudioCue()
     delete pluginChainManager;
 }
 
+void AudioCue::updateWarnings()
+{
+    StringArray warnings;
+
+    for (auto& af : filesManager->items)
+    {
+        File f = af->audioFile->getFile();
+        if (f == File() || !f.existsAsFile())
+            warnings.add("Missing audio file: " + af->niceName);
+
+        AudioOutput* out = af->targetAudioInterface->getTargetContainerAs<AudioOutput>();
+        if (out == nullptr)
+            warnings.add("No audio output: " + af->niceName);
+    }
+
+    if (pluginChainManager->hasPluginWarnings())
+        warnings.add(pluginChainManager->getPluginWarningMessage());
+
+    if (warnings.isEmpty())
+        clearWarning();
+    else
+        setWarningMessage(warnings.joinIntoString("\n"));
+}
+
+bool AudioCue::canBePlayed()
+{
+    return Cue::canBePlayed() && getWarningMessage().isEmpty();
+}
+
 void AudioCue::newMessage(const ContainerAsyncEvent& e)
 {
     if (
@@ -95,13 +125,8 @@ void AudioCue::newMessage(const ContainerAsyncEvent& e)
         duration->setValue(slicesManager->getTotalDuration());
     }
 
-    if (e.source == pluginChainManager)
-    {
-        if (pluginChainManager->hasPluginWarnings())
-            setWarningMessage(pluginChainManager->getPluginWarningMessage());
-        else
-            clearWarning();
-    }
+    if (e.source == filesManager || e.source == pluginChainManager)
+        updateWarnings();
 }
 
 void AudioCue::playInternal()

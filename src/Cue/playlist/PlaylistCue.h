@@ -67,6 +67,9 @@ public:
 
     void loadJSONDataItemInternal(juce::var data) override;
 
+    void updateWarnings();
+    bool canBePlayed() override;
+
     void playInternal() override;
     void stopInternal() override;
     void retriggerStop() override;

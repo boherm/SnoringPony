@@ -42,12 +42,22 @@ public:
 
     void itemAdded(Cue* c)
     {
+        c->addAsyncWarningTargetListener(this);
+        tableListBox.updateContent();
+        tableListBox.repaint();
+    }
+
+    void itemsAdded(Array<Cue*> items)
+    {
+        for (auto* c : items)
+            c->addAsyncWarningTargetListener(this);
         tableListBox.updateContent();
         tableListBox.repaint();
     }
 
 	void itemRemoved(Cue* c)
     {
+        c->removeAsyncWarningTargetListener(this);
         tableListBox.updateContent();
         tableListBox.repaint();
     }

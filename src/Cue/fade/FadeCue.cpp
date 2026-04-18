@@ -118,7 +118,9 @@ String FadeCue::autoDescriptionInternal()
 
     Cue* target = targetCue->getTargetContainerAs<Cue>();
 
-    if (target != nullptr) {
+    if (target == this) {
+        description += "(Self-reference!)";
+    } else if (target != nullptr) {
         description += target->niceName + " - " + target->getDescription();
     } else {
         description += "(No Target)";

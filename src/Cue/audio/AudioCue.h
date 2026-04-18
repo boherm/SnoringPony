@@ -49,6 +49,9 @@ public:
     void newMessage(const ContainerAsyncEvent& e) override;
     void changeListenerCallback(ChangeBroadcaster* source) override;
 
+    void updateWarnings();
+    bool canBePlayed() override;
+
     void playInternal() override;
     void previewInternal() override;
     bool canBePreviewed() override { return true; }

@@ -107,6 +107,10 @@ PlaylistCue::PlaylistCue(var params) :
 
     shuffle = addBoolParameter("Shuffle", "If enabled, the playlist will play items in random order.", false);
 
+    pluginChainManager = new PluginChainManager();
+    pluginChainManager->editorIsCollapsed = true;
+    pluginChainManager->addAsyncContainerListener(this);
+
     filesManager.reset(new BaseManager<PlaylistFile>("Playlist Files"));
     filesManager->addAsyncContainerListener(this);
 
@@ -114,10 +118,6 @@ PlaylistCue::PlaylistCue(var params) :
         filesManager->addItemFromData(var());
     }
     addChildControllableContainer(filesManager.get());
-
-    pluginChainManager = new PluginChainManager();
-    pluginChainManager->editorIsCollapsed = true;
-    pluginChainManager->addAsyncContainerListener(this);
     addChildControllableContainer(pluginChainManager);
 
     showWarningInUI = true;
@@ -139,6 +139,7 @@ void PlaylistCue::loadJSONDataItemInternal(juce::var data)
     refreshGlobalDuration();
     refreshAudioOutput();
     refreshVolume();
+    updateWarnings();
 }
 
 void PlaylistCue::playInternal()
@@ -273,6 +274,7 @@ void PlaylistCue::parameterValueChanged(Parameter* p)
     if (p == outputTarget)
     {
         refreshAudioOutput();
+        updateWarnings();
     }
 
     if (p == volume)
@@ -289,18 +291,47 @@ void PlaylistCue::parameterControlModeChanged(Parameter* p)
     }
 }
 
+void PlaylistCue::updateWarnings()
+{
+    StringArray warnings;
+
+    AudioOutput* out = outputTarget->getTargetContainerAs<AudioOutput>();
+    if (out == nullptr)
+        warnings.add("No audio output selected");
+
+    bool hasFiles = false;
+    for (auto& pf : filesManager->items)
+    {
+        File f = pf->audioFile->getFile();
+        if (f == File() || !f.existsAsFile())
+            warnings.add("Missing audio file: " + pf->niceName);
+        else
+            hasFiles = true;
+    }
+    if (!hasFiles)
+        warnings.add("No audio files in playlist");
+
+    if (pluginChainManager->hasPluginWarnings())
+        warnings.add(pluginChainManager->getPluginWarningMessage());
+
+    if (warnings.isEmpty())
+        clearWarning();
+    else
+        setWarningMessage(warnings.joinIntoString("\n"));
+}
+
+bool PlaylistCue::canBePlayed()
+{
+    return Cue::canBePlayed() && getWarningMessage().isEmpty();
+}
+
 void PlaylistCue::newMessage(const ContainerAsyncEvent& e)
 {
     if (e.source == filesManager.get() && e.type == ContainerAsyncEvent::EventType::ControllableFeedbackUpdate && (e.targetControllable->niceName == "Duration" || e.targetControllable->niceName == "Enabled"))
         refreshGlobalDuration();
 
-    if (e.source == pluginChainManager)
-    {
-        if (pluginChainManager->hasPluginWarnings())
-            setWarningMessage(pluginChainManager->getPluginWarningMessage());
-        else
-            clearWarning();
-    }
+    if (e.source == filesManager.get() || e.source == pluginChainManager)
+        updateWarnings();
 }
 
 void PlaylistCue::timerCallback()

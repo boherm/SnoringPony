@@ -89,11 +89,17 @@ CuesTableUI::CuesTableUI(Cuelist* cl)
     cl->cues->addAsyncContainerListener(this);
     cl->cues->addAsyncWarningTargetListener(this);
 
+    for (auto* c : cl->cues->items)
+        c->addAsyncWarningTargetListener(this);
+
     resized();
 }
 
 CuesTableUI::~CuesTableUI()
 {
+    for (auto* c : cl->cues->items)
+        c->removeAsyncWarningTargetListener(this);
+
     cl->cues->removeAsyncContainerListener(this);
     cl->cues->removeBaseManagerListener(this);
     cl->cues->removeAsyncWarningTargetListener(this);

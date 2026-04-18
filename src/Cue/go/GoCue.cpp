@@ -92,6 +92,8 @@ String GoCue::autoDescriptionInternal()
     ControllableContainer* container = targetCue->getTargetContainer();
     if (auto* target = dynamic_cast<Cue*>(container))
     {
+        if (target == this)
+            return "Go Cue (self-reference!)";
         String cuelistName = target->parentCuelist != nullptr ? target->parentCuelist->niceName : String("?");
         return "GO " + cuelistName + " / " + target->id->stringValue() + " - " + target->getDescription();
     }
