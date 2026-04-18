@@ -55,9 +55,14 @@ WingTcpMixerSettings::WingTcpMixerSettings() : MixerSettings("Mixer Settings")
 
 WingTcpMixerSettings::~WingTcpMixerSettings()
 {
-    disconnect();
     if (connectThread != nullptr)
-        connectThread->stopThread(5000);
+    {
+        connectThread->signalThreadShouldExit();
+        if (!connectThread->waitForThreadToExit(1000))
+            connectThread->stopThread(500);
+        connectThread.reset();
+    }
+    disconnect();
 }
 
 void WingTcpMixerSettings::connect()
@@ -94,8 +99,17 @@ void WingTcpMixerSettings::ConnectThread::run()
     owner.connected = success;
     owner.connecting.store(false);
 
+    if (threadShouldExit())
+    {
+        if (success) wClose();
+        return;
+    }
+
     MessageManager::callAsync([&owner = this->owner, success]()
     {
+        if (Engine::mainEngine == nullptr || Engine::mainEngine->isClearing)
+            return;
+
         owner.connectedParam->setValue(success);
 
         if (success)
@@ -117,7 +131,11 @@ void WingTcpMixerSettings::disconnect()
 {
     autoReconnect = false;
     if (connectThread != nullptr)
-        connectThread->stopThread(5000);
+    {
+        connectThread->signalThreadShouldExit();
+        connectThread->stopThread(2000);
+        connectThread.reset();
+    }
     disconnectInternal();
 }
 

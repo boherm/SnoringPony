@@ -233,9 +233,29 @@ var PluginSlot::getJSONData(bool includeNonOverriden)
         if (descXml != nullptr)
             data.getDynamicObject()->setProperty("pluginDescription", descXml->toString());
 
+        // Force a silent processBlock to flush editor parameter changes
+        // Some VST3 plugins don't update getStateInformation until processBlock runs
+        {
+            int numCh = jmax(pluginInstance->getTotalNumInputChannels(),
+                             pluginInstance->getTotalNumOutputChannels(), 2);
+            AudioBuffer<float> silentBuffer(numCh, currentBlockSize);
+            silentBuffer.clear();
+            MidiBuffer emptyMidi;
+            pluginInstance->processBlock(silentBuffer, emptyMidi);
+        }
+
         MemoryBlock stateBlock;
         pluginInstance->getStateInformation(stateBlock);
         data.getDynamicObject()->setProperty("pluginState", stateBlock.toBase64Encoding());
+    }
+    else if (pluginDescription.name.isNotEmpty() && lastKnownState.getSize() > 0)
+    {
+        // Plugin not loaded (missing) — save the last known description and state
+        auto descXml = pluginDescription.createXml();
+        if (descXml != nullptr)
+            data.getDynamicObject()->setProperty("pluginDescription", descXml->toString());
+
+        data.getDynamicObject()->setProperty("pluginState", lastKnownState.toBase64Encoding());
     }
 
     return data;

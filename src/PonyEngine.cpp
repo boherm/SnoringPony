@@ -136,6 +136,9 @@ void PonyEngine::afterLoadFileInternal()
 
 void PonyEngine::clearInternal()
 {
+    // Stop any pending plugin loading before destroying cues
+    pluginLoader.reset();
+
 	//clear
     InterfaceManager::getInstance()->clear();
 	CuelistManager::getInstance()->clear();
