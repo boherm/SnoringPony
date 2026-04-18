@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(cmake --build build --target SnoringPony)",
+      "Bash(cmake --build build)",
+      "WebSearch"
     ]
   }
 }
