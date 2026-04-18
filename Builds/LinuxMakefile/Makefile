@@ -74,6 +74,7 @@ endif
 OBJECTS_APP := \
   $(JUCE_OBJDIR)/PluginSlotEditor_32f16d2a.o \
   $(JUCE_OBJDIR)/PluginScanner_94abfd7c.o \
+  $(JUCE_OBJDIR)/PluginSlot_8351168a.o \
   $(JUCE_OBJDIR)/AudioPlayer_a840e188.o \
   $(JUCE_OBJDIR)/FadeCue_b47c1b80.o \
   $(JUCE_OBJDIR)/OSCCueMessageEditor_79a451.o \
@@ -205,6 +206,11 @@ $(JUCE_OBJDIR)/PluginSlotEditor_32f16d2a.o: ../../src/Audio/ui/PluginSlotEditor.
 $(JUCE_OBJDIR)/PluginScanner_94abfd7c.o: ../../src/Audio/PluginScanner.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling PluginScanner.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/PluginSlot_8351168a.o: ../../src/Audio/PluginSlot.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling PluginSlot.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/AudioPlayer_a840e188.o: ../../src/Audio/AudioPlayer.cpp

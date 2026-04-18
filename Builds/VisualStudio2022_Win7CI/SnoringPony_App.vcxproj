@@ -159,6 +159,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\Audio\ui\PluginSlotEditor.cpp"/>
     <ClCompile Include="..\..\src\Audio\PluginScanner.cpp"/>
+    <ClCompile Include="..\..\src\Audio\PluginSlot.cpp"/>
     <ClCompile Include="..\..\src\Audio\AudioPlayer.cpp"/>
     <ClCompile Include="..\..\src\Cue\fade\FadeCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\osc\ui\OSCCueMessageEditor.cpp"/>

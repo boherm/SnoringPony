@@ -1087,7 +1087,7 @@
     <ClCompile Include="..\..\src\Audio\PluginScanner.cpp">
       <Filter>SnoringPony\Source\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Audio\PluginSlot.mm">
+    <ClCompile Include="..\..\src\Audio\PluginSlot.cpp">
       <Filter>SnoringPony\Source\Audio</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Audio\AudioPlayer.cpp">

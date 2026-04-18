@@ -52,7 +52,7 @@ void PluginSlot::loadPlugin(const PluginDescription& desc)
 
     pluginDescription = desc;
 
-    @try
+    try
     {
         String errorMessage;
         pluginInstance = PluginScanner::getInstance()->formatManager.createPluginInstance(
@@ -91,7 +91,7 @@ void PluginSlot::loadPlugin(const PluginDescription& desc)
             // lastKnownState is preserved for next attempt
         }
     }
-    @catch (...)
+    catch (...)
     {
         NLOGWARNING(niceName, "Plugin crashed during load: " + desc.name);
         pluginInstance.reset();
@@ -148,7 +148,7 @@ void PluginSlot::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midi)
     if (pluginChannels <= 0)
         return;
 
-    @try
+    try
     {
         if (buffer.getNumChannels() <= pluginChannels)
         {
@@ -165,7 +165,7 @@ void PluginSlot::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midi)
             pluginInstance->processBlock(subBuffer, midi);
         }
     }
-    @catch (...)
+    catch (...)
     {
         enabled->setValue(false);
         NLOGWARNING(niceName, "Plugin crashed during processing, disabled: " + pluginDescription.name);
@@ -183,14 +183,14 @@ void PluginSlot::showPluginEditor()
         return;
     }
 
-    @try
+    try
     {
         if (auto* editor = pluginInstance->createEditorIfNeeded())
         {
             editorWindow = std::make_unique<PluginEditorWindow>(this, editor);
         }
     }
-    @catch (...)
+    catch (...)
     {
         NLOGWARNING(niceName, "Plugin editor crashed: " + pluginDescription.name);
     }
