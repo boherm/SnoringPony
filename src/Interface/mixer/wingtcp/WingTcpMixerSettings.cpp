@@ -15,7 +15,7 @@
 
 WingTcpMixerSettings::WingTcpMixerSettings() : MixerSettings("Mixer Settings")
 {
-    remoteHost = addStringParameter("Remote Host", "IP address of the WING console", "192.168.1.10");
+    remoteHost = addStringParameter("Remote Host", "IP address of the WING console", "");
     remoteHost->autoTrim = true;
 
     remotePort = addIntParameter("Remote Port", "TCP port (wapi)", DEFAULT_TCP_PORT, 1, 65535);
@@ -47,6 +47,8 @@ WingTcpMixerSettings::WingTcpMixerSettings() : MixerSettings("Mixer Settings")
         DEFAULT_CLIP_HOLD_SEC, 0.5f, 30.0f);
     clipHoldTime->defaultUI = FloatParameter::TIME;
 
+    reconnectBtn = addTrigger("Reconnect", "Reconnect to the WING console");
+
     connectedParam = addBoolParameter("Connected", "Connection status", false);
     connectedParam->setControllableFeedbackOnly(true);
 }
@@ -54,34 +56,68 @@ WingTcpMixerSettings::WingTcpMixerSettings() : MixerSettings("Mixer Settings")
 WingTcpMixerSettings::~WingTcpMixerSettings()
 {
     disconnect();
+    if (connectThread != nullptr)
+        connectThread->stopThread(5000);
 }
 
 void WingTcpMixerSettings::connect()
 {
+    if (connecting.load())
+        return;
+
     disconnectInternal();
-
-    char ip[64];
-    remoteHost->stringValue().copyToUTF8(ip, sizeof(ip));
-
-    connected = (wOpen(ip) == WSUCCESS);
-    connectedParam->setValue(connected);
-
     autoReconnect = true;
 
-    if (connected)
+    if (connectThread != nullptr)
+        connectThread->stopThread(5000);
+
+    connectThread = std::make_unique<ConnectThread>(*this);
+    connectThread->startThread();
+}
+
+void WingTcpMixerSettings::ConnectThread::run()
+{
+    owner.connecting.store(true);
+
+    char ip[64];
+    owner.remoteHost->stringValue().copyToUTF8(ip, sizeof(ip));
+
+    bool success = (wOpen(ip) == WSUCCESS);
+
+    if (threadShouldExit())
     {
-        setupMeterSubscription();
-        startTimer(TICK_INTERVAL_MS);
+        if (success) wClose();
+        owner.connecting.store(false);
+        return;
     }
-    else
+
+    owner.connected = success;
+    owner.connecting.store(false);
+
+    MessageManager::callAsync([&owner = this->owner, success]()
     {
-        startTimer(RECONNECT_INTERVAL_MS);
-    }
+        owner.connectedParam->setValue(success);
+
+        if (success)
+        {
+            owner.setupMeterSubscription();
+            owner.startTimer(TICK_INTERVAL_MS);
+        }
+        else
+        {
+            owner.startTimer(RECONNECT_INTERVAL_MS);
+        }
+
+        if (owner.onConnectionResult)
+            owner.onConnectionResult(success);
+    });
 }
 
 void WingTcpMixerSettings::disconnect()
 {
     autoReconnect = false;
+    if (connectThread != nullptr)
+        connectThread->stopThread(5000);
     disconnectInternal();
 }
 
@@ -108,22 +144,15 @@ void WingTcpMixerSettings::timerCallback()
 {
     if (!connected)
     {
-        if (!autoReconnect) return;
+        if (!autoReconnect || connecting.load()) return;
 
         if (logOutgoing) logOutgoing("attempting reconnect...");
 
-        char ip[64];
-        remoteHost->stringValue().copyToUTF8(ip, sizeof(ip));
+        if (connectThread != nullptr)
+            connectThread->stopThread(5000);
 
-        connected = (wOpen(ip) == WSUCCESS);
-        connectedParam->setValue(connected);
-
-        if (connected)
-        {
-            if (logOutgoing) logOutgoing("reconnected");
-            setupMeterSubscription();
-            startTimer(TICK_INTERVAL_MS);
-        }
+        connectThread = std::make_unique<ConnectThread>(*this);
+        connectThread->startThread();
         return;
     }
 
@@ -147,6 +176,12 @@ void WingTcpMixerSettings::timerCallback()
     {
         if (wKeepAlive() != WSUCCESS) { handleWapiError(); return; }
     }
+}
+
+void WingTcpMixerSettings::onContainerTriggerTriggered(Trigger* t)
+{
+    if (t == reconnectBtn)
+        connect();
 }
 
 void WingTcpMixerSettings::onContainerParameterChanged(Parameter* p)

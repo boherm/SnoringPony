@@ -75,12 +75,21 @@ void MixerInterface::rebuildMixerSettings()
 void MixerInterface::attemptConnect()
 {
     if (mixerSettings == nullptr) return;
-    mixerSettings->connect();
 
-    if (mixerSettings->isConnected())
-        NLOG(niceName, "Connected");
-    else
-        NLOGWARNING(niceName, "Failed to connect");
+    mixerSettings->onConnectionResult = [this](bool success)
+    {
+        if (success)
+        {
+            NLOG(niceName, "Connected");
+            applyLoadBaseline();
+        }
+        else
+        {
+            NLOGWARNING(niceName, "Failed to connect");
+        }
+    };
+
+    mixerSettings->connect();
 }
 
 void MixerInterface::attemptDisconnect()
@@ -225,7 +234,6 @@ void MixerInterface::loadJSONDataInternal(var data)
 {
     Interface::loadJSONDataInternal(data);
     attemptConnect();
-    // After connect, push a clean baseline so the console reflects the loaded project.
-    // No-op if the connection failed (the settings subclass guards against that).
-    applyLoadBaseline();
+    // applyLoadBaseline() is now called from the onConnectionResult callback
+    // after the async connection succeeds.
 }

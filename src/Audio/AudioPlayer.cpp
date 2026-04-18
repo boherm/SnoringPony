@@ -9,6 +9,7 @@
 */
 
 #include "AudioPlayer.h"
+#include "PluginSlot.h"
 #include "../Interface/audio/AudioInterface.h"
 #include "../Interface/audio/AudioOutput.h"
 
@@ -65,14 +66,72 @@ void AudioPlayerMixer::resetFade()
     fadeStopAfterComplete = false;
 }
 
-void AudioPlayerMixer::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
+void AudioPlayerMixer::prepareToPlay(int samplesPerBlockExpected, double sr)
 {
-    MixerAudioSource::prepareToPlay(samplesPerBlockExpected, sampleRate);
+    MixerAudioSource::prepareToPlay(samplesPerBlockExpected, sr);
+    sampleRate = sr;
+    blockSize = samplesPerBlockExpected;
+
+    if (pluginChain != nullptr)
+    {
+        for (auto* slot : pluginChain->items)
+            slot->prepareToPlay(sr, samplesPerBlockExpected, numChannels);
+    }
 }
 
 void AudioPlayerMixer::getNextAudioBlock(const AudioSourceChannelInfo& info)
 {
     MixerAudioSource::getNextAudioBlock(info);
+
+    numChannels = info.buffer->getNumChannels();
+
+    if (pluginChain != nullptr && !pluginChain->items.isEmpty())
+    {
+        int bufChannels = info.buffer->getNumChannels();
+        int samples = info.numSamples;
+        int start = info.startSample;
+
+        // Find the max channel count any plugin needs
+        int maxChannels = bufChannels;
+        for (auto* slot : pluginChain->items)
+        {
+            if (slot->pluginInstance != nullptr && slot->enabled->boolValue())
+            {
+                maxChannels = jmax(maxChannels, slot->pluginInstance->getTotalNumInputChannels());
+                maxChannels = jmax(maxChannels, slot->pluginInstance->getTotalNumOutputChannels());
+            }
+        }
+
+        if (maxChannels > bufChannels)
+        {
+            // Need a wider buffer - copy our channels in, pad with silence
+            AudioBuffer<float> pluginBuffer(maxChannels, samples);
+            pluginBuffer.clear();
+            for (int ch = 0; ch < bufChannels; ++ch)
+                pluginBuffer.copyFrom(ch, 0, *info.buffer, ch, start, samples);
+
+            MidiBuffer emptyMidi;
+            for (auto* slot : pluginChain->items)
+                slot->processBlock(pluginBuffer, emptyMidi);
+
+            // Copy back to original buffer
+            for (int ch = 0; ch < bufChannels; ++ch)
+                info.buffer->copyFrom(ch, start, pluginBuffer, ch, 0, samples);
+        }
+        else
+        {
+            // Fast path: wrap existing buffer directly with offset pointers
+            float* channelPtrs[32];
+            for (int ch = 0; ch < bufChannels; ++ch)
+                channelPtrs[ch] = info.buffer->getWritePointer(ch) + start;
+
+            AudioBuffer<float> pluginBuffer(channelPtrs, bufChannels, samples);
+            MidiBuffer emptyMidi;
+
+            for (auto* slot : pluginChain->items)
+                slot->processBlock(pluginBuffer, emptyMidi);
+        }
+    }
 
     auto* buffer = info.buffer;
     auto start   = info.startSample;
@@ -249,4 +308,15 @@ void AudioPlayer::fadeIn(double duration)
 void AudioPlayer::fadeOut(double duration, bool stopAfterFade)
 {
     mixer->fadeOut(duration, stopAfterFade);
+}
+
+void AudioPlayerMixer::setPluginChain(PluginChainManager* chain)
+{
+    pluginChain = chain;
+
+    if (pluginChain != nullptr)
+    {
+        for (auto* slot : pluginChain->items)
+            slot->prepareToPlay(sampleRate, blockSize, numChannels);
+    }
 }

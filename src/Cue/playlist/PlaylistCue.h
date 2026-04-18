@@ -14,6 +14,8 @@
 #include "../Cue.h"
 #include "../../Audio/AudioPlayer.h"
 
+class PluginChainManager;
+
 class PlaylistFile :
     public BaseItem,
     public ChangeListener
@@ -57,6 +59,7 @@ public:
     BoolParameter* shuffle;
 
     std::unique_ptr<BaseManager<PlaylistFile>> filesManager;
+    PluginChainManager* pluginChainManager;
 
     String getTypeString() const override { return "Playlist Cue"; }
     String getCueType() const override { return "Playlist"; }

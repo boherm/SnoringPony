@@ -39,6 +39,7 @@ public:
     FloatParameter* clipThresholdDb;
     FloatParameter* clipHoldTime;
     BoolParameter* connectedParam;
+    Trigger* reconnectBtn;
 
     int getNumDCAs() const override { return numDCAs->intValue(); }
 
@@ -77,6 +78,7 @@ private:
     void handleWapiError();
 
     void onContainerParameterChanged(Parameter* p) override;
+    void onContainerTriggerTriggered(Trigger* t) override;
 
     // --- Meter / silence detection ---
     class MeterThread : public juce::Thread
@@ -118,9 +120,21 @@ private:
     static constexpr int COLOR_CHANNEL_OFF = COLOR_YELLOW;
 
     bool connected = false;
+    std::atomic<bool> connecting { false };
 
     // When true, the timer will keep retrying connect() if not connected.
     bool autoReconnect = false;
+
+    // Background connection thread
+    class ConnectThread : public juce::Thread
+    {
+    public:
+        ConnectThread(WingTcpMixerSettings& o) : juce::Thread("WingConnect"), owner(o) {}
+        void run() override;
+    private:
+        WingTcpMixerSettings& owner;
+    };
+    std::unique_ptr<ConnectThread> connectThread;
 
     // Timer cadence: connected = fast ticks (for blink). disconnected = slow (reconnect).
     static constexpr int TICK_INTERVAL_MS = 250;

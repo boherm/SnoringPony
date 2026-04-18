@@ -29,6 +29,9 @@ public:
     // outgoing data in a transport-agnostic way.
     std::function<void(const juce::String&)> logOutgoing;
 
+    // Called (on the message thread) after an async connection attempt completes.
+    std::function<void(bool success)> onConnectionResult;
+
     // --- Configuration ---
     virtual int getNumDCAs() const = 0;
 

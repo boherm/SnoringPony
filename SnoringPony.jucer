@@ -35,6 +35,17 @@
     </GROUP>
     <GROUP id="{72D7B173-FD6A-E831-8382-81700F33CF69}" name="Source">
       <GROUP id="{2F1BEF25-E0C5-02ED-FCBE-D290A55B2990}" name="Audio">
+        <GROUP id="{86010960-25CA-EA90-708B-085D01C35480}" name="ui">
+          <FILE id="IrLYD6" name="PluginSlotEditor.cpp" compile="1" resource="0"
+                file="src/Audio/ui/PluginSlotEditor.cpp"/>
+          <FILE id="ljLRVa" name="PluginSlotEditor.h" compile="0" resource="0"
+                file="src/Audio/ui/PluginSlotEditor.h"/>
+        </GROUP>
+        <FILE id="iPob8g" name="PluginScanner.cpp" compile="1" resource="0"
+              file="src/Audio/PluginScanner.cpp"/>
+        <FILE id="fUEiFo" name="PluginScanner.h" compile="0" resource="0" file="src/Audio/PluginScanner.h"/>
+        <FILE id="hfAGRf" name="PluginSlot.h" compile="0" resource="0" file="src/Audio/PluginSlot.h"/>
+        <FILE id="P4Fwyp" name="PluginSlot.mm" compile="1" resource="0" file="src/Audio/PluginSlot.mm"/>
         <FILE id="qGtloU" name="AudioPlayer.cpp" compile="1" resource="0" file="src/Audio/AudioPlayer.cpp"/>
         <FILE id="N0NRYb" name="AudioPlayer.h" compile="0" resource="0" file="src/Audio/AudioPlayer.h"/>
       </GROUP>
@@ -377,7 +388,8 @@
                JUCE_USE_WINDOWS_MEDIA_FORMAT="1" JUCE_FLOAT_COLOURS="1" JUCE_USE_WIN_WEBVIEW2="1"
                JUCE_ALLOW_SPECIAL_CHARS_IN_ADDRESS="1" JUCE_ENABLE_BROADCAST_BY_DEFAULT="1"
                JUCE_EXCLUSIVE_BINDING_BY_DEFAULT="1" JUCE_IP_AND_PORT_DETECTION="1"
-               ORGANICUI_USE_SERVUS="1" ORGANICUI_USE_WEBSERVER="1"/>
+               ORGANICUI_USE_SERVUS="1" ORGANICUI_USE_WEBSERVER="1" JUCE_PLUGINHOST_VST3="1"
+               JUCE_PLUGINHOST_AU="1"/>
   <EXPORTFORMATS>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile" extraDefs="LINK_PLATFORM_LINUX=1&#10;GDK_BACKEND=x11"
                 extraCompilerFlags="-Wno-multichar" extraLinkerFlags="-Wl,-rpath,&quot;lib&quot;&#10;-Wl,--as-needed&#10;-Wl,--export-dynamic&#10;-fvisibility=default"

@@ -14,6 +14,7 @@
 #include "AudioWaveformSlicer.h"
 #include "../../Cuelist/Cuelist.h"
 #include "../../Audio/AudioPlayer.h"
+#include "../../Audio/PluginSlot.h"
 
 AudioCue::AudioCue(var params)
 {
@@ -42,6 +43,13 @@ AudioCue::AudioCue(var params)
     filesManager = new AudioFilesManager(this);
     filesManager->addAsyncContainerListener(this);
     addChildControllableContainer(filesManager);
+
+    pluginChainManager = new PluginChainManager();
+    pluginChainManager->editorIsCollapsed = true;
+    pluginChainManager->addAsyncContainerListener(this);
+    addChildControllableContainer(pluginChainManager);
+
+    showWarningInUI = true;
     isFadable = true;
 
     if (filesManager->items.isEmpty()) {
@@ -54,10 +62,14 @@ AudioCue::AudioCue(var params)
 
 AudioCue::~AudioCue()
 {
+    pluginChainManager->removeAsyncContainerListener(this);
     slicesManager->removeAsyncContainerListener(this);
     filesManager->stopAll();
+    for (auto& audioFile : filesManager->items)
+        audioFile->player->mixer->setPluginChain(nullptr);
     filesManager->removeAsyncContainerListener(this);
     delete filesManager;
+    delete pluginChainManager;
 }
 
 void AudioCue::newMessage(const ContainerAsyncEvent& e)
@@ -82,6 +94,14 @@ void AudioCue::newMessage(const ContainerAsyncEvent& e)
     if (e.source == slicesManager.get()) {
         duration->setValue(slicesManager->getTotalDuration());
     }
+
+    if (e.source == pluginChainManager)
+    {
+        if (pluginChainManager->hasPluginWarnings())
+            setWarningMessage(pluginChainManager->getPluginWarningMessage());
+        else
+            clearWarning();
+    }
 }
 
 void AudioCue::playInternal()
@@ -93,6 +113,9 @@ void AudioCue::playInternal()
 
     askedToStop = false;
     slicesManager->resetSlices();
+
+    for (auto& audioFile : filesManager->items)
+        audioFile->player->mixer->setPluginChain(pluginChainManager);
 
     double fadeInTime = slicesManager->fadeInDuration->doubleValue();
     if (fadeInTime > 0.0)
@@ -117,6 +140,9 @@ void AudioCue::previewInternal()
         askedToStop = false;
         isPreviewing = true;
 
+        for (auto& audioFile : filesManager->items)
+            audioFile->player->mixer->setPluginChain(pluginChainManager);
+
         double fadeInTime = slicesManager->fadeInDuration->doubleValue();
         if (fadeInTime > 0.0)
         {
@@ -134,6 +160,8 @@ void AudioCue::previewInternal()
 void AudioCue::stopInternal()
 {
     filesManager->stopAll();
+    for (auto& audioFile : filesManager->items)
+        audioFile->player->mixer->setPluginChain(nullptr);
     slicesManager->resetSlices();
     askedToStop = true;
 }

@@ -17,6 +17,7 @@ class AudioFilesManager;
 class AudioOutput;
 class AudioSlicesManager;
 class AudioWaveformSlicer;
+class PluginChainManager;
 
 class AudioCue :
     public Cue,
@@ -33,6 +34,7 @@ public:
     std::unique_ptr<AudioSlicesManager> slicesManager;
 
     AudioFilesManager* filesManager;
+    PluginChainManager* pluginChainManager;
     AudioFormatManager formatManager;
 
     bool askedToStop = false;

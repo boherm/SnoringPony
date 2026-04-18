@@ -9,6 +9,7 @@
 */
 
 #include "PlaylistCue.h"
+#include "../../Audio/PluginSlot.h"
 #include "../../Cuelist/Cuelist.h"
 #include "../../Interface/InterfaceManager.h"
 #include "../../Interface/audio/AudioOutput.h"
@@ -113,12 +114,23 @@ PlaylistCue::PlaylistCue(var params) :
         filesManager->addItemFromData(var());
     }
     addChildControllableContainer(filesManager.get());
+
+    pluginChainManager = new PluginChainManager();
+    pluginChainManager->editorIsCollapsed = true;
+    pluginChainManager->addAsyncContainerListener(this);
+    addChildControllableContainer(pluginChainManager);
+
+    showWarningInUI = true;
 }
 
 PlaylistCue::~PlaylistCue()
 {
     stop();
+    for (auto& f : filesManager->items)
+        f->player->mixer->setPluginChain(nullptr);
+    pluginChainManager->removeAsyncContainerListener(this);
     filesManager->removeAsyncContainerListener(this);
+    delete pluginChainManager;
 }
 
 void PlaylistCue::loadJSONDataItemInternal(juce::var data)
@@ -145,6 +157,9 @@ void PlaylistCue::playInternal()
     }
     queuedNotifier.addMessage(new ContainerAsyncEvent(ContainerAsyncEvent::ControllableContainerNeedsRebuild, this));
 
+    for (auto& playlistFile : filesManager->items)
+        playlistFile->player->mixer->setPluginChain(pluginChainManager);
+
     currentOrderIndex = -1;
     generatePlaylistOrder();
     PlaylistFile* nextFile = getNextFileToPlay();
@@ -162,6 +177,7 @@ void PlaylistCue::stopInternal()
     for (auto& playlistFile : filesManager->items)
     {
         playlistFile->player->stopAndClean();
+        playlistFile->player->mixer->setPluginChain(nullptr);
     }
 }
 
@@ -277,6 +293,14 @@ void PlaylistCue::newMessage(const ContainerAsyncEvent& e)
 {
     if (e.source == filesManager.get() && e.type == ContainerAsyncEvent::EventType::ControllableFeedbackUpdate && (e.targetControllable->niceName == "Duration" || e.targetControllable->niceName == "Enabled"))
         refreshGlobalDuration();
+
+    if (e.source == pluginChainManager)
+    {
+        if (pluginChainManager->hasPluginWarnings())
+            setWarningMessage(pluginChainManager->getPluginWarningMessage());
+        else
+            clearWarning();
+    }
 }
 
 void PlaylistCue::timerCallback()

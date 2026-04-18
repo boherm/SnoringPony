@@ -12,7 +12,7 @@
 
 WingOscMixerSettings::WingOscMixerSettings() : MixerSettings("Mixer Settings")
 {
-    remoteHost = addStringParameter("Remote Host", "IP address of the mixing console", "192.168.1.10");
+    remoteHost = addStringParameter("Remote Host", "IP address of the mixing console", "");
     remoteHost->autoTrim = true;
 
     remotePort = addIntParameter("Remote Port", "OSC send port on the console",

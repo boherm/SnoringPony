@@ -65,7 +65,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\JuceLibraryCode;..\..\modules\juce\modules;..\..\modules;../../src;../../external/asio;../../external/asiodriver;../../external/servus/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\modules\juce\modules\juce_audio_processors\format_types\VST3_SDK;..\..\JuceLibraryCode;..\..\modules\juce\modules;..\..\modules;../../src;../../external/asio;../../external/asiodriver;../../external/servus/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;DEBUG;_DEBUG;VST_LOGGING=0;BLE_SUPPORT=0;PING_SUPPORT=0;OS_SYSINFO_SUPPORT=0;JUCER_VS2022_BA4A4C2=1;JUCE_APP_VERSION=1.0.0b3;JUCE_APP_VERSION_HEX=0x10000;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;JucePlugin_Build_Unity=0;JucePlugin_Build_LV2=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -80,7 +80,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>..\..\JuceLibraryCode;..\..\modules\juce\modules;..\..\modules;../../src;../../external/asio;../../external/asiodriver;../../external/servus/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\modules\juce\modules\juce_audio_processors\format_types\VST3_SDK;..\..\JuceLibraryCode;..\..\modules\juce\modules;..\..\modules;../../src;../../external/asio;../../external/asiodriver;../../external/servus/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;DEBUG;_DEBUG;VST_LOGGING=0;BLE_SUPPORT=0;PING_SUPPORT=0;OS_SYSINFO_SUPPORT=0;JUCER_VS2022_BA4A4C2=1;JUCE_APP_VERSION=1.0.0b3;JUCE_APP_VERSION_HEX=0x10000;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;JucePlugin_Build_Unity=0;JucePlugin_Build_LV2=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
@@ -114,7 +114,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Full</Optimization>
-      <AdditionalIncludeDirectories>..\..\JuceLibraryCode;..\..\modules\juce\modules;..\..\modules;../../src;../../external/asio;../../external/asiodriver;../../external/servus/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\modules\juce\modules\juce_audio_processors\format_types\VST3_SDK;..\..\JuceLibraryCode;..\..\modules\juce\modules;..\..\modules;../../src;../../external/asio;../../external/asiodriver;../../external/servus/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;NDEBUG;VST_LOGGING=0;BLE_SUPPORT=0;PING_SUPPORT=0;OS_SYSINFO_SUPPORT=0;JUCER_VS2022_BA4A4C2=1;JUCE_APP_VERSION=1.0.0b3;JUCE_APP_VERSION_HEX=0x10000;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;JucePlugin_Build_Unity=0;JucePlugin_Build_LV2=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -129,7 +129,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>..\..\JuceLibraryCode;..\..\modules\juce\modules;..\..\modules;../../src;../../external/asio;../../external/asiodriver;../../external/servus/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\modules\juce\modules\juce_audio_processors\format_types\VST3_SDK;..\..\JuceLibraryCode;..\..\modules\juce\modules;..\..\modules;../../src;../../external/asio;../../external/asiodriver;../../external/servus/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;NDEBUG;VST_LOGGING=0;BLE_SUPPORT=0;PING_SUPPORT=0;OS_SYSINFO_SUPPORT=0;JUCER_VS2022_BA4A4C2=1;JUCE_APP_VERSION=1.0.0b3;JUCE_APP_VERSION_HEX=0x10000;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;JucePlugin_Build_Unity=0;JucePlugin_Build_LV2=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
@@ -157,6 +157,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\Audio\ui\PluginSlotEditor.cpp"/>
+    <ClCompile Include="..\..\src\Audio\PluginScanner.cpp"/>
     <ClCompile Include="..\..\src\Audio\AudioPlayer.cpp"/>
     <ClCompile Include="..\..\src\Cue\fade\FadeCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\osc\ui\OSCCueMessageEditor.cpp"/>
@@ -3358,6 +3360,9 @@
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_simpleweb2.cpp"/>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\Audio\ui\PluginSlotEditor.h"/>
+    <ClInclude Include="..\..\src\Audio\PluginScanner.h"/>
+    <ClInclude Include="..\..\src\Audio\PluginSlot.h"/>
     <ClInclude Include="..\..\src\Audio\AudioPlayer.h"/>
     <ClInclude Include="..\..\src\Cue\fade\FadeCue.h"/>
     <ClInclude Include="..\..\src\Cue\osc\ui\OSCCueMessageEditor.h"/>

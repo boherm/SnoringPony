@@ -13,6 +13,7 @@
 #include "../MainIncludes.h"
 
 class AudioOutput;
+class PluginChainManager;
 
 class AudioPlayerMixer:
     public MixerAudioSource
@@ -22,6 +23,8 @@ public:
     bool isFading = false;
     bool fadeStopAfterComplete = false;
     double sampleRate = 44100.0;
+    int blockSize = 512;
+    int numChannels = 2;
     AudioTransportSource* transportSource = nullptr;
     LinearSmoothedValue<float> panicFadingGain { 1.0f };
     LinearSmoothedValue<float> fadingGain { 1.0f };
@@ -45,6 +48,9 @@ public:
     void fadeIn(double duration);
     void fadeOut(double duration, bool stopAfterFade = true);
     void resetFade();
+
+    PluginChainManager* pluginChain = nullptr;
+    void setPluginChain(PluginChainManager* chain);
 };
 
 class AudioPlayer

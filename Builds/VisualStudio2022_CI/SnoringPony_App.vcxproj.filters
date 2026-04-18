@@ -5,6 +5,9 @@
     <Filter Include="SnoringPony\resources">
       <UniqueIdentifier>{D7335BFF-FFB2-A690-CE1C-02AE67CCBEBC}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SnoringPony\Source\Audio\ui">
+      <UniqueIdentifier>{90C4786C-F389-E237-E25B-CAB76E401DCB}</UniqueIdentifier>
+    </Filter>
     <Filter Include="SnoringPony\Source\Audio">
       <UniqueIdentifier>{40BDC2EE-8555-16D5-D602-86BCF3AE99B5}</UniqueIdentifier>
     </Filter>
@@ -1078,6 +1081,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\Audio\ui\PluginSlotEditor.cpp">
+      <Filter>SnoringPony\Source\Audio\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Audio\PluginScanner.cpp">
+      <Filter>SnoringPony\Source\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Audio\PluginSlot.mm">
+      <Filter>SnoringPony\Source\Audio</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Audio\AudioPlayer.cpp">
       <Filter>SnoringPony\Source\Audio</Filter>
     </ClCompile>
@@ -4683,6 +4695,15 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\Audio\ui\PluginSlotEditor.h">
+      <Filter>SnoringPony\Source\Audio\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Audio\PluginScanner.h">
+      <Filter>SnoringPony\Source\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Audio\PluginSlot.h">
+      <Filter>SnoringPony\Source\Audio</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Audio\AudioPlayer.h">
       <Filter>SnoringPony\Source\Audio</Filter>
     </ClInclude>

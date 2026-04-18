@@ -16,6 +16,8 @@
 #include "ProjectSettings/ColorPresets.h"
 #include "ProjectSettings/VolumePresets.h"
 #include "ProjectSettings/DecksSettings.h"
+#include "Audio/PluginScanner.h"
+#include "Audio/PluginSlot.h"
 
 class PonyEngine : public Engine
 {
@@ -29,7 +31,10 @@ public:
     VolumePresets volumePresets;
     DecksSettings decksSettings;
 
+	std::unique_ptr<PluginLoader> pluginLoader;
+
 	void clearInternal() override;
+	void afterLoadFileInternal() override;
 
 	var getJSONData(bool includeNonOverriden = false) override;
 	void loadJSONDataInternalEngine(var data, ProgressTask * loadingTask) override;

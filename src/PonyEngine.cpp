@@ -8,6 +8,9 @@
   ==============================================================================
 */
 
+#include "Cue/audio/AudioCue.h"
+#include "Cue/playlist/PlaylistCue.h"
+#include "Cue/CueManager.h"
 #include "Cuelist/CuelistFactory.h"
 #include "Cuelist/CuelistManager.h"
 #include "Interface/action/MappingActionFactory.h"
@@ -39,6 +42,7 @@ PonyEngine::PonyEngine() :
 	//init here
 	Engine::mainEngine = this;
 	MIDIManager::getInstance(); // Init MIDI device tracking early
+	PluginScanner::getInstance(); // Init plugin scanner
 	addChildControllableContainer(CuelistManager::getInstance());
     addChildControllableContainer(InterfaceManager::getInstance());
     addChildControllableContainer(ShowControl::getInstance());
@@ -50,6 +54,7 @@ PonyEngine::PonyEngine() :
 	->getControllableContainerByName("manualOSCSend")->editorIsCollapsed = true;
 	GlobalSettings::getInstance()->getControllableContainerByName("launchArguments")->editorIsCollapsed = true;
     GlobalSettings::getInstance()->askBeforeRemovingItems->setValue(true);
+	GlobalSettings::getInstance()->addChildControllableContainer(PluginScanner::getInstance());
 
 	OSCRemoteControl::getInstance()->addRemoteControlListener(UserInputManager::getInstance());
 
@@ -78,6 +83,7 @@ PonyEngine::~PonyEngine()
 	isClearing = true;
 	OSCRemoteControl::getInstance()->removeRemoteControlListener(UserInputManager::getInstance());
 
+    PluginScanner::deleteInstance();
     InterfaceManager::deleteInstance();
     MIDIManager::deleteInstance();
     MappingActionFactory::deleteInstance();
@@ -92,6 +98,40 @@ PonyEngine::~PonyEngine()
     UserInputManager::deleteInstance();
 
     Brain::deleteInstance();
+}
+
+void PonyEngine::afterLoadFileInternal()
+{
+    Array<PluginSlot*> pendingSlots;
+
+    for (auto* cuelist : CuelistManager::getInstance()->items)
+    {
+        if (cuelist->cues == nullptr) continue;
+
+        for (auto* cue : cuelist->cues->items)
+        {
+            PluginChainManager* chain = nullptr;
+
+            if (auto* audioCue = dynamic_cast<AudioCue*>(cue))
+                chain = audioCue->pluginChainManager;
+            else if (auto* playlistCue = dynamic_cast<PlaylistCue*>(cue))
+                chain = playlistCue->pluginChainManager;
+
+            if (chain != nullptr)
+            {
+                for (auto* slot : chain->items)
+                {
+                    if (slot->hasPendingLoad())
+                        pendingSlots.add(slot);
+                }
+            }
+        }
+    }
+
+    if (!pendingSlots.isEmpty())
+    {
+        pluginLoader = std::make_unique<PluginLoader>(pendingSlots);
+    }
 }
 
 void PonyEngine::clearInternal()
