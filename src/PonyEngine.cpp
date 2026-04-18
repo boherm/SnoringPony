@@ -84,11 +84,10 @@ PonyEngine::~PonyEngine()
 	OSCRemoteControl::getInstance()->removeRemoteControlListener(UserInputManager::getInstance());
 
     PluginScanner::deleteInstance();
-    InterfaceManager::deleteInstance();
-    MIDIManager::deleteInstance();
-    MappingActionFactory::deleteInstance();
 	CuelistManager::deleteInstance();
     CuelistFactory::deleteInstance();
+    MIDIManager::deleteInstance();
+    MappingActionFactory::deleteInstance();
 
     Clock::deleteInstance();
     ShowControl::deleteInstance();
@@ -97,6 +96,7 @@ PonyEngine::~PonyEngine()
     SPAssetManager::deleteInstance();
     UserInputManager::deleteInstance();
 
+    InterfaceManager::deleteInstance();
     Brain::deleteInstance();
 }
 
@@ -139,15 +139,17 @@ void PonyEngine::clearInternal()
     // Stop any pending plugin loading before destroying cues
     pluginLoader.reset();
 
+    // Clear deck settings first so DeckViewUIs release their cuelist references
+    decksSettings.clear();
+
 	//clear
-    InterfaceManager::getInstance()->clear();
 	CuelistManager::getInstance()->clear();
+    InterfaceManager::getInstance()->clear();
 
     showProperties.clear();
     audioSettings.clear();
     colorPresets.clear();
     volumePresets.clear();
-    decksSettings.clear();
 }
 
 var PonyEngine::getJSONData(bool includeNonOverriden)

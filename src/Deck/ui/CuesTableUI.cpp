@@ -97,12 +97,15 @@ CuesTableUI::CuesTableUI(Cuelist* cl)
 
 CuesTableUI::~CuesTableUI()
 {
-    for (auto* c : cl->cues->items)
-        c->removeAsyncWarningTargetListener(this);
+    if (cl != nullptr && cl->cues != nullptr)
+    {
+        for (auto* c : cl->cues->items)
+            c->removeAsyncWarningTargetListener(this);
 
-    cl->cues->removeAsyncContainerListener(this);
-    cl->cues->removeBaseManagerListener(this);
-    cl->cues->removeAsyncWarningTargetListener(this);
+        cl->cues->removeAsyncContainerListener(this);
+        cl->cues->removeBaseManagerListener(this);
+        cl->cues->removeAsyncWarningTargetListener(this);
+    }
     tableListBox.setLookAndFeel(nullptr);
     lafTable.reset();
 }

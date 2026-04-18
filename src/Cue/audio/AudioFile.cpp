@@ -162,6 +162,10 @@ AudioFile::~AudioFile()
 void AudioFile::parameterValueChanged(Parameter* p)
 {
     BaseItem::parameterValueChanged(p);
+
+    if (Engine::mainEngine != nullptr && Engine::mainEngine->isClearing)
+        return;
+
     clearWarning();
 
     if (p == audioFile)

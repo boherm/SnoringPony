@@ -59,13 +59,16 @@ DeckViewHeaderUI::DeckViewHeaderUI(Cuelist* cl) :
 
 DeckViewHeaderUI::~DeckViewHeaderUI()
 {
-    currentCuelist->removeAsyncContainerListener(this);
+    if (currentCuelist != nullptr)
+        currentCuelist->removeAsyncContainerListener(this);
     if (auto* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine))
         engine->showProperties.removeAsyncContainerListener(this);
 }
 
 void DeckViewHeaderUI::paint(Graphics& g)
 {
+    if (currentCuelist == nullptr) return;
+
     g.setColour(currentCuelist->itemColor->getColor());
     g.fillRect(0, 0, getWidth(), 30);
     g.setColour(Colours::white);

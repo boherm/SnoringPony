@@ -38,7 +38,7 @@ juce_add_gui_app("${PROJECT_NAME}"
 target_compile_features("${PROJECT_NAME}"  PRIVATE cxx_std_17)
 
 
-file(GLOB_RECURSE SourceFiles CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.mm" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
+file(GLOB_RECURSE SourceFiles CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
 target_sources("${PROJECT_NAME}" PRIVATE ${SourceFiles})
 
 target_compile_definitions("${PROJECT_NAME}"  PRIVATE

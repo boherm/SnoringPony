@@ -51,6 +51,10 @@ PlaylistFile::~PlaylistFile()
 void PlaylistFile::parameterValueChanged(Parameter* p)
 {
     BaseItem::parameterValueChanged(p);
+
+    if (Engine::mainEngine != nullptr && Engine::mainEngine->isClearing)
+        return;
+
     clearWarning();
 
     if (p == audioFile)
@@ -270,6 +274,9 @@ PlaylistFile* PlaylistCue::getNextFileToPlay()
 void PlaylistCue::parameterValueChanged(Parameter* p)
 {
     Cue::parameterValueChanged(p);
+
+    if (Engine::mainEngine != nullptr && Engine::mainEngine->isClearing)
+        return;
 
     if (p == outputTarget)
     {
