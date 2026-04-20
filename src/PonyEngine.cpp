@@ -14,6 +14,8 @@
 #include "Cuelist/CuelistFactory.h"
 #include "Cuelist/CuelistManager.h"
 #include "Interface/action/MappingActionFactory.h"
+#include "Interface/midi/MIDIFeedbackFactory.h"
+#include "Interface/osc/OSCFeedbackFactory.h"
 #include "Interface/midi/MIDIManager.h"
 #include "MainIncludes.h"
 #include "PonyEngine.h"
@@ -81,6 +83,8 @@ PonyEngine::~PonyEngine()
 	CuelistManager::deleteInstance();
     CuelistFactory::deleteInstance();
     MappingActionFactory::deleteInstance();
+    MIDIFeedbackFactory::deleteInstance();
+    OSCFeedbackFactory::deleteInstance();
 
     Clock::deleteInstance();
     ShowControl::deleteInstance();

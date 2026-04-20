@@ -123,6 +123,10 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/MIDIDevice_de7e8239.o \
   $(JUCE_OBJDIR)/MIDIManager_52484d74.o \
   $(JUCE_OBJDIR)/MIDIMapping_98fde15.o \
+  $(JUCE_OBJDIR)/MIDIFeedbackFactory_38648d8c.o \
+  $(JUCE_OBJDIR)/MIDIFeedbackItem_e100d89b.o \
+  $(JUCE_OBJDIR)/MIDIIsPanickingFeedback_c4b7d4f0.o \
+  $(JUCE_OBJDIR)/MIDIIsPlayingFeedback_ae3f4490.o \
   $(JUCE_OBJDIR)/WingOscMixerSettings_bbefb8f.o \
   $(JUCE_OBJDIR)/WingOscProtocol_319ae8ff.o \
   $(JUCE_OBJDIR)/wapi_mingw_shim_56476567.o \
@@ -136,8 +140,16 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/OSCInputEditor_1e7922b7.o \
   $(JUCE_OBJDIR)/OSCCommand_9cf21fd2.o \
   $(JUCE_OBJDIR)/OSCInterface_7d7d7a40.o \
+  $(JUCE_OBJDIR)/OSCCurrentCueFeedback_52210c42.o \
+  $(JUCE_OBJDIR)/OSCFeedbackFactory_9a40cf4c.o \
+  $(JUCE_OBJDIR)/OSCFeedbackItem_b9a1eedb.o \
+  $(JUCE_OBJDIR)/OSCIsPanickingFeedback_771d36b0.o \
+  $(JUCE_OBJDIR)/OSCIsPlayingFeedback_a121650.o \
+  $(JUCE_OBJDIR)/OSCMapping_ada9dfd5.o \
+  $(JUCE_OBJDIR)/OSCNextCueFeedback_c1b9b76c.o \
   $(JUCE_OBJDIR)/InterfaceManagerUI_f9a324b7.o \
   $(JUCE_OBJDIR)/InterfaceUI_e393dec8.o \
+  $(JUCE_OBJDIR)/FeedbackItem_3ca1f296.o \
   $(JUCE_OBJDIR)/Interface_9e38c80d.o \
   $(JUCE_OBJDIR)/InterfaceManager_8001f36a.o \
   $(JUCE_OBJDIR)/AudioSettings_1417810.o \
@@ -453,6 +465,26 @@ $(JUCE_OBJDIR)/MIDIMapping_98fde15.o: ../../src/Interface/midi/MIDIMapping.cpp
 	@echo "Compiling MIDIMapping.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
+$(JUCE_OBJDIR)/MIDIFeedbackFactory_38648d8c.o: ../../src/Interface/midi/MIDIFeedbackFactory.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MIDIFeedbackFactory.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MIDIFeedbackItem_e100d89b.o: ../../src/Interface/midi/MIDIFeedbackItem.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MIDIFeedbackItem.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MIDIIsPanickingFeedback_c4b7d4f0.o: ../../src/Interface/midi/MIDIIsPanickingFeedback.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MIDIIsPanickingFeedback.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MIDIIsPlayingFeedback_ae3f4490.o: ../../src/Interface/midi/MIDIIsPlayingFeedback.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MIDIIsPlayingFeedback.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
 $(JUCE_OBJDIR)/WingOscMixerSettings_bbefb8f.o: ../../src/Interface/mixer/wingosc/WingOscMixerSettings.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling WingOscMixerSettings.cpp"
@@ -518,6 +550,41 @@ $(JUCE_OBJDIR)/OSCInterface_7d7d7a40.o: ../../src/Interface/osc/OSCInterface.cpp
 	@echo "Compiling OSCInterface.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
+$(JUCE_OBJDIR)/OSCCurrentCueFeedback_52210c42.o: ../../src/Interface/osc/OSCCurrentCueFeedback.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling OSCCurrentCueFeedback.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/OSCFeedbackFactory_9a40cf4c.o: ../../src/Interface/osc/OSCFeedbackFactory.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling OSCFeedbackFactory.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/OSCFeedbackItem_b9a1eedb.o: ../../src/Interface/osc/OSCFeedbackItem.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling OSCFeedbackItem.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/OSCIsPanickingFeedback_771d36b0.o: ../../src/Interface/osc/OSCIsPanickingFeedback.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling OSCIsPanickingFeedback.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/OSCIsPlayingFeedback_a121650.o: ../../src/Interface/osc/OSCIsPlayingFeedback.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling OSCIsPlayingFeedback.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/OSCMapping_ada9dfd5.o: ../../src/Interface/osc/OSCMapping.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling OSCMapping.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/OSCNextCueFeedback_c1b9b76c.o: ../../src/Interface/osc/OSCNextCueFeedback.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling OSCNextCueFeedback.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
 $(JUCE_OBJDIR)/InterfaceManagerUI_f9a324b7.o: ../../src/Interface/ui/InterfaceManagerUI.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling InterfaceManagerUI.cpp"
@@ -526,6 +593,11 @@ $(JUCE_OBJDIR)/InterfaceManagerUI_f9a324b7.o: ../../src/Interface/ui/InterfaceMa
 $(JUCE_OBJDIR)/InterfaceUI_e393dec8.o: ../../src/Interface/ui/InterfaceUI.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling InterfaceUI.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/FeedbackItem_3ca1f296.o: ../../src/Interface/feedback/FeedbackItem.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling FeedbackItem.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/Interface_9e38c80d.o: ../../src/Interface/Interface.cpp

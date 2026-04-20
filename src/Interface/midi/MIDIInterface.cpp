@@ -9,6 +9,7 @@
 */
 
 #include "MIDIInterface.h"
+#include "MIDIFeedbackFactory.h"
 
 MIDIInterface::MIDIInterface() :
     Interface("MIDI Interface 1")
@@ -36,6 +37,12 @@ MIDIInterface::MIDIInterface() :
     mappings.reset(new BaseManager<MIDIMapping>("Mappings"));
     mappings->selectItemWhenCreated = false;
     addChildControllableContainer(mappings.get());
+
+    feedbacks.reset(new BaseManager<MIDIFeedbackItem>("Feedback"));
+    feedbacks->managerFactory = &MIDIFeedbackFactory::getInstance()->factory;
+    feedbacks->selectItemWhenCreated = false;
+    feedbacks->addBaseManagerListener(this);
+    addChildControllableContainer(feedbacks.get());
 
     MIDIManager::getInstance()->init();
     MIDIManager::getInstance()->addMIDIManagerListener(this);
@@ -117,6 +124,10 @@ void MIDIInterface::setOutputDevice(MIDIOutputDevice* device)
         outputDeviceName->setValue(currentOutputDevice->name);
         outputDeviceIdentifier->setValue(currentOutputDevice->id);
         NLOG(niceName, "Connected to MIDI output: " << currentOutputDevice->name);
+
+        // Send current feedback state to newly connected device
+        for (auto* fb : feedbacks->items)
+            fb->sendFeedback();
     }
     else
     {
@@ -143,6 +154,11 @@ void MIDIInterface::sendMessage(const juce::MidiMessage& msg)
             });
         }
     }
+}
+
+void MIDIInterface::itemAdded(MIDIFeedbackItem* item)
+{
+    item->setMIDIInterface(this);
 }
 
 void MIDIInterface::midiDeviceOutAdded(MIDIOutputDevice* d)
@@ -312,6 +328,16 @@ void MIDIInterface::triggerTriggered(Trigger* t)
 void MIDIInterface::loadJSONDataInternal(var data)
 {
     Interface::loadJSONDataInternal(data);
+
+    // Defer feedback binding to after session is fully loaded
+    MessageManager::callAsync([this]()
+    {
+        for (auto* fb : feedbacks->items)
+        {
+            fb->setMIDIInterface(this);
+            fb->sendFeedback();
+        }
+    });
 
     String storedId = deviceIdentifier->stringValue();
     if (storedId.isNotEmpty())

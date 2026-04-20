@@ -11,6 +11,7 @@
 #include "OSCInterface.h"
 #include "ui/OSCInputEditor.h"
 #include "OSCCommand.h"
+#include "OSCFeedbackFactory.h"
 
 OSCInterface::OSCInterface() :
     Interface("OSC Interface 1"),
@@ -20,11 +21,12 @@ OSCInterface::OSCInterface() :
     // Inputs
     receiveCC.reset(new EnablingControllableContainer("OSC Input"));
 	receiveCC->customGetEditorFunc = &OSCInputEditor::create;
-    receiveCC->hideInEditor = true;
 	addChildControllableContainer(receiveCC.get());
 
     localPort = receiveCC->addIntParameter("Local Port", "Local port to receive OSC messages", 14000, 1024, 65535);
     localPort->warningResolveInspectable = this;
+
+    autoAdd = receiveCC->addBoolParameter("Auto-add", "When enabled, automatically creates a new mapping for each unrecognised OSC message received", false);
 
 	receiver.registerFormatErrorHandler(&OSCHelpers::logOSCFormatError);
 	receiver.addListener(this);
@@ -48,6 +50,18 @@ OSCInterface::OSCInterface() :
     templateManager->addBaseManagerListener(this);
     addChildControllableContainer(templateManager.get());
 
+    // Mappings
+    mappings.reset(new BaseManager<OSCMapping>("Mappings"));
+    mappings->selectItemWhenCreated = false;
+    addChildControllableContainer(mappings.get());
+
+    // Feedback
+    feedbacks.reset(new BaseManager<OSCFeedbackItem>("Feedback"));
+    feedbacks->managerFactory = &OSCFeedbackFactory::getInstance()->factory;
+    feedbacks->selectItemWhenCreated = false;
+    feedbacks->addBaseManagerListener(this);
+    addChildControllableContainer(feedbacks.get());
+
     // start zeroconf thread
     if (!isThreadRunning() && !Engine::mainEngine->isLoadingFile) startThread();
 }
@@ -68,6 +82,16 @@ void OSCInterface::loadJSONDataInternal(var data)
     setupSenders();
 	if (!isThreadRunning()) startThread();
 	setupReceiver();
+
+    // Defer feedback binding to after session is fully loaded
+    MessageManager::callAsync([this]()
+    {
+        for (auto* fb : feedbacks->items)
+        {
+            fb->setOSCInterface(this);
+            fb->sendFeedback();
+        }
+    });
 }
 
 void OSCInterface::onContainerNiceNameChanged()
@@ -175,12 +199,64 @@ void OSCInterface::processMessage(const OSCMessage& msg)
 		NLOG(niceName, msg.getAddressPattern().toString() << " :" << s);
 	}
 
-	// processMessageInternal(msg);
+	if (autoAdd->boolValue())
+	{
+		bool hasMatch = (findExistingMapping(msg) != nullptr);
+		if (!hasMatch)
+		{
+			OSCMessage msgCopy(msg);
+			MessageManager::callAsync([this, msgCopy]()
+			{
+				createMappingFromMessage(msgCopy);
+			});
+			return;
+		}
+	}
+
+	for (auto* m : mappings->items)
+	{
+		if (m->matches(msg))
+		{
+			WeakReference<Inspectable> safeMapping(m);
+			MessageManager::callAsync([safeMapping]()
+			{
+				if (safeMapping != nullptr)
+					dynamic_cast<OSCMapping*>(safeMapping.get())->executeActions();
+			});
+		}
+	}
+}
+
+OSCMapping* OSCInterface::findExistingMapping(const OSCMessage& msg) const
+{
+	for (auto* m : mappings->items)
+		if (m->matches(msg)) return m;
+	return nullptr;
+}
+
+OSCMapping* OSCInterface::createMappingFromMessage(const OSCMessage& msg)
+{
+	OSCMapping* m = new OSCMapping();
+	m->addressPattern->setValue(msg.getAddressPattern().toString());
+	mappings->addItem(m);
+	return m;
+}
+
+void OSCInterface::itemAdded(OSCFeedbackItem* item)
+{
+    item->setOSCInterface(this);
 }
 
 void OSCInterface::itemAdded(OSCOutput* output)
 {
 	output->warningResolveInspectable = this;
+
+    // Send current feedback state to newly connected output
+    if (!Engine::mainEngine->isLoadingFile)
+    {
+        for (auto* fb : feedbacks->items)
+            fb->sendFeedback();
+    }
 }
 
 void OSCInterface::itemAdded(OSCCommand* command)

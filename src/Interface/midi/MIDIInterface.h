@@ -16,11 +16,13 @@
 #include "../Interface.h"
 #include "MIDIMapping.h"
 #include "MIDIManager.h"
+#include "MIDIFeedbackItem.h"
 
 class MIDIInterface :
     public Interface,
     public MIDIManager::Listener,
-    public MIDIInputDevice::Listener
+    public MIDIInputDevice::Listener,
+    public BaseManager<MIDIFeedbackItem>::ManagerListener
 {
 public:
     MIDIInterface();
@@ -39,6 +41,7 @@ public:
     MIDIOutputDevice* currentOutputDevice = nullptr;
 
     std::unique_ptr<BaseManager<MIDIMapping>> mappings;
+    std::unique_ptr<BaseManager<MIDIFeedbackItem>> feedbacks;
 
     void setInputDevice(MIDIInputDevice* device);
     void setOutputDevice(MIDIOutputDevice* device);
@@ -55,6 +58,8 @@ public:
 
     MIDIMapping* findExistingMapping(const juce::MidiMessage& msg) const;
     MIDIMapping* createMappingFromMessage(const juce::MidiMessage& msg);
+
+    void itemAdded(MIDIFeedbackItem* item) override;
 
     void triggerTriggered(Trigger* t) override;
     void loadJSONDataInternal(var data) override;

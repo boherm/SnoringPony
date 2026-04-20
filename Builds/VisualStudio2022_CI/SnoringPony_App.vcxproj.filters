@@ -92,6 +92,9 @@
     <Filter Include="SnoringPony\Source\Interface\ui">
       <UniqueIdentifier>{E16C3CA1-6B76-BEA6-3651-45807ADA4DAB}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SnoringPony\Source\Interface\feedback">
+      <UniqueIdentifier>{6E354331-1864-09E1-BF80-44B177DDAA3B}</UniqueIdentifier>
+    </Filter>
     <Filter Include="SnoringPony\Source\Interface">
       <UniqueIdentifier>{94D45E40-67E2-58E1-06DC-6E35BF711F27}</UniqueIdentifier>
     </Filter>
@@ -1234,6 +1237,18 @@
     <ClCompile Include="..\..\src\Interface\midi\MIDIMapping.cpp">
       <Filter>SnoringPony\Source\Interface\midi</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Interface\midi\MIDIFeedbackFactory.cpp">
+      <Filter>SnoringPony\Source\Interface\midi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\midi\MIDIFeedbackItem.cpp">
+      <Filter>SnoringPony\Source\Interface\midi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\midi\MIDIIsPanickingFeedback.cpp">
+      <Filter>SnoringPony\Source\Interface\midi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\midi\MIDIIsPlayingFeedback.cpp">
+      <Filter>SnoringPony\Source\Interface\midi</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Interface\mixer\wingosc\WingOscMixerSettings.cpp">
       <Filter>SnoringPony\Source\Interface\mixer\wingosc</Filter>
     </ClCompile>
@@ -1273,11 +1288,35 @@
     <ClCompile Include="..\..\src\Interface\osc\OSCInterface.cpp">
       <Filter>SnoringPony\Source\Interface\osc</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Interface\osc\OSCCurrentCueFeedback.cpp">
+      <Filter>SnoringPony\Source\Interface\osc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\osc\OSCFeedbackFactory.cpp">
+      <Filter>SnoringPony\Source\Interface\osc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\osc\OSCFeedbackItem.cpp">
+      <Filter>SnoringPony\Source\Interface\osc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\osc\OSCIsPanickingFeedback.cpp">
+      <Filter>SnoringPony\Source\Interface\osc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\osc\OSCIsPlayingFeedback.cpp">
+      <Filter>SnoringPony\Source\Interface\osc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\osc\OSCMapping.cpp">
+      <Filter>SnoringPony\Source\Interface\osc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\osc\OSCNextCueFeedback.cpp">
+      <Filter>SnoringPony\Source\Interface\osc</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Interface\ui\InterfaceManagerUI.cpp">
       <Filter>SnoringPony\Source\Interface\ui</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Interface\ui\InterfaceUI.cpp">
       <Filter>SnoringPony\Source\Interface\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\feedback\FeedbackItem.cpp">
+      <Filter>SnoringPony\Source\Interface\feedback</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Interface\Interface.cpp">
       <Filter>SnoringPony\Source\Interface</Filter>
@@ -4845,6 +4884,21 @@
     <ClInclude Include="..\..\src\Interface\midi\MIDIManager.h">
       <Filter>SnoringPony\Source\Interface\midi</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Interface\midi\MIDIFeedbackFactory.h">
+      <Filter>SnoringPony\Source\Interface\midi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\midi\MIDIFeedbackItem.h">
+      <Filter>SnoringPony\Source\Interface\midi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\midi\MIDIIsPanickingFeedback.h">
+      <Filter>SnoringPony\Source\Interface\midi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\midi\MIDIIsPlayingFeedback.h">
+      <Filter>SnoringPony\Source\Interface\midi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\midi\MTCEncoder.h">
+      <Filter>SnoringPony\Source\Interface\midi</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Interface\midi\MIDIMapping.h">
       <Filter>SnoringPony\Source\Interface\midi</Filter>
     </ClInclude>
@@ -4890,7 +4944,28 @@
     <ClInclude Include="..\..\src\Interface\osc\OSCCommand.h">
       <Filter>SnoringPony\Source\Interface\osc</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Interface\osc\OSCCurrentCueFeedback.h">
+      <Filter>SnoringPony\Source\Interface\osc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\osc\OSCFeedbackFactory.h">
+      <Filter>SnoringPony\Source\Interface\osc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\osc\OSCFeedbackItem.h">
+      <Filter>SnoringPony\Source\Interface\osc</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Interface\osc\OSCInterface.h">
+      <Filter>SnoringPony\Source\Interface\osc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\osc\OSCIsPanickingFeedback.h">
+      <Filter>SnoringPony\Source\Interface\osc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\osc\OSCIsPlayingFeedback.h">
+      <Filter>SnoringPony\Source\Interface\osc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\osc\OSCMapping.h">
+      <Filter>SnoringPony\Source\Interface\osc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\osc\OSCNextCueFeedback.h">
       <Filter>SnoringPony\Source\Interface\osc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Interface\ui\InterfaceManagerUI.h">
@@ -4898,6 +4973,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Interface\ui\InterfaceUI.h">
       <Filter>SnoringPony\Source\Interface\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\feedback\FeedbackItem.h">
+      <Filter>SnoringPony\Source\Interface\feedback</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Interface\Interface.h">
       <Filter>SnoringPony\Source\Interface</Filter>

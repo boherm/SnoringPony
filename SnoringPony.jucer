@@ -230,6 +230,23 @@
           <FILE id="m7tVMa" name="MIDIManager.cpp" compile="1" resource="0" file="src/Interface/midi/MIDIManager.cpp"/>
           <FILE id="etgnw8" name="MIDIManager.h" compile="0" resource="0" file="src/Interface/midi/MIDIManager.h"/>
           <FILE id="VhXd1K" name="MIDIMapping.cpp" compile="1" resource="0" file="src/Interface/midi/MIDIMapping.cpp"/>
+          <FILE id="g0cVCY" name="MIDIFeedbackFactory.cpp" compile="1" resource="0"
+                file="src/Interface/midi/MIDIFeedbackFactory.cpp"/>
+          <FILE id="j8D0jr" name="MIDIFeedbackFactory.h" compile="0" resource="0"
+                file="src/Interface/midi/MIDIFeedbackFactory.h"/>
+          <FILE id="ytFfM6" name="MIDIFeedbackItem.cpp" compile="1" resource="0"
+                file="src/Interface/midi/MIDIFeedbackItem.cpp"/>
+          <FILE id="qVcRbn" name="MIDIFeedbackItem.h" compile="0" resource="0"
+                file="src/Interface/midi/MIDIFeedbackItem.h"/>
+          <FILE id="flfmBO" name="MIDIIsPanickingFeedback.cpp" compile="1" resource="0"
+                file="src/Interface/midi/MIDIIsPanickingFeedback.cpp"/>
+          <FILE id="NnuJdM" name="MIDIIsPanickingFeedback.h" compile="0" resource="0"
+                file="src/Interface/midi/MIDIIsPanickingFeedback.h"/>
+          <FILE id="aKSFsQ" name="MIDIIsPlayingFeedback.cpp" compile="1" resource="0"
+                file="src/Interface/midi/MIDIIsPlayingFeedback.cpp"/>
+          <FILE id="jP6lR6" name="MIDIIsPlayingFeedback.h" compile="0" resource="0"
+                file="src/Interface/midi/MIDIIsPlayingFeedback.h"/>
+          <FILE id="nCGfaZ" name="MTCEncoder.h" compile="0" resource="0" file="src/Interface/midi/MTCEncoder.h"/>
           <FILE id="lEMkYk" name="MIDIMapping.h" compile="0" resource="0" file="src/Interface/midi/MIDIMapping.h"/>
         </GROUP>
         <GROUP id="{AF426437-FBAB-194E-56D2-9A20BD4CBD62}" name="mixer">
@@ -285,7 +302,33 @@
           <FILE id="oweHCU" name="OSCCommand.h" compile="0" resource="0" file="src/Interface/osc/OSCCommand.h"/>
           <FILE id="ZYkzgO" name="OSCInterface.cpp" compile="1" resource="0"
                 file="src/Interface/osc/OSCInterface.cpp"/>
+          <FILE id="Tgtn15" name="OSCCurrentCueFeedback.cpp" compile="1" resource="0"
+                file="src/Interface/osc/OSCCurrentCueFeedback.cpp"/>
+          <FILE id="CuRrcT" name="OSCCurrentCueFeedback.h" compile="0" resource="0"
+                file="src/Interface/osc/OSCCurrentCueFeedback.h"/>
+          <FILE id="UCbCbD" name="OSCFeedbackFactory.cpp" compile="1" resource="0"
+                file="src/Interface/osc/OSCFeedbackFactory.cpp"/>
+          <FILE id="Su2Ysw" name="OSCFeedbackFactory.h" compile="0" resource="0"
+                file="src/Interface/osc/OSCFeedbackFactory.h"/>
+          <FILE id="KQsNmG" name="OSCFeedbackItem.cpp" compile="1" resource="0"
+                file="src/Interface/osc/OSCFeedbackItem.cpp"/>
+          <FILE id="lEJ6dw" name="OSCFeedbackItem.h" compile="0" resource="0"
+                file="src/Interface/osc/OSCFeedbackItem.h"/>
           <FILE id="Xqv4X9" name="OSCInterface.h" compile="0" resource="0" file="src/Interface/osc/OSCInterface.h"/>
+          <FILE id="u9OtHA" name="OSCIsPanickingFeedback.cpp" compile="1" resource="0"
+                file="src/Interface/osc/OSCIsPanickingFeedback.cpp"/>
+          <FILE id="kxxMGT" name="OSCIsPanickingFeedback.h" compile="0" resource="0"
+                file="src/Interface/osc/OSCIsPanickingFeedback.h"/>
+          <FILE id="tk2PT0" name="OSCIsPlayingFeedback.cpp" compile="1" resource="0"
+                file="src/Interface/osc/OSCIsPlayingFeedback.cpp"/>
+          <FILE id="qgsitk" name="OSCIsPlayingFeedback.h" compile="0" resource="0"
+                file="src/Interface/osc/OSCIsPlayingFeedback.h"/>
+          <FILE id="aqthYe" name="OSCMapping.cpp" compile="1" resource="0" file="src/Interface/osc/OSCMapping.cpp"/>
+          <FILE id="V0spfF" name="OSCMapping.h" compile="0" resource="0" file="src/Interface/osc/OSCMapping.h"/>
+          <FILE id="Yw7cvK" name="OSCNextCueFeedback.cpp" compile="1" resource="0"
+                file="src/Interface/osc/OSCNextCueFeedback.cpp"/>
+          <FILE id="p4Vowu" name="OSCNextCueFeedback.h" compile="0" resource="0"
+                file="src/Interface/osc/OSCNextCueFeedback.h"/>
         </GROUP>
         <GROUP id="{0CA6DB6E-2314-0671-0B67-F07A22FBCE97}" name="ui">
           <FILE id="SeOkxg" name="InterfaceManagerUI.cpp" compile="1" resource="0"
@@ -294,6 +337,11 @@
                 file="src/Interface/ui/InterfaceManagerUI.h"/>
           <FILE id="x2vJ1X" name="InterfaceUI.cpp" compile="1" resource="0" file="src/Interface/ui/InterfaceUI.cpp"/>
           <FILE id="U2kXsW" name="InterfaceUI.h" compile="0" resource="0" file="src/Interface/ui/InterfaceUI.h"/>
+        </GROUP>
+        <GROUP id="{5A75CD3F-4B78-2433-833A-92D773ED29E3}" name="feedback">
+          <FILE id="VY8rRW" name="FeedbackItem.cpp" compile="1" resource="0"
+                file="src/Interface/feedback/FeedbackItem.cpp"/>
+          <FILE id="rUIN97" name="FeedbackItem.h" compile="0" resource="0" file="src/Interface/feedback/FeedbackItem.h"/>
         </GROUP>
         <FILE id="DKLzl2" name="Interface.cpp" compile="1" resource="0" file="src/Interface/Interface.cpp"/>
         <FILE id="JLOBBN" name="Interface.h" compile="0" resource="0" file="src/Interface/Interface.h"/>

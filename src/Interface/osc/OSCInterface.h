@@ -13,6 +13,8 @@
 #include "../Interface.h"
 #include "../../MainIncludes.h"
 #include "OSCCommand.h"
+#include "OSCMapping.h"
+#include "OSCFeedbackItem.h"
 
 using namespace servus;
 
@@ -56,7 +58,8 @@ class OSCInterface :
     public Thread,
     public OSCReceiver::Listener<OSCReceiver::RealtimeCallback>,
     public BaseManager<OSCOutput>::ManagerListener,
-    public BaseManager<OSCCommand>::ManagerListener
+    public BaseManager<OSCCommand>::ManagerListener,
+    public BaseManager<OSCFeedbackItem>::ManagerListener
 {
 public:
     OSCInterface();
@@ -68,12 +71,18 @@ public:
     // inputs
     std::unique_ptr<EnablingControllableContainer> receiveCC;
 	IntParameter* localPort;
+    BoolParameter* autoAdd;
     OSCReceiver receiver;
+
+    std::unique_ptr<BaseManager<OSCMapping>> mappings;
 
     void setupReceiver();
 	void processMessage(const OSCMessage& msg);
 	void oscMessageReceived(const OSCMessage& message) override;
 	void oscBundleReceived(const OSCBundle& bundle) override;
+
+    OSCMapping* findExistingMapping(const OSCMessage& msg) const;
+    OSCMapping* createMappingFromMessage(const OSCMessage& msg);
 
     // outputs
     std::unique_ptr<BaseManager<OSCOutput>> outputManager;
@@ -85,6 +94,10 @@ public:
 
     // templates
     std::unique_ptr<BaseManager<OSCCommand>> templateManager;
+
+    // feedback
+    std::unique_ptr<BaseManager<OSCFeedbackItem>> feedbacks;
+    void itemAdded(OSCFeedbackItem* item) override;
 
     void loadJSONDataInternal(var data) override;
     void onContainerNiceNameChanged() override;
