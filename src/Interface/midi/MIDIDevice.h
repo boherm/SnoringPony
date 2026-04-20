@@ -40,3 +40,24 @@ public:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MIDIInputDevice)
 };
+
+class MIDIOutputDevice
+{
+public:
+    MIDIOutputDevice(const juce::MidiDeviceInfo& info);
+    ~MIDIOutputDevice();
+
+    juce::String id;
+    juce::String name;
+    std::unique_ptr<juce::MidiOutput> device;
+
+    int useCount = 0;
+
+    void addUser();
+    void removeUser();
+    bool isOpen() const { return device != nullptr; }
+
+    void sendMessage(const juce::MidiMessage& message);
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MIDIOutputDevice)
+};

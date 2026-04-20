@@ -25,5 +25,6 @@ public:
     Factory<Interface> factory;
 
     static void showMenuForTargetAudioOutput(ControllableContainer* startFromCC, std::function<void(ControllableContainer*)> returnFunc);
+    static void showMenuForTargetMIDIInterface(ControllableContainer* startFromCC, std::function<void(ControllableContainer*)> returnFunc);
 	// void feedback(String address, var value, String origin);
 };

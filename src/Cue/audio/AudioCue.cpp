@@ -16,6 +16,8 @@
 #include "../../Audio/AudioPlayer.h"
 #include "../../Audio/PluginSlot.h"
 #include "../../Interface/audio/AudioOutput.h"
+#include "../../Interface/midi/MIDIInterface.h"
+#include "../../Interface/InterfaceManager.h"
 
 AudioCue::AudioCue(var params)
 {
@@ -29,6 +31,25 @@ AudioCue::AudioCue(var params)
     initialDuration->setEnabled(false);
     initialDuration->hideInRemoteControl = true;
     initialDuration->hideInEditor = true;
+
+    // MTC
+    mtcCC = new EnablingControllableContainer("MTC");
+    mtcCC->enabled->setValue(false);
+    mtcCC->editorIsCollapsed = true;
+    addChildControllableContainer(mtcCC, true);
+
+    mtcMidiInterface = mtcCC->addTargetParameter("MIDI Interface", "MIDI interface to send MTC through", InterfaceManager::getInstance());
+    mtcMidiInterface->targetType = TargetParameter::CONTAINER;
+    mtcMidiInterface->customGetTargetContainerFunc = &InterfaceManager::showMenuForTargetMIDIInterface;
+
+    mtcOffset = mtcCC->addFloatParameter("Offset", "Time offset added to MTC timecode", 0.0);
+    mtcOffset->defaultUI = FloatParameter::TIME;
+
+    mtcFrameRate = mtcCC->addEnumParameter("Frame Rate", "MTC frame rate");
+    mtcFrameRate->addOption("24 fps", MTCEncoder::FPS_24);
+    mtcFrameRate->addOption("25 fps", MTCEncoder::FPS_25);
+    mtcFrameRate->addOption("29.97 df", MTCEncoder::FPS_30_DROP);
+    mtcFrameRate->addOption("30 fps", MTCEncoder::FPS_30);
 
     audioSlicer.reset(new ControllableContainer("Audio Slicer"));
     audioSlicer->editorIsCollapsed = true;
@@ -63,6 +84,12 @@ AudioCue::AudioCue(var params)
 
 AudioCue::~AudioCue()
 {
+    if (mtcTimer != nullptr)
+    {
+        mtcTimer->stopTimer();
+        mtcTimer.reset();
+    }
+
     pluginChainManager->removeAsyncContainerListener(this);
     slicesManager->removeAsyncContainerListener(this);
     filesManager->stopAll();
@@ -153,6 +180,8 @@ void AudioCue::playInternal()
     {
         filesManager->playAll();
     }
+
+    startMTC();
 }
 
 void AudioCue::previewInternal()
@@ -184,6 +213,7 @@ void AudioCue::previewInternal()
 
 void AudioCue::stopInternal()
 {
+    stopMTC();
     filesManager->stopAll();
     for (auto& audioFile : filesManager->items)
         audioFile->player->mixer->setPluginChain(nullptr);
@@ -264,6 +294,7 @@ void AudioCue::changeListenerCallback(ChangeBroadcaster* source)
         if (!transport->isPlaying() && !filesManager->haveOnePlaying()) {
             isPlaying->setValue(false);
             stopTimer();
+            stopMTC();
             currentTime->setValue(0.0);
             isPanicking = false;
             isPreviewing = false;
@@ -335,4 +366,81 @@ void AudioCue::createFromFiles(const StringArray& files)
         AudioFile* audioFile = filesManager->addItemFromData(var());
         audioFile->audioFile->setValue(f);
     }
+}
+
+// -------------------------------------------------------
+// MTC
+// -------------------------------------------------------
+
+MIDIInterface* AudioCue::getMTCInterface()
+{
+    return mtcMidiInterface->getTargetContainerAs<MIDIInterface>();
+}
+
+HashMap<MIDIInterface*, AudioCue*> AudioCue::activeMTCSenders;
+
+void AudioCue::startMTC()
+{
+    if (!mtcCC->enabled->boolValue()) return;
+
+    MIDIInterface* iface = getMTCInterface();
+    if (iface == nullptr) return;
+
+    // Stop any other AudioCue currently sending MTC on this interface
+    if (activeMTCSenders.contains(iface))
+    {
+        AudioCue* previous = activeMTCSenders[iface];
+        if (previous != this)
+            previous->stopMTC();
+    }
+
+    activeMTCSenders.set(iface, this);
+
+    MTCEncoder::FrameRate rate = (MTCEncoder::FrameRate)(int)mtcFrameRate->getValueData();
+    double startTime = mtcOffset->doubleValue();
+
+    iface->sendMessage(MTCEncoder::createFullFrameMessage(startTime, rate));
+
+    mtcTimer.reset(new MTCTimer(*this));
+    int intervalMs = juce::jmax(1, (int)(MTCEncoder::getQuarterFrameInterval(rate) * 1000.0));
+    mtcTimer->startTimer(intervalMs);
+}
+
+void AudioCue::stopMTC()
+{
+    if (mtcTimer != nullptr)
+    {
+        mtcTimer->stopTimer();
+        mtcTimer.reset();
+    }
+
+    // Remove from active senders
+    MIDIInterface* iface = getMTCInterface();
+    if (iface != nullptr && activeMTCSenders.contains(iface) && activeMTCSenders[iface] == this)
+        activeMTCSenders.remove(iface);
+}
+
+// -------------------------------------------------------
+// MTCTimer
+// -------------------------------------------------------
+
+AudioCue::MTCTimer::MTCTimer(AudioCue& o) : owner(o)
+{
+}
+
+void AudioCue::MTCTimer::hiResTimerCallback()
+{
+    MIDIInterface* iface = owner.getMTCInterface();
+    if (iface == nullptr) return;
+
+    double playbackTime = owner.filesManager->getCurrentTime() + owner.mtcOffset->doubleValue();
+    MTCEncoder::FrameRate rate = (MTCEncoder::FrameRate)(int)owner.mtcFrameRate->getValueData();
+
+    if (currentPiece == 0)
+        lastFrameTime = playbackTime;
+
+    auto msg = MTCEncoder::createQuarterFrameMessage(currentPiece, lastFrameTime, rate);
+    iface->sendMessage(msg);
+
+    currentPiece = (currentPiece + 1) % 8;
 }

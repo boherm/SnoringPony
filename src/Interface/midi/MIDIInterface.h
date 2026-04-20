@@ -33,13 +33,22 @@ public:
 
     MIDIInputDevice* currentDevice = nullptr;
 
+    StringParameter* outputDeviceName;
+    StringParameter* outputDeviceIdentifier;
+    Trigger* selectOutputDeviceBtn;
+    MIDIOutputDevice* currentOutputDevice = nullptr;
+
     std::unique_ptr<BaseManager<MIDIMapping>> mappings;
 
     void setInputDevice(MIDIInputDevice* device);
+    void setOutputDevice(MIDIOutputDevice* device);
+    void sendMessage(const juce::MidiMessage& msg);
 
     // MIDIManager::Listener
     void midiDeviceInAdded(MIDIInputDevice* d) override;
     void midiDeviceInRemoved(MIDIInputDevice* d) override;
+    void midiDeviceOutAdded(MIDIOutputDevice* d) override;
+    void midiDeviceOutRemoved(MIDIOutputDevice* d) override;
 
     // MIDIInputDevice::Listener
     void midiMessageReceived(const juce::MidiMessage& message) override;

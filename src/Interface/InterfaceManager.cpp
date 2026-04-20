@@ -84,4 +84,35 @@ void InterfaceManager::showMenuForTargetAudioOutput(ControllableContainer* start
     }
 }
 
+void InterfaceManager::showMenuForTargetMIDIInterface(ControllableContainer* startFromCC, std::function<void(ControllableContainer*)> returnFunc)
+{
+    PopupMenu menu;
+    InterfaceManager* m = InterfaceManager::getInstance();
+
+    int idx = 1;
+    for (auto* item : m->items)
+    {
+        if (item->getTypeString() != "MIDI") continue;
+        menu.addItem(idx, item->niceName);
+        idx++;
+    }
+
+    menu.showMenuAsync(PopupMenu::Options(), [m, returnFunc](int result)
+    {
+        if (result <= 0) return;
+
+        int current = 1;
+        for (auto* item : m->items)
+        {
+            if (item->getTypeString() != "MIDI") continue;
+            if (current == result)
+            {
+                returnFunc(item);
+                return;
+            }
+            current++;
+        }
+    });
+}
+
 juce_ImplementSingleton(InterfaceManager);

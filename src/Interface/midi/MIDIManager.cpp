@@ -14,19 +14,32 @@ juce_ImplementSingleton(MIDIManager)
 
 MIDIManager::MIDIManager()
 {
-    checkDevices();
 }
 
 MIDIManager::~MIDIManager()
 {
+    connection = {};
+}
+
+void MIDIManager::init()
+{
+    if (initialized) return;
+    initialized = true;
+
+    checkDevices();
+
+    connection = juce::MidiDeviceListConnection::make([this]
+    {
+        checkDevices();
+    });
 }
 
 void MIDIManager::checkDevices()
 {
+    // --- Inputs ---
     juce::Array<juce::MidiDeviceInfo> inputInfos = juce::MidiInput::getAvailableDevices();
 
-    // Remove devices that are no longer present
-    juce::Array<MIDIInputDevice*> toRemove;
+    juce::Array<MIDIInputDevice*> inputsToRemove;
     for (auto* d : inputs)
     {
         bool found = false;
@@ -38,15 +51,38 @@ void MIDIManager::checkDevices()
                 break;
             }
         }
-        if (!found) toRemove.add(d);
+        if (!found) inputsToRemove.add(d);
     }
 
-    for (auto* d : toRemove)
+    for (auto* d : inputsToRemove)
         removeInputDevice(d);
 
-    // Add new devices
     for (const auto& info : inputInfos)
         addInputDeviceIfNotThere(info);
+
+    // --- Outputs ---
+    juce::Array<juce::MidiDeviceInfo> outputInfos = juce::MidiOutput::getAvailableDevices();
+
+    juce::Array<MIDIOutputDevice*> outputsToRemove;
+    for (auto* d : outputs)
+    {
+        bool found = false;
+        for (const auto& info : outputInfos)
+        {
+            if (info.identifier == d->id)
+            {
+                found = true;
+                break;
+            }
+        }
+        if (!found) outputsToRemove.add(d);
+    }
+
+    for (auto* d : outputsToRemove)
+        removeOutputDevice(d);
+
+    for (const auto& info : outputInfos)
+        addOutputDeviceIfNotThere(info);
 }
 
 void MIDIManager::addInputDeviceIfNotThere(const juce::MidiDeviceInfo& info)
@@ -77,6 +113,40 @@ MIDIInputDevice* MIDIManager::getInputDeviceWithID(const juce::String& id)
 MIDIInputDevice* MIDIManager::getInputDeviceWithName(const juce::String& name)
 {
     for (auto* d : inputs)
+        if (d->name == name) return d;
+    return nullptr;
+}
+
+// --- Output devices ---
+
+void MIDIManager::addOutputDeviceIfNotThere(const juce::MidiDeviceInfo& info)
+{
+    if (getOutputDeviceWithID(info.identifier) != nullptr) return;
+
+    MIDIOutputDevice* d = new MIDIOutputDevice(info);
+    outputs.add(d);
+    NLOG("MIDI", "Device Out Added : " << d->name);
+    listeners.call(&Listener::midiDeviceOutAdded, d);
+}
+
+void MIDIManager::removeOutputDevice(MIDIOutputDevice* d)
+{
+    outputs.removeObject(d, false);
+    NLOG("MIDI", "Device Out Removed : " << d->name);
+    listeners.call(&Listener::midiDeviceOutRemoved, d);
+    delete d;
+}
+
+MIDIOutputDevice* MIDIManager::getOutputDeviceWithID(const juce::String& id)
+{
+    for (auto* d : outputs)
+        if (d->id == id) return d;
+    return nullptr;
+}
+
+MIDIOutputDevice* MIDIManager::getOutputDeviceWithName(const juce::String& name)
+{
+    for (auto* d : outputs)
         if (d->name == name) return d;
     return nullptr;
 }
