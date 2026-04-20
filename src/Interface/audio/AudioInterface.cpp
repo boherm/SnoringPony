@@ -38,7 +38,17 @@ AudioInterface::AudioInterface() :
     addChildControllableContainer(&hs);
     addChildControllableContainer(outputs);
     initSetup();
-    // updateAudioSetup();
+
+    if (outputs->items.isEmpty() && !Engine::mainEngine->isLoadingFile)
+    {
+        AudioOutput* defaultOutput = outputs->addItem();
+        defaultOutput->setNiceName("Stereo Out");
+        defaultOutput->outputType->setValueWithData("s");
+        defaultOutput->savedChan1 = 1;
+        defaultOutput->savedChan2 = 2;
+        defaultOutput->refreshChannelOptions();
+        defaultOutput->setupAudioOutputs();
+    }
 }
 
 AudioInterface::~AudioInterface()
