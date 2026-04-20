@@ -56,4 +56,7 @@ void MainContentComponent::init()
 
     // Init Organic Main Content
 	OrganicMainContentComponent::init();
+
+    // Warm up audio HAL so that creating an Audio interface later is faster
+    { AudioDeviceManager warmup; }
 }
