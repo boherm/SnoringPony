@@ -17,6 +17,7 @@
 #include "osc/OSCInterface.h"
 #include "midi/MIDIInterface.h"
 #include "mixer/MixerInterface.h"
+#include "obs/OBSInterface.h"
 
 InterfaceManager::InterfaceManager() :
     BaseManager("Interfaces")
@@ -27,6 +28,7 @@ InterfaceManager::InterfaceManager() :
     factory.defs.add(Factory<Interface>::Definition::createDef("", "MIDI", &MIDIInterface::create)->addIcon(SPAssetManager::getInstance()->getInterfaceIcon("MIDI")));
     factory.defs.add(Factory<Interface>::Definition::createDef("", "OSC", &OSCInterface::create)->addIcon(SPAssetManager::getInstance()->getInterfaceIcon("OSC")));
     factory.defs.add(Factory<Interface>::Definition::createDef("", "Mixer", &MixerInterface::create)->addIcon(SPAssetManager::getInstance()->getInterfaceIcon("Mixer")));
+    factory.defs.add(Factory<Interface>::Definition::createDef("", "OBS", &OBSInterface::create)->addIcon(SPAssetManager::getInstance()->getInterfaceIcon("OBS")));
 }
 
 InterfaceManager::~InterfaceManager()

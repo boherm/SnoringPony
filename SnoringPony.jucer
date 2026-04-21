@@ -71,6 +71,19 @@
           <FILE id="kU8oBb" name="PlaylistCue.cpp" compile="1" resource="0" file="src/Cue/playlist/PlaylistCue.cpp"/>
           <FILE id="zNeXVg" name="PlaylistCue.h" compile="0" resource="0" file="src/Cue/playlist/PlaylistCue.h"/>
         </GROUP>
+        <GROUP id="{A3814E1A-2F48-A184-CE30-7F6B7E64D7F2}" name="obs">
+          <GROUP id="{AB2294D1-90D5-0BE0-93CB-ED1583968360}" name="ui">
+            <FILE id="yQSwNK" name="OBSCueRequestEditor.cpp" compile="1" resource="0"
+                  file="src/Cue/obs/ui/OBSCueRequestEditor.cpp"/>
+            <FILE id="xU7wIz" name="OBSCueRequestEditor.h" compile="0" resource="0"
+                  file="src/Cue/obs/ui/OBSCueRequestEditor.h"/>
+          </GROUP>
+          <FILE id="KbgY3I" name="OBSCue.cpp" compile="1" resource="0" file="src/Cue/obs/OBSCue.cpp"/>
+          <FILE id="E1ZJTI" name="OBSCue.h" compile="0" resource="0" file="src/Cue/obs/OBSCue.h"/>
+          <FILE id="c633Ct" name="OBSCueRequest.cpp" compile="1" resource="0"
+                file="src/Cue/obs/OBSCueRequest.cpp"/>
+          <FILE id="pZPhVb" name="OBSCueRequest.h" compile="0" resource="0" file="src/Cue/obs/OBSCueRequest.h"/>
+        </GROUP>
         <GROUP id="{F6360A6C-7FC2-6FAA-7205-29D762DAEC42}" name="audio">
           <GROUP id="{030E42BF-9636-8527-42BA-56EF3EEF1C0B}" name="ui">
             <FILE id="bFOO43" name="MTCContainerEditor.cpp" compile="1" resource="0"
@@ -286,6 +299,19 @@
           <FILE id="vx7LBa" name="MixerInterface.h" compile="0" resource="0"
                 file="src/Interface/mixer/MixerInterface.h"/>
           <FILE id="KiZEVp" name="MixerSettings.h" compile="0" resource="0" file="src/Interface/mixer/MixerSettings.h"/>
+        </GROUP>
+        <GROUP id="{6B1D58E6-5FB6-4755-392B-040B81541AA3}" name="obs">
+          <GROUP id="{E5932114-A409-2851-9A12-CEF5F84C8DE3}" name="ui">
+            <FILE id="pWqaRh" name="OBSCommandEditor.cpp" compile="1" resource="0"
+                  file="src/Interface/obs/ui/OBSCommandEditor.cpp"/>
+            <FILE id="sYTWQp" name="OBSCommandEditor.h" compile="0" resource="0"
+                  file="src/Interface/obs/ui/OBSCommandEditor.h"/>
+          </GROUP>
+          <FILE id="pZYRsT" name="OBSCommand.cpp" compile="1" resource="0" file="src/Interface/obs/OBSCommand.cpp"/>
+          <FILE id="rTFgfe" name="OBSCommand.h" compile="0" resource="0" file="src/Interface/obs/OBSCommand.h"/>
+          <FILE id="tUKbCk" name="OBSInterface.cpp" compile="1" resource="0"
+                file="src/Interface/obs/OBSInterface.cpp"/>
+          <FILE id="nxDuwk" name="OBSInterface.h" compile="0" resource="0" file="src/Interface/obs/OBSInterface.h"/>
         </GROUP>
         <GROUP id="{023D512E-62A3-4D02-81EE-EA28EB792660}" name="osc">
           <GROUP id="{E92C2E37-6E69-A0C3-665F-AA65A2E19D37}" name="ui">

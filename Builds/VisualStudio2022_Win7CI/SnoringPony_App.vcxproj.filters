@@ -23,6 +23,12 @@
     <Filter Include="SnoringPony\Source\Cue\playlist">
       <UniqueIdentifier>{FE6F7955-A108-981C-5662-A26E8676FF94}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SnoringPony\Source\Cue\obs\ui">
+      <UniqueIdentifier>{35CE2B1D-AB3A-C899-A17C-F60059881163}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Cue\obs">
+      <UniqueIdentifier>{9EF24512-4BC2-3F2A-117B-361D724E3C75}</UniqueIdentifier>
+    </Filter>
     <Filter Include="SnoringPony\Source\Cue\audio\ui">
       <UniqueIdentifier>{4614EE1F-4BC3-A64A-8484-59E34A9F6B78}</UniqueIdentifier>
     </Filter>
@@ -82,6 +88,12 @@
     </Filter>
     <Filter Include="SnoringPony\Source\Interface\mixer">
       <UniqueIdentifier>{FF1CAC50-0D2E-ADE5-39D1-76963CD94C73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Interface\obs\ui">
+      <UniqueIdentifier>{23D16D72-7698-A78C-2DBD-610FC83D4AE2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Interface\obs">
+      <UniqueIdentifier>{C6F7A1F6-A5E2-E920-3F7D-E49649CD8C53}</UniqueIdentifier>
     </Filter>
     <Filter Include="SnoringPony\Source\Interface\osc\ui">
       <UniqueIdentifier>{8D5E916F-73AA-232E-D86D-B130BF87C337}</UniqueIdentifier>
@@ -1111,6 +1123,15 @@
     <ClCompile Include="..\..\src\Cue\playlist\PlaylistCue.cpp">
       <Filter>SnoringPony\Source\Cue\playlist</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Cue\obs\ui\OBSCueRequestEditor.cpp">
+      <Filter>SnoringPony\Source\Cue\obs\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cue\obs\OBSCue.cpp">
+      <Filter>SnoringPony\Source\Cue\obs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cue\obs\OBSCueRequest.cpp">
+      <Filter>SnoringPony\Source\Cue\obs</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Cue\audio\ui\MTCContainerEditor.cpp">
       <Filter>SnoringPony\Source\Cue\audio\ui</Filter>
     </ClCompile>
@@ -1275,6 +1296,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Interface\mixer\MixerInterface.cpp">
       <Filter>SnoringPony\Source\Interface\mixer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\obs\ui\OBSCommandEditor.cpp">
+      <Filter>SnoringPony\Source\Interface\obs\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\obs\OBSCommand.cpp">
+      <Filter>SnoringPony\Source\Interface\obs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\obs\OBSInterface.cpp">
+      <Filter>SnoringPony\Source\Interface\obs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Interface\osc\ui\OSCCommandArgumentsEditor.cpp">
       <Filter>SnoringPony\Source\Interface\osc\ui</Filter>
@@ -4764,6 +4794,15 @@
     <ClInclude Include="..\..\src\Cue\playlist\PlaylistCue.h">
       <Filter>SnoringPony\Source\Cue\playlist</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Cue\obs\ui\OBSCueRequestEditor.h">
+      <Filter>SnoringPony\Source\Cue\obs\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cue\obs\OBSCue.h">
+      <Filter>SnoringPony\Source\Cue\obs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cue\obs\OBSCueRequest.h">
+      <Filter>SnoringPony\Source\Cue\obs</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Cue\audio\ui\MTCContainerEditor.h">
       <Filter>SnoringPony\Source\Cue\audio\ui</Filter>
     </ClInclude>
@@ -4937,6 +4976,15 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Interface\mixer\MixerSettings.h">
       <Filter>SnoringPony\Source\Interface\mixer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\obs\ui\OBSCommandEditor.h">
+      <Filter>SnoringPony\Source\Interface\obs\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\obs\OBSCommand.h">
+      <Filter>SnoringPony\Source\Interface\obs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\obs\OBSInterface.h">
+      <Filter>SnoringPony\Source\Interface\obs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Interface\osc\ui\OSCCommandArgumentsEditor.h">
       <Filter>SnoringPony\Source\Interface\osc\ui</Filter>

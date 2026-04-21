@@ -13,6 +13,7 @@
 #include "../Cue/CueManager.h"
 #include "../Cue/audio/AudioCue.h"
 #include "../Cue/osc/OSCCue.h"
+#include "../Cue/obs/OBSCue.h"
 #include "../Cue/playlist/PlaylistCue.h"
 #include "../Cue/fade/FadeCue.h"
 #include "../Cue/go/GoCue.h"
@@ -124,6 +125,7 @@ void Cuelist::registerCueTypes(Factory<Cue>& f)
     f.defs.add(Factory<Cue>::Definition::createDef("Playback", "Fade Cue", &FadeCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Fade")));
     f.defs.add(Factory<Cue>::Definition::createDef("Playback", "Go Cue", &GoCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Go")));
     f.defs.add(Factory<Cue>::Definition::createDef("Network", "OSC Cue", &OSCCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("OSC")));
+    f.defs.add(Factory<Cue>::Definition::createDef("Network", "OBS Cue", &OBSCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("OBS")));
 }
 
 InspectableEditor* Cuelist::getEditorInternal(bool isRoot, Array<Inspectable*> inspectables)

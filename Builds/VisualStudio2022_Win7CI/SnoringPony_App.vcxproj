@@ -166,6 +166,9 @@
     <ClCompile Include="..\..\src\Cue\osc\OSCCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\osc\OSCCueMessage.cpp"/>
     <ClCompile Include="..\..\src\Cue\playlist\PlaylistCue.cpp"/>
+    <ClCompile Include="..\..\src\Cue\obs\ui\OBSCueRequestEditor.cpp"/>
+    <ClCompile Include="..\..\src\Cue\obs\OBSCue.cpp"/>
+    <ClCompile Include="..\..\src\Cue\obs\OBSCueRequest.cpp"/>
     <ClCompile Include="..\..\src\Cue\audio\ui\MTCContainerEditor.cpp"/>
     <ClCompile Include="..\..\src\Cue\audio\ui\AudioWaveformSlicerEditor.cpp"/>
     <ClCompile Include="..\..\src\Cue\audio\AudioSlices.cpp"/>
@@ -221,6 +224,9 @@
     <ClCompile Include="..\..\src\Interface\mixer\MixerChannel.cpp"/>
     <ClCompile Include="..\..\src\Interface\mixer\MixerFX.cpp"/>
     <ClCompile Include="..\..\src\Interface\mixer\MixerInterface.cpp"/>
+    <ClCompile Include="..\..\src\Interface\obs\ui\OBSCommandEditor.cpp"/>
+    <ClCompile Include="..\..\src\Interface\obs\OBSCommand.cpp"/>
+    <ClCompile Include="..\..\src\Interface\obs\OBSInterface.cpp"/>
     <ClCompile Include="..\..\src\Interface\osc\ui\OSCCommandArgumentsEditor.cpp"/>
     <ClCompile Include="..\..\src\Interface\osc\ui\OSCCommandEditor.cpp"/>
     <ClCompile Include="..\..\src\Interface\osc\ui\OSCInputEditor.cpp"/>
@@ -3383,6 +3389,9 @@
     <ClInclude Include="..\..\src\Cue\osc\OSCCue.h"/>
     <ClInclude Include="..\..\src\Cue\osc\OSCCueMessage.h"/>
     <ClInclude Include="..\..\src\Cue\playlist\PlaylistCue.h"/>
+    <ClInclude Include="..\..\src\Cue\obs\ui\OBSCueRequestEditor.h"/>
+    <ClInclude Include="..\..\src\Cue\obs\OBSCue.h"/>
+    <ClInclude Include="..\..\src\Cue\obs\OBSCueRequest.h"/>
     <ClInclude Include="..\..\src\Cue\audio\ui\MTCContainerEditor.h"/>
     <ClInclude Include="..\..\src\Cue\audio\ui\AudioWaveformSlicerEditor.h"/>
     <ClInclude Include="..\..\src\Cue\audio\AudioSlices.h"/>
@@ -3441,6 +3450,9 @@
     <ClInclude Include="..\..\src\Interface\mixer\MixerFX.h"/>
     <ClInclude Include="..\..\src\Interface\mixer\MixerInterface.h"/>
     <ClInclude Include="..\..\src\Interface\mixer\MixerSettings.h"/>
+    <ClInclude Include="..\..\src\Interface\obs\ui\OBSCommandEditor.h"/>
+    <ClInclude Include="..\..\src\Interface\obs\OBSCommand.h"/>
+    <ClInclude Include="..\..\src\Interface\obs\OBSInterface.h"/>
     <ClInclude Include="..\..\src\Interface\osc\ui\OSCCommandArgumentsEditor.h"/>
     <ClInclude Include="..\..\src\Interface\osc\ui\OSCCommandEditor.h"/>
     <ClInclude Include="..\..\src\Interface\osc\ui\OSCInputEditor.h"/>

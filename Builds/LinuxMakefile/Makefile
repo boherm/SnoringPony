@@ -81,6 +81,9 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/OSCCue_6cd7e3c0.o \
   $(JUCE_OBJDIR)/OSCCueMessage_fc4f0bb1.o \
   $(JUCE_OBJDIR)/PlaylistCue_3b5dd40.o \
+  $(JUCE_OBJDIR)/OBSCueRequestEditor_9d0649b9.o \
+  $(JUCE_OBJDIR)/OBSCue_b6c639fe.o \
+  $(JUCE_OBJDIR)/OBSCueRequest_90d4423b.o \
   $(JUCE_OBJDIR)/MTCContainerEditor_10bd4c82.o \
   $(JUCE_OBJDIR)/AudioWaveformSlicerEditor_302e651a.o \
   $(JUCE_OBJDIR)/AudioSlices_6406366c.o \
@@ -136,6 +139,9 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/MixerChannel_ff00e9f6.o \
   $(JUCE_OBJDIR)/MixerFX_b07eb3e9.o \
   $(JUCE_OBJDIR)/MixerInterface_4b8bd7ac.o \
+  $(JUCE_OBJDIR)/OBSCommandEditor_5d7a2d58.o \
+  $(JUCE_OBJDIR)/OBSCommand_ff2f2710.o \
+  $(JUCE_OBJDIR)/OBSInterface_4495a9fe.o \
   $(JUCE_OBJDIR)/OSCCommandArgumentsEditor_32cb47c2.o \
   $(JUCE_OBJDIR)/OSCCommandEditor_99163e38.o \
   $(JUCE_OBJDIR)/OSCInputEditor_1e7922b7.o \
@@ -254,6 +260,21 @@ $(JUCE_OBJDIR)/OSCCueMessage_fc4f0bb1.o: ../../src/Cue/osc/OSCCueMessage.cpp
 $(JUCE_OBJDIR)/PlaylistCue_3b5dd40.o: ../../src/Cue/playlist/PlaylistCue.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling PlaylistCue.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/OBSCueRequestEditor_9d0649b9.o: ../../src/Cue/obs/ui/OBSCueRequestEditor.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling OBSCueRequestEditor.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/OBSCue_b6c639fe.o: ../../src/Cue/obs/OBSCue.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling OBSCue.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/OBSCueRequest_90d4423b.o: ../../src/Cue/obs/OBSCueRequest.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling OBSCueRequest.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/MTCContainerEditor_10bd4c82.o: ../../src/Cue/audio/ui/MTCContainerEditor.cpp
@@ -529,6 +550,21 @@ $(JUCE_OBJDIR)/MixerFX_b07eb3e9.o: ../../src/Interface/mixer/MixerFX.cpp
 $(JUCE_OBJDIR)/MixerInterface_4b8bd7ac.o: ../../src/Interface/mixer/MixerInterface.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling MixerInterface.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/OBSCommandEditor_5d7a2d58.o: ../../src/Interface/obs/ui/OBSCommandEditor.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling OBSCommandEditor.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/OBSCommand_ff2f2710.o: ../../src/Interface/obs/OBSCommand.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling OBSCommand.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/OBSInterface_4495a9fe.o: ../../src/Interface/obs/OBSInterface.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling OBSInterface.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/OSCCommandArgumentsEditor_32cb47c2.o: ../../src/Interface/osc/ui/OSCCommandArgumentsEditor.cpp
