@@ -166,6 +166,7 @@
     <ClCompile Include="..\..\src\Cue\osc\OSCCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\osc\OSCCueMessage.cpp"/>
     <ClCompile Include="..\..\src\Cue\playlist\PlaylistCue.cpp"/>
+    <ClCompile Include="..\..\src\Cue\audio\ui\MTCContainerEditor.cpp"/>
     <ClCompile Include="..\..\src\Cue\audio\ui\AudioWaveformSlicerEditor.cpp"/>
     <ClCompile Include="..\..\src\Cue\audio\AudioSlices.cpp"/>
     <ClCompile Include="..\..\src\Cue\audio\AudioWaveformSlicer.cpp"/>
@@ -3382,6 +3383,7 @@
     <ClInclude Include="..\..\src\Cue\osc\OSCCue.h"/>
     <ClInclude Include="..\..\src\Cue\osc\OSCCueMessage.h"/>
     <ClInclude Include="..\..\src\Cue\playlist\PlaylistCue.h"/>
+    <ClInclude Include="..\..\src\Cue\audio\ui\MTCContainerEditor.h"/>
     <ClInclude Include="..\..\src\Cue\audio\ui\AudioWaveformSlicerEditor.h"/>
     <ClInclude Include="..\..\src\Cue\audio\AudioSlices.h"/>
     <ClInclude Include="..\..\src\Cue\audio\AudioWaveformSlicer.h"/>

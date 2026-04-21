@@ -136,6 +136,7 @@
 		E4192F1B5850D7DE185F54BA /* OSCFeedbackItem.cpp */ = {isa = PBXBuildFile; fileRef = 7B399111D15607712371350D; };
 		E4F65AC813AF8AC6E2EA72EA /* AudioOutput.cpp */ = {isa = PBXBuildFile; fileRef = BA828DF6524FC93B0427DA5A; };
 		E5648FD99172DCDE0CEE634D /* Metal.framework */ = {isa = PBXBuildFile; fileRef = 45041D47A349EDEF1C22D769; settings = { ATTRIBUTES = (Weak, ); }; };
+		E804646E8839032989691E66 /* MTCContainerEditor.cpp */ = {isa = PBXBuildFile; fileRef = D37E12E68D909D62B0012E1E; };
 		EA4B860910C0D53D64958AED /* AboutWindow.cpp */ = {isa = PBXBuildFile; fileRef = A3D8CB28E4C99C7BE7FAFE1A; };
 		EB13A437772917E249C5FFF7 /* OSCInterface.cpp */ = {isa = PBXBuildFile; fileRef = 0CCDB06D20559DD8E6C727F1; };
 		ED824788D6100CDA3C41CF7B /* MetalKit.framework */ = {isa = PBXBuildFile; fileRef = CF7BF1327A3FD5E809829B64; settings = { ATTRIBUTES = (Weak, ); }; };
@@ -282,6 +283,7 @@
 		7830E13782E5ED36A801F8F3 /* playlist_cue.png */ /* playlist_cue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = playlist_cue.png; path = ../../resources/playlist_cue.png; sourceTree = SOURCE_ROOT; };
 		7AC8E480FC47EE78EFC7EC9B /* GoCue.h */ /* GoCue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GoCue.h; path = ../../src/Cue/go/GoCue.h; sourceTree = SOURCE_ROOT; };
 		7B399111D15607712371350D /* OSCFeedbackItem.cpp */ /* OSCFeedbackItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OSCFeedbackItem.cpp; path = ../../src/Interface/osc/OSCFeedbackItem.cpp; sourceTree = SOURCE_ROOT; };
+		7C3A8201F2BEB6CE11CD0A7B /* MTCContainerEditor.h */ /* MTCContainerEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MTCContainerEditor.h; path = ../../src/Cue/audio/ui/MTCContainerEditor.h; sourceTree = SOURCE_ROOT; };
 		7CF75AF7B9621C0C88F778A9 /* include_juce_audio_processors.mm */ /* include_juce_audio_processors.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_audio_processors.mm; path = ../../JuceLibraryCode/include_juce_audio_processors.mm; sourceTree = SOURCE_ROOT; };
 		7CFFB66F5529DE07F5A2C12B /* noicon.png */ /* noicon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = noicon.png; path = ../../resources/noicon.png; sourceTree = SOURCE_ROOT; };
 		7D983A3F5973C91C665F605D /* OSCIsPanickingFeedback.h */ /* OSCIsPanickingFeedback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OSCIsPanickingFeedback.h; path = ../../src/Interface/osc/OSCIsPanickingFeedback.h; sourceTree = SOURCE_ROOT; };
@@ -379,6 +381,7 @@
 		CE01FDB47DE124494507B545 /* WingTcpMixerSettings.cpp */ /* WingTcpMixerSettings.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WingTcpMixerSettings.cpp; path = ../../src/Interface/mixer/wingtcp/WingTcpMixerSettings.cpp; sourceTree = SOURCE_ROOT; };
 		CF78ECFA21F0F737C765F30D /* GoCue.cpp */ /* GoCue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = GoCue.cpp; path = ../../src/Cue/go/GoCue.cpp; sourceTree = SOURCE_ROOT; };
 		CF7BF1327A3FD5E809829B64 /* MetalKit.framework */ /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
+		D37E12E68D909D62B0012E1E /* MTCContainerEditor.cpp */ /* MTCContainerEditor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MTCContainerEditor.cpp; path = ../../src/Cue/audio/ui/MTCContainerEditor.cpp; sourceTree = SOURCE_ROOT; };
 		D458FD584C87F76038FF98A8 /* MIDIManager.h */ /* MIDIManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MIDIManager.h; path = ../../src/Interface/midi/MIDIManager.h; sourceTree = SOURCE_ROOT; };
 		D47AA32AD265731805BF8376 /* Clock.h */ /* Clock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Clock.h; path = ../../src/ui/panels/Clock.h; sourceTree = SOURCE_ROOT; };
 		D5974663D523854A78B2AB75 /* FadeCue.cpp */ /* FadeCue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FadeCue.cpp; path = ../../src/Cue/fade/FadeCue.cpp; sourceTree = SOURCE_ROOT; };
@@ -748,6 +751,8 @@
 		8E1EB4ECB06EE1162F5F55F3 /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				D37E12E68D909D62B0012E1E,
+				7C3A8201F2BEB6CE11CD0A7B,
 				2619D69AD9F2375D60AB0C5F,
 				DC2483C81B0ABDCC67D79CBB,
 			);
@@ -1183,6 +1188,7 @@
 				B4B843D1ED4D9B12887D05D0,
 				92A944B5B37D6CAD15D2C9E6,
 				AB1932D67FACCAFFEFE24DE0,
+				E804646E8839032989691E66,
 				C727F0EDBA227906A00EB01D,
 				81FE5838DBC11A9078C405D2,
 				23E34A02F96BCBAD117AB4F6,

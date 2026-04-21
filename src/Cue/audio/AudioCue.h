@@ -49,6 +49,7 @@ public:
     TargetParameter* mtcMidiInterface;
     FloatParameter* mtcOffset;
     EnumParameter* mtcFrameRate;
+    StringParameter* mtcTimecodeDisplay;
 
     class MTCTimer : public juce::HighResolutionTimer
     {

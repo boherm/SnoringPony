@@ -19,6 +19,7 @@
 #include "../../Cue/dca/ui/DCAAssignmentDialog.h"
 #include "../../Interface/mixer/MixerChannel.h"
 #include "../../ui/SPAssetManager.h"
+#include "../../Cue/audio/AudioCue.h"
 
 enum ColumnIds
 {
@@ -396,10 +397,21 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
     if (DescriptionColumn == columnId) {
         Rectangle<float> r = Rectangle<float>(0, 0, width, height);
 
+        AudioCue* audioCue = dynamic_cast<AudioCue*>(cue);
         if (cue->getControllableByName("Loop") != nullptr && dynamic_cast<BoolParameter*>(cue->getControllableByName("Loop"))->boolValue()) {
             g.setOpacity(0.5f);
             g.drawImage(SPAssetManager::getInstance()->getLoopIcon(), r.removeFromRight(22).reduced(3), RectanglePlacement::centred, false);
         }
+
+        if (audioCue != nullptr && audioCue->mtcCC->enabled->boolValue()) {
+            g.setOpacity(0.5f);
+            g.setColour(Colours::red);
+            g.setFont(Font(11.0f, Font::bold));
+            g.drawText("TC", r.removeFromRight(22), Justification::centred);
+            g.setColour(Colours::white);
+            g.setFont(Font(14.0f));
+        }
+
         g.setOpacity(1.0f);
         if (cue->isAutoStartCue())
             g.setOpacity(0.4f);

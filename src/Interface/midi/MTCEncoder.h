@@ -121,6 +121,17 @@ public:
 
     /** Time interval between quarter-frame messages in seconds.
         There are 4 quarter-frames per frame. */
+    static juce::String smpteToString(const SMPTETime& t, FrameRate rate)
+    {
+        return juce::String::formatted("%02d:%02d:%02d:%02d",
+            t.hours, t.minutes, t.seconds, t.frames);
+    }
+
+    static juce::String secondsToSMPTEString(double timeInSeconds, FrameRate rate)
+    {
+        return smpteToString(secondsToSMPTE(timeInSeconds, rate), rate);
+    }
+
     static double getQuarterFrameInterval(FrameRate rate)
     {
         return 1.0 / (getFramesPerSecond(rate) * 4.0);

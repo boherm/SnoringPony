@@ -81,6 +81,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/OSCCue_6cd7e3c0.o \
   $(JUCE_OBJDIR)/OSCCueMessage_fc4f0bb1.o \
   $(JUCE_OBJDIR)/PlaylistCue_3b5dd40.o \
+  $(JUCE_OBJDIR)/MTCContainerEditor_10bd4c82.o \
   $(JUCE_OBJDIR)/AudioWaveformSlicerEditor_302e651a.o \
   $(JUCE_OBJDIR)/AudioSlices_6406366c.o \
   $(JUCE_OBJDIR)/AudioWaveformSlicer_8710d808.o \
@@ -253,6 +254,11 @@ $(JUCE_OBJDIR)/OSCCueMessage_fc4f0bb1.o: ../../src/Cue/osc/OSCCueMessage.cpp
 $(JUCE_OBJDIR)/PlaylistCue_3b5dd40.o: ../../src/Cue/playlist/PlaylistCue.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling PlaylistCue.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MTCContainerEditor_10bd4c82.o: ../../src/Cue/audio/ui/MTCContainerEditor.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MTCContainerEditor.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/AudioWaveformSlicerEditor_302e651a.o: ../../src/Cue/audio/ui/AudioWaveformSlicerEditor.cpp

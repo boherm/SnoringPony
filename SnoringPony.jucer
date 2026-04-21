@@ -73,6 +73,10 @@
         </GROUP>
         <GROUP id="{F6360A6C-7FC2-6FAA-7205-29D762DAEC42}" name="audio">
           <GROUP id="{030E42BF-9636-8527-42BA-56EF3EEF1C0B}" name="ui">
+            <FILE id="bFOO43" name="MTCContainerEditor.cpp" compile="1" resource="0"
+                  file="src/Cue/audio/ui/MTCContainerEditor.cpp"/>
+            <FILE id="iNuWFQ" name="MTCContainerEditor.h" compile="0" resource="0"
+                  file="src/Cue/audio/ui/MTCContainerEditor.h"/>
             <FILE id="q4wXEZ" name="AudioWaveformSlicerEditor.cpp" compile="1"
                   resource="0" file="src/Cue/audio/ui/AudioWaveformSlicerEditor.cpp"/>
             <FILE id="eRTt8p" name="AudioWaveformSlicerEditor.h" compile="0" resource="0"

@@ -18,6 +18,7 @@
 #include "../../Interface/audio/AudioOutput.h"
 #include "../../Interface/midi/MIDIInterface.h"
 #include "../../Interface/InterfaceManager.h"
+#include "ui/MTCContainerEditor.h"
 
 AudioCue::AudioCue(var params)
 {
@@ -50,6 +51,12 @@ AudioCue::AudioCue(var params)
     mtcFrameRate->addOption("25 fps", MTCEncoder::FPS_25);
     mtcFrameRate->addOption("29.97 df", MTCEncoder::FPS_30_DROP);
     mtcFrameRate->addOption("30 fps", MTCEncoder::FPS_30);
+
+    mtcTimecodeDisplay = mtcCC->addStringParameter("Timecode", "Current MTC timecode being sent", "00:00:00:00");
+    mtcTimecodeDisplay->setEnabled(false);
+    mtcTimecodeDisplay->hideInEditor = true;
+
+    mtcCC->customGetEditorFunc = &MTCContainerEditor::create;
 
     audioSlicer.reset(new ControllableContainer("Audio Slicer"));
     audioSlicer->editorIsCollapsed = true;
@@ -257,6 +264,13 @@ void AudioCue::timerCallback()
     double time = slicesManager->processTime(filesManager->getCurrentTime());
     currentTime->setValue(jmax(0.0, time));
 
+    if (mtcCC->enabled->boolValue() && mtcTimer != nullptr)
+    {
+        double playbackTime = filesManager->getCurrentTime() + mtcOffset->doubleValue();
+        MTCEncoder::FrameRate rate = (MTCEncoder::FrameRate)(int)mtcFrameRate->getValueData();
+        mtcTimecodeDisplay->setValue(MTCEncoder::secondsToSMPTEString(playbackTime, rate));
+    }
+
     bool isLooping = slicesManager->hasLoopingSlice();
 
     if (!isLooping)
@@ -413,6 +427,8 @@ void AudioCue::stopMTC()
         mtcTimer->stopTimer();
         mtcTimer.reset();
     }
+
+    mtcTimecodeDisplay->setValue("00:00:00:00");
 
     // Remove from active senders
     MIDIInterface* iface = getMTCInterface();

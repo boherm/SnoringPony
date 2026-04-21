@@ -1111,6 +1111,9 @@
     <ClCompile Include="..\..\src\Cue\playlist\PlaylistCue.cpp">
       <Filter>SnoringPony\Source\Cue\playlist</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Cue\audio\ui\MTCContainerEditor.cpp">
+      <Filter>SnoringPony\Source\Cue\audio\ui</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Cue\audio\ui\AudioWaveformSlicerEditor.cpp">
       <Filter>SnoringPony\Source\Cue\audio\ui</Filter>
     </ClCompile>
@@ -4760,6 +4763,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Cue\playlist\PlaylistCue.h">
       <Filter>SnoringPony\Source\Cue\playlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cue\audio\ui\MTCContainerEditor.h">
+      <Filter>SnoringPony\Source\Cue\audio\ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Cue\audio\ui\AudioWaveformSlicerEditor.h">
       <Filter>SnoringPony\Source\Cue\audio\ui</Filter>
