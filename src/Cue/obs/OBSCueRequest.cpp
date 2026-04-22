@@ -19,6 +19,46 @@ OBSCueRequestArguments::OBSCueRequestArguments() :
 {
 }
 
+// Custom manager editor that does a second layout pass so that child editors
+// with non-standard heights (e.g. multiline StringParameter) are accounted for.
+class OBSCueRequestArgumentsEditor : public GenericManagerEditor<GenericControllableItem>
+{
+public:
+    OBSCueRequestArgumentsEditor(BaseManager<GenericControllableItem>* m, bool isRoot)
+        : GenericManagerEditor<GenericControllableItem>(m, isRoot)
+    {
+        // The base constructor calls resetAndBuild() but virtual dispatch
+        // doesn't reach our override during construction. Run the second
+        // layout pass here so child editor heights are correct.
+        secondLayoutPass();
+    }
+
+    void resetAndBuild() override
+    {
+        GenericManagerEditor<GenericControllableItem>::resetAndBuild();
+        secondLayoutPass();
+    }
+
+private:
+    void secondLayoutPass()
+    {
+        // GenericControllableItemEditor sets headerHeight in its constructor
+        // AFTER the base constructor already computed the component size.
+        // Force each child editor to recalculate its height.
+        for (auto* cui : childEditors)
+            cui->resized();
+
+        juce::Rectangle<int> r = getLocalBounds();
+        resizedInternal(r);
+        setSize(getWidth(), juce::jmax<int>(r.getY() + 2, headerHeight));
+    }
+};
+
+InspectableEditor* OBSCueRequestArguments::getEditorInternal(bool isRoot, juce::Array<Inspectable*>)
+{
+    return new OBSCueRequestArgumentsEditor(this, isRoot);
+}
+
 // -----------------------------------------------------
 
 OBSCueRequest::OBSCueRequest(String name) :
@@ -45,6 +85,7 @@ OBSCueRequest::OBSCueRequest(String name) :
 
     customJSON = addStringParameter("Custom JSON", "Request data as raw JSON (optional)", "", false);
     customJSON->hideInEditor = true;
+    customJSON->multiline = true;
 
     setWarningMessage("No OBS Template selected");
 
@@ -137,8 +178,15 @@ void OBSCueRequest::rebuildArgumentsFromTemplate()
             nGci->canBeReorderedInEditor = false;
             nGci->canBeCopiedAndPasted = false;
             nGci->userCanDuplicate = false;
+
+            // Preserve multiline flag from the source parameter
+            StringParameter* srcStr = dynamic_cast<StringParameter*>(p);
+            StringParameter* dstStr = dynamic_cast<StringParameter*>(nGci->controllable);
+            if (srcStr != nullptr && dstStr != nullptr)
+                dstStr->multiline = srcStr->multiline;
         }
     }
+
 }
 
 var OBSCueRequest::buildRequestData()
@@ -300,6 +348,16 @@ void OBSCueRequest::loadJSONDataItemInternal(juce::var data)
                 gci->canBeReorderedInEditor = false;
                 gci->canBeCopiedAndPasted = false;
                 gci->userCanDuplicate = false;
+
+                // Preserve multiline flag from the template parameter
+                if (obsCommand->params != nullptr)
+                {
+                    if (auto* srcStr = dynamic_cast<StringParameter*>(obsCommand->params->getControllableByName(gci->controllable->shortName)))
+                    {
+                        if (auto* dstStr = dynamic_cast<StringParameter*>(gci->controllable))
+                            dstStr->multiline = srcStr->multiline;
+                    }
+                }
             }
         }
     } else if (obsInterface != nullptr) {

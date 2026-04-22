@@ -21,6 +21,7 @@ class OBSCueRequestArguments :
 public:
     OBSCueRequestArguments();
     virtual ~OBSCueRequestArguments() {}
+    InspectableEditor* getEditorInternal(bool isRoot, juce::Array<Inspectable*> inspectables) override;
 };
 
 // -----------------------------------------------------

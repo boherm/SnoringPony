@@ -83,8 +83,12 @@ void OBSCommand::rebuildParams()
     else if (type == "Custom")
     {
         params->addStringParameter("customRequestType", "OBS request type string", "");
-        params->addStringParameter("customJSON", "Request data as raw JSON (optional)", "");
+        auto* customJSONParam = params->addStringParameter("customJSON", "Request data as raw JSON (optional)", "");
+        customJSONParam->multiline = true;
     }
+
+    params->queuedNotifier.addMessage(new ContainerAsyncEvent(ContainerAsyncEvent::ControllableContainerNeedsRebuild, params.get()));
+    queuedNotifier.addMessage(new ContainerAsyncEvent(ContainerAsyncEvent::ControllableContainerNeedsRebuild, this));
 }
 
 var OBSCommand::buildRequestData()
