@@ -294,9 +294,13 @@ void OBSInterface::onContainerParameterChangedInternal(Parameter* p)
 {
     if (Engine::mainEngine->isLoadingFile || Engine::mainEngine->isClearing) return;
 
-    if (p == autoConnect && !autoConnect->boolValue())
+    if (p == autoConnect)
     {
-        if (isTimerRunning())
+        if (autoConnect->boolValue() && connectionState == Disconnected)
+        {
+            connectOBS();
+        }
+        else if (!autoConnect->boolValue() && isTimerRunning())
         {
             stopTimer();
             NLOG(niceName, "Auto-reconnect stopped");
