@@ -267,6 +267,15 @@
           <FILE id="lEMkYk" name="MIDIMapping.h" compile="0" resource="0" file="src/Interface/midi/MIDIMapping.h"/>
         </GROUP>
         <GROUP id="{AF426437-FBAB-194E-56D2-9A20BD4CBD62}" name="mixer">
+          <GROUP id="{AB75D155-2B3A-A2BD-1405-FB373DF2AEC5}" name="ahcq">
+            <FILE id="m1snku" name="AHCQMixerSettings.cpp" compile="1" resource="0"
+                  file="src/Interface/mixer/ahcq/AHCQMixerSettings.cpp"/>
+            <FILE id="jm0PUh" name="AHCQMixerSettings.h" compile="0" resource="0"
+                  file="src/Interface/mixer/ahcq/AHCQMixerSettings.h"/>
+            <FILE id="y3tCeG" name="AHCQProtocol.cpp" compile="1" resource="0"
+                  file="src/Interface/mixer/ahcq/AHCQProtocol.cpp"/>
+            <FILE id="ZVJ2sX" name="AHCQProtocol.h" compile="0" resource="0" file="src/Interface/mixer/ahcq/AHCQProtocol.h"/>
+          </GROUP>
           <GROUP id="{9B3A8471-C144-138B-466A-945FF95125DD}" name="wingosc">
             <FILE id="xEbd2D" name="WingOscMixerSettings.cpp" compile="1" resource="0"
                   file="src/Interface/mixer/wingosc/WingOscMixerSettings.cpp"/>

@@ -80,6 +80,9 @@
     <Filter Include="SnoringPony\Source\Interface\midi">
       <UniqueIdentifier>{6C9D08FA-276B-D99C-E11E-4084A6CBACB7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SnoringPony\Source\Interface\mixer\ahcq">
+      <UniqueIdentifier>{04C79EFD-2F83-D9D7-B1DC-60995B0E47D7}</UniqueIdentifier>
+    </Filter>
     <Filter Include="SnoringPony\Source\Interface\mixer\wingosc">
       <UniqueIdentifier>{916D2EA2-37DE-7EBC-01ED-28E7879A887B}</UniqueIdentifier>
     </Filter>
@@ -1272,6 +1275,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Interface\midi\MIDIIsPlayingFeedback.cpp">
       <Filter>SnoringPony\Source\Interface\midi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\mixer\ahcq\AHCQMixerSettings.cpp">
+      <Filter>SnoringPony\Source\Interface\mixer\ahcq</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Interface\mixer\ahcq\AHCQProtocol.cpp">
+      <Filter>SnoringPony\Source\Interface\mixer\ahcq</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Interface\mixer\wingosc\WingOscMixerSettings.cpp">
       <Filter>SnoringPony\Source\Interface\mixer\wingosc</Filter>
@@ -4946,6 +4955,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Interface\midi\MIDIMapping.h">
       <Filter>SnoringPony\Source\Interface\midi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\mixer\ahcq\AHCQMixerSettings.h">
+      <Filter>SnoringPony\Source\Interface\mixer\ahcq</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\mixer\ahcq\AHCQProtocol.h">
+      <Filter>SnoringPony\Source\Interface\mixer\ahcq</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Interface\mixer\wingosc\WingOscMixerSettings.h">
       <Filter>SnoringPony\Source\Interface\mixer\wingosc</Filter>

@@ -11,6 +11,7 @@
 		014993105B0195ABA4ABA0A0 /* IOKit.framework */ = {isa = PBXBuildFile; fileRef = 8A837C2CA24E36B83D0747D7; };
 		015EB3829272967F5BA7FAF4 /* InterfaceManagerUI.cpp */ = {isa = PBXBuildFile; fileRef = 5CA0B57692A6CB7C5E32805E; };
 		01B377BE82EB05C4A7AD488E /* OSCCommandArgumentsEditor.cpp */ = {isa = PBXBuildFile; fileRef = CB8B523172DF3CA0B58BCB68; };
+		023B5F040ECA50975C898551 /* AHCQMixerSettings.cpp */ = {isa = PBXBuildFile; fileRef = 7AB73D1822E4A1B5F620925B; };
 		023DAAC78847AD8C6370E6EE /* GoAction.cpp */ = {isa = PBXBuildFile; fileRef = F56DA8E1723FD641B474725C; };
 		03C3E3DCBC32F6184158CD3D /* CuelistManagerUI.cpp */ = {isa = PBXBuildFile; fileRef = DD7ACC4AB9929D4724C9805A; };
 		0661D07BFE02C9C1A53CA91C /* include_juce_core.mm */ = {isa = PBXBuildFile; fileRef = 9E9721FF8A3697A22337A63E; };
@@ -126,6 +127,7 @@
 		CAA9EA5837AAA5B4C3266E63 /* PluginScanner.cpp */ = {isa = PBXBuildFile; fileRef = DFDFCCBD5D767210C2C7AB90; };
 		CE74F3166954BB2024784337 /* AudioPlayer.cpp */ = {isa = PBXBuildFile; fileRef = 6684AECAA95242E961D9B528; };
 		CFF4F88CCE80595A4EB2B38B /* OSCCueMessageEditor.cpp */ = {isa = PBXBuildFile; fileRef = 439E7D11E98A9DF464D4C92C; };
+		D167A137DD3453EF85F2D539 /* AHCQProtocol.cpp */ = {isa = PBXBuildFile; fileRef = 05B50EAB39F3B3A51B23A600; };
 		D3AB51E0D9E6CB37C6660051 /* include_juce_dsp.mm */ = {isa = PBXBuildFile; fileRef = C53BC4064BE7C7553002A5C5; };
 		D3E6CFD214BF4A73A5BDE1BE /* MIDIInterface.cpp */ = {isa = PBXBuildFile; fileRef = 026A962DAAD005086CE1C881; };
 		D55C0A63B293E3A54668BED1 /* Accelerate.framework */ = {isa = PBXBuildFile; fileRef = 0765A39470BFE2B9D5943FA8; };
@@ -162,6 +164,7 @@
 		026A962DAAD005086CE1C881 /* MIDIInterface.cpp */ /* MIDIInterface.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MIDIInterface.cpp; path = ../../src/Interface/midi/MIDIInterface.cpp; sourceTree = SOURCE_ROOT; };
 		04D20B58F51A265067CB498B /* Security.framework */ /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		05283F160356A04290ECC3E9 /* Icon.icns */ /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = file.icns; name = Icon.icns; path = Icon.icns; sourceTree = SOURCE_ROOT; };
+		05B50EAB39F3B3A51B23A600 /* AHCQProtocol.cpp */ /* AHCQProtocol.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AHCQProtocol.cpp; path = ../../src/Interface/mixer/ahcq/AHCQProtocol.cpp; sourceTree = SOURCE_ROOT; };
 		0765A39470BFE2B9D5943FA8 /* Accelerate.framework */ /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		07DBEE605F4D1B0C8F46B26F /* InterfaceUI.h */ /* InterfaceUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = InterfaceUI.h; path = ../../src/Interface/ui/InterfaceUI.h; sourceTree = SOURCE_ROOT; };
 		08A03183DAD949E7BFC25C1B /* CuelistManager.h */ /* CuelistManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CuelistManager.h; path = ../../src/Cuelist/CuelistManager.h; sourceTree = SOURCE_ROOT; };
@@ -245,6 +248,7 @@
 		489036D0F9E0BC2C39548EC9 /* MIDIFeedbackFactory.h */ /* MIDIFeedbackFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MIDIFeedbackFactory.h; path = ../../src/Interface/midi/MIDIFeedbackFactory.h; sourceTree = SOURCE_ROOT; };
 		48F1D1974FE3CCB72CCE848B /* OSCIsPlayingFeedback.cpp */ /* OSCIsPlayingFeedback.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OSCIsPlayingFeedback.cpp; path = ../../src/Interface/osc/OSCIsPlayingFeedback.cpp; sourceTree = SOURCE_ROOT; };
 		4936348895A92A1E35AEDC68 /* include_juce_simpleweb.cpp */ /* include_juce_simpleweb.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = include_juce_simpleweb.cpp; path = ../../JuceLibraryCode/include_juce_simpleweb.cpp; sourceTree = SOURCE_ROOT; };
+		4ACFD3B7EC52794A8DB296B2 /* AHCQMixerSettings.h */ /* AHCQMixerSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AHCQMixerSettings.h; path = ../../src/Interface/mixer/ahcq/AHCQMixerSettings.h; sourceTree = SOURCE_ROOT; };
 		4AF4705DCDCE8CF6A8A02D48 /* OSCCue.h */ /* OSCCue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OSCCue.h; path = ../../src/Cue/osc/OSCCue.h; sourceTree = SOURCE_ROOT; };
 		4DD3DF81F9E8DF48569EB0AC /* OpenGL.framework */ /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		4E35F8403B373616B15746FF /* AudioOutputEditor.cpp */ /* AudioOutputEditor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AudioOutputEditor.cpp; path = ../../src/Interface/audio/ui/AudioOutputEditor.cpp; sourceTree = SOURCE_ROOT; };
@@ -293,6 +297,7 @@
 		7690DD3917EBF82E47DA7A41 /* include_juce_organicui2.cpp */ /* include_juce_organicui2.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = include_juce_organicui2.cpp; path = ../../JuceLibraryCode/include_juce_organicui2.cpp; sourceTree = SOURCE_ROOT; };
 		77486214AEDCF4FAD70C0ACB /* PluginSlotEditor.h */ /* PluginSlotEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PluginSlotEditor.h; path = ../../src/Audio/ui/PluginSlotEditor.h; sourceTree = SOURCE_ROOT; };
 		7830E13782E5ED36A801F8F3 /* playlist_cue.png */ /* playlist_cue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = playlist_cue.png; path = ../../resources/playlist_cue.png; sourceTree = SOURCE_ROOT; };
+		7AB73D1822E4A1B5F620925B /* AHCQMixerSettings.cpp */ /* AHCQMixerSettings.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AHCQMixerSettings.cpp; path = ../../src/Interface/mixer/ahcq/AHCQMixerSettings.cpp; sourceTree = SOURCE_ROOT; };
 		7AC8E480FC47EE78EFC7EC9B /* GoCue.h */ /* GoCue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GoCue.h; path = ../../src/Cue/go/GoCue.h; sourceTree = SOURCE_ROOT; };
 		7B399111D15607712371350D /* OSCFeedbackItem.cpp */ /* OSCFeedbackItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OSCFeedbackItem.cpp; path = ../../src/Interface/osc/OSCFeedbackItem.cpp; sourceTree = SOURCE_ROOT; };
 		7C3A8201F2BEB6CE11CD0A7B /* MTCContainerEditor.h */ /* MTCContainerEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MTCContainerEditor.h; path = ../../src/Cue/audio/ui/MTCContainerEditor.h; sourceTree = SOURCE_ROOT; };
@@ -419,6 +424,7 @@
 		DD5380996B2A5B8559FF2089 /* juce_opengl */ /* juce_opengl */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_opengl; path = ../../modules/juce/modules/juce_opengl; sourceTree = SOURCE_ROOT; };
 		DD7ACC4AB9929D4724C9805A /* CuelistManagerUI.cpp */ /* CuelistManagerUI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CuelistManagerUI.cpp; path = ../../src/Cuelist/ui/CuelistManagerUI.cpp; sourceTree = SOURCE_ROOT; };
 		DE3BEE5252CD04A26A6220EB /* midi_interface.png */ /* midi_interface.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = midi_interface.png; path = ../../resources/midi_interface.png; sourceTree = SOURCE_ROOT; };
+		DFB0A06657D3334C9BD6F6A6 /* AHCQProtocol.h */ /* AHCQProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AHCQProtocol.h; path = ../../src/Interface/mixer/ahcq/AHCQProtocol.h; sourceTree = SOURCE_ROOT; };
 		DFDFCCBD5D767210C2C7AB90 /* PluginScanner.cpp */ /* PluginScanner.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PluginScanner.cpp; path = ../../src/Audio/PluginScanner.cpp; sourceTree = SOURCE_ROOT; };
 		E1D74C2A085FDE009832E6EA /* CuelistEditor.h */ /* CuelistEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CuelistEditor.h; path = ../../src/Cuelist/ui/CuelistEditor.h; sourceTree = SOURCE_ROOT; };
 		E207EA8EDA2E4FBC93775A1F /* AudioOutputEditor.h */ /* AudioOutputEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AudioOutputEditor.h; path = ../../src/Interface/audio/ui/AudioOutputEditor.h; sourceTree = SOURCE_ROOT; };
@@ -490,6 +496,17 @@
 				DC0909F652628E5DF243573E,
 			);
 			name = feedback;
+			sourceTree = "<group>";
+		};
+		02008D6A2209BF748D610E11 /* ahcq */ = {
+			isa = PBXGroup;
+			children = (
+				7AB73D1822E4A1B5F620925B,
+				4ACFD3B7EC52794A8DB296B2,
+				05B50EAB39F3B3A51B23A600,
+				DFB0A06657D3334C9BD6F6A6,
+			);
+			name = ahcq;
 			sourceTree = "<group>";
 		};
 		0F5DBE62BFC648CFF68EB520 /* osc */ = {
@@ -1120,6 +1137,7 @@
 		F663022066341132C6347687 /* mixer */ = {
 			isa = PBXGroup;
 			children = (
+				02008D6A2209BF748D610E11,
 				8573F3509D64E648ABF65376,
 				87D040C09EB7BF7A1A8EB359,
 				45C45C7EC8DCA96906A091E6,
@@ -1300,6 +1318,8 @@
 				BDFD6B44DF94B3F26C7DCBDA,
 				50F4324093DC783F35D3D186,
 				2A59712EB5D39DE2674731FB,
+				023B5F040ECA50975C898551,
+				D167A137DD3453EF85F2D539,
 				978744C52A3F141F9CFB270A,
 				97D89858E236B10E5033A379,
 				8736D6D0ADE3FDE437CBE84A,

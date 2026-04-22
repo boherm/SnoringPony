@@ -216,6 +216,8 @@
     <ClCompile Include="..\..\src\Interface\midi\MIDIFeedbackItem.cpp"/>
     <ClCompile Include="..\..\src\Interface\midi\MIDIIsPanickingFeedback.cpp"/>
     <ClCompile Include="..\..\src\Interface\midi\MIDIIsPlayingFeedback.cpp"/>
+    <ClCompile Include="..\..\src\Interface\mixer\ahcq\AHCQMixerSettings.cpp"/>
+    <ClCompile Include="..\..\src\Interface\mixer\ahcq\AHCQProtocol.cpp"/>
     <ClCompile Include="..\..\src\Interface\mixer\wingosc\WingOscMixerSettings.cpp"/>
     <ClCompile Include="..\..\src\Interface\mixer\wingosc\WingOscProtocol.cpp"/>
     <ClCompile Include="..\..\src\Interface\mixer\wingtcp\wapi_mingw_shim.cpp"/>
@@ -3440,6 +3442,8 @@
     <ClInclude Include="..\..\src\Interface\midi\MIDIIsPlayingFeedback.h"/>
     <ClInclude Include="..\..\src\Interface\midi\MTCEncoder.h"/>
     <ClInclude Include="..\..\src\Interface\midi\MIDIMapping.h"/>
+    <ClInclude Include="..\..\src\Interface\mixer\ahcq\AHCQMixerSettings.h"/>
+    <ClInclude Include="..\..\src\Interface\mixer\ahcq\AHCQProtocol.h"/>
     <ClInclude Include="..\..\src\Interface\mixer\wingosc\WingOscMixerSettings.h"/>
     <ClInclude Include="..\..\src\Interface\mixer\wingosc\WingOscProtocol.h"/>
     <ClInclude Include="..\..\src\Interface\mixer\wingtcp\wapi.h"/>

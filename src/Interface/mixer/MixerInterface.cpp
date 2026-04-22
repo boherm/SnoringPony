@@ -11,6 +11,7 @@
 #include "MixerInterface.h"
 #include "wingosc/WingOscMixerSettings.h"
 #include "wingtcp/WingTcpMixerSettings.h"
+#include "ahcq/AHCQMixerSettings.h"
 
 MixerInterface::MixerInterface() :
     Interface("Mixer Interface 1")
@@ -20,6 +21,7 @@ MixerInterface::MixerInterface() :
     vendor = addEnumParameter("Mixer", "Mixing console brand/model");
     vendor->addOption("Behringer Wing (OSC)", "WingOsc");
     vendor->addOption("Behringer Wing (TCP/wapi)", "WingTcp");
+    vendor->addOption("Allen & Heath CQ", "AHCQ");
 
     rebuildMixerSettings();
 
@@ -60,6 +62,8 @@ void MixerInterface::rebuildMixerSettings()
         mixerSettings.reset(new WingOscMixerSettings());
     else if (v == "WingTcp")
         mixerSettings.reset(new WingTcpMixerSettings());
+    else if (v == "AHCQ")
+        mixerSettings.reset(new AHCQMixerSettings());
 
     if (mixerSettings != nullptr)
     {
