@@ -115,9 +115,8 @@ private:
     static constexpr int COLOR_GREEN = 5;
     static constexpr int COLOR_YELLOW = 7;
     static constexpr int COLOR_RED = 9;
-    static constexpr int COLOR_DCA_SINGLE = COLOR_LIGHT_BLUE;
-    static constexpr int COLOR_DCA_MULTI = COLOR_GREEN;
-    static constexpr int COLOR_CHANNEL_OFF = COLOR_YELLOW;
+    static constexpr int COLOR_DCA = COLOR_YELLOW;
+    static constexpr int COLOR_CHANNEL_OFF = COLOR_GREEN;
 
     bool connected = false;
     std::atomic<bool> connecting { false };

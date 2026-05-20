@@ -99,9 +99,7 @@ void WingOscMixerSettings::applyDCAMembership(const juce::Array<juce::Array<int>
         int channelCount = i < membership.size() ? membership[i].size() : 0;
         bool hasMembers = channelCount > 0;
 
-        int color = WingOscProtocol::COLOR_OFF;
-        if (channelCount == 1)      color = WingOscProtocol::COLOR_DCA_SINGLE;
-        else if (channelCount > 1)  color = WingOscProtocol::COLOR_DCA_MULTI;
+        int color = hasMembers ? WingOscProtocol::COLOR_DCA : WingOscProtocol::COLOR_OFF;
 
         send(WingOscProtocol::dcaNameMessage(i + 1, dcaNames[i]));
         send(WingOscProtocol::dcaColorMessage(i + 1, color));
@@ -122,9 +120,7 @@ void WingOscMixerSettings::applyDCAMembership(const juce::Array<juce::Array<int>
         }
         bool isActive = dcaChannelCount > 0;
 
-        int channelColor = WingOscProtocol::COLOR_CHANNEL_OFF;
-        if (dcaChannelCount == 1)       channelColor = WingOscProtocol::COLOR_DCA_SINGLE;
-        else if (dcaChannelCount > 1)   channelColor = WingOscProtocol::COLOR_DCA_MULTI;
+        int channelColor = isActive ? WingOscProtocol::COLOR_DCA : WingOscProtocol::COLOR_CHANNEL_OFF;
 
         send(WingOscProtocol::channelCustomLinkMessage(ch, false));
         send(WingOscProtocol::channelMuteMessage(ch, !isActive));

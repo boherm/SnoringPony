@@ -486,9 +486,7 @@ void WingTcpMixerSettings::applyDCAMembership(const juce::Array<juce::Array<int>
         int channelCount = i < membership.size() ? membership[i].size() : 0;
         bool hasMembers = channelCount > 0;
 
-        int color = COLOR_OFF;
-        if (channelCount == 1)      color = COLOR_DCA_SINGLE;
-        else if (channelCount > 1)  color = COLOR_DCA_MULTI;
+        int color = hasMembers ? COLOR_DCA : COLOR_OFF;
 
         juce::String cmd = "/dca." + juce::String(i + 1)
             + ".name=" + sanitizeName(dcaNames[i])
@@ -523,9 +521,7 @@ void WingTcpMixerSettings::applyDCAMembership(const juce::Array<juce::Array<int>
         }
         bool isActive = dcaChannelCount > 0;
 
-        int channelColor = COLOR_CHANNEL_OFF;
-        if (dcaChannelCount == 1)       channelColor = COLOR_DCA_SINGLE;
-        else if (dcaChannelCount > 1)   channelColor = COLOR_DCA_MULTI;
+        int channelColor = isActive ? COLOR_DCA : COLOR_CHANNEL_OFF;
 
         newBaseColors[ch] = channelColor;
 

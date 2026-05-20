@@ -29,9 +29,8 @@ public:
     static constexpr int COLOR_YELLOW = 7;
     static constexpr int COLOR_RED = 9;
     static constexpr int COLOR_LIGHT_BLUE = 14;
-    static constexpr int COLOR_DCA_SINGLE = COLOR_LIGHT_BLUE;   // one channel in the DCA
-    static constexpr int COLOR_DCA_MULTI  = COLOR_GREEN;        // multiple channels in the DCA
-    static constexpr int COLOR_CHANNEL_OFF = COLOR_YELLOW;      // declared but not used in the cue
+    static constexpr int COLOR_DCA = COLOR_YELLOW;               // DCA with assigned channels
+    static constexpr int COLOR_CHANNEL_OFF = COLOR_GREEN;       // channel not used in any DCA
 
     static juce::OSCMessage channelNameMessage(int channelNum, const juce::String& name);
     static juce::OSCMessage channelMuteMessage(int channelNum, bool muted);
