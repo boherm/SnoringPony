@@ -115,7 +115,7 @@ public:
             default: break;
         }
 
-        juce::uint8 dataByte = (juce::uint8)((piece << 4) | (nibble & 0x0F));
+        //juce::uint8 dataByte = (juce::uint8)((piece << 4) | (nibble & 0x0F));
         return juce::MidiMessage::quarterFrame(piece, nibble);
     }
 
