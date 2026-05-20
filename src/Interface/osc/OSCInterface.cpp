@@ -252,11 +252,13 @@ void OSCInterface::itemAdded(OSCOutput* output)
 	output->warningResolveInspectable = this;
 
     // Send current feedback state to newly connected output
+    /*
     if (!Engine::mainEngine->isLoadingFile)
     {
         for (auto* fb : feedbacks->items)
             fb->sendFeedback();
     }
+    */
 }
 
 void OSCInterface::itemAdded(OSCCommand* command)
