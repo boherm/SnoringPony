@@ -1,15 +1,14 @@
-BUILD_DIR := build
-BUILD_CONF := Release
+# Build into the same directory as the nvim cmake-tools setup (out/<BuildType>)
+# so command-line and editor builds share the same cache and object files.
+BUILD_CONF := Debug
+BUILD_DIR := out/$(BUILD_CONF)
 
 .PHONY: all configure build clean
 
 all: build
 
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
-	cd $(BUILD_DIR) && cmake ..
-
-configure: $(BUILD_DIR)
+configure:
+	cmake -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=$(BUILD_CONF) -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 build: configure
 	cmake --build $(BUILD_DIR) --config $(BUILD_CONF)
