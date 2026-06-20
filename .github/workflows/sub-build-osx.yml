@@ -26,7 +26,7 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
         with:
           submodules: 'recursive'
 
@@ -49,7 +49,7 @@ jobs:
           xcode-version: '16.4.0'
 
       - name: Build
-        uses: sersoft-gmbh/xcodebuild-action@v2.0.1
+        uses: sersoft-gmbh/xcodebuild-action@v4
         with:
           project: Builds/MacOSX_CI/${{ env.ProjectName }}.xcodeproj
           destination: platform=macOS
@@ -57,7 +57,7 @@ jobs:
           action: build
           arch: ${{ matrix.arch }}
           configuration: ${{ matrix.config }}
-          use-xcpretty: true
+          output-formatter: xcbeautify
 
       - name: Create Package
         id: create_package
@@ -69,7 +69,7 @@ jobs:
         working-directory: ./Package
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: osx-${{ matrix.arch }}
           path: ./Package/${{ steps.create_package.outputs.pkg-name }}

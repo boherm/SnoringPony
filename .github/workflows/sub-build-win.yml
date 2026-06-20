@@ -28,7 +28,7 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
         with:
           submodules: 'recursive'
 
@@ -39,7 +39,7 @@ jobs:
           os: ${{ matrix.arch }}
 
       - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v1.0.2
+        uses: microsoft/setup-msbuild@v3
 
       - name: Force 64-bit Linker
         shell: powershell
@@ -63,7 +63,7 @@ jobs:
         working-directory: ./Binaries/CI/App
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.arch }}
           path: ./Binaries/CI/App/${{ steps.create_package.outputs.pkg-name }}

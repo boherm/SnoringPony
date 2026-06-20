@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
         with:
           submodules: 'recursive'
 
@@ -52,7 +52,7 @@ jobs:
         working-directory: ./Builds/LinuxMakefile
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: linux
           path: ./Builds/LinuxMakefile/${{ steps.create_package.outputs.pkg-name }}
