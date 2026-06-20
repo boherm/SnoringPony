@@ -29,6 +29,9 @@ public:
     virtual ~DCACue();
 
     TargetParameter* targetMixer;
+    // Optional cue (in any cuelist) to GO — or cuelist to trigger its next cue —
+    // when this DCA cue is played. nullptr target means nothing is triggered.
+    TargetParameter* triggerCue;
     std::unique_ptr<BaseManager<DCAAssignment>> dcaAssignments;
 
     MixerInterface* getMixer() const;

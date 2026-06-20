@@ -12,46 +12,6 @@
 #include "../../Cuelist/Cuelist.h"
 #include "../../Cuelist/CuelistManager.h"
 #include "../CueManager.h"
-#include "../../ui/SPAssetManager.h"
-
-static void showGoTargetMenu(ControllableContainer* /*startFromCC*/,
-                             std::function<void(ControllableContainer*)> returnFunc)
-{
-    juce::PopupMenu menu;
-    CuelistManager* cm = CuelistManager::getInstance();
-
-    for (int i = 1; i <= cm->items.size(); ++i)
-    {
-        Cuelist* cl = cm->items[i - 1];
-        juce::PopupMenu sub;
-
-        sub.addItem(i, "GO cuelist (play next cue)");
-        sub.addSeparator();
-
-        for (int y = 1; y <= cl->cues->items.size(); ++y)
-        {
-            Cue* c = cl->cues->items[y - 1];
-            sub.addItem((i * 10000) + y,
-                        c->niceName + " - " + c->getDescription(),
-                        true, false,
-                        SPAssetManager::getInstance()->getCueIcon(c->getCueType()));
-        }
-        menu.addSubMenu(cl->niceName, sub);
-    }
-
-    menu.showMenuAsync(juce::PopupMenu::Options(), [cm, returnFunc](int result)
-    {
-        if (result <= 0) return;
-        if (result < 10000)
-        {
-            returnFunc(cm->items[result - 1]);
-            return;
-        }
-        int cueIdx = (result % 10000) - 1;
-        int cuelistIdx = ((result - cueIdx) / 10000) - 1;
-        returnFunc(cm->items[cuelistIdx]->cues->items[cueIdx]);
-    });
-}
 
 GoCue::GoCue(var params) :
     Cue(params)
@@ -64,7 +24,7 @@ GoCue::GoCue(var params) :
     targetCue = addTargetParameter("Target", "Cue to GO, or cuelist to trigger its next cue",
                                    CuelistManager::getInstance());
     targetCue->targetType = TargetParameter::CONTAINER;
-    targetCue->customGetTargetContainerFunc = &showGoTargetMenu;
+    targetCue->customGetTargetContainerFunc = &CuelistManager::showGoTargetMenu;
 }
 
 GoCue::~GoCue()
@@ -73,17 +33,7 @@ GoCue::~GoCue()
 
 void GoCue::playInternal()
 {
-    ControllableContainer* container = targetCue->getTargetContainer();
-    if (auto* targetCueItem = dynamic_cast<Cue*>(container))
-    {
-        if (targetCueItem->parentCuelist != nullptr)
-            targetCueItem->parentCuelist->currentCue->setValueFromTarget(targetCueItem);
-        targetCueItem->play();
-    }
-    else if (auto* cl = dynamic_cast<Cuelist*>(container))
-    {
-        cl->goBtn->trigger();
-    }
+    CuelistManager::triggerGoTarget(targetCue->getTargetContainer());
     endCue();
 }
 

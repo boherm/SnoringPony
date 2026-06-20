@@ -34,6 +34,32 @@ enum ColumnIds
     LastDCAColumn = 115
 };
 
+namespace
+{
+    // Width (px) reserved on the right of the Description cell for the "triggers
+    // another cue" icon, and the area over which its tooltip is shown.
+    constexpr int triggerIconWidth = 24;
+
+    // Builds the tooltip text describing the cue/cuelist a DCA cue triggers, using
+    // getDescription() so an automatic description is resolved correctly.
+    String getTriggerTooltip(DCACue* dca)
+    {
+        if (dca == nullptr) return {};
+
+        ControllableContainer* target = dca->triggerCue->getTargetContainer();
+        if (auto* c = dynamic_cast<Cue*>(target))
+        {
+            if (c == dca) return "Triggers: self-reference!";
+            String cuelistName = c->parentCuelist != nullptr ? c->parentCuelist->niceName : String("?");
+            return "Triggers: " + cuelistName + " / " + c->id->stringValue() + " - " + c->getDescription();
+        }
+        if (auto* cl = dynamic_cast<Cuelist*>(target))
+            return "Triggers: GO " + cl->niceName + " (next cue)";
+
+        return {};
+    }
+}
+
 CuesTableModel::CuesTableModel(TableListBox* tlb, Cuelist* cl)
 {
     this->cl = cl;
@@ -397,6 +423,18 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
     if (DescriptionColumn == columnId) {
         Rectangle<float> r = Rectangle<float>(0, 0, width, height);
 
+        // DCA cue that triggers another cue/cuelist: show a GO icon on the right.
+        // (Hovering it reveals the target via the overlay in refreshComponentForCell.)
+        if (auto* dcaCue = dynamic_cast<DCACue*>(cue)) {
+            if (dcaCue->triggerCue->getTargetContainer() != nullptr) {
+                g.setOpacity(cue->isAutoStartCue() ? 0.4f : 0.8f);
+                g.drawImage(SPAssetManager::getInstance()->getCueIcon("Go"),
+                            r.removeFromRight((float)triggerIconWidth).reduced(3),
+                            RectanglePlacement::centred, false);
+                g.setOpacity(1.0f);
+            }
+        }
+
         AudioCue* audioCue = dynamic_cast<AudioCue*>(cue);
         if (cue->getControllableByName("Loop") != nullptr && dynamic_cast<BoolParameter*>(cue->getControllableByName("Loop"))->boolValue()) {
             g.setOpacity(0.5f);
@@ -427,6 +465,23 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
 Component* CuesTableModel::refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate)
 {
     return nullptr;
+}
+
+String CuesTableModel::getCellTooltip(int rowNumber, int columnId)
+{
+    if (columnId != DescriptionColumn || rowNumber >= cl->cues->items.size())
+        return {};
+
+    DCACue* dcaCue = dynamic_cast<DCACue*>(cl->cues->items[rowNumber]);
+    if (dcaCue == nullptr || dcaCue->triggerCue->getTargetContainer() == nullptr)
+        return {};
+
+    // Only show the tooltip when hovering the trigger icon (right edge of the cell).
+    Rectangle<int> cell = tlb->getCellPosition(columnId, rowNumber, true);
+    if (tlb->getMouseXYRelative().getX() < cell.getRight() - triggerIconWidth)
+        return {};
+
+    return getTriggerTooltip(dcaCue);
 }
 
 void CuesTableModel::selectedRowsChanged(int lastRowSelected)

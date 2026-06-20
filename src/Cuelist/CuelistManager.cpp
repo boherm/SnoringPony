@@ -91,6 +91,59 @@ void CuelistManager::showMenuForTargetCue(ControllableContainer* startFromCC, st
     }
 }
 
+void CuelistManager::showGoTargetMenu(ControllableContainer* /*startFromCC*/,
+                                      std::function<void(ControllableContainer*)> returnFunc)
+{
+    PopupMenu menu;
+    CuelistManager* cm = CuelistManager::getInstance();
+
+    for (int i = 1; i <= cm->items.size(); ++i)
+    {
+        Cuelist* cl = cm->items[i - 1];
+        PopupMenu sub;
+
+        sub.addItem(i, "GO cuelist (play next cue)");
+        sub.addSeparator();
+
+        for (int y = 1; y <= cl->cues->items.size(); ++y)
+        {
+            Cue* c = cl->cues->items[y - 1];
+            sub.addItem((i * 10000) + y,
+                        c->niceName + " - " + c->getDescription(),
+                        true, false,
+                        SPAssetManager::getInstance()->getCueIcon(c->getCueType()));
+        }
+        menu.addSubMenu(cl->niceName, sub);
+    }
+
+    menu.showMenuAsync(PopupMenu::Options(), [cm, returnFunc](int result)
+    {
+        if (result <= 0) return;
+        if (result < 10000)
+        {
+            returnFunc(cm->items[result - 1]);
+            return;
+        }
+        int cueIdx = (result % 10000) - 1;
+        int cuelistIdx = ((result - cueIdx) / 10000) - 1;
+        returnFunc(cm->items[cuelistIdx]->cues->items[cueIdx]);
+    });
+}
+
+void CuelistManager::triggerGoTarget(ControllableContainer* container)
+{
+    if (auto* targetCueItem = dynamic_cast<Cue*>(container))
+    {
+        if (targetCueItem->parentCuelist != nullptr)
+            targetCueItem->parentCuelist->currentCue->setValueFromTarget(targetCueItem);
+        targetCueItem->play();
+    }
+    else if (auto* cl = dynamic_cast<Cuelist*>(container))
+    {
+        cl->goBtn->trigger();
+    }
+}
+
 void CuelistManager::addItemInternal(Cuelist* cl, var data)
 {
     PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);

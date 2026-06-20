@@ -9,6 +9,7 @@
 */
 
 #include "DCACue.h"
+#include "../../Cuelist/CuelistManager.h"
 #include "../../Interface/mixer/MixerInterface.h"
 #include "../../Interface/mixer/MixerChannel.h"
 #include "../../Interface/mixer/Character.h"
@@ -28,6 +29,10 @@ DCACue::DCACue(var params) :
     targetMixer = addTargetParameter("Target Mixer", "Mixing console interface to apply this DCA assignment to", InterfaceManager::getInstance());
     targetMixer->targetType = TargetParameter::CONTAINER;
     targetMixer->maxDefaultSearchLevel = 1;
+
+    triggerCue = addTargetParameter("GO cue on play", "When this DCA cue is played, also GO this cue (or trigger this cuelist's next cue). Leave empty to do nothing.", CuelistManager::getInstance());
+    triggerCue->targetType = TargetParameter::CONTAINER;
+    triggerCue->customGetTargetContainerFunc = &CuelistManager::showGoTargetMenu;
 
     dcaAssignments.reset(new BaseManager<DCAAssignment>("DCA Assignments"));
     dcaAssignments->selectItemWhenCreated = false;
@@ -188,6 +193,14 @@ void DCACue::playInternal()
     }
 
     mixer->applyDCAMembership(membership, names, activeChannelNames, channelFXBuses, dcaHasFX, dcaForcedFaders);
+
+    // Optionally GO another cue / cuelist alongside applying the DCA state.
+    if (ControllableContainer* triggerTarget = triggerCue->getTargetContainer())
+    {
+        if (triggerTarget != this)
+            CuelistManager::triggerGoTarget(triggerTarget);
+    }
+
     endCue();
 }
 
@@ -196,6 +209,10 @@ void DCACue::onContainerParameterChangedInternal(Parameter* p)
     if (p == targetMixer)
     {
         refreshCharacterRefRoots();
+        checkBrokenRefs();
+    }
+    else if (p == triggerCue)
+    {
         checkBrokenRefs();
     }
 }
@@ -226,6 +243,13 @@ void DCACue::refreshCharacterRefRoots()
 
 void DCACue::checkBrokenRefs()
 {
+    // A DCA cue triggering itself would loop on GO: flag it (runtime is guarded too).
+    if (triggerCue->getTargetContainer() == this)
+    {
+        setWarningMessage("This DCA cue triggers itself");
+        return;
+    }
+
     for (auto* a : dcaAssignments->items)
     {
         for (auto* r : a->characters->items)
