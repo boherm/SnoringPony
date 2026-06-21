@@ -25,22 +25,22 @@ jobs:
       - name: Get win64 artifacts
         uses: actions/download-artifact@v4
         with:
-          name: win-x64
+          name: win-x64-${{ github.run_id }}
 
       - name: Get osx-intel artifacts
         uses: actions/download-artifact@v4
         with:
-          name: osx-x86_64
+          name: osx-x86_64-${{ github.run_id }}
 
       - name: Get osx-silicon artifacts
         uses: actions/download-artifact@v4
         with:
-          name: osx-arm64
+          name: osx-arm64-${{ github.run_id }}
 
       - name: Get linux artifacts
         uses: actions/download-artifact@v4
         with:
-          name: linux
+          name: linux-${{ github.run_id }}
 
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2

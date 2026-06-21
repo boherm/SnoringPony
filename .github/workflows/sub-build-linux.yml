@@ -54,5 +54,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
         with:
-          name: linux
+          name: linux-${{ github.run_id }}
           path: ./Builds/LinuxMakefile/${{ steps.create_package.outputs.pkg-name }}

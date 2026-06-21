@@ -54,25 +54,25 @@ jobs:
         if: ${{ github.event.inputs.platform == 'all' || github.event.inputs.platform == 'windows' }}
         uses: actions/download-artifact@v4
         with:
-          name: win-x64
+          name: win-x64-${{ github.run_id }}
 
       - name: Get osx-intel artifacts
         if: ${{ github.event.inputs.platform == 'all' || github.event.inputs.platform == 'osx' }}
         uses: actions/download-artifact@v4
         with:
-          name: osx-x86_64
+          name: osx-x86_64-${{ github.run_id }}
 
       - name: Get osx-silicon artifacts
         if: ${{ github.event.inputs.platform == 'all' || github.event.inputs.platform == 'osx' }}
         uses: actions/download-artifact@v4
         with:
-          name: osx-arm64
+          name: osx-arm64-${{ github.run_id }}
 
       - name: Get linux artifacts
         if: ${{ github.event.inputs.platform == 'all' || github.event.inputs.platform == 'linux' }}
         uses: actions/download-artifact@v4
         with:
-          name: linux
+          name: linux-${{ github.run_id }}
 
       - name: Upload to Scaleway Object Storage
         run: |

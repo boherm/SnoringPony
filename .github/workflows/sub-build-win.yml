@@ -65,7 +65,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
         with:
-          name: ${{ matrix.arch }}
+          name: ${{ matrix.arch }}-${{ github.run_id }}
           path: ./Binaries/CI/App/${{ steps.create_package.outputs.pkg-name }}
 
       # - name: Rename PDB

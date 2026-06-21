@@ -71,5 +71,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
         with:
-          name: osx-${{ matrix.arch }}
+          name: osx-${{ matrix.arch }}-${{ github.run_id }}
           path: ./Package/${{ steps.create_package.outputs.pkg-name }}
