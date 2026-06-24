@@ -121,6 +121,19 @@ void ShowControl::parameterValueChanged(Parameter *p)
             } else {
                 paramGo->setEnabled(false);
             }
+
+            // Re-evaluate Panic against the NEW main cuelist. Without this, switching the
+            // main cuelist away from a cuelist that had a cue playing leaves the Panic button stuck
+            // active, since we stop listening to the old cuelist's "Is Playing" before it goes false.
+            paramPanic->setEnabled(mainCuelist->isPlaying->boolValue());
+            if (mainCuelist->isPanicking->boolValue())
+                startPanicking();
+            else
+                stopPanicking();
+        } else {
+            paramGo->setEnabled(false);
+            paramPanic->setEnabled(false);
+            stopPanicking();
         }
         repaint();
     }
