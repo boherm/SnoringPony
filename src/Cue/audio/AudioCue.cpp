@@ -391,6 +391,39 @@ MIDIInterface* AudioCue::getMTCInterface()
     return mtcMidiInterface->getTargetContainerAs<MIDIInterface>();
 }
 
+void AudioCue::onControllableFeedbackUpdateInternal(ControllableContainer* cc, Controllable* c)
+{
+    Cue::onControllableFeedbackUpdateInternal(cc, c);
+
+    if (Engine::mainEngine != nullptr && Engine::mainEngine->isLoadingFile) return;
+
+    // Allow turning MTC on/off (or choosing its interface) while the cue is already
+    // playing: start it at the cue's current position, or stop it.
+    if (c == mtcCC->enabled)
+    {
+        if (mtcCC->enabled->boolValue())
+        {
+            if (isPlaying->boolValue() && !isPreviewing)
+                startMTC();
+        }
+        else
+        {
+            stopMTC();
+        }
+    }
+    else if (c == mtcMidiInterface)
+    {
+        if (isPlaying->boolValue() && !isPreviewing)
+        {
+            // Release the previous interface, then re-arm on the newly chosen one
+            // (no-op if the interface was cleared).
+            stopMTC();
+            if (mtcCC->enabled->boolValue())
+                startMTC();
+        }
+    }
+}
+
 HashMap<MIDIInterface*, AudioCue*> AudioCue::activeMTCSenders;
 
 void AudioCue::startMTC()
@@ -409,9 +442,12 @@ void AudioCue::startMTC()
     }
 
     activeMTCSenders.set(iface, this);
+    mtcActiveInterface = iface;
 
     MTCEncoder::FrameRate rate = (MTCEncoder::FrameRate)(int)mtcFrameRate->getValueData();
-    double startTime = mtcOffset->doubleValue();
+    // Start from the cue's current playback position (not just the offset), so enabling
+    // MTC mid-playback sends the correct timecode for where the cue actually is.
+    double startTime = filesManager->getCurrentTime() + mtcOffset->doubleValue();
 
     iface->sendMessage(MTCEncoder::createFullFrameMessage(startTime, rate));
 
@@ -430,10 +466,14 @@ void AudioCue::stopMTC()
 
     mtcTimecodeDisplay->setValue("00:00:00:00");
 
-    // Remove from active senders
-    MIDIInterface* iface = getMTCInterface();
-    if (iface != nullptr && activeMTCSenders.contains(iface) && activeMTCSenders[iface] == this)
-        activeMTCSenders.remove(iface);
+    // Remove from active senders, using the interface we actually started on (the
+    // selected one may have just changed, which is exactly why we track it).
+    if (mtcActiveInterface != nullptr
+        && activeMTCSenders.contains(mtcActiveInterface)
+        && activeMTCSenders[mtcActiveInterface] == this)
+        activeMTCSenders.remove(mtcActiveInterface);
+
+    mtcActiveInterface = nullptr;
 }
 
 // -------------------------------------------------------

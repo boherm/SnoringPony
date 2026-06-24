@@ -63,6 +63,10 @@ public:
     };
     std::unique_ptr<MTCTimer> mtcTimer;
 
+    // The interface this cue is currently sending MTC on (may differ from the selected
+    // one right after an interface change), used to clean up the right entry on stop.
+    MIDIInterface* mtcActiveInterface = nullptr;
+
     static HashMap<MIDIInterface*, AudioCue*> activeMTCSenders;
 
     String getTypeString() const override { return "Audio Cue"; }
@@ -87,6 +91,8 @@ public:
     void fadeOut(double duration, bool stopAfterFade = true);
 
     String autoDescriptionInternal() override;
+
+    void onControllableFeedbackUpdateInternal(ControllableContainer* cc, Controllable* c) override;
 
     void startMTC();
     void stopMTC();
