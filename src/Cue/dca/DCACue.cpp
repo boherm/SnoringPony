@@ -26,6 +26,10 @@ DCACue::DCACue(var params) :
     duration->hideInRemoteControl = true;
     retriggerStopCC->hideInEditor = true;
 
+    // A DCA cue applies a persistent mixer state and ends instantly; keep it as the
+    // cuelist's current cue so the Show Info panel reflects the last DCA cue fired.
+    keepCurrentCueOnEnd = true;
+
     targetMixer = addTargetParameter("Target Mixer", "Mixing console interface to apply this DCA assignment to", InterfaceManager::getInstance());
     targetMixer->targetType = TargetParameter::CONTAINER;
     targetMixer->maxDefaultSearchLevel = 1;

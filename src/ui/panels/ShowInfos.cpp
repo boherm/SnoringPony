@@ -100,6 +100,12 @@ void ShowInfos::parameterValueChanged(Parameter* p)
 
     if (p == engine->showProperties.mainCuelist)
     {
+        if (currentCue != nullptr) {
+            currentCue->id->removeParameterListener(this);
+            currentCue->description->removeParameterListener(this);
+            currentCue = nullptr;
+        }
+
         if (nextCue != nullptr) {
             nextCue->id->removeParameterListener(this);
             nextCue->description->removeParameterListener(this);
@@ -117,6 +123,14 @@ void ShowInfos::parameterValueChanged(Parameter* p)
         if (mainCuelist != nullptr) {
             mainCuelist->currentCue->addParameterListener(this);
             mainCuelist->nextCue->addParameterListener(this);
+
+            Cue* cc = mainCuelist->currentCue->getTargetContainerAs<Cue>();
+            currentCue = cc;
+            if (cc != nullptr) {
+                cc->id->addParameterListener(this);
+                cc->description->addParameterListener(this);
+            }
+
             Cue* nc = mainCuelist->nextCue->getTargetContainerAs<Cue>();
             nextCue = nc;
             if (nc != nullptr) {
