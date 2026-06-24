@@ -30,16 +30,13 @@ enum ColumnIds
     TimeColumn = 5,
     PreWaitColumn = 6,
     PostWaitColumn = 7,
+    TriggerCueColumn = 8,
     FirstDCAColumn = 100,    // 100..115 reserved for DCAs 1..16
     LastDCAColumn = 115
 };
 
 namespace
 {
-    // Width (px) reserved on the right of the Description cell for the "triggers
-    // another cue" icon, and the area over which its tooltip is shown.
-    constexpr int triggerIconWidth = 24;
-
     // Builds the tooltip text describing the cue/cuelist a DCA cue triggers, using
     // getDescription() so an automatic description is resolved correctly.
     String getTriggerTooltip(DCACue* dca)
@@ -419,21 +416,32 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         return;
     }
 
-    // Description Column
-    if (DescriptionColumn == columnId) {
-        Rectangle<float> r = Rectangle<float>(0, 0, width, height);
+    // Cue column (DCA Mixing Cuelist): the cue/cuelist this DCA cue also triggers on GO.
+    if (TriggerCueColumn == columnId) {
+        auto* dcaCue = dynamic_cast<DCACue*>(cue);
+        if (dcaCue != nullptr) {
+            ControllableContainer* target = dcaCue->triggerCue->getTargetContainer();
+            String text;
+            if (auto* tc = dynamic_cast<Cue*>(target))
+                text = (tc == dcaCue) ? "!" : tc->id->stringValue();
+            else if (dynamic_cast<Cuelist*>(target) != nullptr)
+                text = "GO";
 
-        // DCA cue that triggers another cue/cuelist: show a GO icon on the right.
-        // (Hovering it reveals the target via the overlay in refreshComponentForCell.)
-        if (auto* dcaCue = dynamic_cast<DCACue*>(cue)) {
-            if (dcaCue->triggerCue->getTargetContainer() != nullptr) {
-                g.setOpacity(cue->isAutoStartCue() ? 0.4f : 0.8f);
-                g.drawImage(SPAssetManager::getInstance()->getCueIcon("Go"),
-                            r.removeFromRight((float)triggerIconWidth).reduced(3),
-                            RectanglePlacement::centred, false);
+            if (text.isNotEmpty()) {
+                Rectangle<float> r(0, 0, (float)width, (float)height);
+                g.setOpacity(cue->isAutoStartCue() ? 0.4f : 1.0f);
+                g.setColour(Colours::white);
+                g.setFont(Font(11.0f));
+                g.drawText(text, r.reduced(2, 0), Justification::centred, true);
                 g.setOpacity(1.0f);
             }
         }
+        return;
+    }
+
+    // Description Column
+    if (DescriptionColumn == columnId) {
+        Rectangle<float> r = Rectangle<float>(0, 0, width, height);
 
         AudioCue* audioCue = dynamic_cast<AudioCue*>(cue);
         if (cue->getControllableByName("Loop") != nullptr && dynamic_cast<BoolParameter*>(cue->getControllableByName("Loop"))->boolValue()) {
@@ -469,16 +477,11 @@ Component* CuesTableModel::refreshComponentForCell(int rowNumber, int columnId, 
 
 String CuesTableModel::getCellTooltip(int rowNumber, int columnId)
 {
-    if (columnId != DescriptionColumn || rowNumber >= cl->cues->items.size())
+    if (columnId != TriggerCueColumn || rowNumber >= cl->cues->items.size())
         return {};
 
     DCACue* dcaCue = dynamic_cast<DCACue*>(cl->cues->items[rowNumber]);
     if (dcaCue == nullptr || dcaCue->triggerCue->getTargetContainer() == nullptr)
-        return {};
-
-    // Only show the tooltip when hovering the trigger icon (right edge of the cell).
-    Rectangle<int> cell = tlb->getCellPosition(columnId, rowNumber, true);
-    if (tlb->getMouseXYRelative().getX() < cell.getRight() - triggerIconWidth)
         return {};
 
     return getTriggerTooltip(dcaCue);
@@ -734,6 +737,23 @@ void CuesTableModel::cellDoubleClicked(int rowNumber, int columnId, const MouseE
         auto screenRect = tlb->localAreaToGlobal(cellRect);
         auto bubble = std::make_unique<CellEditBubble>(initial, std::move(onCommit));
         CallOutBox::launchAsynchronously(std::move(bubble), screenRect, nullptr);
+        return;
+    }
+
+    if (columnId == TriggerCueColumn)
+    {
+        if (rowNumber < 0 || rowNumber >= cl->cues->items.size()) return;
+
+        DCACue* dcaCue = dynamic_cast<DCACue*>(cl->cues->items[rowNumber]);
+        if (dcaCue == nullptr) return;
+
+        // Edit the "GO cue on play" target via a bubble holding the TargetParameter's
+        // own UI (click to pick from the GO menu, or clear), mirroring the description cell.
+        auto cellRect = tlb->getCellPosition(columnId, rowNumber, true);
+        auto screenRect = tlb->localAreaToGlobal(cellRect);
+        auto ui = std::unique_ptr<Component>(dcaCue->triggerCue->createDefaultUI());
+        ui->setSize(jmax(220, cellRect.getWidth()), 28);
+        CallOutBox::launchAsynchronously(std::move(ui), screenRect, nullptr);
         return;
     }
 

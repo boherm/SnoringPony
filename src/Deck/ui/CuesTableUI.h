@@ -21,6 +21,7 @@ class CuesTableUI :
     public Component,
     public BaseManagerListener<Cue>,
     public ContainerAsyncListener,
+    public ControllableContainerListener,
     public DragAndDropContainer,
     public DragAndDropTarget,
     public FileDragAndDropTarget,
@@ -79,6 +80,9 @@ public:
         tableListBox.repaint();
     }
 
+    // ControllableContainerListener — watch the mixer for live "Num DCAs" changes
+    void controllableFeedbackUpdate(ControllableContainer* cc, Controllable* c) override;
+
     // DragAndDropTarget implementation
     bool isInterestedInDragSource(const SourceDetails& dragSourceDetails) override;
     void itemDragEnter(const SourceDetails& dragSourceDetails) override;
@@ -99,6 +103,10 @@ public:
 
 private:
     int insertIndex = -1;
+
+    void rebuildColumns();
+    int dcaColumnCount = 0;
+    juce::WeakReference<ControllableContainer> watchedMixer;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CuesTableUI)
 };

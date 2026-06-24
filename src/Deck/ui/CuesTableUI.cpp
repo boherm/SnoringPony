@@ -27,22 +27,30 @@ enum ColumnIds
     TimeColumn = 5,
     PreWaitColumn = 6,
     PostWaitColumn = 7,
+    TriggerCueColumn = 8,
     FirstDCAColumn = 100,
     LastDCAColumn = 115
 };
 
-static int deriveDCACount(Cuelist* cl)
+static MixerInterface* findMixer(Cuelist* cl)
 {
-    if (dynamic_cast<DCAMixingCuelist*>(cl) == nullptr) return 0;
+    if (dynamic_cast<DCAMixingCuelist*>(cl) == nullptr) return nullptr;
 
     for (auto* c : cl->cues->items)
     {
         if (auto* dc = dynamic_cast<DCACue*>(c))
         {
             if (auto* m = dc->getMixer())
-                return m->getNumDCAs();
+                return m;
         }
     }
+    return nullptr;
+}
+
+static int deriveDCACount(Cuelist* cl)
+{
+    if (dynamic_cast<DCAMixingCuelist*>(cl) == nullptr) return 0;
+    if (auto* m = findMixer(cl)) return m->getNumDCAs();
     return 8;
 }
 
@@ -63,26 +71,8 @@ CuesTableUI::CuesTableUI(Cuelist* cl)
     tableListBox.setAutoSizeMenuOptionShown(false);
     tableListBox.setModel(tableModel.get());
     tableListBox.setRowHeight(35);
-    int flags = TableHeaderComponent::visible | TableHeaderComponent::resizable | TableHeaderComponent::appearsOnColumnMenu;
-    int numDCAs = deriveDCACount(cl);
-    bool isDCAMixing = numDCAs > 0;
 
-    tableListBox.getHeader().addColumn("", StatusColumn, 10, 10, 10, flags & ~TableHeaderComponent::appearsOnColumnMenu | ~TableHeaderComponent::resizable);
-    tableListBox.getHeader().addColumn("#", IdColumn, 60, 60, 100, flags & ~TableHeaderComponent::appearsOnColumnMenu);
-    tableListBox.getHeader().addColumn("Type", TypeColumn, 40, 40, 40, flags & ~TableHeaderComponent::resizable);
-    tableListBox.getHeader().addColumn("Description", DescriptionColumn, 200, 200, 5000, flags & ~TableHeaderComponent::appearsOnColumnMenu);
-    tableListBox.getHeader().addColumn("Pre-wait", PreWaitColumn, 130, 130, 130, flags & ~TableHeaderComponent::resizable);
-
-    for (int i = 1; i <= numDCAs; ++i)
-    {
-        tableListBox.getHeader().addColumn("DCA " + String(i),
-            FirstDCAColumn + i - 1, 100, 60, 300,
-            flags & ~TableHeaderComponent::appearsOnColumnMenu);
-    }
-
-    if (!isDCAMixing)
-        tableListBox.getHeader().addColumn("Time", TimeColumn, 130, 130, 130, flags & ~TableHeaderComponent::resizable);
-    tableListBox.getHeader().addColumn("Post-wait", PostWaitColumn, 130, 130, 130, flags & ~TableHeaderComponent::resizable);
+    rebuildColumns();
 
     addAndMakeVisible(tableListBox);
     cl->cues->addBaseManagerListener(this);
@@ -92,7 +82,57 @@ CuesTableUI::CuesTableUI(Cuelist* cl)
     for (auto* c : cl->cues->items)
         c->addAsyncWarningTargetListener(this);
 
+    // Watch the mixer so the DCA columns refresh live when "Num DCAs" changes.
+    // Listening on the MixerInterface (not the inner settings) survives vendor rebuilds.
+    if (auto* m = findMixer(cl))
+    {
+        watchedMixer = m;
+        m->addControllableContainerListener(this);
+    }
+
     resized();
+}
+
+void CuesTableUI::rebuildColumns()
+{
+    auto& header = tableListBox.getHeader();
+    header.removeAllColumns();
+
+    int flags = TableHeaderComponent::visible | TableHeaderComponent::resizable | TableHeaderComponent::appearsOnColumnMenu;
+    int numDCAs = deriveDCACount(cl);
+    dcaColumnCount = numDCAs;
+    bool isDCAMixing = numDCAs > 0;
+
+    header.addColumn("", StatusColumn, 10, 10, 10, flags & ~TableHeaderComponent::appearsOnColumnMenu | ~TableHeaderComponent::resizable);
+    header.addColumn("#", IdColumn, 60, 60, 100, flags & ~TableHeaderComponent::appearsOnColumnMenu);
+    header.addColumn("Type", TypeColumn, 40, 40, 40, flags & ~TableHeaderComponent::resizable);
+    header.addColumn("Description", DescriptionColumn, 200, 200, 5000, flags & ~TableHeaderComponent::appearsOnColumnMenu);
+    if (isDCAMixing)
+        header.addColumn("Cue", TriggerCueColumn, 70, 50, 120, flags & ~TableHeaderComponent::appearsOnColumnMenu);
+    header.addColumn("Pre-wait", PreWaitColumn, 130, 130, 130, flags & ~TableHeaderComponent::resizable);
+
+    for (int i = 1; i <= numDCAs; ++i)
+    {
+        header.addColumn("DCA " + String(i),
+            FirstDCAColumn + i - 1, 100, 60, 300,
+            flags & ~TableHeaderComponent::appearsOnColumnMenu);
+    }
+
+    if (!isDCAMixing)
+        header.addColumn("Time", TimeColumn, 130, 130, 130, flags & ~TableHeaderComponent::resizable);
+    header.addColumn("Post-wait", PostWaitColumn, 130, 130, 130, flags & ~TableHeaderComponent::resizable);
+
+    tableListBox.updateContent();
+    resized();
+    tableListBox.repaint();
+}
+
+void CuesTableUI::controllableFeedbackUpdate(ControllableContainer* cc, Controllable* c)
+{
+    // Only react to the mixer's "Num DCAs" parameter, and only when the count actually
+    // changes (feedback updates also fire for unrelated params, e.g. console meters).
+    if (c != nullptr && c->niceName == "Num DCAs" && deriveDCACount(cl) != dcaColumnCount)
+        rebuildColumns();
 }
 
 CuesTableUI::~CuesTableUI()
@@ -106,6 +146,8 @@ CuesTableUI::~CuesTableUI()
         cl->cues->removeBaseManagerListener(this);
         cl->cues->removeAsyncWarningTargetListener(this);
     }
+    if (watchedMixer != nullptr)
+        watchedMixer->removeControllableContainerListener(this);
     tableListBox.setLookAndFeel(nullptr);
     lafTable.reset();
 }
@@ -149,6 +191,11 @@ void CuesTableUI::resized()
     if (tableListBox.getHeader().isColumnVisible(TypeColumn)) {
         tableListBox.getHeader().setColumnWidth(TypeColumn, 40);
         width -= 40;
+    }
+
+    if (tableListBox.getHeader().isColumnVisible(TriggerCueColumn)) {
+        tableListBox.getHeader().setColumnWidth(TriggerCueColumn, 70);
+        width -= 70;
     }
 
     if (tableListBox.getHeader().isColumnVisible(PreWaitColumn)) {
