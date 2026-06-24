@@ -20,6 +20,7 @@
 #include "../../Interface/mixer/MixerChannel.h"
 #include "../../ui/SPAssetManager.h"
 #include "../../Cue/audio/AudioCue.h"
+#include "../../Interface/midi/MIDIInterface.h"
 
 enum ColumnIds
 {
@@ -477,14 +478,41 @@ Component* CuesTableModel::refreshComponentForCell(int rowNumber, int columnId, 
 
 String CuesTableModel::getCellTooltip(int rowNumber, int columnId)
 {
-    if (columnId != TriggerCueColumn || rowNumber >= cl->cues->items.size())
+    if (rowNumber >= cl->cues->items.size())
         return {};
 
-    DCACue* dcaCue = dynamic_cast<DCACue*>(cl->cues->items[rowNumber]);
-    if (dcaCue == nullptr || dcaCue->triggerCue->getTargetContainer() == nullptr)
-        return {};
+    if (columnId == TriggerCueColumn)
+    {
+        DCACue* dcaCue = dynamic_cast<DCACue*>(cl->cues->items[rowNumber]);
+        if (dcaCue == nullptr || dcaCue->triggerCue->getTargetContainer() == nullptr)
+            return {};
 
-    return getTriggerTooltip(dcaCue);
+        return getTriggerTooltip(dcaCue);
+    }
+
+    if (columnId == DescriptionColumn)
+    {
+        // Show the MTC interface when hovering the "TC" badge (right side of the cell,
+        // just left of the loop icon when present).
+        AudioCue* audioCue = dynamic_cast<AudioCue*>(cl->cues->items[rowNumber]);
+        if (audioCue == nullptr || !audioCue->mtcCC->enabled->boolValue())
+            return {};
+
+        bool loopOn = false;
+        if (auto* loopP = dynamic_cast<BoolParameter*>(audioCue->getControllableByName("Loop")))
+            loopOn = loopP->boolValue();
+
+        Rectangle<int> cell = tlb->getCellPosition(columnId, rowNumber, true);
+        int tcRight = cell.getRight() - (loopOn ? 22 : 0);
+        int mouseX = tlb->getMouseXYRelative().getX();
+        if (mouseX < tcRight - 22 || mouseX > tcRight)
+            return {};
+
+        MIDIInterface* iface = audioCue->getMTCInterface();
+        return "MTC interface: " + (iface != nullptr ? iface->niceName : String("(none selected)"));
+    }
+
+    return {};
 }
 
 void CuesTableModel::selectedRowsChanged(int lastRowSelected)
