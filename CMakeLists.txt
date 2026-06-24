@@ -14,7 +14,7 @@ add_subdirectory(modules/juce)
 
 juce_add_gui_app("${PROJECT_NAME}"
     PRODUCT_NAME ${PROJECT_NAME}
-    VERSION 1.0.0b7
+    VERSION 1.0.0b8
     BUNDLE_ID dev.boherm.SnoringPony
     DOCUMENT_EXTENSIONS indy
     ICON_SMALL resources/icon.png
