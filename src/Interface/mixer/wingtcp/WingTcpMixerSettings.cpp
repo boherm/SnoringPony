@@ -15,7 +15,7 @@
 
 WingTcpMixerSettings::WingTcpMixerSettings() : MixerSettings("Mixer Settings")
 {
-    remoteHost = addStringParameter("Remote Host", "IP address of the WING console", "");
+    remoteHost = addStringParameter("Remote Host", "IP address of the WING console (leave empty for auto-discovery)", "");
     remoteHost->autoTrim = true;
 
     remotePort = addIntParameter("Remote Port", "TCP port (wapi)", DEFAULT_TCP_PORT, 1, 65535);
