@@ -221,13 +221,22 @@ void MixerInterface::onContainerParameterChangedInternal(Parameter* p)
     }
 
     if (Engine::mainEngine != nullptr && Engine::mainEngine->isLoadingFile) return;
+
+    if (p == enabled)
+    {
+        if (enabled->boolValue())
+            attemptConnect();
+        else
+            attemptDisconnect();
+    }
 }
 
 void MixerInterface::onControllableFeedbackUpdateInternal(ControllableContainer* cc, Controllable* c)
 {
     if (Engine::mainEngine != nullptr && Engine::mainEngine->isLoadingFile) return;
 
-    if (mixerSettings != nullptr && cc == mixerSettings.get()
+    if (enabled->boolValue()
+        && mixerSettings != nullptr && cc == mixerSettings.get()
         && mixerSettings->shouldReconnectOnChange(c))
     {
         attemptConnect();
@@ -237,7 +246,8 @@ void MixerInterface::onControllableFeedbackUpdateInternal(ControllableContainer*
 void MixerInterface::loadJSONDataInternal(var data)
 {
     Interface::loadJSONDataInternal(data);
-    attemptConnect();
+    if (enabled->boolValue())
+        attemptConnect();
     // applyLoadBaseline() is now called from the onConnectionResult callback
     // after the async connection succeeds.
 }
