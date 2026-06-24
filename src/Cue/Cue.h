@@ -30,6 +30,16 @@ public:
     bool isRetriggerStopping = false;
     double retriggerFadeStartTime = 0.0;
 
+    // Technical flag (not a parameter): when true, play() does not auto-advance the
+    // parent cuelist's nextCue. Default false for every cue; set true by cues that
+    // manage the next cue themselves (e.g. SetMainCuelistCue).
+    bool notSetNextCueAuto = false;
+
+    // Technical flag (not a parameter): when true, endCue() keeps this cue as its
+    // cuelist's currentCue instead of clearing it. Used by instant cues that represent
+    // a persistent state (e.g. DCACue), so the "current cue" reflects the last one fired.
+    bool keepCurrentCueOnEnd = false;
+
     Cuelist* parentCuelist;
 
     BoolParameter* isPlaying;

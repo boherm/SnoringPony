@@ -250,7 +250,8 @@ void Cue::play()
     if (isPlaying->boolValue() && retriggerStopCC->enabled->boolValue())
     {
         retriggerStop();
-        setNextCue();
+        if (!notSetNextCueAuto)
+            setNextCue();
         return;
     }
 
@@ -269,7 +270,7 @@ void Cue::play()
         playInternal();
     }
 
-    if (!retriggerStopCC->enabled->boolValue())
+    if (!retriggerStopCC->enabled->boolValue() && !notSetNextCueAuto)
         setNextCue();
 }
 
@@ -353,7 +354,7 @@ void Cue::endCue()
     isPlaying->setValue(false);
     autoFollowProcess(PostWaitType::AFTER_CUE);
 
-    if (!postWaitCC->enabled->boolValue()) {
+    if (!postWaitCC->enabled->boolValue() && !keepCurrentCueOnEnd) {
         if (parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
             parentCuelist->currentCue->resetValue();
         }
@@ -361,7 +362,7 @@ void Cue::endCue()
 
     // When a cue with "Stop on retrigger" finishes naturally (not by retrigger),
     // advance the nextCue pointer so the operator sees the next cue ready.
-    if (retriggerStopCC->enabled->boolValue() && !wasRetriggerStop)
+    if (retriggerStopCC->enabled->boolValue() && !wasRetriggerStop && !notSetNextCueAuto)
         setNextCue();
 }
 

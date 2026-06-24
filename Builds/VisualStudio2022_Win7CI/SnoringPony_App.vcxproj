@@ -181,6 +181,7 @@
     <ClCompile Include="..\..\src\Cue\dca\CharacterRef.cpp"/>
     <ClCompile Include="..\..\src\Cue\dca\DCAAssignment.cpp"/>
     <ClCompile Include="..\..\src\Cue\dca\DCACue.cpp"/>
+    <ClCompile Include="..\..\src\Cue\setmaincuelist\SetMainCuelistCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\go\GoCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\Cue.cpp"/>
     <ClCompile Include="..\..\src\Cue\CueManager.cpp"/>
@@ -3406,6 +3407,7 @@
     <ClInclude Include="..\..\src\Cue\dca\CharacterRef.h"/>
     <ClInclude Include="..\..\src\Cue\dca\DCAAssignment.h"/>
     <ClInclude Include="..\..\src\Cue\dca\DCACue.h"/>
+    <ClInclude Include="..\..\src\Cue\setmaincuelist\SetMainCuelistCue.h"/>
     <ClInclude Include="..\..\src\Cue\go\GoCue.h"/>
     <ClInclude Include="..\..\src\Cue\Cue.h"/>
     <ClInclude Include="..\..\src\Cue\CueManager.h"/>
@@ -5707,6 +5709,7 @@
     <None Include="..\..\resources\note_cue.png"/>
     <None Include="..\..\resources\obs_interface.png"/>
     <None Include="..\..\resources\playlist_cue.png"/>
+    <None Include="..\..\resources\setmain_cue.png"/>
     <None Include="..\..\resources\tray_icon.png"/>
     <None Include="..\..\modules\juce\modules\juce_audio_devices\native\oboe\src\common\README.md"/>
     <None Include="..\..\modules\juce\modules\juce_audio_devices\native\oboe\src\flowgraph\resampler\README.md"/>

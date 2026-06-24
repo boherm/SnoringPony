@@ -31,6 +31,7 @@
             file="resources/obs_interface.png"/>
       <FILE id="uDpLpc" name="playlist_cue.png" compile="0" resource="1"
             file="resources/playlist_cue.png"/>
+      <FILE id="P2mXBN" name="setmain_cue.png" compile="0" resource="1" file="resources/setmain_cue.png"/>
       <FILE id="BgHvX4" name="tray_icon.png" compile="0" resource="1" file="resources/tray_icon.png"/>
     </GROUP>
     <GROUP id="{72D7B173-FD6A-E831-8382-81700F33CF69}" name="Source">
@@ -129,6 +130,12 @@
           <FILE id="xaxV84" name="DCAAssignment.h" compile="0" resource="0" file="src/Cue/dca/DCAAssignment.h"/>
           <FILE id="Fo1LLn" name="DCACue.cpp" compile="1" resource="0" file="src/Cue/dca/DCACue.cpp"/>
           <FILE id="lxKHco" name="DCACue.h" compile="0" resource="0" file="src/Cue/dca/DCACue.h"/>
+        </GROUP>
+        <GROUP id="{6D69BFFC-3316-D490-8C7A-0F0AF19D87FF}" name="setmaincuelist">
+          <FILE id="Xo3riS" name="SetMainCuelistCue.cpp" compile="1" resource="0"
+                file="src/Cue/setmaincuelist/SetMainCuelistCue.cpp"/>
+          <FILE id="DzzilB" name="SetMainCuelistCue.h" compile="0" resource="0"
+                file="src/Cue/setmaincuelist/SetMainCuelistCue.h"/>
         </GROUP>
         <GROUP id="{5033644A-F6A6-8505-A81B-2A023DBD29ED}" name="go">
           <FILE id="BKQLmE" name="GoCue.cpp" compile="1" resource="0" file="src/Cue/go/GoCue.cpp"/>

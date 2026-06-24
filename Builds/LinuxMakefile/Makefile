@@ -96,6 +96,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/CharacterRef_390d4313.o \
   $(JUCE_OBJDIR)/DCAAssignment_a075f530.o \
   $(JUCE_OBJDIR)/DCACue_2d8b60fa.o \
+  $(JUCE_OBJDIR)/SetMainCuelistCue_759e5540.o \
   $(JUCE_OBJDIR)/GoCue_f384cdc0.o \
   $(JUCE_OBJDIR)/Cue_4c4af201.o \
   $(JUCE_OBJDIR)/CueManager_4c7e6ef6.o \
@@ -337,6 +338,11 @@ $(JUCE_OBJDIR)/DCAAssignment_a075f530.o: ../../src/Cue/dca/DCAAssignment.cpp
 $(JUCE_OBJDIR)/DCACue_2d8b60fa.o: ../../src/Cue/dca/DCACue.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling DCACue.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/SetMainCuelistCue_759e5540.o: ../../src/Cue/setmaincuelist/SetMainCuelistCue.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling SetMainCuelistCue.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/GoCue_f384cdc0.o: ../../src/Cue/go/GoCue.cpp

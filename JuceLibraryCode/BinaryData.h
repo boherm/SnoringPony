@@ -59,11 +59,14 @@ namespace BinaryData
     extern const char*   playlist_cue_png;
     const int            playlist_cue_pngSize = 3123;
 
+    extern const char*   setmain_cue_png;
+    const int            setmain_cue_pngSize = 3693;
+
     extern const char*   tray_icon_png;
     const int            tray_icon_pngSize = 2548;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 18;
+    const int namedResourceListSize = 19;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];

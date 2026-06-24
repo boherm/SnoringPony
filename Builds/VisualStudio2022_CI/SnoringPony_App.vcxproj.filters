@@ -44,6 +44,9 @@
     <Filter Include="SnoringPony\Source\Cue\dca">
       <UniqueIdentifier>{590C700F-D284-F0F8-7570-B8A372F05805}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SnoringPony\Source\Cue\setmaincuelist">
+      <UniqueIdentifier>{F3EA1254-12DE-0AEE-158E-59415934B355}</UniqueIdentifier>
+    </Filter>
     <Filter Include="SnoringPony\Source\Cue\go">
       <UniqueIdentifier>{81130B15-1CE3-AB3F-E213-1DBBA6E5FDCD}</UniqueIdentifier>
     </Filter>
@@ -1170,6 +1173,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Cue\dca\DCACue.cpp">
       <Filter>SnoringPony\Source\Cue\dca</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cue\setmaincuelist\SetMainCuelistCue.cpp">
+      <Filter>SnoringPony\Source\Cue\setmaincuelist</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Cue\go\GoCue.cpp">
       <Filter>SnoringPony\Source\Cue\go</Filter>
@@ -4847,6 +4853,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Cue\dca\DCACue.h">
       <Filter>SnoringPony\Source\Cue\dca</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cue\setmaincuelist\SetMainCuelistCue.h">
+      <Filter>SnoringPony\Source\Cue\setmaincuelist</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Cue\go\GoCue.h">
       <Filter>SnoringPony\Source\Cue\go</Filter>
@@ -11745,6 +11754,9 @@
       <Filter>SnoringPony\resources</Filter>
     </None>
     <None Include="..\..\resources\playlist_cue.png">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
+    <None Include="..\..\resources\setmain_cue.png">
       <Filter>SnoringPony\resources</Filter>
     </None>
     <None Include="..\..\resources\tray_icon.png">
