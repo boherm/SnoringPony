@@ -23,6 +23,8 @@ juce_add_gui_app("${PROJECT_NAME}"
     COMPANY_COPYRIGHT Boris Hermans
     COMPANY_WEBSITE snoringpony.boherm.dev
     COMPANY_EMAIL boris@boherm.dev
+    MICROPHONE_PERMISSION_ENABLED TRUE
+    MICROPHONE_PERMISSION_TEXT "SnoringPony uses the microphone for the Metering panel (level meter and spectrogram)."
     NEEDS_WEB_BROWSER TRUE
     NEEDS_CURL FALSE
     PLIST_TO_MERGE              [[<plist>

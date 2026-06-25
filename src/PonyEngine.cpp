@@ -29,6 +29,7 @@
 #include "ui/panels/ShowInfos.h"
 #include "ui/panels/MTCMonitor.h"
 #include "ui/panels/ActiveCuesPanel.h"
+#include "ui/panels/MeteringPanel.h"
 #include "Interface/InterfaceManager.h"
 #include "Timer/ShowTimerManager.h"
 
@@ -70,6 +71,7 @@ PonyEngine::PonyEngine() :
     ProjectSettings::getInstance()->addChildControllableContainer(&colorPresets);
     ProjectSettings::getInstance()->addChildControllableContainer(&volumePresets);
     ProjectSettings::getInstance()->addChildControllableContainer(&decksSettings);
+    ProjectSettings::getInstance()->addChildControllableContainer(&meteringSettings);
     ProjectSettings::getInstance()->customValuesCC.hideInEditor = true;
     ProjectSettings::getInstance()->dashboardCC.editorIsCollapsed = true;
 
@@ -95,6 +97,7 @@ PonyEngine::~PonyEngine()
     Clock::deleteInstance();
     MTCMonitor::deleteInstance();
     ActiveCuesPanel::deleteInstance();
+    MeteringPanel::deleteInstance();
     ShowControl::deleteInstance();
     ShowInfos::deleteInstance();
 
@@ -138,6 +141,9 @@ void PonyEngine::afterLoadFileInternal()
     {
         pluginLoader = std::make_unique<PluginLoader>(pendingSlots);
     }
+
+    // Open/close the metering input to match the loaded "Active" state.
+    meteringSettings.reconfigure();
 }
 
 void PonyEngine::clearInternal()
@@ -157,6 +163,7 @@ void PonyEngine::clearInternal()
     audioSettings.clear();
     colorPresets.clear();
     volumePresets.clear();
+    meteringSettings.clear();
 }
 
 var PonyEngine::getJSONData(bool includeNonOverriden)

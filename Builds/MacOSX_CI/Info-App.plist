@@ -8,6 +8,8 @@
       <key>NSAllowsArbitraryLoads</key>
       <true/>
     </dict>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>SnoringPony uses the microphone for the Metering panel (level meter and spectrogram).</string>
     <key>CFBundleExecutable</key>
     <string>${EXECUTABLE_NAME}</string>
     <key>CFBundleIconFile</key>

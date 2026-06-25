@@ -16,6 +16,7 @@
 #include "ProjectSettings/ColorPresets.h"
 #include "ProjectSettings/VolumePresets.h"
 #include "ProjectSettings/DecksSettings.h"
+#include "ProjectSettings/MeteringSettings.h"
 #include "Audio/PluginScanner.h"
 #include "Audio/PluginSlot.h"
 
@@ -30,6 +31,7 @@ public:
     ColorPresets colorPresets;
     VolumePresets volumePresets;
     DecksSettings decksSettings;
+    MeteringSettings meteringSettings;
 
 	std::unique_ptr<PluginLoader> pluginLoader;
 
