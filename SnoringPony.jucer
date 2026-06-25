@@ -7,7 +7,7 @@
               bundleIdentifier="boherm.SnoringPony">
   <MAINGROUP id="QuL8Eu" name="SnoringPony">
     <GROUP id="{33CB39F8-43C1-5EE5-E27D-0A9CD562E541}" name="resources">
-      <FILE id="alcRUB" name="default.ponylayout" compile="0" resource="1"
+      <FILE id="zg0p1d" name="default.ponylayout" compile="0" resource="1"
             file="resources/default.ponylayout"/>
       <FILE id="TBBD6Q" name="about.png" compile="0" resource="1" file="resources/about.png"/>
       <FILE id="DgS5vE" name="audio_cue.png" compile="0" resource="1" file="resources/audio_cue.png"/>

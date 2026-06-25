@@ -62,25 +62,25 @@
               {
                 "type": 0,
                 "width": 395,
-                "height": 284,
+                "height": 297,
                 "currentContent": "Show Infos",
                 "tabs": [
                   {
                     "name": "Show Infos"
-                  },
-                  {
-                    "name": "Active Cues"
                   }
                 ]
               },
               {
                 "type": 0,
                 "width": 395,
-                "height": 385,
+                "height": 372,
                 "currentContent": "Logger",
                 "tabs": [
                   {
                     "name": "Logger"
+                  },
+                  {
+                    "name": "Active Cues"
                   },
                   {
                     "name": "Warnings"
@@ -98,7 +98,7 @@
               {
                 "type": 0,
                 "width": 1399,
-                "height": 750,
+                "height": 725,
                 "currentContent": "Deck A",
                 "tabs": [
                   {
@@ -121,7 +121,7 @@
               {
                 "type": 0,
                 "width": 1399,
-                "height": 349,
+                "height": 374,
                 "currentContent": "Inspector",
                 "tabs": [
                   {

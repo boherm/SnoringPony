@@ -75,25 +75,25 @@ static const unsigned char temp_binary_data_0[] =
 "              {\r\n"
 "                \"type\": 0,\r\n"
 "                \"width\": 395,\r\n"
-"                \"height\": 284,\r\n"
+"                \"height\": 297,\r\n"
 "                \"currentContent\": \"Show Infos\",\r\n"
 "                \"tabs\": [\r\n"
 "                  {\r\n"
 "                    \"name\": \"Show Infos\"\r\n"
-"                  },\r\n"
-"                  {\r\n"
-"                    \"name\": \"Active Cues\"\r\n"
 "                  }\r\n"
 "                ]\r\n"
 "              },\r\n"
 "              {\r\n"
 "                \"type\": 0,\r\n"
 "                \"width\": 395,\r\n"
-"                \"height\": 385,\r\n"
+"                \"height\": 372,\r\n"
 "                \"currentContent\": \"Logger\",\r\n"
 "                \"tabs\": [\r\n"
 "                  {\r\n"
 "                    \"name\": \"Logger\"\r\n"
+"                  },\r\n"
+"                  {\r\n"
+"                    \"name\": \"Active Cues\"\r\n"
 "                  },\r\n"
 "                  {\r\n"
 "                    \"name\": \"Warnings\"\r\n"
@@ -111,7 +111,7 @@ static const unsigned char temp_binary_data_0[] =
 "              {\r\n"
 "                \"type\": 0,\r\n"
 "                \"width\": 1399,\r\n"
-"                \"height\": 750,\r\n"
+"                \"height\": 725,\r\n"
 "                \"currentContent\": \"Deck A\",\r\n"
 "                \"tabs\": [\r\n"
 "                  {\r\n"
@@ -134,7 +134,7 @@ static const unsigned char temp_binary_data_0[] =
 "              {\r\n"
 "                \"type\": 0,\r\n"
 "                \"width\": 1399,\r\n"
-"                \"height\": 349,\r\n"
+"                \"height\": 374,\r\n"
 "                \"currentContent\": \"Inspector\",\r\n"
 "                \"tabs\": [\r\n"
 "                  {\r\n"
@@ -152,7 +152,7 @@ static const unsigned char temp_binary_data_0[] =
 "    ]\r\n"
 "  },\r\n"
 "  \"windows\": null\r\n"
-"}\r\n";
+"}";
 
 const char* default_ponylayout = (const char*) temp_binary_data_0;
 
@@ -5006,7 +5006,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
 
     switch (hash)
     {
-        case 0xaa7fa072:  numBytes = 3596; return default_ponylayout;
+        case 0xaa7fa072:  numBytes = 3594; return default_ponylayout;
         case 0xb02b7677:  numBytes = 118622; return about_png;
         case 0x57f31eb4:  numBytes = 2581; return audio_cue_png;
         case 0xb1a2097a:  numBytes = 2882; return audio_interface_png;
