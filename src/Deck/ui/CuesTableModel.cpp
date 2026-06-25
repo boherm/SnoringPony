@@ -17,6 +17,7 @@
 #include "../../Cue/dca/DCACue.h"
 #include "../../Cue/dca/DCAAssignment.h"
 #include "../../Cue/dca/ui/DCAAssignmentDialog.h"
+#include "../../Cue/fade/FadeCue.h"
 #include "../../Interface/mixer/MixerChannel.h"
 #include "../../ui/SPAssetManager.h"
 #include "../../Cue/audio/AudioCue.h"
@@ -709,11 +710,16 @@ namespace
 void CuesTableModel::cellDoubleClicked(int rowNumber, int columnId, const MouseEvent& event)
 {
     if (columnId == IdColumn || columnId == DescriptionColumn
-        || columnId == PreWaitColumn || columnId == PostWaitColumn)
+        || columnId == PreWaitColumn || columnId == PostWaitColumn
+        || columnId == TimeColumn)
     {
         if (rowNumber < 0 || rowNumber >= cl->cues->items.size()) return;
 
         Cue* c = cl->cues->items[rowNumber];
+
+        // The Time cell is only editable for FadeCue (its duration is the fade time).
+        if (columnId == TimeColumn && dynamic_cast<FadeCue*>(c) == nullptr) return;
+
         String initial;
         std::function<void(const String&)> onCommit;
 
@@ -745,7 +751,7 @@ void CuesTableModel::cellDoubleClicked(int rowNumber, int columnId, const MouseE
                 }
             };
         }
-        else // PostWaitColumn
+        else if (columnId == PostWaitColumn)
         {
             initial = c->postWaitCC->enabled->boolValue() ? String(c->postWaitDuration->floatValue()) : String();
             onCommit = [c](const String& t) {
@@ -758,6 +764,13 @@ void CuesTableModel::cellDoubleClicked(int rowNumber, int columnId, const MouseE
                     c->postWaitDuration->setValue(jmax(0.0f, t.getFloatValue()));
                     c->postWaitCC->enabled->setValue(true);
                 }
+            };
+        }
+        else // TimeColumn (FadeCue only — see guard above)
+        {
+            initial = String(c->duration->floatValue());
+            onCommit = [c](const String& t) {
+                c->duration->setValue(jmax(0.0f, t.getFloatValue()));
             };
         }
 
