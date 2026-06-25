@@ -47,8 +47,12 @@ void OSCCue::playInternal()
             oscInterface = oscCommand->interface;
         }
 
-        OSCMessage oscMsg = msg->buildMessage();
-        oscInterface->sendOSC(oscMsg);
+        // Skip incomplete messages: no interface, or an empty address (which would throw
+        // an OSCFormatError when building the OSCMessage).
+        if (oscInterface == nullptr) continue;
+        if (msg->address->stringValue().isEmpty()) continue;
+
+        oscInterface->sendOSC(msg->buildMessage());
     }
     endCue();
 }

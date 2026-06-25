@@ -95,6 +95,7 @@ OSCMessage OSCCommand::buildMessage()
 
 void OSCCommand::execute()
 {
+    if (interface == nullptr || address->stringValue().isEmpty()) return;
     interface->sendOSC(buildMessage());
 }
 

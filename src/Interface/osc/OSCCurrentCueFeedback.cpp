@@ -24,6 +24,7 @@ OSCCurrentCueFeedback::OSCCurrentCueFeedback() :
 void OSCCurrentCueFeedback::sendFeedback()
 {
     if (oscInterface == nullptr || resolvedCuelist == nullptr) return;
+    if (oscAddress->stringValue().isEmpty()) return; // empty OSC address would throw OSCFormatError
 
     Cue* cue = resolvedCuelist->currentCue->getTargetContainerAs<Cue>();
     OSCMessage msg(oscAddress->stringValue());

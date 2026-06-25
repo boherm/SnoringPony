@@ -107,6 +107,7 @@ void OSCCueMessage::onContainerTriggerTriggered(Trigger* t)
 
 void OSCCueMessage::sendTestMessage()
 {
+    if (address->stringValue().isEmpty()) return; // empty address would throw OSCFormatError
     OSCMessage msg = buildMessage();
 
     OSCInterface* oscInterface = nullptr;

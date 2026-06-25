@@ -22,6 +22,7 @@ OSCIsPlayingFeedback::OSCIsPlayingFeedback() :
 void OSCIsPlayingFeedback::sendFeedback()
 {
     if (oscInterface == nullptr || resolvedCuelist == nullptr) return;
+    if (oscAddress->stringValue().isEmpty()) return; // empty OSC address would throw OSCFormatError
     int value = resolvedCuelist->isPlaying->boolValue() ? 1 : 0;
     oscInterface->sendOSC(OSCMessage(oscAddress->stringValue(), value));
 }
