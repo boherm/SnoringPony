@@ -1,26 +1,26 @@
 {
   "mainLayout": {
     "type": 1,
-    "width": 1920,
-    "height": 1176,
+    "width": 1800,
+    "height": 1106,
     "direction": 2,
     "shifters": [
       {
         "type": 1,
-        "width": 1920,
-        "height": 1176,
+        "width": 1800,
+        "height": 1106,
         "direction": 1,
         "shifters": [
           {
             "type": 1,
-            "width": 568,
-            "height": 1176,
+            "width": 395,
+            "height": 1106,
             "direction": 2,
             "shifters": [
               {
                 "type": 0,
-                "width": 568,
-                "height": 103,
+                "width": 395,
+                "height": 117,
                 "currentContent": "Clock",
                 "tabs": [
                   {
@@ -30,19 +30,22 @@
               },
               {
                 "type": 0,
-                "width": 568,
-                "height": 138,
+                "width": 395,
+                "height": 108,
                 "currentContent": "Show Control",
                 "tabs": [
                   {
                     "name": "Show Control"
+                  },
+                  {
+                    "name": "MTC Monitor"
                   }
                 ]
               },
               {
                 "type": 0,
-                "width": 568,
-                "height": 154,
+                "width": 395,
+                "height": 185,
                 "currentContent": "Interfaces",
                 "tabs": [
                   {
@@ -50,24 +53,30 @@
                   },
                   {
                     "name": "Interfaces"
+                  },
+                  {
+                    "name": "Timers"
                   }
                 ]
               },
               {
                 "type": 0,
-                "width": 568,
-                "height": 328,
+                "width": 395,
+                "height": 284,
                 "currentContent": "Show Infos",
                 "tabs": [
                   {
                     "name": "Show Infos"
+                  },
+                  {
+                    "name": "Active Cues"
                   }
                 ]
               },
               {
                 "type": 0,
-                "width": 568,
-                "height": 429,
+                "width": 395,
+                "height": 385,
                 "currentContent": "Logger",
                 "tabs": [
                   {
@@ -82,14 +91,14 @@
           },
           {
             "type": 1,
-            "width": 1346,
-            "height": 1176,
+            "width": 1399,
+            "height": 1106,
             "direction": 2,
             "shifters": [
               {
                 "type": 0,
-                "width": 1346,
-                "height": 741,
+                "width": 1399,
+                "height": 750,
                 "currentContent": "Deck A",
                 "tabs": [
                   {
@@ -111,12 +120,15 @@
               },
               {
                 "type": 0,
-                "width": 1346,
-                "height": 428,
+                "width": 1399,
+                "height": 349,
                 "currentContent": "Inspector",
                 "tabs": [
                   {
                     "name": "Inspector"
+                  },
+                  {
+                    "name": "Metering"
                   }
                 ]
               }

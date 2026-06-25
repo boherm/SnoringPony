@@ -9,8 +9,155 @@
 namespace BinaryData
 {
 
-//================== about.png ==================
+//================== default.ponylayout ==================
 static const unsigned char temp_binary_data_0[] =
+"{\r\n"
+"  \"mainLayout\": {\r\n"
+"    \"type\": 1,\r\n"
+"    \"width\": 1800,\r\n"
+"    \"height\": 1106,\r\n"
+"    \"direction\": 2,\r\n"
+"    \"shifters\": [\r\n"
+"      {\r\n"
+"        \"type\": 1,\r\n"
+"        \"width\": 1800,\r\n"
+"        \"height\": 1106,\r\n"
+"        \"direction\": 1,\r\n"
+"        \"shifters\": [\r\n"
+"          {\r\n"
+"            \"type\": 1,\r\n"
+"            \"width\": 395,\r\n"
+"            \"height\": 1106,\r\n"
+"            \"direction\": 2,\r\n"
+"            \"shifters\": [\r\n"
+"              {\r\n"
+"                \"type\": 0,\r\n"
+"                \"width\": 395,\r\n"
+"                \"height\": 117,\r\n"
+"                \"currentContent\": \"Clock\",\r\n"
+"                \"tabs\": [\r\n"
+"                  {\r\n"
+"                    \"name\": \"Clock\"\r\n"
+"                  }\r\n"
+"                ]\r\n"
+"              },\r\n"
+"              {\r\n"
+"                \"type\": 0,\r\n"
+"                \"width\": 395,\r\n"
+"                \"height\": 108,\r\n"
+"                \"currentContent\": \"Show Control\",\r\n"
+"                \"tabs\": [\r\n"
+"                  {\r\n"
+"                    \"name\": \"Show Control\"\r\n"
+"                  },\r\n"
+"                  {\r\n"
+"                    \"name\": \"MTC Monitor\"\r\n"
+"                  }\r\n"
+"                ]\r\n"
+"              },\r\n"
+"              {\r\n"
+"                \"type\": 0,\r\n"
+"                \"width\": 395,\r\n"
+"                \"height\": 185,\r\n"
+"                \"currentContent\": \"Interfaces\",\r\n"
+"                \"tabs\": [\r\n"
+"                  {\r\n"
+"                    \"name\": \"Cuelists\"\r\n"
+"                  },\r\n"
+"                  {\r\n"
+"                    \"name\": \"Interfaces\"\r\n"
+"                  },\r\n"
+"                  {\r\n"
+"                    \"name\": \"Timers\"\r\n"
+"                  }\r\n"
+"                ]\r\n"
+"              },\r\n"
+"              {\r\n"
+"                \"type\": 0,\r\n"
+"                \"width\": 395,\r\n"
+"                \"height\": 284,\r\n"
+"                \"currentContent\": \"Show Infos\",\r\n"
+"                \"tabs\": [\r\n"
+"                  {\r\n"
+"                    \"name\": \"Show Infos\"\r\n"
+"                  },\r\n"
+"                  {\r\n"
+"                    \"name\": \"Active Cues\"\r\n"
+"                  }\r\n"
+"                ]\r\n"
+"              },\r\n"
+"              {\r\n"
+"                \"type\": 0,\r\n"
+"                \"width\": 395,\r\n"
+"                \"height\": 385,\r\n"
+"                \"currentContent\": \"Logger\",\r\n"
+"                \"tabs\": [\r\n"
+"                  {\r\n"
+"                    \"name\": \"Logger\"\r\n"
+"                  },\r\n"
+"                  {\r\n"
+"                    \"name\": \"Warnings\"\r\n"
+"                  }\r\n"
+"                ]\r\n"
+"              }\r\n"
+"            ]\r\n"
+"          },\r\n"
+"          {\r\n"
+"            \"type\": 1,\r\n"
+"            \"width\": 1399,\r\n"
+"            \"height\": 1106,\r\n"
+"            \"direction\": 2,\r\n"
+"            \"shifters\": [\r\n"
+"              {\r\n"
+"                \"type\": 0,\r\n"
+"                \"width\": 1399,\r\n"
+"                \"height\": 750,\r\n"
+"                \"currentContent\": \"Deck A\",\r\n"
+"                \"tabs\": [\r\n"
+"                  {\r\n"
+"                    \"name\": \"Dashboard\"\r\n"
+"                  },\r\n"
+"                  {\r\n"
+"                    \"name\": \"Deck A\"\r\n"
+"                  },\r\n"
+"                  {\r\n"
+"                    \"name\": \"Deck B\"\r\n"
+"                  },\r\n"
+"                  {\r\n"
+"                    \"name\": \"Deck C\"\r\n"
+"                  },\r\n"
+"                  {\r\n"
+"                    \"name\": \"Deck D\"\r\n"
+"                  }\r\n"
+"                ]\r\n"
+"              },\r\n"
+"              {\r\n"
+"                \"type\": 0,\r\n"
+"                \"width\": 1399,\r\n"
+"                \"height\": 349,\r\n"
+"                \"currentContent\": \"Inspector\",\r\n"
+"                \"tabs\": [\r\n"
+"                  {\r\n"
+"                    \"name\": \"Inspector\"\r\n"
+"                  },\r\n"
+"                  {\r\n"
+"                    \"name\": \"Metering\"\r\n"
+"                  }\r\n"
+"                ]\r\n"
+"              }\r\n"
+"            ]\r\n"
+"          }\r\n"
+"        ]\r\n"
+"      }\r\n"
+"    ]\r\n"
+"  },\r\n"
+"  \"windows\": null\r\n"
+"}\r\n";
+
+const char* default_ponylayout = (const char*) temp_binary_data_0;
+
+//================== about.png ==================
+static const unsigned char temp_binary_data_1[] =
 { 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,3,32,0,0,1,224,8,2,0,0,0,210,101,158,162,0,0,1,130,105,67,67,80,115,82,71,66,32,73,69,67,54,49,57,54,54,45,50,46,49,0,0,40,145,117,145,203,75,66,65,20,135,63,181,23,61,40,168,69,139,22,18,213,42,203,18,
 162,54,65,74,88,16,33,102,144,213,70,175,94,13,212,46,247,42,33,109,131,182,66,65,212,166,215,162,254,130,218,6,173,131,160,40,130,104,93,219,162,54,21,183,115,83,80,34,207,112,230,124,243,155,57,135,153,51,96,15,165,148,180,81,227,134,116,38,171,7,253,
 94,231,66,120,209,89,255,66,45,117,116,224,97,48,162,24,218,68,32,48,67,85,251,184,195,102,197,27,151,85,171,250,185,127,173,41,22,55,20,176,53,8,143,43,154,158,21,158,18,158,89,203,106,22,111,11,119,40,201,72,76,248,84,184,95,151,11,10,223,90,122,180,
@@ -1693,10 +1840,10 @@ static const unsigned char temp_binary_data_0[] =
 146,33,96,1,0,0,0,36,25,2,22,0,0,0,64,146,33,96,1,0,0,0,36,25,2,22,0,0,0,64,146,33,96,1,0,0,0,36,25,2,22,0,0,0,64,146,33,96,1,0,0,0,36,25,2,22,0,0,0,64,146,33,96,1,0,0,0,36,25,2,22,0,0,0,64,146,33,96,1,0,0,0,36,25,2,22,0,0,0,64,146,33,96,1,0,0,0,36,25,
 2,22,0,0,0,64,146,33,96,1,0,0,0,36,25,2,22,0,0,0,64,146,33,96,1,0,0,0,36,217,255,1,158,4,83,204,172,76,112,72,0,0,0,0,73,69,78,68,174,66,96,130,0,0 };
 
-const char* about_png = (const char*) temp_binary_data_0;
+const char* about_png = (const char*) temp_binary_data_1;
 
 //================== audio_cue.png ==================
-static const unsigned char temp_binary_data_1[] =
+static const unsigned char temp_binary_data_2[] =
 { 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,128,0,0,0,128,8,6,0,0,0,195,62,97,203,0,0,1,129,105,67,67,80,115,82,71,66,32,73,69,67,54,49,57,54,54,45,50,46,49,0,0,40,145,117,145,207,43,68,81,20,199,63,51,104,252,24,81,44,44,44,38,13,171,25,198,
 200,196,70,25,9,53,73,99,148,95,155,55,111,126,169,249,241,122,111,36,217,42,91,69,137,141,95,11,254,2,182,202,90,41,34,37,107,182,196,134,233,57,207,168,153,100,206,237,158,251,185,223,123,206,233,222,115,193,30,73,171,25,163,218,7,153,108,94,15,143,
 5,93,179,115,243,46,199,11,13,216,168,163,135,126,69,53,180,225,169,169,16,21,237,227,78,98,197,110,188,86,173,202,113,255,90,67,44,110,168,96,171,21,30,82,53,61,47,60,46,28,90,201,107,22,111,11,183,170,41,37,38,124,42,236,209,229,130,194,183,150,30,
@@ -1734,10 +1881,10 @@ static const unsigned char temp_binary_data_1[] =
 118,64,149,191,78,82,202,203,142,115,50,36,205,146,180,86,210,161,154,42,126,143,164,91,82,255,158,78,15,36,205,151,52,162,176,212,105,12,14,74,250,186,188,213,55,11,133,143,69,222,39,105,123,133,74,127,91,210,152,164,59,36,21,249,192,164,211,7,149,110,
 3,203,32,233,98,96,53,112,5,39,126,43,120,14,97,201,244,125,217,246,50,240,123,96,44,155,103,239,12,128,255,1,186,43,28,19,126,9,223,129,0,0,0,0,73,69,78,68,174,66,96,130,0,0 };
 
-const char* audio_cue_png = (const char*) temp_binary_data_1;
+const char* audio_cue_png = (const char*) temp_binary_data_2;
 
 //================== audio_interface.png ==================
-static const unsigned char temp_binary_data_2[] =
+static const unsigned char temp_binary_data_3[] =
 { 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,128,0,0,0,128,8,6,0,0,0,195,62,97,203,0,0,1,128,105,67,67,80,115,82,71,66,32,73,69,67,54,49,57,54,54,45,50,46,49,0,0,40,145,117,145,207,43,68,81,20,199,63,198,143,209,24,81,44,132,197,75,195,10,13,106,
 98,163,140,132,154,164,49,202,175,205,204,51,63,212,204,120,189,247,38,77,182,202,86,81,98,227,215,130,191,128,173,178,86,138,72,201,154,45,177,65,207,121,158,154,73,230,222,206,57,159,251,189,247,156,238,61,23,92,145,180,154,49,42,252,144,201,154,122,
 120,52,168,204,204,206,41,238,103,60,52,139,85,209,18,85,13,109,104,114,50,68,201,241,126,75,153,29,175,187,236,90,165,207,253,59,106,22,227,134,10,101,213,194,131,170,166,155,194,99,194,161,21,83,179,121,75,184,81,77,69,23,133,79,132,59,117,185,160,
@@ -1780,10 +1927,10 @@ static const unsigned char temp_binary_data_2[] =
 35,4,144,211,213,135,17,73,231,43,28,192,44,227,128,164,152,50,238,153,54,33,105,129,164,71,187,188,252,167,242,203,31,1,36,77,147,116,185,164,237,146,246,74,122,64,210,122,133,115,139,173,227,255,79,114,202,178,23,17,74,165,0,0,0,0,73,69,78,68,174,66,
 96,130,0,0 };
 
-const char* audio_interface_png = (const char*) temp_binary_data_2;
+const char* audio_interface_png = (const char*) temp_binary_data_3;
 
 //================== crash.png ==================
-static const unsigned char temp_binary_data_3[] =
+static const unsigned char temp_binary_data_4[] =
 { 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,3,32,0,0,2,88,8,2,0,0,0,21,20,21,39,0,0,1,130,105,67,67,80,115,82,71,66,32,73,69,67,54,49,57,54,54,45,50,46,49,0,0,40,145,117,145,203,75,66,65,20,135,63,181,23,61,40,168,69,139,22,18,213,42,203,18,162,
 54,65,74,88,16,33,102,144,213,70,175,94,13,212,46,247,42,33,109,131,182,66,65,212,166,215,162,254,130,218,6,173,131,160,40,130,104,93,219,162,54,21,183,115,83,80,34,207,112,230,124,243,155,57,135,153,51,96,15,165,148,180,81,227,134,116,38,171,7,253,94,
 231,66,120,209,89,255,66,45,117,116,224,97,48,162,24,218,68,32,48,67,85,251,184,195,102,197,27,151,85,171,250,185,127,173,41,22,55,20,176,53,8,143,43,154,158,21,158,18,158,89,203,106,22,111,11,119,40,201,72,76,248,84,184,95,151,11,10,223,90,122,180,200,
@@ -3346,154 +3493,7 @@ static const unsigned char temp_binary_data_3[] =
 96,1,0,0,4,140,128,5,0,0,16,48,2,22,0,0,64,192,8,88,0,0,0,1,35,96,1,0,0,4,140,128,5,0,0,16,48,2,22,0,0,64,192,8,88,0,0,0,1,35,96,1,0,0,4,140,128,5,0,0,16,48,2,22,0,0,64,192,8,88,0,0,0,1,35,96,1,0,0,4,140,128,5,0,0,16,176,255,31,9,222,19,105,103,55,89,
 5,0,0,0,0,73,69,78,68,174,66,96,130,0,0 };
 
-const char* crash_png = (const char*) temp_binary_data_3;
-
-//================== default.ponylayout ==================
-static const unsigned char temp_binary_data_4[] =
-"{\r\n"
-"  \"mainLayout\": {\r\n"
-"    \"type\": 1,\r\n"
-"    \"width\": 1800,\r\n"
-"    \"height\": 1106,\r\n"
-"    \"direction\": 2,\r\n"
-"    \"shifters\": [\r\n"
-"      {\r\n"
-"        \"type\": 1,\r\n"
-"        \"width\": 1800,\r\n"
-"        \"height\": 1106,\r\n"
-"        \"direction\": 1,\r\n"
-"        \"shifters\": [\r\n"
-"          {\r\n"
-"            \"type\": 1,\r\n"
-"            \"width\": 395,\r\n"
-"            \"height\": 1106,\r\n"
-"            \"direction\": 2,\r\n"
-"            \"shifters\": [\r\n"
-"              {\r\n"
-"                \"type\": 0,\r\n"
-"                \"width\": 395,\r\n"
-"                \"height\": 117,\r\n"
-"                \"currentContent\": \"Clock\",\r\n"
-"                \"tabs\": [\r\n"
-"                  {\r\n"
-"                    \"name\": \"Clock\"\r\n"
-"                  }\r\n"
-"                ]\r\n"
-"              },\r\n"
-"              {\r\n"
-"                \"type\": 0,\r\n"
-"                \"width\": 395,\r\n"
-"                \"height\": 108,\r\n"
-"                \"currentContent\": \"MTC Monitor\",\r\n"
-"                \"tabs\": [\r\n"
-"                  {\r\n"
-"                    \"name\": \"Show Control\"\r\n"
-"                  },\r\n"
-"                  {\r\n"
-"                    \"name\": \"MTC Monitor\"\r\n"
-"                  }\r\n"
-"                ]\r\n"
-"              },\r\n"
-"              {\r\n"
-"                \"type\": 0,\r\n"
-"                \"width\": 395,\r\n"
-"                \"height\": 185,\r\n"
-"                \"currentContent\": \"Timers\",\r\n"
-"                \"tabs\": [\r\n"
-"                  {\r\n"
-"                    \"name\": \"Cuelists\"\r\n"
-"                  },\r\n"
-"                  {\r\n"
-"                    \"name\": \"Interfaces\"\r\n"
-"                  },\r\n"
-"                  {\r\n"
-"                    \"name\": \"Timers\"\r\n"
-"                  }\r\n"
-"                ]\r\n"
-"              },\r\n"
-"              {\r\n"
-"                \"type\": 0,\r\n"
-"                \"width\": 395,\r\n"
-"                \"height\": 284,\r\n"
-"                \"currentContent\": \"Show Infos\",\r\n"
-"                \"tabs\": [\r\n"
-"                  {\r\n"
-"                    \"name\": \"Show Infos\"\r\n"
-"                  },\r\n"
-"                  {\r\n"
-"                    \"name\": \"Active Cues\"\r\n"
-"                  }\r\n"
-"                ]\r\n"
-"              },\r\n"
-"              {\r\n"
-"                \"type\": 0,\r\n"
-"                \"width\": 395,\r\n"
-"                \"height\": 385,\r\n"
-"                \"currentContent\": \"Logger\",\r\n"
-"                \"tabs\": [\r\n"
-"                  {\r\n"
-"                    \"name\": \"Logger\"\r\n"
-"                  },\r\n"
-"                  {\r\n"
-"                    \"name\": \"Warnings\"\r\n"
-"                  }\r\n"
-"                ]\r\n"
-"              }\r\n"
-"            ]\r\n"
-"          },\r\n"
-"          {\r\n"
-"            \"type\": 1,\r\n"
-"            \"width\": 1399,\r\n"
-"            \"height\": 1106,\r\n"
-"            \"direction\": 2,\r\n"
-"            \"shifters\": [\r\n"
-"              {\r\n"
-"                \"type\": 0,\r\n"
-"                \"width\": 1399,\r\n"
-"                \"height\": 750,\r\n"
-"                \"currentContent\": \"Deck C\",\r\n"
-"                \"tabs\": [\r\n"
-"                  {\r\n"
-"                    \"name\": \"Dashboard\"\r\n"
-"                  },\r\n"
-"                  {\r\n"
-"                    \"name\": \"Deck A\"\r\n"
-"                  },\r\n"
-"                  {\r\n"
-"                    \"name\": \"Deck B\"\r\n"
-"                  },\r\n"
-"                  {\r\n"
-"                    \"name\": \"Deck C\"\r\n"
-"                  },\r\n"
-"                  {\r\n"
-"                    \"name\": \"Deck D\"\r\n"
-"                  }\r\n"
-"                ]\r\n"
-"              },\r\n"
-"              {\r\n"
-"                \"type\": 0,\r\n"
-"                \"width\": 1399,\r\n"
-"                \"height\": 349,\r\n"
-"                \"currentContent\": \"Metering\",\r\n"
-"                \"tabs\": [\r\n"
-"                  {\r\n"
-"                    \"name\": \"Inspector\"\r\n"
-"                  },\r\n"
-"                  {\r\n"
-"                    \"name\": \"Metering\"\r\n"
-"                  }\r\n"
-"                ]\r\n"
-"              }\r\n"
-"            ]\r\n"
-"          }\r\n"
-"        ]\r\n"
-"      }\r\n"
-"    ]\r\n"
-"  },\r\n"
-"  \"windows\": null\r\n"
-"}";
-
-const char* default_ponylayout = (const char*) temp_binary_data_4;
+const char* crash_png = (const char*) temp_binary_data_4;
 
 //================== go_cue.png ==================
 static const unsigned char temp_binary_data_5[] =
@@ -5006,11 +5006,11 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
 
     switch (hash)
     {
+        case 0xaa7fa072:  numBytes = 3596; return default_ponylayout;
         case 0xb02b7677:  numBytes = 118622; return about_png;
         case 0x57f31eb4:  numBytes = 2581; return audio_cue_png;
         case 0xb1a2097a:  numBytes = 2882; return audio_interface_png;
         case 0x6e1d1991:  numBytes = 110194; return crash_png;
-        case 0xaa7fa072:  numBytes = 3588; return default_ponylayout;
         case 0x62345dc6:  numBytes = 4097; return go_cue_png;
         case 0x361b535a:  numBytes = 3388; return fade_cue_png;
         case 0x4579c05d:  numBytes = 2036; return group_cue_png;
@@ -5037,11 +5037,11 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
 
 const char* namedResourceList[] =
 {
+    "default_ponylayout",
     "about_png",
     "audio_cue_png",
     "audio_interface_png",
     "crash_png",
-    "default_ponylayout",
     "go_cue_png",
     "fade_cue_png",
     "group_cue_png",
@@ -5063,11 +5063,11 @@ const char* namedResourceList[] =
 
 const char* originalFilenames[] =
 {
+    "default.ponylayout",
     "about.png",
     "audio_cue.png",
     "audio_interface.png",
     "crash.png",
-    "default.ponylayout",
     "go_cue.png",
     "fade_cue.png",
     "group_cue.png",
