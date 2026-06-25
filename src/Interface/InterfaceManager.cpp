@@ -18,6 +18,7 @@
 #include "midi/MIDIInterface.h"
 #include "mixer/MixerInterface.h"
 #include "obs/OBSInterface.h"
+#include "../ProjectSettings/AudioSettings.h"
 
 InterfaceManager::InterfaceManager() :
     BaseManager("Interfaces")
@@ -33,6 +34,29 @@ InterfaceManager::InterfaceManager() :
 
 InterfaceManager::~InterfaceManager()
 {
+}
+
+void InterfaceManager::addItemInternal(Interface* i, var data)
+{
+    if (Engine::mainEngine != nullptr && Engine::mainEngine->isLoadingFile) return;
+
+    AudioInterface* audioInterface = dynamic_cast<AudioInterface*>(i);
+    if (audioInterface == nullptr || audioInterface->outputs == nullptr
+        || audioInterface->outputs->items.isEmpty())
+        return;
+
+    auto* audioSettings = dynamic_cast<AudioSettings*>(
+        ProjectSettings::getInstance()->getControllableContainerByName("audioSettings"));
+    if (audioSettings == nullptr) return;
+
+    // Convenience: when the first audio output appears in the project, make it the
+    // preview output automatically. Never override an already-chosen preview output.
+    if (audioSettings->previewOutput->getTargetContainerAs<AudioOutput>() == nullptr)
+    {
+        AudioOutput* firstOutput = audioInterface->outputs->items.getFirst();
+        audioSettings->previewOutput->setValueFromTarget(firstOutput);
+        audioSettings->previewOutput->notifyValueChanged();
+    }
 }
 
 void InterfaceManager::showMenuForTargetAudioOutput(ControllableContainer* startFromCC, std::function<void(ControllableContainer*)> returnFunc)

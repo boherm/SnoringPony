@@ -40,7 +40,7 @@ public:
     // a persistent state (e.g. DCACue), so the "current cue" reflects the last one fired.
     bool keepCurrentCueOnEnd = false;
 
-    Cuelist* parentCuelist;
+    Cuelist* parentCuelist = nullptr;
 
     BoolParameter* isPlaying;
 
