@@ -409,6 +409,11 @@ void Cue::setNextCue()
             return;
         }
     }
+
+    // Every following cue auto-starts (post-wait chain to the end): there is no cue left
+    // to GO manually, so clear the next cue instead of leaving a stale one.
+    parentCuelist->nextCue->resetValue();
+    parentCuelist->nextCue->notifyValueChanged();
 }
 
 void Cue::autoFollowProcess(PostWaitType type)
