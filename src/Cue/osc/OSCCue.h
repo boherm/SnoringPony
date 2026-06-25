@@ -33,6 +33,9 @@ public:
 
     void itemAdded(OSCCueMessage*) override;
     void itemsAdded(juce::Array<OSCCueMessage *>) override;
+    void itemRemoved(OSCCueMessage*) override;
+
+    void checkWarning(); // warn when the cue has no OSC message
 
     String autoDescriptionInternal() override;
 };

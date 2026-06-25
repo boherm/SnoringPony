@@ -61,6 +61,7 @@ void OSCCue::itemAdded(OSCCueMessage* newItem)
 {
     newItem->cue = this;
     newItem->warningResolveInspectable = this;
+    checkWarning();
 }
 
 void OSCCue::itemsAdded(juce::Array<OSCCueMessage *> newItems)
@@ -69,6 +70,22 @@ void OSCCue::itemsAdded(juce::Array<OSCCueMessage *> newItems)
         msg->cue = this;
         msg->warningResolveInspectable = this;
     }
+    checkWarning();
+}
+
+void OSCCue::itemRemoved(OSCCueMessage*)
+{
+    checkWarning();
+}
+
+void OSCCue::checkWarning()
+{
+    if (messagesManager->items.isEmpty())
+        setWarningMessage("No OSC message");
+    else
+        clearWarning();
+
+    notifyWarningChanged();
 }
 
 String OSCCue::autoDescriptionInternal()

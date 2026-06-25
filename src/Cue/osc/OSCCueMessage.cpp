@@ -38,7 +38,7 @@ OSCCueMessage::OSCCueMessage(String name) :
 
     address = addStringParameter("Address", "OSC Address", "", false);
 
-    setWarningMessage("No OSC Template selected");
+    checkWarning();
 
     argumentsContainer.reset(new OSCCueMessageArguments());
     argumentsContainer->userCanAddItemsManually = false;
@@ -130,8 +130,6 @@ void OSCCueMessage::sendTestMessage()
 
 void OSCCueMessage::onContainerParameterChanged(Parameter * p)
 {
-    clearWarning();
-
     if (p == targetTemplate)
     {
         ControllableContainer* targetContainer = targetTemplate->getTargetContainer();
@@ -140,7 +138,7 @@ void OSCCueMessage::onContainerParameterChanged(Parameter * p)
         argumentsContainer->clear();
 
         if (oscCommand == nullptr && oscInterface == nullptr) {
-            setWarningMessage("No OSC Template selected");
+            // handled by checkWarning() below
         } else if (oscCommand != nullptr) {
             if (templateMessage != nullptr) {
                 templateMessage->removeAsyncContainerListener(this);
@@ -181,6 +179,24 @@ void OSCCueMessage::onContainerParameterChanged(Parameter * p)
         }
         queuedNotifier.addMessage(new ContainerAsyncEvent(ContainerAsyncEvent::ControllableContainerNeedsRebuild, this));
     }
+
+    checkWarning();
+}
+
+void OSCCueMessage::checkWarning()
+{
+    ControllableContainer* target = targetTemplate->getTargetContainer();
+    bool hasTemplate = (dynamic_cast<OSCCommand*>(target) != nullptr)
+                    || (dynamic_cast<OSCInterface*>(target) != nullptr);
+
+    if (!hasTemplate)
+        setWarningMessage("No OSC Template selected");
+    else if (address->stringValue().isEmpty())
+        setWarningMessage("OSC address is empty");
+    else
+        clearWarning();
+
+    notifyWarningChanged();
 }
 
 void OSCCueMessage::loadJSONDataItemInternal(juce::var data)
@@ -227,6 +243,8 @@ void OSCCueMessage::loadJSONDataItemInternal(juce::var data)
         argumentsContainer->userCanAddItemsManually = true;
     }
     queuedNotifier.addMessage(new ContainerAsyncEvent(ContainerAsyncEvent::ControllableContainerNeedsRebuild, this));
+
+    checkWarning();
 }
 
 OSCMessage OSCCueMessage::buildMessage()

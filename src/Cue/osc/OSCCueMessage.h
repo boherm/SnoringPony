@@ -50,6 +50,7 @@ public:
 
     void onContainerTriggerTriggered(Trigger* t) override;
 	void onContainerParameterChanged(Parameter *) override;
+	void checkWarning(); // warn when no template is selected or the address is empty
 
 	void loadJSONDataItemInternal(juce::var data) override;
 
