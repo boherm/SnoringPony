@@ -33,7 +33,8 @@ class MeteringPanel :
     public juce::Component,
     public juce::Timer,
     public juce::AudioIODeviceCallback,
-    public ParameterListener
+    public ParameterListener,
+    public EngineListener
 {
 public:
     juce_DeclareSingleton(MeteringPanel, true);
@@ -48,6 +49,9 @@ public:
     void mouseExit(const juce::MouseEvent& e) override;
 
     void parameterValueChanged(Parameter* p) override;
+
+    void fileLoaded() override;
+    void engineCleared() override;
 
     void audioDeviceIOCallbackWithContext(const float* const* inputChannelData, int numInputChannels,
                                           float* const* outputChannelData, int numOutputChannels,
@@ -100,6 +104,7 @@ private:
     juce::Rectangle<int> readoutArea, meterArea, freqAxisArea, spectroImageArea;
 
     void applySettings();
+    void clearSpectrogram();
     void pullAndProcess();
     void ensureWeighting(double sr);
     void commitColumn(int w, int h, double sr);

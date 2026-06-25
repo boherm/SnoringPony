@@ -56,6 +56,9 @@ MeteringPanel::MeteringPanel()
         settings->deviceManager.addAudioCallback(this);
     }
 
+    if (Engine::mainEngine != nullptr)
+        Engine::mainEngine->addEngineListener(this);
+
     applySettings();
     startTimerHz(60);
 }
@@ -63,6 +66,9 @@ MeteringPanel::MeteringPanel()
 MeteringPanel::~MeteringPanel()
 {
     stopTimer();
+
+    if (Engine::mainEngine != nullptr)
+        Engine::mainEngine->removeEngineListener(this);
 
     if (settings != nullptr)
     {
@@ -77,6 +83,18 @@ MeteringPanel::~MeteringPanel()
 }
 
 //==============================================================================
+
+void MeteringPanel::clearSpectrogram()
+{
+    if (!spectro.isNull())
+        spectro.clear(spectro.getBounds(), Colours::black);
+    repaint();
+}
+
+// Wipe the spectrogram when a file is (re)loaded or a new/blank project is created,
+// so leftover data from the previous project isn't shown.
+void MeteringPanel::fileLoaded()   { clearSpectrogram(); }
+void MeteringPanel::engineCleared() { clearSpectrogram(); }
 
 void MeteringPanel::applySettings()
 {
@@ -97,7 +115,13 @@ void MeteringPanel::parameterValueChanged(Parameter* p)
     else if (p == settings->threshold) thresholdDb = settings->threshold->floatValue();
     else if (p == settings->weighting) weightingType = (int)settings->weighting->getValueData();
     else if (p == settings->verticalOrientation) { verticalTime = settings->verticalOrientation->boolValue(); resized(); }
-    else if (p == settings->active) startStopBtn.setButtonText(settings->active->boolValue() ? "Stop" : "Start");
+    else if (p == settings->active)
+    {
+        startStopBtn.setButtonText(settings->active->boolValue() ? "Stop" : "Start");
+        // On (re)start, wipe the previously generated spectrogram so old data isn't shown.
+        if (settings->active->boolValue())
+            clearSpectrogram();
+    }
 
     repaint();
 }
@@ -296,7 +320,10 @@ juce::Colour MeteringPanel::magnitudeToColour(float mag)
 {
     float db = juce::Decibels::gainToDecibels(mag, -100.0f);
     float norm = juce::jlimit(0.0f, 1.0f, (db + 80.0f) / 80.0f);
-    return juce::Colour::fromHSV(0.66f * (1.0f - norm), 1.0f, norm, 1.0f);
+    // Gamma-boost the brightness so low/mid-level detail isn't rendered dim/washed-out.
+    // Hue stays tied to the raw level so the colour-to-level mapping is unchanged.
+    float bright = std::pow(norm, 0.5f);
+    return juce::Colour::fromHSV(0.66f * (1.0f - norm), 1.0f, bright, 1.0f);
 }
 
 String MeteringPanel::weightingLabel() const
@@ -488,6 +515,11 @@ void MeteringPanel::paint(juce::Graphics& g)
     drawMeter(g, meterArea);
 
     double sr = sampleRate.load();
+
+    // Black background for the whole spectrogram area, so the not-yet-filled
+    // part matches the active spectrogram instead of the panel's grey.
+    g.setColour(Colours::black);
+    g.fillRect(spectroImageArea);
 
     if (!spectro.isNull())
     {
