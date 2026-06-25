@@ -21,7 +21,7 @@ namespace BinaryData
     const int            crash_pngSize = 110194;
 
     extern const char*   default_ponylayout;
-    const int            default_ponylayoutSize = 3258;
+    const int            default_ponylayoutSize = 3588;
 
     extern const char*   go_cue_png;
     const int            go_cue_pngSize = 4097;

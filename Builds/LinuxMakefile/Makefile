@@ -167,6 +167,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/ColorPresets_884d5ac4.o \
   $(JUCE_OBJDIR)/DecksSettings_fe0d7724.o \
   $(JUCE_OBJDIR)/ShowProperties_a8318b43.o \
+  $(JUCE_OBJDIR)/MeteringSettings_7c2c4caf.o \
   $(JUCE_OBJDIR)/VolumePresets_e2087271.o \
   $(JUCE_OBJDIR)/ShowTimerEditor_3c121a04.o \
   $(JUCE_OBJDIR)/ShowTimerManagerItemUI_a2ed4507.o \
@@ -175,7 +176,10 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/ShowTimerManager_d1d721ef.o \
   $(JUCE_OBJDIR)/Clock_bf28f053.o \
   $(JUCE_OBJDIR)/ShowControl_5e188ae5.o \
+  $(JUCE_OBJDIR)/ActiveCuesPanel_22831923.o \
   $(JUCE_OBJDIR)/ShowInfos_e95c3bcd.o \
+  $(JUCE_OBJDIR)/MeteringPanel_2deb8f90.o \
+  $(JUCE_OBJDIR)/MTCMonitor_148a4f43.o \
   $(JUCE_OBJDIR)/LookAndFeelTable_17cb8c95.o \
   $(JUCE_OBJDIR)/AboutWindow_db489c22.o \
   $(JUCE_OBJDIR)/SPAssetManager_e9ba871f.o \
@@ -701,6 +705,11 @@ $(JUCE_OBJDIR)/ShowProperties_a8318b43.o: ../../src/ProjectSettings/ShowProperti
 	@echo "Compiling ShowProperties.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
+$(JUCE_OBJDIR)/MeteringSettings_7c2c4caf.o: ../../src/ProjectSettings/MeteringSettings.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MeteringSettings.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
 $(JUCE_OBJDIR)/VolumePresets_e2087271.o: ../../src/ProjectSettings/VolumePresets.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling VolumePresets.cpp"
@@ -741,9 +750,24 @@ $(JUCE_OBJDIR)/ShowControl_5e188ae5.o: ../../src/ui/panels/ShowControl.cpp
 	@echo "Compiling ShowControl.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
+$(JUCE_OBJDIR)/ActiveCuesPanel_22831923.o: ../../src/ui/panels/ActiveCuesPanel.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling ActiveCuesPanel.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
 $(JUCE_OBJDIR)/ShowInfos_e95c3bcd.o: ../../src/ui/panels/ShowInfos.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling ShowInfos.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MeteringPanel_2deb8f90.o: ../../src/ui/panels/MeteringPanel.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MeteringPanel.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MTCMonitor_148a4f43.o: ../../src/ui/panels/MTCMonitor.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MTCMonitor.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/LookAndFeelTable_17cb8c95.o: ../../src/ui/LookAndFeelTable.cpp

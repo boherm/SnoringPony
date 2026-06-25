@@ -12,8 +12,8 @@
       <FILE id="HWcti6" name="audio_interface.png" compile="0" resource="1"
             file="resources/audio_interface.png"/>
       <FILE id="WhxZqQ" name="crash.png" compile="0" resource="1" file="resources/crash.png"/>
-      <FILE id="PpOxIR" name="default.ponylayout" compile="0" resource="1"
-            file="resources/default.ponylayout"/>
+      <FILE id="oRivQ3" name="default.ponylayout" compile="0" resource="1"
+            file="../../Documents/SnoringPony/layouts/default.ponylayout"/>
       <FILE id="Dma1kB" name="go_cue.png" compile="0" resource="1" file="resources/go_cue.png"/>
       <FILE id="xWkqPV" name="fade_cue.png" compile="0" resource="1" file="resources/fade_cue.png"/>
       <FILE id="ZfdlKT" name="group_cue.png" compile="0" resource="1" file="resources/group_cue.png"/>
@@ -425,6 +425,10 @@
               file="src/ProjectSettings/ShowProperties.cpp"/>
         <FILE id="MKxMiL" name="ShowProperties.h" compile="0" resource="0"
               file="src/ProjectSettings/ShowProperties.h"/>
+        <FILE id="A3hVk1" name="MeteringSettings.h" compile="0" resource="0"
+              file="src/ProjectSettings/MeteringSettings.h"/>
+        <FILE id="aIcnbz" name="MeteringSettings.cpp" compile="1" resource="0"
+              file="src/ProjectSettings/MeteringSettings.cpp"/>
         <FILE id="XFRmAP" name="VolumePresets.cpp" compile="1" resource="0"
               file="src/ProjectSettings/VolumePresets.cpp"/>
         <FILE id="XOPaAx" name="VolumePresets.h" compile="0" resource="0" file="src/ProjectSettings/VolumePresets.h"/>
@@ -454,10 +458,19 @@
       <GROUP id="{20F5B4C7-57F7-331D-5146-37C2A16AA627}" name="ui">
         <GROUP id="{52B09711-0D0C-1791-CEAB-300CE209300E}" name="panels">
           <FILE id="cPO2Cz" name="Clock.cpp" compile="1" resource="0" file="src/ui/panels/Clock.cpp"/>
+          <FILE id="ypqJL9" name="ActiveCuesPanel.h" compile="0" resource="0"
+                file="src/ui/panels/ActiveCuesPanel.h"/>
           <FILE id="CYR6ek" name="Clock.h" compile="0" resource="0" file="src/ui/panels/Clock.h"/>
+          <FILE id="WpPhD5" name="MeteringPanel.h" compile="0" resource="0" file="src/ui/panels/MeteringPanel.h"/>
+          <FILE id="vYjx9A" name="MTCMonitor.h" compile="0" resource="0" file="src/ui/panels/MTCMonitor.h"/>
           <FILE id="cTQgdv" name="ShowControl.cpp" compile="1" resource="0" file="src/ui/panels/ShowControl.cpp"/>
           <FILE id="Ul3dJ1" name="ShowControl.h" compile="0" resource="0" file="src/ui/panels/ShowControl.h"/>
+          <FILE id="UGJasc" name="ActiveCuesPanel.cpp" compile="1" resource="0"
+                file="src/ui/panels/ActiveCuesPanel.cpp"/>
           <FILE id="Y1M3nE" name="ShowInfos.cpp" compile="1" resource="0" file="src/ui/panels/ShowInfos.cpp"/>
+          <FILE id="TcZrpR" name="MeteringPanel.cpp" compile="1" resource="0"
+                file="src/ui/panels/MeteringPanel.cpp"/>
+          <FILE id="NO0tFp" name="MTCMonitor.cpp" compile="1" resource="0" file="src/ui/panels/MTCMonitor.cpp"/>
           <FILE id="NxI23G" name="ShowInfos.h" compile="0" resource="0" file="src/ui/panels/ShowInfos.h"/>
         </GROUP>
         <FILE id="c4rjXG" name="LookAndFeelTable.cpp" compile="1" resource="0"

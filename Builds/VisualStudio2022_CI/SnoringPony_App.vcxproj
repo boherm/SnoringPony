@@ -252,6 +252,7 @@
     <ClCompile Include="..\..\src\ProjectSettings\ColorPresets.cpp"/>
     <ClCompile Include="..\..\src\ProjectSettings\DecksSettings.cpp"/>
     <ClCompile Include="..\..\src\ProjectSettings\ShowProperties.cpp"/>
+    <ClCompile Include="..\..\src\ProjectSettings\MeteringSettings.cpp"/>
     <ClCompile Include="..\..\src\ProjectSettings\VolumePresets.cpp"/>
     <ClCompile Include="..\..\src\Timer\ui\ShowTimerEditor.cpp"/>
     <ClCompile Include="..\..\src\Timer\ui\ShowTimerManagerItemUI.cpp"/>
@@ -260,7 +261,10 @@
     <ClCompile Include="..\..\src\Timer\ShowTimerManager.cpp"/>
     <ClCompile Include="..\..\src\ui\panels\Clock.cpp"/>
     <ClCompile Include="..\..\src\ui\panels\ShowControl.cpp"/>
+    <ClCompile Include="..\..\src\ui\panels\ActiveCuesPanel.cpp"/>
     <ClCompile Include="..\..\src\ui\panels\ShowInfos.cpp"/>
+    <ClCompile Include="..\..\src\ui\panels\MeteringPanel.cpp"/>
+    <ClCompile Include="..\..\src\ui\panels\MTCMonitor.cpp"/>
     <ClCompile Include="..\..\src\ui\LookAndFeelTable.cpp"/>
     <ClCompile Include="..\..\src\ui\AboutWindow.cpp"/>
     <ClCompile Include="..\..\src\ui\SPAssetManager.cpp"/>
@@ -3490,13 +3494,17 @@
     <ClInclude Include="..\..\src\ProjectSettings\ColorPresets.h"/>
     <ClInclude Include="..\..\src\ProjectSettings\DecksSettings.h"/>
     <ClInclude Include="..\..\src\ProjectSettings\ShowProperties.h"/>
+    <ClInclude Include="..\..\src\ProjectSettings\MeteringSettings.h"/>
     <ClInclude Include="..\..\src\ProjectSettings\VolumePresets.h"/>
     <ClInclude Include="..\..\src\Timer\ui\ShowTimerEditor.h"/>
     <ClInclude Include="..\..\src\Timer\ui\ShowTimerManagerItemUI.h"/>
     <ClInclude Include="..\..\src\Timer\ui\ShowTimerManagerUI.h"/>
     <ClInclude Include="..\..\src\Timer\ShowTimer.h"/>
     <ClInclude Include="..\..\src\Timer\ShowTimerManager.h"/>
+    <ClInclude Include="..\..\src\ui\panels\ActiveCuesPanel.h"/>
     <ClInclude Include="..\..\src\ui\panels\Clock.h"/>
+    <ClInclude Include="..\..\src\ui\panels\MeteringPanel.h"/>
+    <ClInclude Include="..\..\src\ui\panels\MTCMonitor.h"/>
     <ClInclude Include="..\..\src\ui\panels\ShowControl.h"/>
     <ClInclude Include="..\..\src\ui\panels\ShowInfos.h"/>
     <ClInclude Include="..\..\src\ui\LookAndFeelTable.h"/>
@@ -5711,7 +5719,7 @@
     <None Include="..\..\resources\audio_cue.png"/>
     <None Include="..\..\resources\audio_interface.png"/>
     <None Include="..\..\resources\crash.png"/>
-    <None Include="..\..\resources\default.ponylayout"/>
+    <None Include="..\..\..\..\Documents\SnoringPony\layouts\default.ponylayout"/>
     <None Include="..\..\resources\go_cue.png"/>
     <None Include="..\..\resources\fade_cue.png"/>
     <None Include="..\..\resources\group_cue.png"/>

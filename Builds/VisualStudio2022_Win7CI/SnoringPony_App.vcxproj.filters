@@ -1396,6 +1396,9 @@
     <ClCompile Include="..\..\src\ProjectSettings\ShowProperties.cpp">
       <Filter>SnoringPony\Source\ProjectSettings</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\ProjectSettings\MeteringSettings.cpp">
+      <Filter>SnoringPony\Source\ProjectSettings</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\ProjectSettings\VolumePresets.cpp">
       <Filter>SnoringPony\Source\ProjectSettings</Filter>
     </ClCompile>
@@ -1420,7 +1423,16 @@
     <ClCompile Include="..\..\src\ui\panels\ShowControl.cpp">
       <Filter>SnoringPony\Source\ui\panels</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\ui\panels\ActiveCuesPanel.cpp">
+      <Filter>SnoringPony\Source\ui\panels</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\ui\panels\ShowInfos.cpp">
+      <Filter>SnoringPony\Source\ui\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\panels\MeteringPanel.cpp">
+      <Filter>SnoringPony\Source\ui\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\panels\MTCMonitor.cpp">
       <Filter>SnoringPony\Source\ui\panels</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\ui\LookAndFeelTable.cpp">
@@ -5112,6 +5124,9 @@
     <ClInclude Include="..\..\src\ProjectSettings\ShowProperties.h">
       <Filter>SnoringPony\Source\ProjectSettings</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\ProjectSettings\MeteringSettings.h">
+      <Filter>SnoringPony\Source\ProjectSettings</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\ProjectSettings\VolumePresets.h">
       <Filter>SnoringPony\Source\ProjectSettings</Filter>
     </ClInclude>
@@ -5130,7 +5145,16 @@
     <ClInclude Include="..\..\src\Timer\ShowTimerManager.h">
       <Filter>SnoringPony\Source\Timer</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\ui\panels\ActiveCuesPanel.h">
+      <Filter>SnoringPony\Source\ui\panels</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\ui\panels\Clock.h">
+      <Filter>SnoringPony\Source\ui\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\panels\MeteringPanel.h">
+      <Filter>SnoringPony\Source\ui\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\panels\MTCMonitor.h">
       <Filter>SnoringPony\Source\ui\panels</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\ui\panels\ShowControl.h">
@@ -11771,7 +11795,7 @@
     <None Include="..\..\resources\crash.png">
       <Filter>SnoringPony\resources</Filter>
     </None>
-    <None Include="..\..\resources\default.ponylayout">
+    <None Include="..\..\..\..\Documents\SnoringPony\layouts\default.ponylayout">
       <Filter>SnoringPony\resources</Filter>
     </None>
     <None Include="..\..\resources\go_cue.png">
