@@ -129,9 +129,9 @@ void Cuelist::registerCueTypes(Factory<Cue>& f)
     f.defs.add(Factory<Cue>::Definition::createDef("Playback", "Fade Cue", &FadeCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Fade")));
     f.defs.add(Factory<Cue>::Definition::createDef("Playback", "Go Cue", &GoCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Go")));
     f.defs.add(Factory<Cue>::Definition::createDef("Playback", "Set Main Cuelist Cue", &SetMainCuelistCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("SetMainCuelist")));
-    f.defs.add(Factory<Cue>::Definition::createDef("Timer", "Start Timer", &StartTimerCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Timer")));
-    f.defs.add(Factory<Cue>::Definition::createDef("Timer", "Pause Timer", &PauseTimerCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Timer")));
-    f.defs.add(Factory<Cue>::Definition::createDef("Timer", "Reset Timer", &ResetTimerCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Timer")));
+    f.defs.add(Factory<Cue>::Definition::createDef("Timer", "Start Timer", &StartTimerCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("TimerStart")));
+    f.defs.add(Factory<Cue>::Definition::createDef("Timer", "Pause Timer", &PauseTimerCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("TimerPause")));
+    f.defs.add(Factory<Cue>::Definition::createDef("Timer", "Reset Timer", &ResetTimerCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("TimerReset")));
     f.defs.add(Factory<Cue>::Definition::createDef("Network", "OSC Cue", &OSCCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("OSC")));
     f.defs.add(Factory<Cue>::Definition::createDef("Network", "OBS Cue", &OBSCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("OBS")));
 }
