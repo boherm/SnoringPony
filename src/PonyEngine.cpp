@@ -27,6 +27,7 @@
 #include "ui/panels/Clock.h"
 #include "ui/panels/ShowControl.h"
 #include "ui/panels/ShowInfos.h"
+#include "ui/panels/MTCMonitor.h"
 #include "Interface/InterfaceManager.h"
 #include "Timer/ShowTimerManager.h"
 
@@ -91,6 +92,7 @@ PonyEngine::~PonyEngine()
     ShowTimerManager::deleteInstance();
 
     Clock::deleteInstance();
+    MTCMonitor::deleteInstance();
     ShowControl::deleteInstance();
     ShowInfos::deleteInstance();
 
