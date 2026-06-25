@@ -185,12 +185,17 @@ void Cue::parameterValueChanged(Parameter* p)
     ControllableContainer::parameterValueChanged(p);
 
     if (p == id) {
-        clearWarning();
         setNiceName(id->stringValue());
         setCustomShortName(id->stringValue());
 
-        if (id->stringValue() != niceName) {
-            setWarningMessage("A cue with this ID already exists!");
+        // Re-evaluate duplicate-id warnings across the whole cuelist, so changing one
+        // cue's id also updates a cue it previously (or now) collides with. Skipped
+        // during a reorder (one check runs at the end) and during file load.
+        if (parentCuelist != nullptr && parentCuelist->cues != nullptr
+            && !parentCuelist->cues->isReordering
+            && (Engine::mainEngine == nullptr || !Engine::mainEngine->isLoadingFile))
+        {
+            parentCuelist->cues->refreshDuplicateIdWarnings();
         }
     }
 }

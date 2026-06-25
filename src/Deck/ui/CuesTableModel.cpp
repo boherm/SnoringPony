@@ -936,6 +936,11 @@ void CuesTableModel::newMessage(const InspectableSelectionManager::SelectionEven
 
 void CuesTableModel::reorderCues(float startId, float increment)
 {
+    // Suspend per-cue duplicate-id checks while we reassign ids (intermediate states
+    // would collide), then run one full-cuelist check at the end so the reordered cues
+    // are still validated against the cues that weren't part of the reorder.
+    cl->cues->isReordering = true;
+
     float currentId = startId;
     for (int i = 0; i < tlb->getNumRows(); i++) {
         if (tlb->isRowSelected(i)) {
@@ -945,5 +950,9 @@ void CuesTableModel::reorderCues(float startId, float increment)
             currentId += increment;
         }
     }
+
+    cl->cues->isReordering = false;
+    cl->cues->refreshDuplicateIdWarnings();
+
     tlb->repaint();
 }

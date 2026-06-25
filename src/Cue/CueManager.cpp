@@ -80,13 +80,31 @@ void CueManager::loadJSONDataManagerInternal(var data)
     BaseManager<Cue>::loadJSONDataManagerInternal(data);
 
     // If we have multiple cues with same ID, we set a warning on them
-    Array<float> existingIds;
-    for (Cue* c : items) {
-        float idValue = c->id->floatValue();
-        if (existingIds.contains(idValue)) {
-            c->setWarningMessage("A cue with this ID already exists!");
+    refreshDuplicateIdWarnings();
+}
+
+void CueManager::refreshDuplicateIdWarnings()
+{
+    const String dupMsg = "A cue with this ID already exists!";
+
+    for (int i = 0; i < items.size(); ++i)
+    {
+        Cue* c = items[i];
+
+        bool duplicate = false;
+        for (int j = 0; j < items.size(); ++j)
+        {
+            if (j != i && items[j]->id->floatValue() == c->id->floatValue())
+            {
+                duplicate = true;
+                break;
+            }
         }
-        existingIds.add(idValue);
+
+        if (duplicate)
+            c->setWarningMessage(dupMsg);
+        else if (c->getWarningMessage() == dupMsg)
+            c->clearWarning(); // only clear the duplicate-id warning, leave other warnings intact
     }
 }
 

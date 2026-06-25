@@ -26,6 +26,13 @@ public:
 
     Cuelist* parentCuelist;
 
+    // While true (e.g. during an id reorder), per-cue duplicate-id checks are skipped;
+    // a single full-cuelist check is run once the operation finishes.
+    bool isReordering = false;
+
+    // Scan the whole cuelist and set/clear the "duplicate id" warning on each cue.
+    void refreshDuplicateIdWarnings();
+
     void bindFactoryFromCuelist();
 
     bool hasCuePlaying();
