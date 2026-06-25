@@ -119,6 +119,12 @@
     <Filter Include="SnoringPony\Source\ProjectSettings">
       <UniqueIdentifier>{65B4B78B-00AF-0E10-CF06-79E1CA443041}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SnoringPony\Source\Timer\ui">
+      <UniqueIdentifier>{14CC9520-6C97-CE4D-A075-C9D74A86C318}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\Timer">
+      <UniqueIdentifier>{AA647341-BD14-1C39-A2FC-ED8BED337A20}</UniqueIdentifier>
+    </Filter>
     <Filter Include="SnoringPony\Source\ui\panels">
       <UniqueIdentifier>{8C0C33FF-2D1A-17FF-ED0C-725382612D6D}</UniqueIdentifier>
     </Filter>
@@ -1386,6 +1392,21 @@
     </ClCompile>
     <ClCompile Include="..\..\src\ProjectSettings\VolumePresets.cpp">
       <Filter>SnoringPony\Source\ProjectSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Timer\ui\ShowTimerEditor.cpp">
+      <Filter>SnoringPony\Source\Timer\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Timer\ui\ShowTimerManagerItemUI.cpp">
+      <Filter>SnoringPony\Source\Timer\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Timer\ui\ShowTimerManagerUI.cpp">
+      <Filter>SnoringPony\Source\Timer\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Timer\ShowTimer.cpp">
+      <Filter>SnoringPony\Source\Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Timer\ShowTimerManager.cpp">
+      <Filter>SnoringPony\Source\Timer</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\ui\panels\Clock.cpp">
       <Filter>SnoringPony\Source\ui\panels</Filter>
@@ -5075,6 +5096,21 @@
     </ClInclude>
     <ClInclude Include="..\..\src\ProjectSettings\VolumePresets.h">
       <Filter>SnoringPony\Source\ProjectSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Timer\ui\ShowTimerEditor.h">
+      <Filter>SnoringPony\Source\Timer\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Timer\ui\ShowTimerManagerItemUI.h">
+      <Filter>SnoringPony\Source\Timer\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Timer\ui\ShowTimerManagerUI.h">
+      <Filter>SnoringPony\Source\Timer\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Timer\ShowTimer.h">
+      <Filter>SnoringPony\Source\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Timer\ShowTimerManager.h">
+      <Filter>SnoringPony\Source\Timer</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\ui\panels\Clock.h">
       <Filter>SnoringPony\Source\ui\panels</Filter>

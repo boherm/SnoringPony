@@ -15,6 +15,7 @@
 #include "ui/panels/ShowControl.h"
 #include "ui/panels/ShowInfos.h"
 #include "Cuelist/ui/CuelistManagerUI.h"
+#include "Timer/ui/ShowTimerManagerUI.h"
 #include "Deck/ui/DeckUI.h"
 #include "Interface/ui/InterfaceManagerUI.h"
 
@@ -39,6 +40,7 @@ void MainContentComponent::init()
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Show Control", &ShowControlUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Show Infos", &ShowInfosUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Cuelists", &CuelistManagerUI::create));
+	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Timers", &ShowTimerManagerUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Deck A", &DeckUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Deck B", &DeckUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Deck C", &DeckUI::create));

@@ -34,6 +34,7 @@ public:
 	std::unique_ptr<PluginLoader> pluginLoader;
 
 	void clearInternal() override;
+	void createNewGraphInternal() override;
 	void afterLoadFileInternal() override;
 
 	var getJSONData(bool includeNonOverriden = false) override;

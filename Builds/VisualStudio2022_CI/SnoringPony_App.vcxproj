@@ -252,6 +252,11 @@
     <ClCompile Include="..\..\src\ProjectSettings\DecksSettings.cpp"/>
     <ClCompile Include="..\..\src\ProjectSettings\ShowProperties.cpp"/>
     <ClCompile Include="..\..\src\ProjectSettings\VolumePresets.cpp"/>
+    <ClCompile Include="..\..\src\Timer\ui\ShowTimerEditor.cpp"/>
+    <ClCompile Include="..\..\src\Timer\ui\ShowTimerManagerItemUI.cpp"/>
+    <ClCompile Include="..\..\src\Timer\ui\ShowTimerManagerUI.cpp"/>
+    <ClCompile Include="..\..\src\Timer\ShowTimer.cpp"/>
+    <ClCompile Include="..\..\src\Timer\ShowTimerManager.cpp"/>
     <ClCompile Include="..\..\src\ui\panels\Clock.cpp"/>
     <ClCompile Include="..\..\src\ui\panels\ShowControl.cpp"/>
     <ClCompile Include="..\..\src\ui\panels\ShowInfos.cpp"/>
@@ -3481,6 +3486,11 @@
     <ClInclude Include="..\..\src\ProjectSettings\DecksSettings.h"/>
     <ClInclude Include="..\..\src\ProjectSettings\ShowProperties.h"/>
     <ClInclude Include="..\..\src\ProjectSettings\VolumePresets.h"/>
+    <ClInclude Include="..\..\src\Timer\ui\ShowTimerEditor.h"/>
+    <ClInclude Include="..\..\src\Timer\ui\ShowTimerManagerItemUI.h"/>
+    <ClInclude Include="..\..\src\Timer\ui\ShowTimerManagerUI.h"/>
+    <ClInclude Include="..\..\src\Timer\ShowTimer.h"/>
+    <ClInclude Include="..\..\src\Timer\ShowTimerManager.h"/>
     <ClInclude Include="..\..\src\ui\panels\Clock.h"/>
     <ClInclude Include="..\..\src\ui\panels\ShowControl.h"/>
     <ClInclude Include="..\..\src\ui\panels\ShowInfos.h"/>

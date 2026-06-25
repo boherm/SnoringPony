@@ -167,6 +167,11 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/DecksSettings_fe0d7724.o \
   $(JUCE_OBJDIR)/ShowProperties_a8318b43.o \
   $(JUCE_OBJDIR)/VolumePresets_e2087271.o \
+  $(JUCE_OBJDIR)/ShowTimerEditor_3c121a04.o \
+  $(JUCE_OBJDIR)/ShowTimerManagerItemUI_a2ed4507.o \
+  $(JUCE_OBJDIR)/ShowTimerManagerUI_acf7e594.o \
+  $(JUCE_OBJDIR)/ShowTimer_2e0eb528.o \
+  $(JUCE_OBJDIR)/ShowTimerManager_d1d721ef.o \
   $(JUCE_OBJDIR)/Clock_bf28f053.o \
   $(JUCE_OBJDIR)/ShowControl_5e188ae5.o \
   $(JUCE_OBJDIR)/ShowInfos_e95c3bcd.o \
@@ -693,6 +698,31 @@ $(JUCE_OBJDIR)/ShowProperties_a8318b43.o: ../../src/ProjectSettings/ShowProperti
 $(JUCE_OBJDIR)/VolumePresets_e2087271.o: ../../src/ProjectSettings/VolumePresets.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling VolumePresets.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/ShowTimerEditor_3c121a04.o: ../../src/Timer/ui/ShowTimerEditor.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling ShowTimerEditor.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/ShowTimerManagerItemUI_a2ed4507.o: ../../src/Timer/ui/ShowTimerManagerItemUI.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling ShowTimerManagerItemUI.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/ShowTimerManagerUI_acf7e594.o: ../../src/Timer/ui/ShowTimerManagerUI.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling ShowTimerManagerUI.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/ShowTimer_2e0eb528.o: ../../src/Timer/ShowTimer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling ShowTimer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/ShowTimerManager_d1d721ef.o: ../../src/Timer/ShowTimerManager.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling ShowTimerManager.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/Clock_bf28f053.o: ../../src/ui/panels/Clock.cpp

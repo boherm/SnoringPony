@@ -414,6 +414,28 @@
               file="src/ProjectSettings/VolumePresets.cpp"/>
         <FILE id="XOPaAx" name="VolumePresets.h" compile="0" resource="0" file="src/ProjectSettings/VolumePresets.h"/>
       </GROUP>
+      <GROUP id="{4D5BB3E2-2D87-3432-7871-A795095E1D5C}" name="Timer">
+        <GROUP id="{7DCCF350-19A1-608E-78C5-C085EEB6B36E}" name="ui">
+          <FILE id="Ko9Vc5" name="ShowTimerEditor.cpp" compile="1" resource="0"
+                file="src/Timer/ui/ShowTimerEditor.cpp"/>
+          <FILE id="fQ6ZoV" name="ShowTimerEditor.h" compile="0" resource="0"
+                file="src/Timer/ui/ShowTimerEditor.h"/>
+          <FILE id="UcEVWY" name="ShowTimerManagerItemUI.cpp" compile="1" resource="0"
+                file="src/Timer/ui/ShowTimerManagerItemUI.cpp"/>
+          <FILE id="ddnzF9" name="ShowTimerManagerItemUI.h" compile="0" resource="0"
+                file="src/Timer/ui/ShowTimerManagerItemUI.h"/>
+          <FILE id="JRFLXN" name="ShowTimerManagerUI.cpp" compile="1" resource="0"
+                file="src/Timer/ui/ShowTimerManagerUI.cpp"/>
+          <FILE id="PPxiCI" name="ShowTimerManagerUI.h" compile="0" resource="0"
+                file="src/Timer/ui/ShowTimerManagerUI.h"/>
+        </GROUP>
+        <FILE id="bQK7lI" name="ShowTimer.cpp" compile="1" resource="0" file="src/Timer/ShowTimer.cpp"/>
+        <FILE id="U5Nc4E" name="ShowTimer.h" compile="0" resource="0" file="src/Timer/ShowTimer.h"/>
+        <FILE id="rPcOoC" name="ShowTimerManager.cpp" compile="1" resource="0"
+              file="src/Timer/ShowTimerManager.cpp"/>
+        <FILE id="r7vWtr" name="ShowTimerManager.h" compile="0" resource="0"
+              file="src/Timer/ShowTimerManager.h"/>
+      </GROUP>
       <GROUP id="{20F5B4C7-57F7-331D-5146-37C2A16AA627}" name="ui">
         <GROUP id="{52B09711-0D0C-1791-CEAB-300CE209300E}" name="panels">
           <FILE id="cPO2Cz" name="Clock.cpp" compile="1" resource="0" file="src/ui/panels/Clock.cpp"/>

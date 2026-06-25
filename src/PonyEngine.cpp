@@ -28,6 +28,7 @@
 #include "ui/panels/ShowControl.h"
 #include "ui/panels/ShowInfos.h"
 #include "Interface/InterfaceManager.h"
+#include "Timer/ShowTimerManager.h"
 
 ControllableContainer* getAppSettings();
 String getAppVersion();
@@ -47,6 +48,7 @@ PonyEngine::PonyEngine() :
 	PluginScanner::getInstance(); // Init plugin scanner
 	addChildControllableContainer(CuelistManager::getInstance());
     addChildControllableContainer(InterfaceManager::getInstance());
+    addChildControllableContainer(ShowTimerManager::getInstance());
     addChildControllableContainer(ShowControl::getInstance());
 
 	// Clean
@@ -85,6 +87,8 @@ PonyEngine::~PonyEngine()
     MappingActionFactory::deleteInstance();
     MIDIFeedbackFactory::deleteInstance();
     OSCFeedbackFactory::deleteInstance();
+
+    ShowTimerManager::deleteInstance();
 
     Clock::deleteInstance();
     ShowControl::deleteInstance();
@@ -143,6 +147,7 @@ void PonyEngine::clearInternal()
 	//clear
 	CuelistManager::getInstance()->clear();
     InterfaceManager::getInstance()->clear();
+    ShowTimerManager::getInstance()->clear();
 
     showProperties.clear();
     audioSettings.clear();
@@ -160,7 +165,16 @@ var PonyEngine::getJSONData(bool includeNonOverriden)
 	var clData = CuelistManager::getInstance()->getJSONData(includeNonOverriden);
 	if (!clData.isVoid() && clData.getDynamicObject()->getProperties().size() > 0) data.getDynamicObject()->setProperty(CuelistManager::getInstance()->shortName, clData);
 
+	var tData = ShowTimerManager::getInstance()->getJSONData(includeNonOverriden);
+	if (!tData.isVoid() && tData.getDynamicObject()->getProperties().size() > 0) data.getDynamicObject()->setProperty(ShowTimerManager::getInstance()->shortName, tData);
+
 	return data;
+}
+
+void PonyEngine::createNewGraphInternal()
+{
+	// Every new show starts with one timer.
+	ShowTimerManager::getInstance()->addItem();
 }
 
 void PonyEngine::loadJSONDataInternalEngine(var data, ProgressTask* loadingTask)
@@ -178,6 +192,13 @@ void PonyEngine::loadJSONDataInternalEngine(var data, ProgressTask* loadingTask)
 	CuelistManager::getInstance()->loadJSONData(clData);
 	clTask->setProgress(1);
 	clTask->end();
+
+	ProgressTask* tTask = loadingTask->addTask("Timers");
+	tTask->start();
+	var tData = data.getProperty(ShowTimerManager::getInstance()->shortName, var());
+	ShowTimerManager::getInstance()->loadJSONData(tData);
+	tTask->setProgress(1);
+	tTask->end();
 }
 
 void PonyEngine::childStructureChanged(ControllableContainer* cc)
