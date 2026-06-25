@@ -126,6 +126,7 @@
 		B88A285F09FF43584A6E2937 /* OSCCurrentCueFeedback.cpp */ = {isa = PBXBuildFile; fileRef = EF91781FD0E8979742B0FEC4; };
 		BA6841C9F61F5417E0581C81 /* include_juce_audio_processors_lv2_libs.cpp */ = {isa = PBXBuildFile; fileRef = 2E0F1FCC31314CFB650B86D0; };
 		BDFD6B44DF94B3F26C7DCBDA /* MIDIFeedbackItem.cpp */ = {isa = PBXBuildFile; fileRef = F75528E8BEC19373C2D2CCDA; };
+		C2375C6B63E2DA674DE0A7F4 /* TimerActionCue.cpp */ = {isa = PBXBuildFile; fileRef = 38E9D7A9DE9FE669DD76D23F; };
 		C397B52691D8900EB29D532A /* MappingAction.cpp */ = {isa = PBXBuildFile; fileRef = E278CF626246005B7AB8F2C9; };
 		C4F5E5AF2FE4280B000A3C81 /* include_juce_events.mm */ = {isa = PBXBuildFile; fileRef = D98FC71223DDF811D805ADF0; };
 		C5BA953BBA2207993A818BA2 /* DCACue.cpp */ = {isa = PBXBuildFile; fileRef = D64698CE8C7A2246827BB905; };
@@ -182,6 +183,7 @@
 		0B8F0C901AEF03A994A2791E /* juce_cryptography */ /* juce_cryptography */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_cryptography; path = ../../modules/juce/modules/juce_cryptography; sourceTree = SOURCE_ROOT; };
 		0C957E2B305ACCB9E8F306D6 /* juce_audio_formats */ /* juce_audio_formats */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_audio_formats; path = ../../modules/juce/modules/juce_audio_formats; sourceTree = SOURCE_ROOT; };
 		0CCDB06D20559DD8E6C727F1 /* OSCInterface.cpp */ /* OSCInterface.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OSCInterface.cpp; path = ../../src/Interface/osc/OSCInterface.cpp; sourceTree = SOURCE_ROOT; };
+		0CE1EC8C894AE100021B9CBE /* timerreset_cue.png */ /* timerreset_cue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = timerreset_cue.png; path = ../../resources/timerreset_cue.png; sourceTree = SOURCE_ROOT; };
 		0D3F0BABF7E52208D6B17BBE /* OSCCueMessage.cpp */ /* OSCCueMessage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OSCCueMessage.cpp; path = ../../src/Cue/osc/OSCCueMessage.cpp; sourceTree = SOURCE_ROOT; };
 		0DC76C92C58FE53ABE40F86E /* include_juce_organicui4.cpp */ /* include_juce_organicui4.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = include_juce_organicui4.cpp; path = ../../JuceLibraryCode/include_juce_organicui4.cpp; sourceTree = SOURCE_ROOT; };
 		0DE611E76438A1E07302A9B2 /* ColorPresets.cpp */ /* ColorPresets.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ColorPresets.cpp; path = ../../src/ProjectSettings/ColorPresets.cpp; sourceTree = SOURCE_ROOT; };
@@ -191,6 +193,7 @@
 		135EC8CCFEAE4E8F3F781553 /* CueEditor.h */ /* CueEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CueEditor.h; path = ../../src/Cue/ui/CueEditor.h; sourceTree = SOURCE_ROOT; };
 		14254149BBB8AFFA3959E572 /* OSCNextCueFeedback.h */ /* OSCNextCueFeedback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OSCNextCueFeedback.h; path = ../../src/Interface/osc/OSCNextCueFeedback.h; sourceTree = SOURCE_ROOT; };
 		14515318AE14DF4F499C3575 /* OSCCueMessageEditor.h */ /* OSCCueMessageEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OSCCueMessageEditor.h; path = ../../src/Cue/osc/ui/OSCCueMessageEditor.h; sourceTree = SOURCE_ROOT; };
+		16BEB770299BF62ABB2402AF /* timerstart_cue.png */ /* timerstart_cue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = timerstart_cue.png; path = ../../resources/timerstart_cue.png; sourceTree = SOURCE_ROOT; };
 		16EE0D60F5E1FB11FB093F68 /* InterfaceUI.cpp */ /* InterfaceUI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = InterfaceUI.cpp; path = ../../src/Interface/ui/InterfaceUI.cpp; sourceTree = SOURCE_ROOT; };
 		1AC850E793B1ADE9326E09C9 /* QuartzCore.framework */ /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		1C81167099AA3BC2A75FA474 /* OBSCommand.h */ /* OBSCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OBSCommand.h; path = ../../src/Interface/obs/OBSCommand.h; sourceTree = SOURCE_ROOT; };
@@ -222,9 +225,11 @@
 		3443CCF22F295503CD4BE73D /* audio_interface.png */ /* audio_interface.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = audio_interface.png; path = ../../resources/audio_interface.png; sourceTree = SOURCE_ROOT; };
 		361357A8F5E8393883A745B5 /* include_juce_gui_extra.mm */ /* include_juce_gui_extra.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_gui_extra.mm; path = ../../JuceLibraryCode/include_juce_gui_extra.mm; sourceTree = SOURCE_ROOT; };
 		36163ED5AF6DA8797DC10768 /* about.png */ /* about.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = about.png; path = ../../resources/about.png; sourceTree = SOURCE_ROOT; };
+		363B269A64FC20CD5CF2C571 /* PauseTimerCue.h */ /* PauseTimerCue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PauseTimerCue.h; path = ../../src/Cue/timer/PauseTimerCue.h; sourceTree = SOURCE_ROOT; };
 		36E7454C02A4CA4C709F9C89 /* MIDIIsPanickingFeedback.h */ /* MIDIIsPanickingFeedback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MIDIIsPanickingFeedback.h; path = ../../src/Interface/midi/MIDIIsPanickingFeedback.h; sourceTree = SOURCE_ROOT; };
 		36E757BD5881546F0DD03C23 /* AudioSlices.h */ /* AudioSlices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AudioSlices.h; path = ../../src/Cue/audio/AudioSlices.h; sourceTree = SOURCE_ROOT; };
 		38B8FFFB72BF1EBC34685F89 /* PluginScanner.h */ /* PluginScanner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PluginScanner.h; path = ../../src/Audio/PluginScanner.h; sourceTree = SOURCE_ROOT; };
+		38E9D7A9DE9FE669DD76D23F /* TimerActionCue.cpp */ /* TimerActionCue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TimerActionCue.cpp; path = ../../src/Cue/timer/TimerActionCue.cpp; sourceTree = SOURCE_ROOT; };
 		3957265E33146B574943CB36 /* WingOscMixerSettings.h */ /* WingOscMixerSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WingOscMixerSettings.h; path = ../../src/Interface/mixer/wingosc/WingOscMixerSettings.h; sourceTree = SOURCE_ROOT; };
 		39E5C9501C81C55B892913DA /* include_juce_organicui2b.cpp */ /* include_juce_organicui2b.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = include_juce_organicui2b.cpp; path = ../../JuceLibraryCode/include_juce_organicui2b.cpp; sourceTree = SOURCE_ROOT; };
 		3B1BBD59124886C5E5570952 /* CoreMIDI.framework */ /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
@@ -251,6 +256,7 @@
 		4540B5B17A01690381200D91 /* MIDIMapping.cpp */ /* MIDIMapping.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MIDIMapping.cpp; path = ../../src/Interface/midi/MIDIMapping.cpp; sourceTree = SOURCE_ROOT; };
 		4592F0432873D6CE793A26B8 /* DCAMixingCuelistEditor.h */ /* DCAMixingCuelistEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DCAMixingCuelistEditor.h; path = ../../src/Cuelist/dca/ui/DCAMixingCuelistEditor.h; sourceTree = SOURCE_ROOT; };
 		45C45C7EC8DCA96906A091E6 /* Character.cpp */ /* Character.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Character.cpp; path = ../../src/Interface/mixer/Character.cpp; sourceTree = SOURCE_ROOT; };
+		45CD13C34CD7E5D2F6948542 /* TimerActionCue.h */ /* TimerActionCue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TimerActionCue.h; path = ../../src/Cue/timer/TimerActionCue.h; sourceTree = SOURCE_ROOT; };
 		46054AF999DEAB776F7E46F2 /* include_juce_organicui3.cpp */ /* include_juce_organicui3.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = include_juce_organicui3.cpp; path = ../../JuceLibraryCode/include_juce_organicui3.cpp; sourceTree = SOURCE_ROOT; };
 		467B9F602C1EC911FB49C01D /* SetMainCuelistCue.h */ /* SetMainCuelistCue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SetMainCuelistCue.h; path = ../../src/Cue/setmaincuelist/SetMainCuelistCue.h; sourceTree = SOURCE_ROOT; };
 		47F05F3C712CE4880B06CED2 /* include_juce_gui_basics.mm */ /* include_juce_gui_basics.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_gui_basics.mm; path = ../../JuceLibraryCode/include_juce_gui_basics.mm; sourceTree = SOURCE_ROOT; };
@@ -293,6 +299,7 @@
 		673F84CF2C710E52F67D39CC /* MainIncludes.cpp */ /* MainIncludes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MainIncludes.cpp; path = ../../src/MainIncludes.cpp; sourceTree = SOURCE_ROOT; };
 		67C83CB21E375CF0A1780D5F /* WingTcpMixerSettings.h */ /* WingTcpMixerSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WingTcpMixerSettings.h; path = ../../src/Interface/mixer/wingtcp/WingTcpMixerSettings.h; sourceTree = SOURCE_ROOT; };
 		6815A563D854CF6E90D14C70 /* setmain_cue.png */ /* setmain_cue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = setmain_cue.png; path = ../../resources/setmain_cue.png; sourceTree = SOURCE_ROOT; };
+		6849C38D2B47DBB358F74B44 /* ResetTimerCue.h */ /* ResetTimerCue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ResetTimerCue.h; path = ../../src/Cue/timer/ResetTimerCue.h; sourceTree = SOURCE_ROOT; };
 		6A1EAAF908613EB930851E85 /* OSCCue.cpp */ /* OSCCue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OSCCue.cpp; path = ../../src/Cue/osc/OSCCue.cpp; sourceTree = SOURCE_ROOT; };
 		6A32CA96C1DFA99E08B394FE /* MIDIDevice.h */ /* MIDIDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MIDIDevice.h; path = ../../src/Interface/midi/MIDIDevice.h; sourceTree = SOURCE_ROOT; };
 		6BE673BCFB76FF8C280E3C55 /* OSCInputEditor.h */ /* OSCInputEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OSCInputEditor.h; path = ../../src/Interface/osc/ui/OSCInputEditor.h; sourceTree = SOURCE_ROOT; };
@@ -318,6 +325,7 @@
 		7C3A8201F2BEB6CE11CD0A7B /* MTCContainerEditor.h */ /* MTCContainerEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MTCContainerEditor.h; path = ../../src/Cue/audio/ui/MTCContainerEditor.h; sourceTree = SOURCE_ROOT; };
 		7CF75AF7B9621C0C88F778A9 /* include_juce_audio_processors.mm */ /* include_juce_audio_processors.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_audio_processors.mm; path = ../../JuceLibraryCode/include_juce_audio_processors.mm; sourceTree = SOURCE_ROOT; };
 		7CFFB66F5529DE07F5A2C12B /* noicon.png */ /* noicon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = noicon.png; path = ../../resources/noicon.png; sourceTree = SOURCE_ROOT; };
+		7D25BEBD087A7A945327F542 /* timerpause_cue.png */ /* timerpause_cue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = timerpause_cue.png; path = ../../resources/timerpause_cue.png; sourceTree = SOURCE_ROOT; };
 		7D983A3F5973C91C665F605D /* OSCIsPanickingFeedback.h */ /* OSCIsPanickingFeedback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OSCIsPanickingFeedback.h; path = ../../src/Interface/osc/OSCIsPanickingFeedback.h; sourceTree = SOURCE_ROOT; };
 		7EAE753075563FC5A00678DB /* juce_audio_basics */ /* juce_audio_basics */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_audio_basics; path = ../../modules/juce/modules/juce_audio_basics; sourceTree = SOURCE_ROOT; };
 		7EE3607D432AD93D396624DB /* DCAMixingCuelist.h */ /* DCAMixingCuelist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DCAMixingCuelist.h; path = ../../src/Cuelist/dca/DCAMixingCuelist.h; sourceTree = SOURCE_ROOT; };
@@ -432,6 +440,7 @@
 		D65D293B39A9E5D72A638337 /* MappingActionFactory.cpp */ /* MappingActionFactory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MappingActionFactory.cpp; path = ../../src/Interface/action/MappingActionFactory.cpp; sourceTree = SOURCE_ROOT; };
 		D6DEB1C621888ED4330BB464 /* MTCEncoder.h */ /* MTCEncoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MTCEncoder.h; path = ../../src/Interface/midi/MTCEncoder.h; sourceTree = SOURCE_ROOT; };
 		D772DA0FB13C5EE4A2B65BDA /* SelectNextCueAction.h */ /* SelectNextCueAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SelectNextCueAction.h; path = ../../src/Interface/action/SelectNextCueAction.h; sourceTree = SOURCE_ROOT; };
+		D8B318C4F93AB4475B63F371 /* StartTimerCue.h */ /* StartTimerCue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = StartTimerCue.h; path = ../../src/Cue/timer/StartTimerCue.h; sourceTree = SOURCE_ROOT; };
 		D9202BC13D3DD488D0FDB340 /* IOBluetooth.framework */ /* IOBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOBluetooth.framework; path = System/Library/Frameworks/IOBluetooth.framework; sourceTree = SDKROOT; };
 		D98FC71223DDF811D805ADF0 /* include_juce_events.mm */ /* include_juce_events.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_events.mm; path = ../../JuceLibraryCode/include_juce_events.mm; sourceTree = SOURCE_ROOT; };
 		D9FC4E963830B32B9F781F83 /* MIDIFeedbackItem.h */ /* MIDIFeedbackItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MIDIFeedbackItem.h; path = ../../src/Interface/midi/MIDIFeedbackItem.h; sourceTree = SOURCE_ROOT; };
@@ -1138,9 +1147,24 @@
 				650E7B08E4274E2E2333F1B7,
 				7830E13782E5ED36A801F8F3,
 				6815A563D854CF6E90D14C70,
+				7D25BEBD087A7A945327F542,
+				0CE1EC8C894AE100021B9CBE,
+				16BEB770299BF62ABB2402AF,
 				716F018CD03F3FD0677DA5C2,
 			);
 			name = resources;
+			sourceTree = "<group>";
+		};
+		D98E9D94BC2399BAF3E0A98D /* timer */ = {
+			isa = PBXGroup;
+			children = (
+				363B269A64FC20CD5CF2C571,
+				6849C38D2B47DBB358F74B44,
+				D8B318C4F93AB4475B63F371,
+				38E9D7A9DE9FE669DD76D23F,
+				45CD13C34CD7E5D2F6948542,
+			);
+			name = timer;
 			sourceTree = "<group>";
 		};
 		DA33AC17BA1639FC7AAB7D8E /* action */ = {
@@ -1224,10 +1248,11 @@
 				9179A917D8DD1B16AB3D53E4,
 				6C601E1026D4ED16535FF305,
 				F47E35D3CACD068101C7400F,
-				523B61206AD0FA664AB028DE,
 				86EECDCC764319F01661E4FE,
 				ABA5C402D739952296A2F01F,
 				B38886EDB4CA111118413EBD,
+				D98E9D94BC2399BAF3E0A98D,
+				523B61206AD0FA664AB028DE,
 				407B500238CB39ACE3DD88AB,
 				3BC95215FB0975B46F09DFD8,
 				A96C066781776491CB009430,
@@ -1341,7 +1366,6 @@
 				23E34A02F96BCBAD117AB4F6,
 				7C0874028823810C3333CBD1,
 				5F61A2A1E4033C8B46607165,
-				24D3C95909E18C99ABFE56FE,
 				44669BDE16F9A16213BC406F,
 				9E07533E5CB8D8FE5856552B,
 				48776D3D02FA0934CDBB3B4B,
@@ -1349,6 +1373,8 @@
 				C5BA953BBA2207993A818BA2,
 				5020B01692FF82975AFA6BA4,
 				8963305DB6F73051102C1BEF,
+				C2375C6B63E2DA674DE0A7F4,
+				24D3C95909E18C99ABFE56FE,
 				31442203BD5BE74BEE7930A4,
 				426DC5B30615206106211F16,
 				151EA319274F46A0FAA400C1,

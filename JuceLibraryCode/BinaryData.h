@@ -62,11 +62,20 @@ namespace BinaryData
     extern const char*   setmain_cue_png;
     const int            setmain_cue_pngSize = 3693;
 
+    extern const char*   timerpause_cue_png;
+    const int            timerpause_cue_pngSize = 5037;
+
+    extern const char*   timerreset_cue_png;
+    const int            timerreset_cue_pngSize = 5341;
+
+    extern const char*   timerstart_cue_png;
+    const int            timerstart_cue_pngSize = 5091;
+
     extern const char*   tray_icon_png;
     const int            tray_icon_pngSize = 2548;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 19;
+    const int namedResourceListSize = 22;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];

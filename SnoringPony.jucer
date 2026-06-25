@@ -32,6 +32,12 @@
       <FILE id="uDpLpc" name="playlist_cue.png" compile="0" resource="1"
             file="resources/playlist_cue.png"/>
       <FILE id="P2mXBN" name="setmain_cue.png" compile="0" resource="1" file="resources/setmain_cue.png"/>
+      <FILE id="lSm2J2" name="timerpause_cue.png" compile="0" resource="1"
+            file="resources/timerpause_cue.png"/>
+      <FILE id="mRAioX" name="timerreset_cue.png" compile="0" resource="1"
+            file="resources/timerreset_cue.png"/>
+      <FILE id="Bjbjaj" name="timerstart_cue.png" compile="0" resource="1"
+            file="resources/timerstart_cue.png"/>
       <FILE id="BgHvX4" name="tray_icon.png" compile="0" resource="1" file="resources/tray_icon.png"/>
     </GROUP>
     <GROUP id="{72D7B173-FD6A-E831-8382-81700F33CF69}" name="Source">
@@ -107,10 +113,6 @@
           <FILE id="DwTgkP" name="AudioFile.cpp" compile="1" resource="0" file="src/Cue/audio/AudioFile.cpp"/>
           <FILE id="bN8xqB" name="AudioFile.h" compile="0" resource="0" file="src/Cue/audio/AudioFile.h"/>
         </GROUP>
-        <GROUP id="{C9CAAE13-5938-AA3A-C591-71AA92FD3494}" name="ui">
-          <FILE id="YOOYkS" name="CueEditor.cpp" compile="1" resource="0" file="src/Cue/ui/CueEditor.cpp"/>
-          <FILE id="cjtZkz" name="CueEditor.h" compile="0" resource="0" file="src/Cue/ui/CueEditor.h"/>
-        </GROUP>
         <GROUP id="{422C886B-829D-F205-7A7A-F8A63C40A5A6}" name="dca">
           <GROUP id="{110FB668-8B6E-AAEE-BAA8-ACFE2B5CC316}" name="ui">
             <FILE id="OudpB7" name="DCAAssignmentDialog.cpp" compile="1" resource="0"
@@ -140,6 +142,19 @@
         <GROUP id="{5033644A-F6A6-8505-A81B-2A023DBD29ED}" name="go">
           <FILE id="BKQLmE" name="GoCue.cpp" compile="1" resource="0" file="src/Cue/go/GoCue.cpp"/>
           <FILE id="vGcRza" name="GoCue.h" compile="0" resource="0" file="src/Cue/go/GoCue.h"/>
+        </GROUP>
+        <GROUP id="{7B82D836-613B-C5FE-BCF3-EF0CF9E7A7F9}" name="timer">
+          <FILE id="MoRF2b" name="PauseTimerCue.h" compile="0" resource="0" file="src/Cue/timer/PauseTimerCue.h"/>
+          <FILE id="WNA9KW" name="ResetTimerCue.h" compile="0" resource="0" file="src/Cue/timer/ResetTimerCue.h"/>
+          <FILE id="Fi5zjt" name="StartTimerCue.h" compile="0" resource="0" file="src/Cue/timer/StartTimerCue.h"/>
+          <FILE id="ggyGl6" name="TimerActionCue.cpp" compile="1" resource="0"
+                file="src/Cue/timer/TimerActionCue.cpp"/>
+          <FILE id="Ndsxqe" name="TimerActionCue.h" compile="0" resource="0"
+                file="src/Cue/timer/TimerActionCue.h"/>
+        </GROUP>
+        <GROUP id="{C9CAAE13-5938-AA3A-C591-71AA92FD3494}" name="ui">
+          <FILE id="YOOYkS" name="CueEditor.cpp" compile="1" resource="0" file="src/Cue/ui/CueEditor.cpp"/>
+          <FILE id="cjtZkz" name="CueEditor.h" compile="0" resource="0" file="src/Cue/ui/CueEditor.h"/>
         </GROUP>
         <FILE id="oAPlTB" name="Cue.cpp" compile="1" resource="0" file="src/Cue/Cue.cpp"/>
         <FILE id="fbA1vU" name="Cue.h" compile="0" resource="0" file="src/Cue/Cue.h"/>

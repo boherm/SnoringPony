@@ -175,7 +175,6 @@
     <ClCompile Include="..\..\src\Cue\audio\AudioWaveformSlicer.cpp"/>
     <ClCompile Include="..\..\src\Cue\audio\AudioCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\audio\AudioFile.cpp"/>
-    <ClCompile Include="..\..\src\Cue\ui\CueEditor.cpp"/>
     <ClCompile Include="..\..\src\Cue\dca\ui\DCAAssignmentDialog.cpp"/>
     <ClCompile Include="..\..\src\Cue\dca\ui\DCAAssignmentEditor.cpp"/>
     <ClCompile Include="..\..\src\Cue\dca\CharacterRef.cpp"/>
@@ -183,6 +182,8 @@
     <ClCompile Include="..\..\src\Cue\dca\DCACue.cpp"/>
     <ClCompile Include="..\..\src\Cue\setmaincuelist\SetMainCuelistCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\go\GoCue.cpp"/>
+    <ClCompile Include="..\..\src\Cue\timer\TimerActionCue.cpp"/>
+    <ClCompile Include="..\..\src\Cue\ui\CueEditor.cpp"/>
     <ClCompile Include="..\..\src\Cue\Cue.cpp"/>
     <ClCompile Include="..\..\src\Cue\CueManager.cpp"/>
     <ClCompile Include="..\..\src\Cuelist\dca\ui\DCAMixingCuelistEditor.cpp"/>
@@ -3406,7 +3407,6 @@
     <ClInclude Include="..\..\src\Cue\audio\AudioWaveformSlicer.h"/>
     <ClInclude Include="..\..\src\Cue\audio\AudioCue.h"/>
     <ClInclude Include="..\..\src\Cue\audio\AudioFile.h"/>
-    <ClInclude Include="..\..\src\Cue\ui\CueEditor.h"/>
     <ClInclude Include="..\..\src\Cue\dca\ui\DCAAssignmentDialog.h"/>
     <ClInclude Include="..\..\src\Cue\dca\ui\DCAAssignmentEditor.h"/>
     <ClInclude Include="..\..\src\Cue\dca\CharacterRef.h"/>
@@ -3414,6 +3414,11 @@
     <ClInclude Include="..\..\src\Cue\dca\DCACue.h"/>
     <ClInclude Include="..\..\src\Cue\setmaincuelist\SetMainCuelistCue.h"/>
     <ClInclude Include="..\..\src\Cue\go\GoCue.h"/>
+    <ClInclude Include="..\..\src\Cue\timer\PauseTimerCue.h"/>
+    <ClInclude Include="..\..\src\Cue\timer\ResetTimerCue.h"/>
+    <ClInclude Include="..\..\src\Cue\timer\StartTimerCue.h"/>
+    <ClInclude Include="..\..\src\Cue\timer\TimerActionCue.h"/>
+    <ClInclude Include="..\..\src\Cue\ui\CueEditor.h"/>
     <ClInclude Include="..\..\src\Cue\Cue.h"/>
     <ClInclude Include="..\..\src\Cue\CueManager.h"/>
     <ClInclude Include="..\..\src\Cuelist\dca\ui\DCAMixingCuelistEditor.h"/>
@@ -5720,6 +5725,9 @@
     <None Include="..\..\resources\obs_interface.png"/>
     <None Include="..\..\resources\playlist_cue.png"/>
     <None Include="..\..\resources\setmain_cue.png"/>
+    <None Include="..\..\resources\timerpause_cue.png"/>
+    <None Include="..\..\resources\timerreset_cue.png"/>
+    <None Include="..\..\resources\timerstart_cue.png"/>
     <None Include="..\..\resources\tray_icon.png"/>
     <None Include="..\..\modules\juce\modules\juce_audio_devices\native\oboe\src\common\README.md"/>
     <None Include="..\..\modules\juce\modules\juce_audio_devices\native\oboe\src\flowgraph\resampler\README.md"/>

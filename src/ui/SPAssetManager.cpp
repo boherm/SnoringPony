@@ -61,6 +61,12 @@ Image SPAssetManager::getCueIcon(String type)
         return ImageCache::getFromMemory(BinaryData::setmain_cue_png, BinaryData::setmain_cue_pngSize);
     } else if (type == "DCA") {
         return ImageCache::getFromMemory(BinaryData::mixer_interface_png, BinaryData::mixer_interface_pngSize);
+    } else if (type == "TimerStart") {
+        return ImageCache::getFromMemory(BinaryData::timerstart_cue_png, BinaryData::timerstart_cue_pngSize);
+    } else if (type == "TimerPause") {
+        return ImageCache::getFromMemory(BinaryData::timerpause_cue_png, BinaryData::timerpause_cue_pngSize);
+    } else if (type == "TimerReset") {
+        return ImageCache::getFromMemory(BinaryData::timerreset_cue_png, BinaryData::timerreset_cue_pngSize);
     } else {
         return ImageCache::getFromMemory(BinaryData::noicon_png, BinaryData::noicon_pngSize);
     }

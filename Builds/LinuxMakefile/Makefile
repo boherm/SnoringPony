@@ -90,7 +90,6 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/AudioWaveformSlicer_8710d808.o \
   $(JUCE_OBJDIR)/AudioCue_6b8f1412.o \
   $(JUCE_OBJDIR)/AudioFile_d20cdec7.o \
-  $(JUCE_OBJDIR)/CueEditor_6ade7941.o \
   $(JUCE_OBJDIR)/DCAAssignmentDialog_62e17685.o \
   $(JUCE_OBJDIR)/DCAAssignmentEditor_58ab002a.o \
   $(JUCE_OBJDIR)/CharacterRef_390d4313.o \
@@ -98,6 +97,8 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/DCACue_2d8b60fa.o \
   $(JUCE_OBJDIR)/SetMainCuelistCue_759e5540.o \
   $(JUCE_OBJDIR)/GoCue_f384cdc0.o \
+  $(JUCE_OBJDIR)/TimerActionCue_b060c69e.o \
+  $(JUCE_OBJDIR)/CueEditor_6ade7941.o \
   $(JUCE_OBJDIR)/Cue_4c4af201.o \
   $(JUCE_OBJDIR)/CueManager_4c7e6ef6.o \
   $(JUCE_OBJDIR)/DCAMixingCuelistEditor_2970c9d0.o \
@@ -315,11 +316,6 @@ $(JUCE_OBJDIR)/AudioFile_d20cdec7.o: ../../src/Cue/audio/AudioFile.cpp
 	@echo "Compiling AudioFile.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-$(JUCE_OBJDIR)/CueEditor_6ade7941.o: ../../src/Cue/ui/CueEditor.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling CueEditor.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
 $(JUCE_OBJDIR)/DCAAssignmentDialog_62e17685.o: ../../src/Cue/dca/ui/DCAAssignmentDialog.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling DCAAssignmentDialog.cpp"
@@ -353,6 +349,16 @@ $(JUCE_OBJDIR)/SetMainCuelistCue_759e5540.o: ../../src/Cue/setmaincuelist/SetMai
 $(JUCE_OBJDIR)/GoCue_f384cdc0.o: ../../src/Cue/go/GoCue.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling GoCue.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/TimerActionCue_b060c69e.o: ../../src/Cue/timer/TimerActionCue.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling TimerActionCue.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/CueEditor_6ade7941.o: ../../src/Cue/ui/CueEditor.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling CueEditor.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/Cue_4c4af201.o: ../../src/Cue/Cue.cpp
