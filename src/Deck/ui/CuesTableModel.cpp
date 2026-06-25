@@ -846,6 +846,14 @@ void CuesTableModel::deleteKeyPressed(int lastRowSelected)
     askDeleteSelectedCues();
 }
 
+void CuesTableModel::returnKeyPressed(int lastRowSelected)
+{
+    if (lastRowSelected < 0 || lastRowSelected >= cl->cues->items.size()) return;
+
+    cl->nextCue->setTarget(cl->cues->items[lastRowSelected]);
+    cl->nextCue->notifyValueChanged();
+}
+
 void CuesTableModel::inspectCue(int rowNumber)
 {
     InspectableSelectionManager::mainSelectionManager->selectInspectable(cl->cues->items[rowNumber]);

@@ -43,6 +43,7 @@ public:
     void selectedRowsChanged(int lastRowSelected) override;
     void backgroundClicked(const MouseEvent& event) override;
     void deleteKeyPressed (int lastRowSelected) override;
+    void returnKeyPressed (int lastRowSelected) override;
 
     void inspectCue(int rowNumber);
     void askDeleteSelectedCues();
