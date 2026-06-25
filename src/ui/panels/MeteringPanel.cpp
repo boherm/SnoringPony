@@ -498,7 +498,7 @@ void MeteringPanel::drawFreqAxis(juce::Graphics& g, double sr)
         }
         else
         {
-            int y = spectroImageArea.getBottom() - (int)(frac * spectroImageArea.getHeight());
+            int y = spectroImageArea.getY() + (int)(frac * spectroImageArea.getHeight());
             g.setColour(Colours::white.withAlpha(.08f));
             g.drawHorizontalLine(y, (float)spectroImageArea.getX(), (float)spectroImageArea.getRight());
             g.setColour(Colours::white.withAlpha(.45f));
@@ -532,7 +532,17 @@ void MeteringPanel::paint(juce::Graphics& g)
         }
         else
         {
-            g.drawImageAt(spectro, spectroImageArea.getX(), spectroImageArea.getY());
+            // New columns are committed at the buffer's right edge (x = w-1) and
+            // scroll left. Mirror on X so the newest data emerges on the LEFT, next to
+            // the frequency axis - matching the vertical layout, where the newest row
+            // emerges at the bottom next to its axis. Mirror on Y too so low
+            // frequencies sit at the top and highs at the bottom (the buffer stores
+            // highs at y=0 for the vertical path).
+            int w = spectro.getWidth();
+            int h = spectro.getHeight();
+            juce::AffineTransform t(-1.0f, 0.0f, (float)(spectroImageArea.getX() + w - 1),
+                                    0.0f, -1.0f, (float)(spectroImageArea.getY() + h - 1));
+            g.drawImageTransformed(spectro, t);
         }
     }
 
@@ -566,7 +576,7 @@ void MeteringPanel::paint(juce::Graphics& g)
         }
         else
         {
-            double frac = 1.0 - (double)(mousePos.y - spectroImageArea.getY()) / (double)juce::jmax(1, spectroImageArea.getHeight());
+            double frac = (double)(mousePos.y - spectroImageArea.getY()) / (double)juce::jmax(1, spectroImageArea.getHeight());
             freq = freqFromFrac(juce::jlimit(0.0, 1.0, frac), sr);
             g.setColour(Colours::white.withAlpha(.5f));
             g.drawHorizontalLine(mousePos.y, (float)spectroImageArea.getX(), (float)spectroImageArea.getRight());
