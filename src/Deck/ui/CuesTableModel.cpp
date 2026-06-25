@@ -269,7 +269,7 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
 
         if (cue->isAutoStartCue()) g.setOpacity(0.5f);
 
-        if (cue->duration->doubleValue() > 0.0 || cue->isPlaying->boolValue() || cue->preWaitActive->boolValue() || cue->postWaitActive->boolValue() || cue->postWaitCC->enabled->boolValue())
+        if (cue->duration->doubleValue() > 0.0 || cue->isPlaying->boolValue() || cue->preWaitActive->boolValue() || cue->postWaitActive->boolValue())
             g.strokePath(myPath, PathStrokeType(1));
         g.setColour(color.withAlpha(0.6f));
 
@@ -280,7 +280,7 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
 
         if (cue->isAutoStartCue()) g.setOpacity(0.5f);
 
-        if (cue->duration->doubleValue() <= 0.0 && !cue->isPlaying->boolValue() && !cue->preWaitActive->boolValue() && !cue->postWaitActive->boolValue() && !cue->postWaitCC->enabled->boolValue())
+        if (cue->duration->doubleValue() <= 0.0 && !cue->isPlaying->boolValue() && !cue->preWaitActive->boolValue() && !cue->postWaitActive->boolValue())
             g.setOpacity(0.5f);
 
         g.drawText(text, r.getX(), r.getY(), r.getWidth(), r.getHeight(), Justification::centred, true);
