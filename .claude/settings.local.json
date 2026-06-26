@@ -4,7 +4,8 @@
       "Bash(grep:*)",
       "Bash(cmake --build build --target SnoringPony)",
       "Bash(cmake --build build)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(cmake --build out/Debug --config Debug)"
     ]
   }
 }
