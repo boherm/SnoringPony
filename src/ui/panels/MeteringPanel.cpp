@@ -31,6 +31,15 @@ MeteringPanel::MeteringPanel()
     weightingGain.assign((size_t)numBins, 1.0f);
     laeqRing.assign((size_t)laeqSeconds, 0.0f);
 
+    numRtaBands = (int)std::round(std::log2(rtaFMax / rtaFMin) * rtaBandsPerOctave) + 1;
+    rtaCenters.resize((size_t)numRtaBands);
+    for (int b = 0; b < numRtaBands; ++b)
+        rtaCenters[(size_t)b] = rtaFMin * std::pow(2.0, (double)b / rtaBandsPerOctave);
+    rtaBandLo.assign((size_t)numRtaBands, 1);
+    rtaBandHi.assign((size_t)numRtaBands, 0);
+    rtaSmooth.assign((size_t)numRtaBands, 0.0f);
+    rtaPeak.assign((size_t)numRtaBands, 0.0f);
+
     window.resize((size_t)fftSize);
     windowPower = 0.0;
     for (int i = 0; i < fftSize; ++i)
@@ -45,11 +54,16 @@ MeteringPanel::MeteringPanel()
     startStopBtn.onClick = [this] { if (settings) settings->active->setValue(!settings->active->boolValue()); };
     addAndMakeVisible(startStopBtn);
 
+    modeBtn.setTooltip("Switch between the spectrogram and the RTA");
+    modeBtn.onClick = [this] { if (settings) settings->displayMode->setNext(true); };
+    addAndMakeVisible(modeBtn);
+
     if (settings != nullptr)
     {
         settings->calibration->addParameterListener(this);
         settings->weighting->addParameterListener(this);
         settings->threshold->addParameterListener(this);
+        settings->displayMode->addParameterListener(this);
         settings->verticalOrientation->addParameterListener(this);
         settings->active->addParameterListener(this);
 
@@ -77,6 +91,7 @@ MeteringPanel::~MeteringPanel()
         settings->calibration->removeParameterListener(this);
         settings->weighting->removeParameterListener(this);
         settings->threshold->removeParameterListener(this);
+        settings->displayMode->removeParameterListener(this);
         settings->verticalOrientation->removeParameterListener(this);
         settings->active->removeParameterListener(this);
     }
@@ -88,6 +103,8 @@ void MeteringPanel::clearSpectrogram()
 {
     if (!spectro.isNull())
         spectro.clear(spectro.getBounds(), Colours::black);
+    std::fill(rtaSmooth.begin(), rtaSmooth.end(), 0.0f);
+    std::fill(rtaPeak.begin(), rtaPeak.end(), 0.0f);
     repaint();
 }
 
@@ -103,8 +120,10 @@ void MeteringPanel::applySettings()
     calibrationDb = settings->calibration->floatValue();
     thresholdDb = settings->threshold->floatValue();
     weightingType = (int)settings->weighting->getValueData();
+    displayMode = (int)settings->displayMode->getValueData();
     verticalTime = settings->verticalOrientation->boolValue();
     startStopBtn.setButtonText(settings->active->boolValue() ? "Stop" : "Start");
+    modeBtn.setButtonText(displayMode == (int)MeteringSettings::RTA ? "RTA" : "Spectro");
 }
 
 void MeteringPanel::parameterValueChanged(Parameter* p)
@@ -114,6 +133,12 @@ void MeteringPanel::parameterValueChanged(Parameter* p)
     if (p == settings->calibration) calibrationDb = settings->calibration->floatValue();
     else if (p == settings->threshold) thresholdDb = settings->threshold->floatValue();
     else if (p == settings->weighting) weightingType = (int)settings->weighting->getValueData();
+    else if (p == settings->displayMode)
+    {
+        displayMode = (int)settings->displayMode->getValueData();
+        modeBtn.setButtonText(displayMode == (int)MeteringSettings::RTA ? "RTA" : "Spectro");
+        resized();
+    }
     else if (p == settings->verticalOrientation) { verticalTime = settings->verticalOrientation->boolValue(); resized(); }
     else if (p == settings->active)
     {
@@ -124,6 +149,11 @@ void MeteringPanel::parameterValueChanged(Parameter* p)
     }
 
     repaint();
+}
+
+float MeteringPanel::getMeasuredDbFs() const
+{
+    return (float)(10.0 * std::log10(juce::jmax(1e-12, splFastMs)));
 }
 
 //==============================================================================
@@ -211,6 +241,32 @@ void MeteringPanel::ensureWeighting(double sr)
     weightingComputedSr = sr;
 }
 
+void MeteringPanel::ensureRtaBands(double sr)
+{
+    if (sr == rtaBandsComputedSr) return;
+
+    const double edge = std::pow(2.0, 0.5 / (double)rtaBandsPerOctave); // half a band
+    for (int b = 0; b < numRtaBands; ++b)
+    {
+        const double centre = rtaCenters[(size_t)b];
+        if (centre > sr * 0.5) // beyond Nyquist: mark empty (lo > hi) so it's skipped
+        {
+            rtaBandLo[(size_t)b] = 1;
+            rtaBandHi[(size_t)b] = 0;
+            continue;
+        }
+
+        int lo = (int)std::ceil ((centre / edge) * (double)fftSize / sr);
+        int hi = (int)std::floor((centre * edge) * (double)fftSize / sr);
+        if (lo > hi) // band narrower than the FFT bin spacing: sample the nearest bin
+            lo = hi = (int)std::lround(centre * (double)fftSize / sr);
+
+        rtaBandLo[(size_t)b] = juce::jlimit(1, numBins - 1, lo);
+        rtaBandHi[(size_t)b] = juce::jlimit(1, numBins - 1, hi);
+    }
+    rtaBandsComputedSr = sr;
+}
+
 //==============================================================================
 // Message thread DSP
 
@@ -228,6 +284,7 @@ void MeteringPanel::pullAndProcess()
 
     const double sr = sampleRate.load();
     ensureWeighting(sr);
+    ensureRtaBands(sr);
 
     const bool haveImage = !spectro.isNull() && spectroImageArea.getWidth() > 0;
     const int W = haveImage ? spectro.getWidth() : 1;
@@ -236,6 +293,8 @@ void MeteringPanel::pullAndProcess()
     const double hopTime = (double)fftSize / sr;
     const double msScale = 1.0 / ((double)fftSize * windowPower);
     const double fastAlpha = 1.0 - std::exp(-hopTime / 0.125);
+    const float  rtaAttackA  = (float)(1.0 - std::exp(-hopTime / 0.050));
+    const float  rtaReleaseA = (float)(1.0 - std::exp(-hopTime / 0.300));
 
     while ((int)sampleAccum.size() >= fftSize)
     {
@@ -255,6 +314,41 @@ void MeteringPanel::pullAndProcess()
                 pendingColumn[(size_t)b] = juce::jmax(pendingColumn[(size_t)b], fftBuffer[(size_t)b]);
         }
         if (haveImage) pendingColumn[0] = juce::jmax(pendingColumn[0], fftBuffer[0]);
+
+        // RTA: aggregate bins into bands and store the band mean-square (power),
+        // window-corrected and A/B/C-weighted like the SPL meter so it maps to dB SPL.
+        // Wide bands (>= 2 FFT bins) sum their bins; narrow low-end bands, which are
+        // thinner than the FFT bin spacing, instead interpolate the weighted power at
+        // their centre frequency so adjacent bands differ smoothly rather than snapping
+        // to the same bin (which produced a visible low-frequency staircase).
+        for (int band = 0; band < numRtaBands; ++band)
+        {
+            int lo = rtaBandLo[(size_t)band], hi = rtaBandHi[(size_t)band];
+            double bandEnergy = 0.0;
+            if (hi > lo)
+            {
+                for (int bin = lo; bin <= hi; ++bin)
+                {
+                    double wm = (double)weightingGain[(size_t)bin] * fftBuffer[(size_t)bin];
+                    bandEnergy += wm * wm;
+                }
+            }
+            else if (hi == lo) // <= 1 bin wide: interpolate the weighted power at the centre
+            {
+                double xc = rtaCenters[(size_t)band] * (double)fftSize / sr;
+                int k = juce::jlimit(1, numBins - 2, (int)xc);
+                double frac = juce::jlimit(0.0, 1.0, xc - (double)k);
+                double w0 = (double)weightingGain[(size_t)k]       * fftBuffer[(size_t)k];
+                double w1 = (double)weightingGain[(size_t)(k + 1)] * fftBuffer[(size_t)(k + 1)];
+                bandEnergy = w0 * w0 + (w1 * w1 - w0 * w0) * frac;
+            }
+            // (hi < lo: band beyond Nyquist -> bandEnergy stays 0)
+
+            float p = (float)(2.0 * bandEnergy * msScale); // band mean-square (bins are all >= 1)
+            float prev = rtaSmooth[(size_t)band];
+            rtaSmooth[(size_t)band] = prev + (p - prev) * (p > prev ? rtaAttackA : rtaReleaseA);
+            rtaPeak[(size_t)band] = juce::jmax(rtaPeak[(size_t)band], rtaSmooth[(size_t)band]);
+        }
 
         double ms = energy * msScale;
         splFastMs += (ms - splFastMs) * fastAlpha;
@@ -335,6 +429,11 @@ void MeteringPanel::timerCallback()
 {
     pullAndProcess();
 
+    // RTA peak hold decays ~15 dB/s, never falling below the current smoothed level.
+    const float rtaPeakDecay = 0.972f; // per 60 Hz tick
+    for (int b = 0; b < numRtaBands; ++b)
+        rtaPeak[(size_t)b] = juce::jmax(rtaPeak[(size_t)b] * rtaPeakDecay, rtaSmooth[(size_t)b]);
+
     float peak = inputPeak.exchange(0.0f);
     float db = juce::Decibels::gainToDecibels(peak, -100.0f);
     if (db > meterDb) meterDb = db;
@@ -376,15 +475,16 @@ void MeteringPanel::resized()
 {
     auto r = getLocalBounds();
 
-    // Start/Stop button, top-right corner overlay.
+    // Mode + Start/Stop buttons, top-right corner overlay.
     startStopBtn.setBounds(getWidth() - 64, 4, 58, 22);
+    modeBtn.setBounds(getWidth() - 64 - 4 - 78, 4, 78, 22);
 
-    auto leftCol = r.removeFromLeft(178);
-    meterArea = leftCol.removeFromRight(58);
+    auto leftCol = r.removeFromLeft(140);
+    meterArea = leftCol.removeFromLeft(58);
     readoutArea = leftCol;
     r.removeFromLeft(2);
 
-    if (verticalTime)
+    if (freqOnX())
     {
         freqAxisArea = r.removeFromBottom(16);
         spectroImageArea = r;
@@ -500,7 +600,7 @@ void MeteringPanel::drawFreqAxis(juce::Graphics& g, double sr)
         double frac = fracFromFreq((double)f, sr);
         String label = (f >= 1000) ? String(f / 1000) + "k" : String(f);
 
-        if (verticalTime)
+        if (freqOnX())
         {
             int x = spectroImageArea.getX() + (int)(frac * spectroImageArea.getWidth());
             g.setColour(Colours::white.withAlpha(.08f));
@@ -519,6 +619,74 @@ void MeteringPanel::drawFreqAxis(juce::Graphics& g, double sr)
     }
 }
 
+void MeteringPanel::drawRTA(juce::Graphics& g, double sr)
+{
+    auto area = spectroImageArea;
+    if (area.getWidth() <= 0 || area.getHeight() <= 0) return;
+
+    const float left = (float)area.getX();
+    const float right = (float)area.getRight();
+    const float bottom = (float)area.getBottom();
+
+    // Band mean-square (power) -> dB SPL via the calibration (dB SPL = dBFS + calibration),
+    // shown on a fixed 30..120 dB SPL scale.
+    const float rtaSplMin = 30.0f, rtaSplMax = 120.0f;
+    auto splFor = [this](float power)
+    {
+        return 10.0f * std::log10(juce::jmax(power, 1e-12f)) + calibrationDb;
+    };
+    auto yForSpl = [&](float spl)
+    {
+        float frac = juce::jlimit(0.0f, 1.0f, (spl - rtaSplMin) / (rtaSplMax - rtaSplMin));
+        return bottom - frac * (float)area.getHeight();
+    };
+    auto yFor = [&](float power) { return yForSpl(splFor(power)); };
+
+    // Horizontal level grid + dB SPL labels (every 15 dB).
+    g.setFont(9.0f);
+    for (float spl = rtaSplMax; spl >= rtaSplMin - 0.1f; spl -= 15.0f)
+    {
+        int y = (int)yForSpl(spl);
+        g.setColour(Colours::white.withAlpha(.08f));
+        g.drawHorizontalLine(y, left, right);
+        g.setColour(Colours::white.withAlpha(.35f));
+        g.drawText(String((int)spl), area.getX() + 2, y + 1, 32, 11, Justification::topLeft);
+    }
+    g.setColour(Colours::white.withAlpha(.45f));
+    g.drawText("dB SPL", area.getRight() - 52, area.getY() + 1, 50, 11, Justification::topRight);
+
+    // Smoothed curve + peak-hold curve across the in-range band centres.
+    juce::Path curve, peakPath;
+    bool started = false;
+    float firstX = left, lastX = left;
+    for (int b = 0; b < numRtaBands; ++b)
+    {
+        if (rtaBandLo[(size_t)b] > rtaBandHi[(size_t)b]) continue; // beyond Nyquist
+        float x = left + (float)fracFromFreq(rtaCenters[(size_t)b], sr) * (float)area.getWidth();
+        float yS = yFor(rtaSmooth[(size_t)b]);
+        float yP = yFor(rtaPeak[(size_t)b]);
+
+        if (!started) { curve.startNewSubPath(x, yS); peakPath.startNewSubPath(x, yP); started = true; firstX = x; }
+        else          { curve.lineTo(x, yS);          peakPath.lineTo(x, yP); }
+        lastX = x;
+    }
+    if (!started) return;
+
+    // Filled area under the smoothed curve.
+    juce::Path filled = curve;
+    filled.lineTo(lastX, bottom);
+    filled.lineTo(firstX, bottom);
+    filled.closeSubPath();
+    g.setColour(Colours::limegreen.withAlpha(.18f));
+    g.fillPath(filled);
+
+    g.setColour(Colours::limegreen);
+    g.strokePath(curve, juce::PathStrokeType(1.5f));
+
+    g.setColour(Colours::white.withAlpha(.7f));
+    g.strokePath(peakPath, juce::PathStrokeType(1.0f));
+}
+
 void MeteringPanel::paint(juce::Graphics& g)
 {
     g.fillAll(BG_COLOR);
@@ -533,7 +701,11 @@ void MeteringPanel::paint(juce::Graphics& g)
     g.setColour(Colours::black);
     g.fillRect(spectroImageArea);
 
-    if (!spectro.isNull())
+    if (displayMode == 1)
+    {
+        drawRTA(g, sr);
+    }
+    else if (!spectro.isNull())
     {
         if (verticalTime)
         {
@@ -579,7 +751,7 @@ void MeteringPanel::paint(juce::Graphics& g)
     if (mouseInSpectro)
     {
         double freq;
-        if (verticalTime)
+        if (freqOnX())
         {
             double frac = (double)(mousePos.x - spectroImageArea.getX()) / (double)juce::jmax(1, spectroImageArea.getWidth());
             freq = freqFromFrac(juce::jlimit(0.0, 1.0, frac), sr);

@@ -27,14 +27,18 @@ public:
     virtual ~MeteringSettings();
 
     enum Weighting { A = 0, B = 1, C = 2 };
+    enum Display { Spectrogram = 0, RTA = 1 };
 
     juce::AudioDeviceManager deviceManager;
 
     StringParameter* deviceState;          // juce AudioDeviceManager XML (hidden)
     Trigger*         audioSetup;           // opens the JUCE audio device selector
     FloatParameter*  calibration;          // dB SPL at 0 dBFS
+    FloatParameter*  referenceLevel;       // known dB SPL used by Auto-Calibrate
+    Trigger*         calibrate;            // auto-compute calibration from the live level
     EnumParameter*   weighting;            // A / B / C
     FloatParameter*  threshold;            // dB SPL over which the readout turns red
+    EnumParameter*   displayMode;          // Spectrogram / RTA
     BoolParameter*   verticalOrientation;
     BoolParameter*   active;
 
