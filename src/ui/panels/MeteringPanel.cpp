@@ -40,6 +40,7 @@ MeteringPanel::MeteringPanel()
     rtaBandHi.assign((size_t)numRtaBands, 0);
     rtaSmooth.assign((size_t)numRtaBands, 0.0f);
     rtaPeak.assign((size_t)numRtaBands, 0.0f);
+    rtaReference.assign((size_t)numRtaBands, 0.0f);
 
     window.resize((size_t)fftSize);
     windowPower = 0.0;
@@ -98,21 +99,30 @@ MeteringPanel::~MeteringPanel()
 
 //==============================================================================
 
-void MeteringPanel::clearSpectrogram()
+void MeteringPanel::clearGraphs()
 {
     if (!spectro.isNull())
         spectro.clear(spectro.getBounds(), Colours::black);
     std::fill(rtaSmooth.begin(), rtaSmooth.end(), 0.0f);
     std::fill(rtaPeak.begin(), rtaPeak.end(), 0.0f);
+    rtaHasReference = false;
     std::fill(splHistory.begin(), splHistory.end(), -120.0f);
     splHistoryPos = 0; splHistoryCount = 0; splGraphTick = 0; splBucketMax = -120.0f;
+
+    // Discard any in-flight audio so it can't repopulate the just-cleared graphs
+    // (e.g. leftover FIFO samples committed by the next pullAndProcess after a New).
+    sampleAccum.clear();
+    std::fill(pendingColumn.begin(), pendingColumn.end(), 0.0f);
+    pendingColumnTime = 0.0;
+    if (!deviceRunning.load()) fifo.reset();   // safe only when the audio thread is stopped
+
     repaint();
 }
 
-// Wipe the spectrogram when a file is (re)loaded or a new/blank project is created,
+// Wipe all graphs when a file is (re)loaded or a new/blank project is created,
 // so leftover data from the previous project isn't shown.
-void MeteringPanel::fileLoaded()   { clearSpectrogram(); }
-void MeteringPanel::engineCleared() { clearSpectrogram(); }
+void MeteringPanel::fileLoaded()   { clearGraphs(); }
+void MeteringPanel::engineCleared() { clearGraphs(); }
 
 void MeteringPanel::applySettings()
 {
@@ -144,11 +154,10 @@ void MeteringPanel::parameterValueChanged(Parameter* p)
     else if (p == settings->active)
     {
         updatePlayPauseIcon();
-        // On (re)start, wipe the previously generated spectrogram and reset the held
-        // Max/Peak so old data isn't shown.
+        // On (re)start, wipe all graphs and reset the held Max/Peak so old data isn't shown.
         if (settings->active->boolValue())
         {
-            clearSpectrogram();
+            clearGraphs();
             resetMaxPeak();
         }
     }
@@ -560,15 +569,23 @@ void MeteringPanel::showContextMenu()
     addEnumItems(weight, settings->weighting, 200);
     addEnumItems(laeq, settings->laeqWindow, 300);
 
+    juce::PopupMenu ref;
+    ref.addItem(400, "Capture current curve");
+    ref.addItem(401, "Clear", rtaHasReference);
+
     juce::PopupMenu m;
     m.addSubMenu("Display", disp);
     m.addSubMenu("Weighting", weight);
     m.addSubMenu("LAeq window", laeq);
+    m.addSubMenu("RTA reference", ref);
 
     m.showMenuAsync(juce::PopupMenu::Options().withMousePosition(),
         [this](int result)
         {
             if (result == 0 || settings == nullptr) return;
+            if (result == 400) { captureRtaReference(); return; }
+            if (result == 401) { clearRtaReference();   return; }
+
             EnumParameter* p = result < 200 ? settings->displayMode
                              : (result < 300 ? settings->weighting : settings->laeqWindow);
             int base = result < 200 ? 100 : (result < 300 ? 200 : 300);
@@ -576,6 +593,19 @@ void MeteringPanel::showContextMenu()
             int idx = result - base;
             if (idx >= 0 && idx < keys.size()) p->setValueWithKey(keys[idx]);
         });
+}
+
+void MeteringPanel::captureRtaReference()
+{
+    rtaReference = rtaSmooth;
+    rtaHasReference = true;
+    repaint();
+}
+
+void MeteringPanel::clearRtaReference()
+{
+    rtaHasReference = false;
+    repaint();
 }
 
 //==============================================================================
@@ -790,8 +820,8 @@ void MeteringPanel::drawRTA(juce::Graphics& g, double sr)
     g.setColour(Colours::white.withAlpha(.45f));
     g.drawText("dB SPL", area.getRight() - 52, area.getY() + 1, 50, 11, Justification::topRight);
 
-    // Smoothed curve + peak-hold curve across the in-range band centres.
-    juce::Path curve, peakPath;
+    // Smoothed curve + peak-hold curve (+ optional reference) across the in-range bands.
+    juce::Path curve, peakPath, refPath;
     bool started = false;
     float firstX = left, lastX = left;
     for (int b = 0; b < numRtaBands; ++b)
@@ -800,9 +830,21 @@ void MeteringPanel::drawRTA(juce::Graphics& g, double sr)
         float x = left + (float)fracFromFreq(rtaCenters[(size_t)b], sr) * (float)area.getWidth();
         float yS = yFor(rtaSmooth[(size_t)b]);
         float yP = yFor(rtaPeak[(size_t)b]);
+        float yR = rtaHasReference ? yFor(rtaReference[(size_t)b]) : 0.0f;
 
-        if (!started) { curve.startNewSubPath(x, yS); peakPath.startNewSubPath(x, yP); started = true; firstX = x; }
-        else          { curve.lineTo(x, yS);          peakPath.lineTo(x, yP); }
+        if (!started)
+        {
+            curve.startNewSubPath(x, yS);
+            peakPath.startNewSubPath(x, yP);
+            if (rtaHasReference) refPath.startNewSubPath(x, yR);
+            started = true; firstX = x;
+        }
+        else
+        {
+            curve.lineTo(x, yS);
+            peakPath.lineTo(x, yP);
+            if (rtaHasReference) refPath.lineTo(x, yR);
+        }
         lastX = x;
     }
     if (!started) return;
@@ -820,6 +862,14 @@ void MeteringPanel::drawRTA(juce::Graphics& g, double sr)
 
     g.setColour(Colours::white.withAlpha(.7f));
     g.strokePath(peakPath, juce::PathStrokeType(1.0f));
+
+    // Captured reference curve overlaid for comparison.
+    if (rtaHasReference)
+    {
+        g.setColour(Colours::orange.withAlpha(.9f));
+        g.strokePath(refPath, juce::PathStrokeType(1.2f));
+        g.drawText("ref", area.getRight() - 86, area.getY() + 1, 28, 11, Justification::topRight);
+    }
 }
 
 void MeteringPanel::drawSplGraph(juce::Graphics& g)

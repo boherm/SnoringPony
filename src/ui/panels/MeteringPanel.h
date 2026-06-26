@@ -110,6 +110,8 @@ private:
     std::vector<double> rtaCenters;            // band centre frequencies (Hz)
     std::vector<int>   rtaBandLo, rtaBandHi;   // FFT bin range per band (lo > hi = out of range)
     std::vector<float> rtaSmooth, rtaPeak;     // linear magnitude per band
+    std::vector<float> rtaReference;           // captured reference curve (band powers)
+    bool   rtaHasReference { false };
     double rtaBandsComputedSr { 0.0 };
 
     std::vector<float> weightingGain;
@@ -141,7 +143,7 @@ private:
     juce::Rectangle<int> maxClickArea, peakClickArea;   // click to reset Max / Peak
 
     void applySettings();
-    void clearSpectrogram();
+    void clearGraphs();
     void pullAndProcess();
     void ensureWeighting(double sr);
     void ensureRtaBands(double sr);
@@ -152,6 +154,8 @@ private:
     void drawFreqAxis(juce::Graphics& g, double sr);
     void drawRTA(juce::Graphics& g, double sr);
     void drawSplGraph(juce::Graphics& g);
+    void captureRtaReference();
+    void clearRtaReference();
 
     double fracFromFreq(double f, double sr) const;
     double freqFromFrac(double frac, double sr) const;
