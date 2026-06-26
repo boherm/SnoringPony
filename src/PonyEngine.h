@@ -17,6 +17,7 @@
 #include "ProjectSettings/VolumePresets.h"
 #include "ProjectSettings/DecksSettings.h"
 #include "ProjectSettings/MeteringSettings.h"
+#include "RF/RFCoordinationSettings.h"
 #include "Audio/PluginScanner.h"
 #include "Audio/PluginSlot.h"
 
@@ -32,6 +33,7 @@ public:
     VolumePresets volumePresets;
     DecksSettings decksSettings;
     MeteringSettings meteringSettings;
+    RFCoordinationSettings rfSettings;
 
 	std::unique_ptr<PluginLoader> pluginLoader;
 

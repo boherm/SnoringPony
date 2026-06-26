@@ -17,6 +17,7 @@
 #include "ui/panels/MTCMonitor.h"
 #include "ui/panels/ActiveCuesPanel.h"
 #include "ui/panels/MeteringPanel.h"
+#include "ui/panels/RFCoordinationPanel.h"
 #include "Cuelist/ui/CuelistManagerUI.h"
 #include "Timer/ui/ShowTimerManagerUI.h"
 #include "Deck/ui/DeckUI.h"
@@ -43,6 +44,7 @@ void MainContentComponent::init()
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("MTC Monitor", &MTCMonitorUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Active Cues", &ActiveCuesPanelUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Metering", &MeteringUI::create));
+	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("RF Coordination", &RFCoordinationUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Show Control", &ShowControlUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Show Infos", &ShowInfosUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Cuelists", &CuelistManagerUI::create));

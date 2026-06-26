@@ -30,6 +30,8 @@
 #include "ui/panels/MTCMonitor.h"
 #include "ui/panels/ActiveCuesPanel.h"
 #include "ui/panels/MeteringPanel.h"
+#include "ui/panels/RFCoordinationPanel.h"
+#include "RF/RFDeviceManager.h"
 #include "Interface/InterfaceManager.h"
 #include "Timer/ShowTimerManager.h"
 
@@ -42,7 +44,8 @@ PonyEngine::PonyEngine() :
     audioSettings(),
     colorPresets(),
     volumePresets(),
-    decksSettings()
+    decksSettings(),
+    rfSettings()
 	//ossiaDevice(nullptr)
 {
 	//init here
@@ -72,6 +75,7 @@ PonyEngine::PonyEngine() :
     ProjectSettings::getInstance()->addChildControllableContainer(&volumePresets);
     ProjectSettings::getInstance()->addChildControllableContainer(&decksSettings);
     ProjectSettings::getInstance()->addChildControllableContainer(&meteringSettings);
+    ProjectSettings::getInstance()->addChildControllableContainer(&rfSettings);
     ProjectSettings::getInstance()->customValuesCC.hideInEditor = true;
     ProjectSettings::getInstance()->dashboardCC.editorIsCollapsed = true;
 
@@ -98,6 +102,8 @@ PonyEngine::~PonyEngine()
     MTCMonitor::deleteInstance();
     ActiveCuesPanel::deleteInstance();
     MeteringPanel::deleteInstance();
+    RFCoordinationPanel::deleteInstance();
+    RFDeviceManager::deleteInstance();
     ShowControl::deleteInstance();
     ShowInfos::deleteInstance();
 
@@ -164,6 +170,7 @@ void PonyEngine::clearInternal()
     colorPresets.clear();
     volumePresets.clear();
     meteringSettings.clear();
+    rfSettings.clear();
 }
 
 var PonyEngine::getJSONData(bool includeNonOverriden)
