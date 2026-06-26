@@ -585,29 +585,20 @@ void MeteringPanel::resized()
 {
     auto r = getLocalBounds();
 
-    // Start/Stop (play/pause) icon button, bottom-right corner overlay.
-    startStopBtn.setBounds(getWidth() - 30, getHeight() - 26, 24, 22);
-
-    auto leftCol = r.removeFromLeft(140);
-    meterArea = leftCol.removeFromLeft(58);
-    readoutArea = leftCol;
+    // dB SPL readouts (Now / LAeq) on the left.
+    readoutArea = r.removeFromLeft(82);
     r.removeFromLeft(2);
 
-    if (displayMode == 2)   // dB SPL graph: no frequency axis, level labels are drawn inside
-    {
-        freqAxisArea = juce::Rectangle<int>();
-        spectroImageArea = r;
-    }
-    else if (freqOnX())
-    {
-        freqAxisArea = r.removeFromBottom(16);
-        spectroImageArea = r;
-    }
-    else
-    {
-        freqAxisArea = r.removeFromLeft(34);
-        spectroImageArea = r;
-    }
+    // dBFS meter on the right, leaving room at the bottom for the Start/Stop button.
+    meterArea = r.removeFromRight(58).withTrimmedBottom(26);
+    r.removeFromRight(2);
+
+    // Start/Stop (play/pause) icon button, bottom-right, centred under the dBFS meter.
+    startStopBtn.setBounds(getWidth() - 41, getHeight() - 24, 24, 20);
+
+    // All scales (frequency and level) are drawn inside the plot in the same style,
+    // so the plot uses the whole central area with no reserved axis gutter.
+    spectroImageArea = r;
 
     int w = verticalTime ? spectroImageArea.getHeight() : spectroImageArea.getWidth();
     int h = verticalTime ? spectroImageArea.getWidth()  : spectroImageArea.getHeight();
@@ -703,7 +694,7 @@ void MeteringPanel::drawMeter(juce::Graphics& g, juce::Rectangle<int> area)
     g.setFont(10.0f);
     g.drawText("dBFS", area.getX(), area.getY() + 2, area.getWidth(), 12, Justification::centred);
 
-    auto bar = area.reduced(12, 0).withTrimmedTop(16).withTrimmedBottom(16).withTrimmedRight(16);
+    auto bar = area.reduced(12, 0).withTrimmedTop(24).withTrimmedBottom(16).withTrimmedRight(16);
     g.setColour(Colours::black.withAlpha(.5f));
     g.fillRect(bar);
 
@@ -732,6 +723,7 @@ void MeteringPanel::drawFreqAxis(juce::Graphics& g, double sr)
 {
     static const int ticks[] = { 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000 };
     double fMax = juce::jmax(40.0, sr * 0.5);
+    auto area = spectroImageArea;
 
     g.setFont(9.0f);
     for (int f : ticks)
@@ -742,19 +734,21 @@ void MeteringPanel::drawFreqAxis(juce::Graphics& g, double sr)
 
         if (freqOnX())
         {
-            int x = spectroImageArea.getX() + (int)(frac * spectroImageArea.getWidth());
+            int x = area.getX() + (int)(frac * area.getWidth());
             g.setColour(Colours::white.withAlpha(.08f));
-            g.drawVerticalLine(x, (float)spectroImageArea.getY(), (float)spectroImageArea.getBottom());
+            g.drawVerticalLine(x, (float)area.getY(), (float)area.getBottom());
             g.setColour(Colours::white.withAlpha(.45f));
-            g.drawText(label, x - 16, freqAxisArea.getY(), 32, freqAxisArea.getHeight(), Justification::centred);
+            int lx = juce::jlimit(area.getX(), area.getRight() - 32, x - 16); // keep edge labels in view
+            g.drawText(label, lx, area.getBottom() - 12, 32, 11, Justification::centred);
         }
         else
         {
-            int y = spectroImageArea.getY() + (int)(frac * spectroImageArea.getHeight());
+            int y = area.getY() + (int)(frac * area.getHeight());
             g.setColour(Colours::white.withAlpha(.08f));
-            g.drawHorizontalLine(y, (float)spectroImageArea.getX(), (float)spectroImageArea.getRight());
+            g.drawHorizontalLine(y, (float)area.getX(), (float)area.getRight());
             g.setColour(Colours::white.withAlpha(.45f));
-            g.drawText(label, freqAxisArea.getX(), y - 6, freqAxisArea.getWidth() - 2, 12, Justification::centredRight);
+            int ly = juce::jlimit(area.getY(), area.getBottom() - 12, y - 6); // keep edge labels in view
+            g.drawText(label, area.getX() + 3, ly, 32, 12, Justification::centredLeft);
         }
     }
 }
@@ -789,8 +783,9 @@ void MeteringPanel::drawRTA(juce::Graphics& g, double sr)
         int y = (int)yForSpl(spl);
         g.setColour(Colours::white.withAlpha(.08f));
         g.drawHorizontalLine(y, left, right);
-        g.setColour(Colours::white.withAlpha(.35f));
-        g.drawText(String((int)spl), area.getX() + 2, y + 1, 32, 11, Justification::topLeft);
+        g.setColour(Colours::white.withAlpha(.45f));
+        int ly = juce::jlimit(area.getY(), area.getBottom() - 12, y - 6); // keep edge labels in view
+        g.drawText(String((int)spl), area.getX() + 3, ly, 30, 12, Justification::centredLeft);
     }
     g.setColour(Colours::white.withAlpha(.45f));
     g.drawText("dB SPL", area.getRight() - 52, area.getY() + 1, 50, 11, Justification::topRight);
@@ -851,8 +846,9 @@ void MeteringPanel::drawSplGraph(juce::Graphics& g)
         int y = (int)yForSpl(spl);
         g.setColour(Colours::white.withAlpha(.08f));
         g.drawHorizontalLine(y, left, right);
-        g.setColour(Colours::white.withAlpha(.35f));
-        g.drawText(String((int)spl), area.getX() + 2, y + 1, 32, 11, Justification::topLeft);
+        g.setColour(Colours::white.withAlpha(.45f));
+        int ly = juce::jlimit(area.getY(), area.getBottom() - 12, y - 6); // keep edge labels in view
+        g.drawText(String((int)spl), area.getX() + 3, ly, 30, 12, Justification::centredLeft);
     }
     g.setColour(Colours::white.withAlpha(.45f));
     g.drawText("dB SPL  (last 5 min)", area.getRight() - 120, area.getY() + 1, 118, 11, Justification::topRight);

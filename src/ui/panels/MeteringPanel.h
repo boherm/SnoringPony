@@ -137,7 +137,7 @@ private:
     juce::Point<int> mousePos { -1, -1 };
     bool  mouseInSpectro { false };
 
-    juce::Rectangle<int> readoutArea, meterArea, freqAxisArea, spectroImageArea;
+    juce::Rectangle<int> readoutArea, meterArea, spectroImageArea;
     juce::Rectangle<int> maxClickArea, peakClickArea;   // click to reset Max / Peak
 
     void applySettings();
