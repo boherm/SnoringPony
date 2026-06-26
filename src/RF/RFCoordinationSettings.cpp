@@ -42,7 +42,8 @@ RFCoordinationSettings::RFCoordinationSettings() :
     imdOrder = addEnumParameter("Intermodulation", "Intermodulation products to avoid");
     imdOrder->addOption("Off", (int)IMD_OFF)
             ->addOption("3rd order (2-Tx)", (int)IMD_2TX)
-            ->addOption("3rd order (2-Tx + 3-Tx)", (int)IMD_2TX_3TX);
+            ->addOption("3rd order (2-Tx + 3-Tx)", (int)IMD_2TX_3TX)
+            ->addOption("3rd + 5th order", (int)IMD_2TX_3TX_5TX);
     imdOrder->setDefaultValue("3rd order (2-Tx + 3-Tx)");
 
     occupancyMarginDb = addFloatParameter("Occupancy Margin", "How far above the noise floor (dB) a signal counts as occupied", 12.0f, 1.0f, 60.0f);

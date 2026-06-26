@@ -128,6 +128,8 @@ RFCoordinationPanel::~RFCoordinationPanel()
     if (Engine::mainEngine != nullptr)
         Engine::mainEngine->removeEngineListener(this);
 
+    if (optimizeThread != nullptr) optimizeThread->stopThread(2000);
+
     if (sourceFull != nullptr)   sourceFull->stop();
     if (sourceDetail != nullptr) sourceDetail->stop();
 }
@@ -245,10 +247,17 @@ void RFCoordinationPanel::timerCallback()
 
     updateButtons();
 
-    // While analyzing the waterfall changes every frame; otherwise only repaint
-    // when something displayed actually changed (allowed ranges, device
-    // enable/disable, assignments, ...), so an idle panel costs nothing.
-    if (analyzing) repaint();
+    // Background optimization finished: apply its result on the message thread.
+    if (optimizeDone.exchange(false))
+    {
+        optimizeProgress.store(-1.0f);
+        applyOptimizeResult();
+    }
+    const bool optimizing = optimizeProgress.load() >= 0.0f;
+
+    // While analyzing or optimizing the panel changes every frame; otherwise only
+    // repaint when something displayed actually changed, so an idle panel costs nothing.
+    if (analyzing || optimizing) repaint();
     else
     {
         double sig = computeDisplaySignature();
@@ -377,10 +386,45 @@ void RFCoordinationPanel::rebuildWaterfall()
 }
 
 //==============================================================================
+// Background optimization job: runs the (multi-pass) optimizer off the message
+// thread and reports progress; the panel applies the result when it completes.
+class RFOptimizeJob : public juce::Thread
+{
+public:
+    RFOptimizeJob(RFSpectrumSweep occ_, std::vector<FrequencyOptimizer::DeviceInput> in_,
+                  FrequencyOptimizer::Constraints c_, double maxSeconds_,
+                  std::atomic<float>& prog_, std::atomic<bool>& done_,
+                  FrequencyOptimizer::Result& out_, juce::CriticalSection& lock_) :
+        juce::Thread("RF Optimize"),
+        occ(std::move(occ_)), inputs(std::move(in_)), c(c_), maxSeconds(maxSeconds_),
+        prog(prog_), done(done_), out(out_), lk(lock_) {}
+
+    void run() override
+    {
+        auto res = FrequencyOptimizer::optimize(occ, inputs, c, maxSeconds,
+            [this](float p) { prog.store(p); return !threadShouldExit(); });
+        { juce::ScopedLock sl(lk); out = res; }
+        prog.store(1.0f);
+        done.store(true);
+    }
+
+private:
+    RFSpectrumSweep occ;
+    std::vector<FrequencyOptimizer::DeviceInput> inputs;
+    FrequencyOptimizer::Constraints c;
+    double maxSeconds;
+    std::atomic<float>& prog;
+    std::atomic<bool>&  done;
+    FrequencyOptimizer::Result& out;
+    juce::CriticalSection& lk;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RFOptimizeJob)
+};
 
 void RFCoordinationPanel::runOptimize()
 {
     if (settings == nullptr) return;
+    if (optimizeThread != nullptr && optimizeThread->isThreadRunning()) return;   // already running
 
     // Clear every device's assignment first (including disabled ones), so a device
     // that is no longer placed doesn't keep a stale frequency.
@@ -410,6 +454,7 @@ void RFCoordinationPanel::runOptimize()
     if (inputs.empty())
     {
         NLOGWARNING("RF Coordination", "No enabled device to coordinate.");
+        repaint();
         return;
     }
 
@@ -425,9 +470,22 @@ void RFCoordinationPanel::runOptimize()
         c.allowedRanges.push_back({ lo, hi });
     }
 
-    FrequencyOptimizer::Result res = FrequencyOptimizer::optimize(occ, inputs, c);
+    // No fixed pass count: the optimizer keeps trying (random-restart) until every
+    // placeable device is placed, it plateaus, or this safety time budget elapses.
+    const double maxSeconds = 15.0;
+    optimizeProgress.store(0.0f);
+    optimizeDone.store(false);
+    optimizeThread.reset(new RFOptimizeJob(std::move(occ), std::move(inputs), c, maxSeconds,
+                                           optimizeProgress, optimizeDone, optimizeResult, optimizeLock));
+    optimizeThread->startThread();
+    repaint();
+}
 
-    // Apply the assignments back onto the devices.
+void RFCoordinationPanel::applyOptimizeResult()
+{
+    FrequencyOptimizer::Result res;
+    { juce::ScopedLock sl(optimizeLock); res = optimizeResult; }
+
     int placed = 0;
     for (const auto& a : res.assignments)
     {
@@ -835,13 +893,30 @@ void RFCoordinationPanel::paint(juce::Graphics& g)
     g.fillRect(headerArea);
 
     {
-        int total = (int)scanElapsedSec;
-        String t = String::formatted("%02d:%02d:%02d", total / 3600, (total % 3600) / 60, total % 60);
-        if (settings != nullptr) t = settings->sourceType->getValueKey() + " - " + t;
+        const float prog = optimizeProgress.load();
+        if (prog >= 0.0f)
+        {
+            // Optimization progress bar (right side of the header).
+            auto bar = headerArea.withTrimmedRight(10).removeFromRight(200).reduced(0, 9);
+            g.setColour(Colours::black.withAlpha(.4f));
+            g.fillRoundedRectangle(bar.toFloat(), 3.0f);
+            auto fill = bar.withWidth((int)(bar.getWidth() * juce::jlimit(0.0f, 1.0f, prog)));
+            g.setColour(Colours::limegreen.withAlpha(.8f));
+            g.fillRoundedRectangle(fill.toFloat(), 3.0f);
+            g.setColour(Colours::white);
+            g.setFont(Font(12.0f, Font::bold));
+            g.drawText("Optimizing  " + String((int)(prog * 100.0f)) + "%", bar, Justification::centred);
+        }
+        else
+        {
+            int total = (int)scanElapsedSec;
+            String t = String::formatted("%02d:%02d:%02d", total / 3600, (total % 3600) / 60, total % 60);
+            if (settings != nullptr) t = settings->sourceType->getValueKey() + " - " + t;
 
-        g.setColour(Colours::white.withAlpha(analyzing ? .85f : .5f));
-        g.setFont(Font(14.0f, Font::bold));
-        g.drawText(t, headerArea.withTrimmedRight(10), Justification::centredRight);
+            g.setColour(Colours::white.withAlpha(analyzing ? .85f : .5f));
+            g.setFont(Font(14.0f, Font::bold));
+            g.drawText(t, headerArea.withTrimmedRight(10), Justification::centredRight);
+        }
     }
 
     drawSpectrum(g);

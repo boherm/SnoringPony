@@ -18,11 +18,12 @@
 #include "../MainIncludes.h"
 #include "RFSpectrumSource.h"
 #include <vector>
+#include <functional>
 
 class FrequencyOptimizer
 {
 public:
-    enum ImdMode { IMD_OFF = 0, IMD_2TX = 1, IMD_2TX_3TX = 2 };
+    enum ImdMode { IMD_OFF = 0, IMD_2TX = 1, IMD_2TX_3TX = 2, IMD_2TX_3TX_5TX = 3 };
 
     struct Candidate { double freqMHz; juce::String presetName; };
 
@@ -57,7 +58,13 @@ public:
         juce::StringArray       warnings;
     };
 
+    // Runs as many greedy attempts (random-restart) as it can and keeps the best
+    // (most devices placed, then best spacing). It stops when every placeable device
+    // is placed, after a plateau with no improvement, or at maxSeconds. onProgress,
+    // if set, is called with a 0..1 fraction and should return false to cancel.
     static Result optimize(const RFSpectrumSweep& sweep,
                            const std::vector<DeviceInput>& devices,
-                           const Constraints& c);
+                           const Constraints& c,
+                           double maxSeconds = 1.0,
+                           std::function<bool(float)> onProgress = {});
 };

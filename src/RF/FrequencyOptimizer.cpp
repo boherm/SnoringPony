@@ -10,6 +10,7 @@
 
 #include "FrequencyOptimizer.h"
 #include <algorithm>
+#include <random>
 
 namespace
 {
@@ -26,7 +27,9 @@ namespace
 
 FrequencyOptimizer::Result FrequencyOptimizer::optimize(const RFSpectrumSweep& sweep,
                                                         const std::vector<DeviceInput>& devices,
-                                                        const Constraints& c)
+                                                        const Constraints& c,
+                                                        double maxSeconds,
+                                                        std::function<bool(float)> onProgress)
 {
     Result result;
 
@@ -34,7 +37,6 @@ FrequencyOptimizer::Result FrequencyOptimizer::optimize(const RFSpectrumSweep& s
     const double spacingMHz  = c.minSpacingKHz / 1000.0;
     const float  occThreshold = estimateNoiseFloor(sweep) + (float)c.occupancyMarginDb;
 
-    // A frequency is occupied if any bin within the guard exceeds the threshold.
     auto isOccupied = [&](double freqMHz) -> bool
     {
         if (sweep.powerDb.empty()) return false;
@@ -48,8 +50,6 @@ FrequencyOptimizer::Result FrequencyOptimizer::optimize(const RFSpectrumSweep& s
         return false;
     };
 
-    // A frequency is legal if it falls inside one of the allowed ranges (or if no
-    // range is declared, in which case assignment is unrestricted).
     auto isAllowed = [&](double freqMHz) -> bool
     {
         if (c.allowedRanges.empty()) return true;
@@ -58,8 +58,7 @@ FrequencyOptimizer::Result FrequencyOptimizer::optimize(const RFSpectrumSweep& s
         return false;
     };
 
-    // --- Filter each device's candidates to the un-occupied ones, then order
-    //     devices most-constrained-first (fewest candidates).
+    // --- Filter each device's candidates to the legal / un-occupied ones.
     struct Work
     {
         const DeviceInput* dev;
@@ -74,67 +73,60 @@ FrequencyOptimizer::Result FrequencyOptimizer::optimize(const RFSpectrumSweep& s
         for (const auto& cand : d.candidates)
             if (isAllowed(cand.freqMHz) && !isOccupied(cand.freqMHz))
                 w.cands.push_back(cand);
-
-        if (w.cands.empty() && !d.candidates.empty())
-            result.warnings.add(d.deviceId + ": no candidate frequency is both legal (allowed range) and free.");
-
         work.push_back(std::move(w));
     }
 
-    std::stable_sort(work.begin(), work.end(),
-                     [](const Work& a, const Work& b) { return a.cands.size() < b.cands.size(); });
-
-    // --- IMD helpers --------------------------------------------------------
     const bool doImd = c.imdMode != IMD_OFF;
-    const bool do3Tx = c.imdMode == IMD_2TX_3TX;
+    const bool do3Tx = c.imdMode == IMD_2TX_3TX || c.imdMode == IMD_2TX_3TX_5TX;
+    const bool do5Tx = c.imdMode == IMD_2TX_3TX_5TX;
 
-    std::vector<double> assigned;       // chosen carriers so far
-    std::vector<double> assignedProd;   // intermod products among the assigned set
+    auto near = [&](double a, double b) { return std::abs(a - b) <= guardMHz; };
 
-    auto recomputeProducts = [&]()
+    // Intermod products among a set of assigned carriers.
+    auto computeProducts = [&](const std::vector<double>& a, std::vector<double>& out)
     {
-        assignedProd.clear();
-        const int m = (int)assigned.size();
+        out.clear();
+        const int m = (int)a.size();
         for (int i = 0; i < m; ++i)
             for (int j = 0; j < m; ++j)
-                if (i != j) assignedProd.push_back(2.0 * assigned[i] - assigned[j]);
-
+                if (i != j)
+                {
+                    out.push_back(2.0 * a[i] - a[j]);           // 3rd order, 2-Tx
+                    if (do5Tx) out.push_back(3.0 * a[i] - 2.0 * a[j]); // 5th order, 2-Tx
+                }
         if (do3Tx)
             for (int i = 0; i < m; ++i)
                 for (int j = i + 1; j < m; ++j)
                     for (int k = 0; k < m; ++k)
                         if (k != i && k != j)
-                            assignedProd.push_back(assigned[i] + assigned[j] - assigned[k]);
+                            out.push_back(a[i] + a[j] - a[k]);  // 3rd order, 3-Tx
     };
 
-    auto near = [&](double a, double b) { return std::abs(a - b) <= guardMHz; };
-
     // Is candidate f compatible with the already-assigned carriers?
-    auto candidateOk = [&](double f) -> bool
+    auto candidateOk = [&](double f, const std::vector<double>& assigned, const std::vector<double>& prod) -> bool
     {
         for (double a : assigned)
-            if (std::abs(f - a) < spacingMHz) return false;   // spacing
+            if (std::abs(f - a) < spacingMHz) return false;       // spacing
 
         if (!doImd) return true;
 
-        // case 1: f must not land on an existing product among the assigned set.
-        for (double p : assignedProd)
+        for (double p : prod)                                     // f on an existing product
             if (near(f, p)) return false;
 
-        // carriers including the candidate
         std::vector<double> S = assigned; S.push_back(f);
 
-        // case 2 (2-Tx): new products involving f must not land on any carrier.
-        for (double a : assigned)
+        for (double a : assigned)                                 // new 2-Tx products with f
         {
-            double p1 = 2.0 * f - a;
-            double p2 = 2.0 * a - f;
-            for (double s : S)
-                if (near(p1, s) || near(p2, s)) return false;
+            double p3a = 2.0 * f - a, p3b = 2.0 * a - f;
+            for (double s : S) if (near(p3a, s) || near(p3b, s)) return false;
+            if (do5Tx)                                            // new 5th-order 2-Tx with f
+            {
+                double p5a = 3.0 * f - 2.0 * a, p5b = 3.0 * a - 2.0 * f;
+                for (double s : S) if (near(p5a, s) || near(p5b, s)) return false;
+            }
         }
 
-        // case 2 (3-Tx): triples involving f.
-        if (do3Tx)
+        if (do3Tx)                                                // new 3-Tx products with f
         {
             const int m = (int)assigned.size();
             for (int i = 0; i < m; ++i)
@@ -143,54 +135,157 @@ FrequencyOptimizer::Result FrequencyOptimizer::optimize(const RFSpectrumSweep& s
                     double pa = f + assigned[i] - assigned[j];
                     double pb = f + assigned[j] - assigned[i];
                     double pc = assigned[i] + assigned[j] - f;
-                    for (double s : S)
-                        if (near(pa, s) || near(pb, s) || near(pc, s)) return false;
+                    for (double s : S) if (near(pa, s) || near(pb, s) || near(pc, s)) return false;
                 }
         }
 
         return true;
     };
 
-    // --- Greedy assignment --------------------------------------------------
-    for (auto& w : work)
+    // One greedy assignment given a device visiting order; randomize picks random
+    // valid candidates (random-restart) instead of the deterministic best. Outputs
+    // the sorted-ascending list of gaps between consecutive carriers (for leximin).
+    auto runPass = [&](const std::vector<int>& order, juce::Random& rng, bool randomize,
+                       std::vector<Assignment>& out, int& placed, std::vector<double>& gaps)
     {
-        Assignment as;
-        as.deviceId = w.dev->deviceId;
+        std::vector<double> assigned, prod;
+        out.assign(work.size(), {});
+        for (size_t wi = 0; wi < work.size(); ++wi) out[wi].deviceId = work[wi].dev->deviceId;
 
-        double bestF = 0.0; juce::String bestName; double bestScore = -1.0e18; bool found = false;
-
-        for (const auto& cand : w.cands)
+        placed = 0;
+        for (int idx : order)
         {
-            if (!candidateOk(cand.freqMHz)) continue;
+            const Work& w = work[(size_t)idx];
+            double bestF = 0.0; juce::String bestName; bool found = false;
 
-            // Prefer candidates far from the carriers already placed (spreads the
-            // set out, which also reduces future IMD pressure) and in quieter spectrum.
-            double minDist = 1.0e9;
-            for (double a : assigned) minDist = juce::jmin(minDist, std::abs(cand.freqMHz - a));
-            if (assigned.empty()) minDist = 0.0;
-            double score = minDist - 0.001 * (double)sweep.powerAt(cand.freqMHz);
+            if (randomize)
+            {
+                // Random-restart: pick a random valid candidate so different passes
+                // genuinely explore different assignments (not just orderings).
+                std::vector<int> valid;
+                for (int ci = 0; ci < (int)w.cands.size(); ++ci)
+                    if (candidateOk(w.cands[(size_t)ci].freqMHz, assigned, prod))
+                        valid.push_back(ci);
 
-            if (score > bestScore) { bestScore = score; bestF = cand.freqMHz; bestName = cand.presetName; found = true; }
+                if (!valid.empty())
+                {
+                    int ci = valid[(size_t)rng.nextInt((int)valid.size())];
+                    bestF = w.cands[(size_t)ci].freqMHz;
+                    bestName = w.cands[(size_t)ci].presetName;
+                    found = true;
+                }
+            }
+            else
+            {
+                // Deterministic: the candidate that's farthest from already-placed
+                // carriers (best spread) and in the quietest spectrum.
+                double bestScore = -1.0e18;
+                for (const auto& cand : w.cands)
+                {
+                    if (!candidateOk(cand.freqMHz, assigned, prod)) continue;
+
+                    double minDist = 1.0e9;
+                    for (double a : assigned) minDist = juce::jmin(minDist, std::abs(cand.freqMHz - a));
+                    if (assigned.empty()) minDist = 0.0;
+
+                    double s = minDist - 0.001 * (double)sweep.powerAt(cand.freqMHz);
+                    if (s > bestScore) { bestScore = s; bestF = cand.freqMHz; bestName = cand.presetName; found = true; }
+                }
+            }
+
+            if (found)
+            {
+                out[(size_t)idx] = { w.dev->deviceId, bestF, bestName, true };
+                assigned.push_back(bestF);
+                computeProducts(assigned, prod);
+                ++placed;
+            }
         }
 
-        if (found)
+        // Quality of this solution = the gaps between consecutive carriers, sorted
+        // ascending. Compared leximin (biggest smallest-gap first) so the spacing is
+        // as even / safe as possible, not just spread to the band edges.
+        std::sort(assigned.begin(), assigned.end());
+        gaps.clear();
+        for (size_t i = 1; i < assigned.size(); ++i)
+            gaps.push_back(assigned[i] - assigned[i - 1]);
+        std::sort(gaps.begin(), gaps.end());
+    };
+
+    // Leximin: a is better than b if, comparing the sorted gaps in order, the first
+    // difference is larger in a (i.e. its smallest constrained gap is bigger).
+    auto leximinBetter = [](const std::vector<double>& a, const std::vector<double>& b)
+    {
+        const size_t n = juce::jmin(a.size(), b.size());
+        for (size_t i = 0; i < n; ++i)
         {
-            as.freqMHz = bestF;
-            as.presetName = bestName;
-            as.placed = true;
-            assigned.push_back(bestF);
-            recomputeProducts();
+            if (a[i] > b[i] + 1.0e-9) return true;
+            if (a[i] < b[i] - 1.0e-9) return false;
         }
+        return a.size() > b.size();
+    };
+
+    // Base order: most-constrained-first (fewest candidates).
+    std::vector<int> baseOrder(work.size());
+    for (int i = 0; i < (int)work.size(); ++i) baseOrder[(size_t)i] = i;
+    std::stable_sort(baseOrder.begin(), baseOrder.end(),
+                     [&](int a, int b) { return work[(size_t)a].cands.size() < work[(size_t)b].cands.size(); });
+
+    std::vector<Assignment> best;
+    int bestPlaced = -1;
+    std::vector<double> bestGaps;
+
+    // Devices that even have a legal/free candidate (the upper bound for placement).
+    int placeable = 0;
+    for (auto& w : work) if (!w.cands.empty()) ++placeable;
+
+    const double startMs  = juce::Time::getMillisecondCounterHiRes();
+    const double budgetMs = juce::jmax(0.05, maxSeconds) * 1000.0;
+    const double plateauMs = 2000.0;        // stop after this long with no improvement
+    const int    safetyCap = 5'000'000;     // hard backstop against an infinite loop
+    double lastImproveMs = startMs;
+
+    for (int p = 0; p < safetyCap; ++p)
+    {
+        std::vector<int> order = baseOrder;
+        juce::Random rng((juce::int64)((unsigned)p * 2654435761u) + 1);
+        if (p > 0) std::shuffle(order.begin(), order.end(), std::mt19937((unsigned)(p * 40503u + 7)));
+
+        std::vector<Assignment> res; int placed = 0; std::vector<double> gaps;
+        runPass(order, rng, p > 0, res, placed, gaps);
+
+        if (placed > bestPlaced || (placed == bestPlaced && leximinBetter(gaps, bestGaps)))
+        {
+            best = res; bestPlaced = placed; bestGaps = gaps;
+            lastImproveMs = juce::Time::getMillisecondCounterHiRes();
+        }
+
+        // Nothing left to optimise once everything is placed and there's no spacing
+        // to improve (0 or 1 carrier).
+        if (bestPlaced >= placeable && placeable < 2) break;
+
+        const double now = juce::Time::getMillisecondCounterHiRes();
+        const double el = now - startMs;
+        if (onProgress && !onProgress((float)juce::jlimit(0.0, 1.0, el / budgetMs))) break;   // cancelled
+        if (el >= budgetMs) break;                          // time budget reached
+        // We keep exploring even after placing everyone, to find more preferable
+        // spacing; we stop once no better solution has appeared for a while.
+        if (now - lastImproveMs >= plateauMs && p > 0) break;
+    }
+
+    result.assignments = best;
+
+    // Warnings for whatever the best solution couldn't place.
+    for (size_t wi = 0; wi < work.size(); ++wi)
+    {
+        if (best[wi].placed) continue;
+        const Work& w = work[wi];
+        if (w.dev->candidates.empty())
+            result.warnings.add(w.dev->deviceId + ": no candidate frequencies defined.");
+        else if (w.cands.empty())
+            result.warnings.add(w.dev->deviceId + ": no candidate frequency is both legal (allowed range) and free.");
         else
-        {
-            as.placed = false;
-            if (!w.cands.empty())
-                result.warnings.add(w.dev->deviceId + ": no conflict-free frequency found (spacing / intermodulation).");
-            else if (w.dev->candidates.empty())
-                result.warnings.add(w.dev->deviceId + ": no candidate frequencies defined.");
-        }
-
-        result.assignments.push_back(as);
+            result.warnings.add(w.dev->deviceId + ": no conflict-free frequency found (spacing / intermodulation).");
     }
 
     return result;

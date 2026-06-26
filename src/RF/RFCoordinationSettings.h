@@ -26,7 +26,7 @@ public:
     virtual ~RFCoordinationSettings();
 
     enum Source  { SIMULATED = 0 };                 // Phase 2 will add RTL-SDR
-    enum ImdMode { IMD_OFF = 0, IMD_2TX = 1, IMD_2TX_3TX = 2 };
+    enum ImdMode { IMD_OFF = 0, IMD_2TX = 1, IMD_2TX_3TX = 2, IMD_2TX_3TX_5TX = 3 };
 
     // Scan band
     FloatParameter* scanMinMHz;

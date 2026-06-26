@@ -19,6 +19,7 @@
 
 #include "../../MainIncludes.h"
 #include "../../RF/RFSpectrumSource.h"
+#include "../../RF/FrequencyOptimizer.h"
 
 class RFCoordinationSettings;
 
@@ -97,6 +98,14 @@ private:
     bool  mouseInPlot = false;
 
     double lastDisplaySig = -1.0;   // change-detection for idle repaints
+
+    // Background optimization + progress (-1 = idle, 0..1 = running).
+    std::unique_ptr<juce::Thread> optimizeThread;
+    std::atomic<float> optimizeProgress { -1.0f };
+    std::atomic<bool>  optimizeDone { false };
+    FrequencyOptimizer::Result optimizeResult;
+    juce::CriticalSection optimizeLock;
+    void applyOptimizeResult();
 
     void startAnalyze();
     void stopAnalyze();
