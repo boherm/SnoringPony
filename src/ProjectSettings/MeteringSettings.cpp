@@ -31,12 +31,16 @@ MeteringSettings::MeteringSettings() :
     weighting = addEnumParameter("Weighting", "Frequency weighting used for the dB SPL reading");
     weighting->addOption("dB(A)", (int)A)->addOption("dB(B)", (int)B)->addOption("dB(C)", (int)C);
 
+    laeqWindow = addEnumParameter("LAeq Window", "Averaging window for the LAeq reading");
+    laeqWindow->addOption("1 min", 60)->addOption("5 min", 300)->addOption("15 min", 900)->addOption("60 min", 3600);
+    laeqWindow->setDefaultValue("15 min");
+
     threshold = addFloatParameter("Threshold", "dB SPL over which the reading is shown in red", 90.0f, 40.0f, 140.0f);
 
     resetMaxPeak = addTrigger("Reset Max/Peak", "Clear the held Max and Peak readouts");
 
-    displayMode = addEnumParameter("Display Mode", "Show the scrolling spectrogram or the real-time analyzer (RTA)");
-    displayMode->addOption("Spectrogram", (int)Spectrogram)->addOption("RTA", (int)RTA);
+    displayMode = addEnumParameter("Display Mode", "Show the scrolling spectrogram, the real-time analyzer (RTA), or the dB SPL time graph");
+    displayMode->addOption("Spectrogram", (int)Spectrogram)->addOption("RTA", (int)RTA)->addOption("dB SPL", (int)SPL);
 
     verticalOrientation = addBoolParameter("Vertical Spectrogram", "Spectrogram time axis vertical instead of horizontal", false);
     active = addBoolParameter("Active", "Whether the metering input is running", false);
@@ -156,6 +160,7 @@ void MeteringSettings::clear()
     calibration->resetValue();
     referenceLevel->resetValue();
     weighting->resetValue();
+    laeqWindow->resetValue();
     threshold->resetValue();
     displayMode->resetValue();
     verticalOrientation->resetValue();

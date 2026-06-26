@@ -27,7 +27,7 @@ public:
     virtual ~MeteringSettings();
 
     enum Weighting { A = 0, B = 1, C = 2 };
-    enum Display { Spectrogram = 0, RTA = 1 };
+    enum Display { Spectrogram = 0, RTA = 1, SPL = 2 };
 
     juce::AudioDeviceManager deviceManager;
 
@@ -37,6 +37,7 @@ public:
     FloatParameter*  referenceLevel;       // known dB SPL used by Auto-Calibrate
     Trigger*         calibrate;            // auto-compute calibration from the live level
     EnumParameter*   weighting;            // A / B / C
+    EnumParameter*   laeqWindow;           // LAeq averaging window (seconds)
     FloatParameter*  threshold;            // dB SPL over which the readout turns red
     Trigger*         resetMaxPeak;         // clear the held Max / Peak readouts
     EnumParameter*   displayMode;          // Spectrogram / RTA

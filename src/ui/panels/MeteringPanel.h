@@ -72,16 +72,15 @@ private:
     static constexpr int fftOrder = 11;
     static constexpr int fftSize  = 1 << fftOrder;
     static constexpr int numBins  = fftSize / 2;
-    static constexpr int laeqSeconds = 15 * 60;
+    static constexpr int laeqMaxSeconds = 60 * 60;   // ring sized for the longest window
 
     MeteringSettings* settings = nullptr;
-    juce::TextButton startStopBtn { "Start" };
-    juce::TextButton modeBtn { "RTA" };       // toggles spectrogram <-> RTA
+    juce::DrawableButton startStopBtn { "transport", juce::DrawableButton::ImageOnButtonBackground };
 
     float calibrationDb { 100.0f };
     float thresholdDb { 90.0f };
     int   weightingType { 0 };
-    int   displayMode { 0 };          // 0 = spectrogram, 1 = RTA
+    int   displayMode { 0 };          // 0 = spectrogram, 1 = RTA, 2 = dB SPL time graph
     bool  verticalTime { false };
 
     // Frequencies are shown on the horizontal axis for the RTA (always) and for the
@@ -119,10 +118,19 @@ private:
     double splFastMs { 0.0 };
     std::vector<float> laeqRing;
     int    laeqPos { 0 }, laeqCount { 0 };
+    int    laeqWindowSec { 900 };   // selected averaging window (seconds)
     double laeqSecEnergy { 0.0 }, laeqSecTime { 0.0 };
     float  splNow { -120.0f }, splLaeq { -120.0f };
     float  splMax { -120.0f };   // held max of the (weighted) Now reading
     float  splPeak { -120.0f };  // held true peak (unweighted) level
+
+    // dB SPL time graph: a 5-minute scrolling history of the (smoothed) SPL level.
+    static constexpr int splGraphSeconds = 300;
+    static constexpr int splGraphSamples = 600;   // one sample every 0.5 s
+    std::vector<float> splHistory;
+    int   splHistoryPos { 0 }, splHistoryCount { 0 };
+    int   splGraphTick { 0 };
+    float splBucketMax { -120.0f };  // peak Now level accumulated over the current 0.5 s slot
 
     float meterDb { -100.0f };
     int   alertHoldTicks { 0 };   // frames left to keep the over-threshold red border
@@ -143,12 +151,16 @@ private:
     void drawReadout(juce::Graphics& g);
     void drawFreqAxis(juce::Graphics& g, double sr);
     void drawRTA(juce::Graphics& g, double sr);
+    void drawSplGraph(juce::Graphics& g);
 
     double fracFromFreq(double f, double sr) const;
     double freqFromFrac(double frac, double sr) const;
     static juce::Colour magnitudeToColour(float mag);
     static float weightingLinear(double f, int type);
     String weightingLabel() const;
+
+    void updatePlayPauseIcon();
+    void showContextMenu();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MeteringPanel)
 };

@@ -29,7 +29,8 @@ MeteringPanel::MeteringPanel()
     fftBuffer.assign((size_t)fftSize * 2, 0.0f);
     pendingColumn.assign((size_t)numBins, 0.0f);
     weightingGain.assign((size_t)numBins, 1.0f);
-    laeqRing.assign((size_t)laeqSeconds, 0.0f);
+    laeqRing.assign((size_t)laeqMaxSeconds, 0.0f);
+    splHistory.assign((size_t)splGraphSamples, -120.0f);
 
     numRtaBands = (int)std::round(std::log2(rtaFMax / rtaFMin) * rtaBandsPerOctave) + 1;
     rtaCenters.resize((size_t)numRtaBands);
@@ -50,18 +51,15 @@ MeteringPanel::MeteringPanel()
 
     settings = dynamic_cast<MeteringSettings*>(ProjectSettings::getInstance()->getControllableContainerByName("meteringSettings"));
 
-    startStopBtn.setTooltip("Start / stop the metering input");
+    startStopBtn.setTooltip("Start / stop the metering input  (right-click the panel for display options)");
     startStopBtn.onClick = [this] { if (settings) settings->active->setValue(!settings->active->boolValue()); };
     addAndMakeVisible(startStopBtn);
-
-    modeBtn.setTooltip("Switch between the spectrogram and the RTA");
-    modeBtn.onClick = [this] { if (settings) settings->displayMode->setNext(true); };
-    addAndMakeVisible(modeBtn);
 
     if (settings != nullptr)
     {
         settings->calibration->addParameterListener(this);
         settings->weighting->addParameterListener(this);
+        settings->laeqWindow->addParameterListener(this);
         settings->threshold->addParameterListener(this);
         settings->displayMode->addParameterListener(this);
         settings->verticalOrientation->addParameterListener(this);
@@ -90,6 +88,7 @@ MeteringPanel::~MeteringPanel()
 
         settings->calibration->removeParameterListener(this);
         settings->weighting->removeParameterListener(this);
+        settings->laeqWindow->removeParameterListener(this);
         settings->threshold->removeParameterListener(this);
         settings->displayMode->removeParameterListener(this);
         settings->verticalOrientation->removeParameterListener(this);
@@ -105,6 +104,8 @@ void MeteringPanel::clearSpectrogram()
         spectro.clear(spectro.getBounds(), Colours::black);
     std::fill(rtaSmooth.begin(), rtaSmooth.end(), 0.0f);
     std::fill(rtaPeak.begin(), rtaPeak.end(), 0.0f);
+    std::fill(splHistory.begin(), splHistory.end(), -120.0f);
+    splHistoryPos = 0; splHistoryCount = 0; splGraphTick = 0; splBucketMax = -120.0f;
     repaint();
 }
 
@@ -120,10 +121,10 @@ void MeteringPanel::applySettings()
     calibrationDb = settings->calibration->floatValue();
     thresholdDb = settings->threshold->floatValue();
     weightingType = (int)settings->weighting->getValueData();
+    laeqWindowSec = (int)settings->laeqWindow->getValueData();
     displayMode = (int)settings->displayMode->getValueData();
     verticalTime = settings->verticalOrientation->boolValue();
-    startStopBtn.setButtonText(settings->active->boolValue() ? "Stop" : "Start");
-    modeBtn.setButtonText(displayMode == (int)MeteringSettings::RTA ? "RTA" : "Spectro");
+    updatePlayPauseIcon();
 }
 
 void MeteringPanel::parameterValueChanged(Parameter* p)
@@ -133,16 +134,16 @@ void MeteringPanel::parameterValueChanged(Parameter* p)
     if (p == settings->calibration) calibrationDb = settings->calibration->floatValue();
     else if (p == settings->threshold) thresholdDb = settings->threshold->floatValue();
     else if (p == settings->weighting) weightingType = (int)settings->weighting->getValueData();
+    else if (p == settings->laeqWindow) laeqWindowSec = (int)settings->laeqWindow->getValueData();
     else if (p == settings->displayMode)
     {
         displayMode = (int)settings->displayMode->getValueData();
-        modeBtn.setButtonText(displayMode == (int)MeteringSettings::RTA ? "RTA" : "Spectro");
         resized();
     }
     else if (p == settings->verticalOrientation) { verticalTime = settings->verticalOrientation->boolValue(); resized(); }
     else if (p == settings->active)
     {
-        startStopBtn.setButtonText(settings->active->boolValue() ? "Stop" : "Start");
+        updatePlayPauseIcon();
         // On (re)start, wipe the previously generated spectrogram and reset the held
         // Max/Peak so old data isn't shown.
         if (settings->active->boolValue())
@@ -362,8 +363,8 @@ void MeteringPanel::pullAndProcess()
         if (laeqSecTime >= 1.0)
         {
             laeqRing[(size_t)laeqPos] = (float)(laeqSecEnergy / laeqSecTime);
-            laeqPos = (laeqPos + 1) % laeqSeconds;
-            laeqCount = juce::jmin(laeqSeconds, laeqCount + 1);
+            laeqPos = (laeqPos + 1) % laeqMaxSeconds;
+            laeqCount = juce::jmin(laeqMaxSeconds, laeqCount + 1);
             laeqSecEnergy = 0.0; laeqSecTime = 0.0;
         }
 
@@ -445,20 +446,26 @@ void MeteringPanel::timerCallback()
 
     splNow = (float)(10.0 * std::log10(juce::jmax(1e-12, splFastMs))) + calibrationDb;
 
-    if (laeqCount > 0)
+    // Average the most recent laeqWindowSec one-second slots (or fewer if not yet filled).
+    int n = juce::jmin(laeqWindowSec, laeqCount);
+    if (n > 0)
     {
         double sum = 0.0;
-        for (int i = 0; i < laeqCount; ++i) sum += laeqRing[(size_t)i];
-        splLaeq = (float)(10.0 * std::log10(juce::jmax(1e-12, sum / laeqCount))) + calibrationDb;
+        for (int i = 0; i < n; ++i)
+            sum += laeqRing[(size_t)((laeqPos - 1 - i + laeqMaxSeconds) % laeqMaxSeconds)];
+        splLaeq = (float)(10.0 * std::log10(juce::jmax(1e-12, sum / n))) + calibrationDb;
     }
     else splLaeq = -120.0f;
 
-    // Hold the maximum (weighted) Now and the true peak (unweighted) while running.
+    // Max holds the highest (weighted) Now reading; Peak is a true-peak (unweighted)
+    // meter that catches transients then falls back slowly (~12 dB/s) so it tracks
+    // recent peaks instead of latching forever on a one-off transient.
     if (deviceRunning.load())
     {
         splMax = juce::jmax(splMax, splNow);
         float peakSpl = 20.0f * std::log10(juce::jmax(1e-9f, peak)) + calibrationDb;
-        splPeak = juce::jmax(splPeak, peakSpl);
+        if (peakSpl > splPeak) splPeak = peakSpl;
+        else                   splPeak = juce::jmax(peakSpl, splPeak - 0.2f); // 0.2 dB/tick at 60 Hz
     }
 
     // Over-threshold alert: keep the red border for ~350 ms after dropping back below.
@@ -466,6 +473,21 @@ void MeteringPanel::timerCallback()
         alertHoldTicks = 21;            // ~0.35 s at 60 Hz
     else if (alertHoldTicks > 0)
         --alertHoldTicks;
+
+    // dB SPL graph: store the peak Now level over each ~0.5 s slot, so the graph's
+    // peaks line up with the held Max instead of smoothing transients away.
+    if (deviceRunning.load())
+    {
+        splBucketMax = juce::jmax(splBucketMax, splNow);
+        if (++splGraphTick >= 30)                 // ~0.5 s at 60 Hz
+        {
+            splHistory[(size_t)splHistoryPos] = splBucketMax;
+            splHistoryPos = (splHistoryPos + 1) % splGraphSamples;
+            splHistoryCount = juce::jmin(splGraphSamples, splHistoryCount + 1);
+            splBucketMax = -120.0f;
+            splGraphTick = 0;
+        }
+    }
 
     repaint();
 }
@@ -488,9 +510,72 @@ void MeteringPanel::mouseExit(const juce::MouseEvent&)
 
 void MeteringPanel::mouseDown(const juce::MouseEvent& e)
 {
+    if (e.mods.isPopupMenu())   // right-click anywhere: display options
+    {
+        showContextMenu();
+        return;
+    }
+
     // Clicking either held readout resets both, via the settings trigger.
     if (settings != nullptr && (maxClickArea.contains(e.getPosition()) || peakClickArea.contains(e.getPosition())))
         settings->resetMaxPeak->trigger();
+}
+
+void MeteringPanel::updatePlayPauseIcon()
+{
+    bool running = settings != nullptr && settings->active->boolValue();
+    juce::Path p;
+    if (running)   // pause: two bars
+    {
+        p.addRectangle(0.0f, 0.0f, 0.34f, 1.0f);
+        p.addRectangle(0.62f, 0.0f, 0.34f, 1.0f);
+    }
+    else           // play: right-pointing triangle
+    {
+        p.addTriangle(0.0f, 0.0f, 0.0f, 1.0f, 0.95f, 0.5f);
+    }
+
+    juce::DrawablePath icon;
+    icon.setPath(p);
+    icon.setFill(juce::Colours::white);
+    startStopBtn.setImages(&icon);
+}
+
+void MeteringPanel::showContextMenu()
+{
+    if (settings == nullptr) return;
+
+    // Each submenu mirrors the matching EnumParameter (kept in Project Settings);
+    // selecting an item just drives that parameter, so both stay in sync.
+    auto addEnumItems = [](juce::PopupMenu& sub, EnumParameter* p, int base)
+    {
+        juce::StringArray keys = p->getAllKeys();
+        juce::String cur = p->getValueKey();
+        for (int i = 0; i < keys.size(); ++i)
+            sub.addItem(base + i, keys[i], true, keys[i] == cur);
+    };
+
+    juce::PopupMenu disp, weight, laeq;
+    addEnumItems(disp, settings->displayMode, 100);
+    addEnumItems(weight, settings->weighting, 200);
+    addEnumItems(laeq, settings->laeqWindow, 300);
+
+    juce::PopupMenu m;
+    m.addSubMenu("Display", disp);
+    m.addSubMenu("Weighting", weight);
+    m.addSubMenu("LAeq window", laeq);
+
+    m.showMenuAsync(juce::PopupMenu::Options().withMousePosition(),
+        [this](int result)
+        {
+            if (result == 0 || settings == nullptr) return;
+            EnumParameter* p = result < 200 ? settings->displayMode
+                             : (result < 300 ? settings->weighting : settings->laeqWindow);
+            int base = result < 200 ? 100 : (result < 300 ? 200 : 300);
+            juce::StringArray keys = p->getAllKeys();
+            int idx = result - base;
+            if (idx >= 0 && idx < keys.size()) p->setValueWithKey(keys[idx]);
+        });
 }
 
 //==============================================================================
@@ -500,16 +585,20 @@ void MeteringPanel::resized()
 {
     auto r = getLocalBounds();
 
-    // Mode + Start/Stop buttons, top-right corner overlay.
-    startStopBtn.setBounds(getWidth() - 64, 4, 58, 22);
-    modeBtn.setBounds(getWidth() - 64 - 4 - 78, 4, 78, 22);
+    // Start/Stop (play/pause) icon button, bottom-right corner overlay.
+    startStopBtn.setBounds(getWidth() - 30, getHeight() - 26, 24, 22);
 
     auto leftCol = r.removeFromLeft(140);
     meterArea = leftCol.removeFromLeft(58);
     readoutArea = leftCol;
     r.removeFromLeft(2);
 
-    if (freqOnX())
+    if (displayMode == 2)   // dB SPL graph: no frequency axis, level labels are drawn inside
+    {
+        freqAxisArea = juce::Rectangle<int>();
+        spectroImageArea = r;
+    }
+    else if (freqOnX())
     {
         freqAxisArea = r.removeFromBottom(16);
         spectroImageArea = r;
@@ -550,11 +639,23 @@ void MeteringPanel::drawReadout(juce::Graphics& g)
     String w = weightingLabel();
 
     auto area = readoutArea;
-    auto nowR = area.removeFromTop(area.getHeight() / 2);
+    // Give the Now box (which also carries Max + Peak) more room than the LAeq box.
+    auto nowR = area.removeFromTop(area.getHeight() * 5 / 8);
     auto avgR = area;
 
+    // One small held readout line (Max / Peak), clickable to reset.
+    auto drawSub = [&](juce::Rectangle<int> r, const String& label, float val)
+    {
+        bool over = running && val >= thresholdDb;
+        String sv = (!running || val <= -119.0f) ? String("--.-") : String(val, 1);
+        g.setColour(over ? Colours::red : Colours::white);
+        g.setFont(Font(12.0f, Font::plain));
+        g.drawText(label + " " + sv, r, Justification::centred);
+    };
+
     auto drawBig = [&](juce::Rectangle<int> a, const String& title, float value,
-                       const String& subLabel, float subValue, juce::Rectangle<int>& clickAreaOut)
+                       const String& sub1, float sub1v, juce::Rectangle<int>* click1,
+                       const String& sub2, float sub2v, juce::Rectangle<int>* click2)
     {
         a = a.withTrimmedLeft(6).withTrimmedRight(6).withTrimmedTop(4).withTrimmedBottom(4);
 
@@ -563,13 +664,9 @@ void MeteringPanel::drawReadout(juce::Graphics& g)
         g.setFont(11.0f);
         g.drawText(title, a.removeFromTop(14), Justification::centred);
 
-        // Held secondary value (Max / Peak) at the bottom - prominent and clickable to reset.
-        clickAreaOut = a.removeFromBottom(18);
-        bool subOver = running && subValue >= thresholdDb;
-        String sv = (!running || subValue <= -119.0f) ? String("--.-") : String(subValue, 1);
-        g.setColour(subOver ? Colours::red : Colours::white);
-        g.setFont(Font(14.0f, Font::bold));
-        g.drawText(subLabel + " " + sv, clickAreaOut, Justification::centred);
+        // Held values stacked at the bottom (sub2 below sub1).
+        if (sub2.isNotEmpty()) { auto r = a.removeFromBottom(16); if (click2) *click2 = r; drawSub(r, sub2, sub2v); }
+        if (sub1.isNotEmpty()) { auto r = a.removeFromBottom(16); if (click1) *click1 = r; drawSub(r, sub1, sub1v); }
 
         // Big measured value with the weighting label directly beneath it, the pair
         // vertically centred in the remaining space.
@@ -589,8 +686,9 @@ void MeteringPanel::drawReadout(juce::Graphics& g)
         g.drawText(w, block, Justification::centred);
     };
 
-    drawBig(nowR, "Now", splNow, "Max", splMax, maxClickArea);
-    drawBig(avgR, "LAeq 15 min", splLaeq, "Pk", splPeak, peakClickArea);
+    // Now box carries the live readout plus the held Max and Peak; the LAeq box stays clean.
+    drawBig(nowR, "Now", splNow, "max", splMax, &maxClickArea, "peak", splPeak, &peakClickArea);
+    drawBig(avgR, "LAeq " + String(laeqWindowSec / 60) + " min", splLaeq, "", 0.0f, nullptr, "", 0.0f, nullptr);
 
     g.setColour(BG_COLOR.brighter(.1f));
     g.drawHorizontalLine(nowR.getBottom(), (float)readoutArea.getX() + 6, (float)readoutArea.getRight() - 6);
@@ -729,6 +827,65 @@ void MeteringPanel::drawRTA(juce::Graphics& g, double sr)
     g.strokePath(peakPath, juce::PathStrokeType(1.0f));
 }
 
+void MeteringPanel::drawSplGraph(juce::Graphics& g)
+{
+    auto area = spectroImageArea;
+    if (area.getWidth() <= 0 || area.getHeight() <= 0) return;
+
+    const float left = (float)area.getX();
+    const float right = (float)area.getRight();
+    const float bottom = (float)area.getBottom();
+    const float height = (float)area.getHeight();
+
+    const float splMin = 30.0f, splMax = 120.0f;
+    auto yForSpl = [&](float spl)
+    {
+        float frac = juce::jlimit(0.0f, 1.0f, (spl - splMin) / (splMax - splMin));
+        return bottom - frac * height;
+    };
+
+    // Level grid + dB SPL labels (every 15 dB).
+    g.setFont(9.0f);
+    for (float spl = splMax; spl >= splMin - 0.1f; spl -= 15.0f)
+    {
+        int y = (int)yForSpl(spl);
+        g.setColour(Colours::white.withAlpha(.08f));
+        g.drawHorizontalLine(y, left, right);
+        g.setColour(Colours::white.withAlpha(.35f));
+        g.drawText(String((int)spl), area.getX() + 2, y + 1, 32, 11, Justification::topLeft);
+    }
+    g.setColour(Colours::white.withAlpha(.45f));
+    g.drawText("dB SPL  (last 5 min)", area.getRight() - 120, area.getY() + 1, 118, 11, Justification::topRight);
+
+    // Threshold reference line.
+    {
+        int yT = (int)yForSpl(thresholdDb);
+        if (yT > area.getY() && yT < area.getBottom())
+        {
+            g.setColour(Colours::red.withAlpha(.35f));
+            g.drawHorizontalLine(yT, left, right);
+        }
+    }
+
+    // SPL history line: newest at the left, scrolling right as time passes - matching
+    // the horizontal spectrogram's direction for consistency.
+    if (splHistoryCount > 1)
+    {
+        float step = (float)area.getWidth() / (float)(splGraphSamples - 1);
+        juce::Path p;
+        for (int k = 0; k < splHistoryCount; ++k)   // k = age, 0 = newest
+        {
+            int idx = (splHistoryPos - 1 - k + splGraphSamples) % splGraphSamples;
+            float x = left + (float)k * step;
+            float y = yForSpl(splHistory[(size_t)idx]);
+            if (k == 0) p.startNewSubPath(x, y);
+            else        p.lineTo(x, y);
+        }
+        g.setColour(Colours::limegreen);
+        g.strokePath(p, juce::PathStrokeType(1.5f));
+    }
+}
+
 void MeteringPanel::paint(juce::Graphics& g)
 {
     g.fillAll(BG_COLOR);
@@ -743,36 +900,43 @@ void MeteringPanel::paint(juce::Graphics& g)
     g.setColour(Colours::black);
     g.fillRect(spectroImageArea);
 
-    if (displayMode == 1)
+    if (displayMode == 2)
     {
-        drawRTA(g, sr);
+        drawSplGraph(g);
     }
-    else if (!spectro.isNull())
+    else
     {
-        if (verticalTime)
+        if (displayMode == 1)
         {
-            int h = spectro.getHeight();
-            juce::AffineTransform t(0.0f, -1.0f, (float)(spectroImageArea.getX() + h - 1),
-                                    1.0f, 0.0f, (float)spectroImageArea.getY());
-            g.drawImageTransformed(spectro, t);
+            drawRTA(g, sr);
         }
-        else
+        else if (!spectro.isNull())
         {
-            // New columns are committed at the buffer's right edge (x = w-1) and
-            // scroll left. Mirror on X so the newest data emerges on the LEFT, next to
-            // the frequency axis - matching the vertical layout, where the newest row
-            // emerges at the bottom next to its axis. Mirror on Y too so low
-            // frequencies sit at the top and highs at the bottom (the buffer stores
-            // highs at y=0 for the vertical path).
-            int w = spectro.getWidth();
-            int h = spectro.getHeight();
-            juce::AffineTransform t(-1.0f, 0.0f, (float)(spectroImageArea.getX() + w - 1),
-                                    0.0f, -1.0f, (float)(spectroImageArea.getY() + h - 1));
-            g.drawImageTransformed(spectro, t);
+            if (verticalTime)
+            {
+                int h = spectro.getHeight();
+                juce::AffineTransform t(0.0f, -1.0f, (float)(spectroImageArea.getX() + h - 1),
+                                        1.0f, 0.0f, (float)spectroImageArea.getY());
+                g.drawImageTransformed(spectro, t);
+            }
+            else
+            {
+                // New columns are committed at the buffer's right edge (x = w-1) and
+                // scroll left. Mirror on X so the newest data emerges on the LEFT, next to
+                // the frequency axis - matching the vertical layout, where the newest row
+                // emerges at the bottom next to its axis. Mirror on Y too so low
+                // frequencies sit at the top and highs at the bottom (the buffer stores
+                // highs at y=0 for the vertical path).
+                int w = spectro.getWidth();
+                int h = spectro.getHeight();
+                juce::AffineTransform t(-1.0f, 0.0f, (float)(spectroImageArea.getX() + w - 1),
+                                        0.0f, -1.0f, (float)(spectroImageArea.getY() + h - 1));
+                g.drawImageTransformed(spectro, t);
+            }
         }
-    }
 
-    drawFreqAxis(g, sr);
+        drawFreqAxis(g, sr);
+    }
 
     bool active = (settings != nullptr && settings->active->boolValue());
     if (!active)
@@ -790,7 +954,7 @@ void MeteringPanel::paint(juce::Graphics& g)
         return;
     }
 
-    if (mouseInSpectro)
+    if (mouseInSpectro && displayMode != 2)   // frequency hover doesn't apply to the SPL graph
     {
         double freq;
         if (freqOnX())
@@ -809,6 +973,25 @@ void MeteringPanel::paint(juce::Graphics& g)
         }
 
         String label = (freq >= 1000.0) ? String(freq / 1000.0, 2) + " kHz" : String((int)(freq + 0.5)) + " Hz";
+        g.setFont(Font(12.0f, Font::bold));
+        int tw = g.getCurrentFont().getStringWidth(label) + 12;
+        juce::Rectangle<int> box(juce::jlimit(spectroImageArea.getX(), spectroImageArea.getRight() - tw, mousePos.x + 8),
+                                 juce::jlimit(spectroImageArea.getY(), spectroImageArea.getBottom() - 18, mousePos.y - 18),
+                                 tw, 16);
+        g.setColour(Colours::black.withAlpha(.7f));
+        g.fillRoundedRectangle(box.toFloat(), 3.0f);
+        g.setColour(Colours::white);
+        g.drawText(label, box, Justification::centred);
+    }
+    else if (mouseInSpectro && displayMode == 2)
+    {
+        // dB SPL graph: read the level at the cursor's vertical position (30..120 scale).
+        double frac = (double)(spectroImageArea.getBottom() - mousePos.y) / (double)juce::jmax(1, spectroImageArea.getHeight());
+        double spl = 30.0 + juce::jlimit(0.0, 1.0, frac) * (120.0 - 30.0);
+        g.setColour(Colours::white.withAlpha(.5f));
+        g.drawHorizontalLine(mousePos.y, (float)spectroImageArea.getX(), (float)spectroImageArea.getRight());
+
+        String label = String(spl, 1) + " dB SPL";
         g.setFont(Font(12.0f, Font::bold));
         int tw = g.getCurrentFont().getStringWidth(label) + 12;
         juce::Rectangle<int> box(juce::jlimit(spectroImageArea.getX(), spectroImageArea.getRight() - tw, mousePos.x + 8),
