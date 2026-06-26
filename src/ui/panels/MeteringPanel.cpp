@@ -513,6 +513,7 @@ double MeteringPanel::computeMeterSignature() const
 {
     double sig = (double)meterDb + (double)alertHoldTicks * 1000.0;
     for (int b = 0; b < numRtaBands; ++b) sig += rtaPeak[(size_t)b];
+    if (settings != nullptr && settings->isSelected) sig += 12345.0;   // selection border
     return sig;
 }
 
@@ -542,7 +543,18 @@ void MeteringPanel::mouseDown(const juce::MouseEvent& e)
 
     // Clicking either held readout resets both, via the settings trigger.
     if (settings != nullptr && (maxClickArea.contains(e.getPosition()) || peakClickArea.contains(e.getPosition())))
+    {
         settings->resetMaxPeak->trigger();
+        return;
+    }
+
+    // Clicking anywhere else selects the Metering settings so its inspector opens
+    // (and the panel shows a selection border).
+    if (settings != nullptr)
+    {
+        settings->selectThis();
+        repaint();
+    }
 }
 
 void MeteringPanel::updatePlayPauseIcon()
@@ -997,6 +1009,14 @@ void MeteringPanel::paint(juce::Graphics& g)
         }
 
         drawFreqAxis(g, sr);
+    }
+
+    // Selection border (drawn before the early returns below so it shows even when
+    // the input is stopped), shown when the Metering settings are selected.
+    if (settings != nullptr && settings->isSelected)
+    {
+        g.setColour(LIGHTCONTOUR_COLOR);
+        g.drawRoundedRectangle(getLocalBounds().toFloat().reduced(1.5f), 2.0f, 1.5f);
     }
 
     bool active = (settings != nullptr && settings->active->boolValue());
