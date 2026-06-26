@@ -969,6 +969,13 @@ void MeteringPanel::paint(juce::Graphics& g)
         }
 
         String label = (freq >= 1000.0) ? String(freq / 1000.0, 2) + " kHz" : String((int)(freq + 0.5)) + " Hz";
+        if (displayMode == 1)   // RTA: also show the level of the band under the cursor
+        {
+            int band = juce::jlimit(0, numRtaBands - 1,
+                                    (int)std::lround(std::log2(freq / rtaFMin) * rtaBandsPerOctave));
+            float spl = 10.0f * std::log10(juce::jmax(rtaSmooth[(size_t)band], 1e-12f)) + calibrationDb;
+            label += "   " + String(spl, 1) + " dB SPL";
+        }
         g.setFont(Font(12.0f, Font::bold));
         int tw = g.getCurrentFont().getStringWidth(label) + 12;
         juce::Rectangle<int> box(juce::jlimit(spectroImageArea.getX(), spectroImageArea.getRight() - tw, mousePos.x + 8),
