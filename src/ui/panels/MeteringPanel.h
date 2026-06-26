@@ -47,6 +47,7 @@ public:
 
     void mouseMove(const juce::MouseEvent& e) override;
     void mouseExit(const juce::MouseEvent& e) override;
+    void mouseDown(const juce::MouseEvent& e) override;
 
     void parameterValueChanged(Parameter* p) override;
 
@@ -54,6 +55,9 @@ public:
     // Used by MeteringSettings' Auto-Calibrate to derive the calibration.
     float getMeasuredDbFs() const;
     bool  isInputRunning() const { return deviceRunning.load(); }
+
+    // Reset the held Max / Peak readouts (called on start and by the settings trigger).
+    void  resetMaxPeak() { splMax = -120.0f; splPeak = -120.0f; repaint(); }
 
     void fileLoaded() override;
     void engineCleared() override;
@@ -117,12 +121,16 @@ private:
     int    laeqPos { 0 }, laeqCount { 0 };
     double laeqSecEnergy { 0.0 }, laeqSecTime { 0.0 };
     float  splNow { -120.0f }, splLaeq { -120.0f };
+    float  splMax { -120.0f };   // held max of the (weighted) Now reading
+    float  splPeak { -120.0f };  // held true peak (unweighted) level
 
     float meterDb { -100.0f };
+    int   alertHoldTicks { 0 };   // frames left to keep the over-threshold red border
     juce::Point<int> mousePos { -1, -1 };
     bool  mouseInSpectro { false };
 
     juce::Rectangle<int> readoutArea, meterArea, freqAxisArea, spectroImageArea;
+    juce::Rectangle<int> maxClickArea, peakClickArea;   // click to reset Max / Peak
 
     void applySettings();
     void clearSpectrogram();

@@ -143,9 +143,13 @@ void MeteringPanel::parameterValueChanged(Parameter* p)
     else if (p == settings->active)
     {
         startStopBtn.setButtonText(settings->active->boolValue() ? "Stop" : "Start");
-        // On (re)start, wipe the previously generated spectrogram so old data isn't shown.
+        // On (re)start, wipe the previously generated spectrogram and reset the held
+        // Max/Peak so old data isn't shown.
         if (settings->active->boolValue())
+        {
             clearSpectrogram();
+            resetMaxPeak();
+        }
     }
 
     repaint();
@@ -422,7 +426,7 @@ juce::Colour MeteringPanel::magnitudeToColour(float mag)
 
 String MeteringPanel::weightingLabel() const
 {
-    return weightingType == 0 ? "dB(A)" : (weightingType == 1 ? "dB(B)" : "dB(C)");
+    return weightingType == 0 ? "dB SPL (A)" : (weightingType == 1 ? "dB SPL (B)" : "dB SPL (C)");
 }
 
 void MeteringPanel::timerCallback()
@@ -449,6 +453,20 @@ void MeteringPanel::timerCallback()
     }
     else splLaeq = -120.0f;
 
+    // Hold the maximum (weighted) Now and the true peak (unweighted) while running.
+    if (deviceRunning.load())
+    {
+        splMax = juce::jmax(splMax, splNow);
+        float peakSpl = 20.0f * std::log10(juce::jmax(1e-9f, peak)) + calibrationDb;
+        splPeak = juce::jmax(splPeak, peakSpl);
+    }
+
+    // Over-threshold alert: keep the red border for ~350 ms after dropping back below.
+    if (deviceRunning.load() && splNow >= thresholdDb)
+        alertHoldTicks = 21;            // ~0.35 s at 60 Hz
+    else if (alertHoldTicks > 0)
+        --alertHoldTicks;
+
     repaint();
 }
 
@@ -466,6 +484,13 @@ void MeteringPanel::mouseExit(const juce::MouseEvent&)
 {
     mouseInSpectro = false;
     repaint();
+}
+
+void MeteringPanel::mouseDown(const juce::MouseEvent& e)
+{
+    // Clicking either held readout resets both, via the settings trigger.
+    if (settings != nullptr && (maxClickArea.contains(e.getPosition()) || peakClickArea.contains(e.getPosition())))
+        settings->resetMaxPeak->trigger();
 }
 
 //==============================================================================
@@ -528,27 +553,44 @@ void MeteringPanel::drawReadout(juce::Graphics& g)
     auto nowR = area.removeFromTop(area.getHeight() / 2);
     auto avgR = area;
 
-    auto drawBig = [&](juce::Rectangle<int> a, const String& title, float value)
+    auto drawBig = [&](juce::Rectangle<int> a, const String& title, float value,
+                       const String& subLabel, float subValue, juce::Rectangle<int>& clickAreaOut)
     {
-        a = a.withTrimmedLeft(8).withTrimmedRight(4).withTrimmedTop(4).withTrimmedBottom(4);
+        a = a.withTrimmedLeft(6).withTrimmedRight(6).withTrimmedTop(4).withTrimmedBottom(4);
+
+        // Title (top, centred).
         g.setColour(Colours::white.withAlpha(.55f));
         g.setFont(11.0f);
-        g.drawText(title, a.removeFromTop(15), Justification::topLeft);
+        g.drawText(title, a.removeFromTop(14), Justification::centred);
 
+        // Held secondary value (Max / Peak) at the bottom - prominent and clickable to reset.
+        clickAreaOut = a.removeFromBottom(18);
+        bool subOver = running && subValue >= thresholdDb;
+        String sv = (!running || subValue <= -119.0f) ? String("--.-") : String(subValue, 1);
+        g.setColour(subOver ? Colours::red : Colours::white);
+        g.setFont(Font(14.0f, Font::bold));
+        g.drawText(subLabel + " " + sv, clickAreaOut, Justification::centred);
+
+        // Big measured value with the weighting label directly beneath it, the pair
+        // vertically centred in the remaining space.
         bool over = running && value >= thresholdDb;
-        float fontSize = (float)juce::jlimit(15, 30, a.getHeight() - 2);
-        g.setColour(over ? Colours::red : Colours::white);
-        g.setFont(Font(fontSize, Font::bold));
+        const int wH = 13;
+        int blockH = juce::jmin(a.getHeight(), 34 + wH);
+        auto block = a.withSizeKeepingCentre(a.getWidth(), blockH);
+        int vH = juce::jmax(14, blockH - wH);
+
         String v = (!running || value <= -119.0f) ? String("--.-") : String(value, 1);
-        g.drawText(v, a, Justification::centredRight);
+        g.setColour(over ? Colours::red : Colours::white);
+        g.setFont(Font((float)juce::jlimit(14, 30, vH - 2), Font::bold));
+        g.drawText(v, block.removeFromTop(vH), Justification::centred);
 
         g.setColour(Colours::white.withAlpha(.5f));
         g.setFont(10.0f);
-        g.drawText(w, a, Justification::bottomLeft);
+        g.drawText(w, block, Justification::centred);
     };
 
-    drawBig(nowR, "Now", splNow);
-    drawBig(avgR, "LAeq 15 min", splLaeq);
+    drawBig(nowR, "Now", splNow, "Max", splMax, maxClickArea);
+    drawBig(avgR, "LAeq 15 min", splLaeq, "Pk", splPeak, peakClickArea);
 
     g.setColour(BG_COLOR.brighter(.1f));
     g.drawHorizontalLine(nowR.getBottom(), (float)readoutArea.getX() + 6, (float)readoutArea.getRight() - 6);
@@ -776,5 +818,13 @@ void MeteringPanel::paint(juce::Graphics& g)
         g.fillRoundedRectangle(box.toFloat(), 3.0f);
         g.setColour(Colours::white);
         g.drawText(label, box, Justification::centred);
+    }
+
+    // Strong over-threshold alert: a thick red border around the whole panel,
+    // held briefly (see alertHoldTicks) so it doesn't flicker.
+    if (alertHoldTicks > 0)
+    {
+        g.setColour(Colours::red);
+        g.drawRect(getLocalBounds(), 4);
     }
 }

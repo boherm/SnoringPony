@@ -38,6 +38,7 @@ public:
     Trigger*         calibrate;            // auto-compute calibration from the live level
     EnumParameter*   weighting;            // A / B / C
     FloatParameter*  threshold;            // dB SPL over which the readout turns red
+    Trigger*         resetMaxPeak;         // clear the held Max / Peak readouts
     EnumParameter*   displayMode;          // Spectrogram / RTA
     BoolParameter*   verticalOrientation;
     BoolParameter*   active;

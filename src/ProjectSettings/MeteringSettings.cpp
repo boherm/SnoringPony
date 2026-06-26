@@ -33,6 +33,8 @@ MeteringSettings::MeteringSettings() :
 
     threshold = addFloatParameter("Threshold", "dB SPL over which the reading is shown in red", 90.0f, 40.0f, 140.0f);
 
+    resetMaxPeak = addTrigger("Reset Max/Peak", "Clear the held Max and Peak readouts");
+
     displayMode = addEnumParameter("Display Mode", "Show the scrolling spectrogram or the real-time analyzer (RTA)");
     displayMode->addOption("Spectrogram", (int)Spectrogram)->addOption("RTA", (int)RTA);
 
@@ -134,6 +136,11 @@ void MeteringSettings::onContainerTriggerTriggered(Trigger* t)
             return;
         }
         calibration->setValue(referenceLevel->floatValue() - panel->getMeasuredDbFs());
+    }
+    else if (t == resetMaxPeak)
+    {
+        if (auto* panel = MeteringPanel::getInstanceWithoutCreating())
+            panel->resetMaxPeak();
     }
 }
 
