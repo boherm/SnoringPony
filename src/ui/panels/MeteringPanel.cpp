@@ -398,7 +398,19 @@ void MeteringPanel::resized()
     int w = verticalTime ? spectroImageArea.getHeight() : spectroImageArea.getWidth();
     int h = verticalTime ? spectroImageArea.getWidth()  : spectroImageArea.getHeight();
     if (w > 0 && h > 0 && (spectro.getWidth() != w || spectro.getHeight() != h))
-        spectro = juce::Image(juce::Image::RGB, w, h, true);
+    {
+        // Rescale the existing spectrogram into the new size instead of starting
+        // from a blank image, so resizing the panel keeps the current content.
+        // The buffer always stores time on X and frequency on Y, so a plain
+        // rescale stays correct in both orientations.
+        juce::Image resized(juce::Image::RGB, w, h, true);
+        if (!spectro.isNull())
+        {
+            juce::Graphics ig(resized);
+            ig.drawImage(spectro, 0, 0, w, h, 0, 0, spectro.getWidth(), spectro.getHeight());
+        }
+        spectro = resized;
+    }
 }
 
 //==============================================================================
