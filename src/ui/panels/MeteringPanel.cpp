@@ -498,7 +498,22 @@ void MeteringPanel::timerCallback()
         }
     }
 
-    repaint();
+    // While the input is running the graphs change every frame; once stopped only
+    // a few held values decay (meter, RTA peak, alert border), so repaint only
+    // until they settle and then leave the panel idle (no needless CPU).
+    if (deviceRunning.load()) repaint();
+    else
+    {
+        double sig = computeMeterSignature();
+        if (sig != lastMeterSig) { lastMeterSig = sig; repaint(); }
+    }
+}
+
+double MeteringPanel::computeMeterSignature() const
+{
+    double sig = (double)meterDb + (double)alertHoldTicks * 1000.0;
+    for (int b = 0; b < numRtaBands; ++b) sig += rtaPeak[(size_t)b];
+    return sig;
 }
 
 //==============================================================================

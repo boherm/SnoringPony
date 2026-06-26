@@ -142,7 +142,10 @@ private:
     juce::Rectangle<int> readoutArea, meterArea, spectroImageArea;
     juce::Rectangle<int> maxClickArea, peakClickArea;   // click to reset Max / Peak
 
+    double lastMeterSig { 1.0e18 };   // change-detection for idle (stopped) repaints
+
     void applySettings();
+    double computeMeterSignature() const;
     void clearGraphs();
     void pullAndProcess();
     void ensureWeighting(double sr);
