@@ -34,7 +34,7 @@ void RFDeviceManagerItemUI::paint(Graphics& g)
 
     Rectangle<int> r = getLocalBounds().withTrimmedLeft(8).withTrimmedRight(22);
 
-    const bool presets = item->getCandidateMode() == RFDevice::PRESETS;
+    const bool presets = item->getCandidateMode() == RFProfile::PRESETS;
     const double f = item->assignedFreqMHz->floatValue();
 
     String val, tip;

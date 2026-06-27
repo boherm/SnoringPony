@@ -175,6 +175,9 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/FrequencyPreset_648ea240.o \
   $(JUCE_OBJDIR)/RFCoordinationSettings_1bd507d7.o \
   $(JUCE_OBJDIR)/RFDevice_4dff578f.o \
+  $(JUCE_OBJDIR)/RFSourceSettings_5a6aee97.o \
+  $(JUCE_OBJDIR)/RFProfile_db223eda.o \
+  $(JUCE_OBJDIR)/RFProfileManager_94f8abfd.o \
   $(JUCE_OBJDIR)/RFDeviceManager_2de54da8.o \
   $(JUCE_OBJDIR)/RtlSdrSpectrumSource_99a36628.o \
   $(JUCE_OBJDIR)/SimulatedRFSpectrumSource_2fb315c5.o \
@@ -753,6 +756,21 @@ $(JUCE_OBJDIR)/RFCoordinationSettings_1bd507d7.o: ../../src/RF/RFCoordinationSet
 $(JUCE_OBJDIR)/RFDevice_4dff578f.o: ../../src/RF/RFDevice.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling RFDevice.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/RFSourceSettings_5a6aee97.o: ../../src/RF/RFSourceSettings.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling RFSourceSettings.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/RFProfile_db223eda.o: ../../src/RF/RFProfile.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling RFProfile.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/RFProfileManager_94f8abfd.o: ../../src/RF/RFProfileManager.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling RFProfileManager.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/RFDeviceManager_2de54da8.o: ../../src/RF/RFDeviceManager.cpp

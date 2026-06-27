@@ -34,10 +34,13 @@ public:
     bool isRunning() const override { return running.load(); }
     bool getLatestSweep(RFSpectrumSweep& out) override;
 
+    // Change the scanned window live (no device reopen) - used to follow the view.
+    void setRange(double minMHz, double maxMHz, double binHz);
+
     void run() override;
 
     // Tuner configuration (applied on the next start()).
-    void configure(int deviceIndex, bool autoGain, float gainDb, int ppm);
+    void configure(int deviceIndex, float gainDb, int ppm);
 
     juce::String getStatusMessage() const;
 
@@ -46,9 +49,8 @@ public:
 
 private:
     std::atomic<bool> running { false };
-    double bandMinMHz { 470.0 }, bandMaxMHz { 870.0 }, targetBinHz { 25000.0 };
+    std::atomic<double> reqMinMHz { 470.0 }, reqMaxMHz { 474.0 }, reqBinHz { 1000.0 };
     int    deviceIndex { 0 };
-    bool   autoGain { true };
     float  gainDb { 30.0f };
     int    ppm { 0 };
 

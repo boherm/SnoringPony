@@ -44,7 +44,7 @@ void MainContentComponent::init()
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("MTC Monitor", &MTCMonitorUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Active Cues", &ActiveCuesPanelUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Metering", &MeteringUI::create));
-	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("RF Coordination", &RFCoordinationUI::create));
+	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("RF Coordinator", &RFCoordinationUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Show Control", &ShowControlUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Show Infos", &ShowInfosUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Cuelists", &CuelistManagerUI::create));

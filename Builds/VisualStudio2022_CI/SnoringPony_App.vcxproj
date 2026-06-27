@@ -260,6 +260,9 @@
     <ClCompile Include="..\..\src\RF\FrequencyPreset.cpp"/>
     <ClCompile Include="..\..\src\RF\RFCoordinationSettings.cpp"/>
     <ClCompile Include="..\..\src\RF\RFDevice.cpp"/>
+    <ClCompile Include="..\..\src\RF\RFSourceSettings.cpp"/>
+    <ClCompile Include="..\..\src\RF\RFProfile.cpp"/>
+    <ClCompile Include="..\..\src\RF\RFProfileManager.cpp"/>
     <ClCompile Include="..\..\src\RF\RFDeviceManager.cpp"/>
     <ClCompile Include="..\..\src\RF\RtlSdrSpectrumSource.cpp"/>
     <ClCompile Include="..\..\src\RF\SimulatedRFSpectrumSource.cpp"/>
@@ -3511,6 +3514,9 @@
     <ClInclude Include="..\..\src\RF\FrequencyOptimizer.h"/>
     <ClInclude Include="..\..\src\RF\FrequencyPreset.h"/>
     <ClInclude Include="..\..\src\RF\RFCoordinationSettings.h"/>
+    <ClInclude Include="..\..\src\RF\RFSourceSettings.h"/>
+    <ClInclude Include="..\..\src\RF\RFProfile.h"/>
+    <ClInclude Include="..\..\src\RF\RFProfileManager.h"/>
     <ClInclude Include="..\..\src\RF\RFDevice.h"/>
     <ClInclude Include="..\..\src\RF\RFDeviceManager.h"/>
     <ClInclude Include="..\..\src\RF\RFSpectrumSource.h"/>

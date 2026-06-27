@@ -16,7 +16,6 @@ RFDeviceManager::RFDeviceManager() :
     BaseManager<RFDevice>("RF Devices")
 {
     itemDataType = "RF Device";
-    selectItemWhenCreated = false;
 }
 
 RFDeviceManager::~RFDeviceManager()

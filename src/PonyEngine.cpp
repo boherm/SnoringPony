@@ -32,6 +32,7 @@
 #include "ui/panels/MeteringPanel.h"
 #include "ui/panels/RFCoordinationPanel.h"
 #include "RF/RFDeviceManager.h"
+#include "RF/RFProfileManager.h"
 #include "Interface/InterfaceManager.h"
 #include "Timer/ShowTimerManager.h"
 
@@ -104,6 +105,7 @@ PonyEngine::~PonyEngine()
     MeteringPanel::deleteInstance();
     RFCoordinationPanel::deleteInstance();
     RFDeviceManager::deleteInstance();
+    RFProfileManager::deleteInstance();
     ShowControl::deleteInstance();
     ShowInfos::deleteInstance();
 

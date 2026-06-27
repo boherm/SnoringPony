@@ -5,10 +5,10 @@
     Created: 26 Jun 2026
     Author:  boherm
 
-    A wireless RF device to coordinate: a microphone (transmitter) or an IEM
-    (in-ear monitor). Its allowed frequencies are defined either by a continuous
-    Range (with a tuning grid step) or by a discrete list of named Presets. The
-    optimizer fills in the assigned frequency (and preset name, in Presets mode).
+    A wireless RF device to coordinate (mic / IEM). It references an RFProfile that
+    defines its assignable frequencies (Range or Presets); the device itself only
+    keeps its optimizer result (assigned frequency and, in Presets mode, the chosen
+    preset/"mode"). Enable/disable uses Organic's built-in `enabled`.
 
   ==============================================================================
 */
@@ -16,7 +16,7 @@
 #pragma once
 
 #include "../MainIncludes.h"
-#include "FrequencyPreset.h"
+#include "RFProfile.h"
 
 class RFDevice :
     public BaseItem
@@ -25,37 +25,19 @@ public:
     RFDevice(var params = var());
     virtual ~RFDevice();
 
-    enum CandidateMode { RANGE = 0, PRESETS = 1 };
-
-    EnumParameter*   candidateMode;      // Range / Presets
-
-    // Range mode
-    FloatParameter*  rangeMinMHz;
-    FloatParameter*  rangeMaxMHz;
-    FloatParameter*  gridStepKHz;        // tuning grid step
+    TargetParameter* profile;            // references an RFProfile (assignable freqs)
 
     // Result of the optimizer (feedback-only, but saved)
     FloatParameter*  assignedFreqMHz;
-    StringParameter* assignedPresetName; // only meaningful in Presets mode
+    StringParameter* assignedPresetName; // the chosen preset/"mode" (Presets profiles)
 
-    // Presets mode: the list of selectable frequencies ("mode a / mode b ...")
-    std::unique_ptr<BaseManager<FrequencyPreset>> presetsManager;
-
-    struct Candidate { double freqMHz; juce::String presetName; };
-
-    CandidateMode getCandidateMode() const { return (CandidateMode)(int)candidateMode->getValueData(); }
-
-    // All candidate frequencies for this device (grid over the range, or the presets).
-    std::vector<Candidate> getCandidates() const;
+    RFProfile*               getProfile() const;
+    RFProfile::CandidateMode getCandidateMode() const;             // from the profile
+    std::vector<RFProfile::Candidate> getCandidates() const;       // delegates to the profile
 
     void setAssignment(double freqMHz, const juce::String& presetName);
     void clearAssignment();
 
     String getTypeString() const override { return "RF Device"; }
     static RFDevice* create(var params) { return new RFDevice(params); }
-
-    void onContainerParameterChangedInternal(Parameter* p) override;
-
-private:
-    void updateModeVisibility();
 };

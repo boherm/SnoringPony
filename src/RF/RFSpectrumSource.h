@@ -44,6 +44,19 @@ struct RFSpectrumSweep
         int b = binForFreq(freqMHz);
         return b < 0 ? -200.0f : powerDb[(size_t)b];
     }
+
+    // Linearly-interpolated power between adjacent bins, for smooth rendering when
+    // the display has more pixels than the sweep has bins (avoids blocky columns).
+    float powerAtInterp(double freqMHz) const
+    {
+        if (powerDb.empty()) return -200.0f;
+        double x = (freqMHz - minMHz) / binMHz() - 0.5;   // position in bin-centre units
+        if (x <= 0.0) return powerDb.front();
+        if (x >= (double)(powerDb.size() - 1)) return powerDb.back();
+        int i = (int)x;
+        float t = (float)(x - i);
+        return powerDb[(size_t)i] * (1.0f - t) + powerDb[(size_t)(i + 1)] * t;
+    }
 };
 
 class RFSpectrumSource

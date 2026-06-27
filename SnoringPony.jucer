@@ -456,6 +456,16 @@
         <FILE id="Up5rBq" name="RFCoordinationSettings.h" compile="0" resource="0"
               file="src/RF/RFCoordinationSettings.h"/>
         <FILE id="NCM9jG" name="RFDevice.cpp" compile="1" resource="0" file="src/RF/RFDevice.cpp"/>
+        <FILE id="KlF4BD" name="RFSourceSettings.h" compile="0" resource="0"
+              file="src/RF/RFSourceSettings.h"/>
+        <FILE id="DcDXrM" name="RFSourceSettings.cpp" compile="1" resource="0"
+              file="src/RF/RFSourceSettings.cpp"/>
+        <FILE id="ZomV8o" name="RFProfile.h" compile="0" resource="0" file="src/RF/RFProfile.h"/>
+        <FILE id="vhlMwV" name="RFProfileManager.h" compile="0" resource="0"
+              file="src/RF/RFProfileManager.h"/>
+        <FILE id="xgSZ6U" name="RFProfile.cpp" compile="1" resource="0" file="src/RF/RFProfile.cpp"/>
+        <FILE id="eNfCzr" name="RFProfileManager.cpp" compile="1" resource="0"
+              file="src/RF/RFProfileManager.cpp"/>
         <FILE id="tFvXy7" name="RFDevice.h" compile="0" resource="0" file="src/RF/RFDevice.h"/>
         <FILE id="LKGYW3" name="RFDeviceManager.cpp" compile="1" resource="0"
               file="src/RF/RFDeviceManager.cpp"/>

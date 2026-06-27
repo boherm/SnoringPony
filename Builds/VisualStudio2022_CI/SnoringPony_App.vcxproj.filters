@@ -1426,6 +1426,15 @@
     <ClCompile Include="..\..\src\RF\RFDevice.cpp">
       <Filter>SnoringPony\Source\RF</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\RF\RFSourceSettings.cpp">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\RF\RFProfile.cpp">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\RF\RFProfileManager.cpp">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\RF\RFDeviceManager.cpp">
       <Filter>SnoringPony\Source\RF</Filter>
     </ClCompile>
@@ -5179,6 +5188,15 @@
       <Filter>SnoringPony\Source\RF</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\RF\RFCoordinationSettings.h">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\RF\RFSourceSettings.h">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\RF\RFProfile.h">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\RF\RFProfileManager.h">
       <Filter>SnoringPony\Source\RF</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\RF\RFDevice.h">

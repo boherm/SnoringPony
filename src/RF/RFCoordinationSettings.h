@@ -17,6 +17,7 @@
 
 #include "../MainIncludes.h"
 #include "AllowedRange.h"
+#include "RFSourceSettings.h"
 
 class RFCoordinationSettings :
     public ControllableContainer
@@ -25,21 +26,14 @@ public:
     RFCoordinationSettings();
     virtual ~RFCoordinationSettings();
 
-    enum Source  { SIMULATED = 0, RTLSDR = 1 };
     enum ImdMode { IMD_OFF = 0, IMD_2TX = 1, IMD_2TX_3TX = 2, IMD_2TX_3TX_5TX = 3 };
+
+    // Source + dongle settings, grouped in a "Source" sub-container.
+    std::unique_ptr<RFSourceSettings> source;
 
     // Scan band
     FloatParameter* scanMinMHz;
     FloatParameter* scanMaxMHz;
-    EnumParameter*  sourceType;
-
-    // RTL-SDR hardware
-    IntParameter*   deviceIndex;       // dongle index
-    BoolParameter*  autoGain;
-    FloatParameter* gainDb;            // manual tuner gain (when autoGain off)
-    IntParameter*   ppmCorrection;     // frequency correction
-    FloatParameter* scanBinKHz;        // hardware scan resolution
-    Trigger*        listDevices;       // log connected dongles
 
     // Optimizer constraints
     FloatParameter* minSpacingKHz;
@@ -47,10 +41,10 @@ public:
     EnumParameter*  imdOrder;
     FloatParameter* occupancyMarginDb;
     FloatParameter* occupancyCooldownSec;   // peak-hold cool-down time
+    FloatParameter* scanDwellSec;           // seconds per band window during the guided scan
 
     // Legally usable assignment ranges; empty = unrestricted.
     std::unique_ptr<BaseManager<AllowedRange>> allowedRanges;
 
-    void onContainerTriggerTriggered(Trigger* t) override;
     void clear();
 };

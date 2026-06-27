@@ -23,6 +23,7 @@
 		0EFCDCAC1ECA3FBBCE121DDB /* Icon.icns */ = {isa = PBXBuildFile; fileRef = 05283F160356A04290ECC3E9; };
 		118F1C9595CB7C806C6144EC /* include_juce_audio_formats.mm */ = {isa = PBXBuildFile; fileRef = 9ABD79ACDDC09CD38B81CCC0; };
 		12DA2A7A6CA57A16ED15D78D /* WingTcpMixerSettings.cpp */ = {isa = PBXBuildFile; fileRef = CE01FDB47DE124494507B545; };
+		1408DF3BB52A590AE3082861 /* RFProfile.cpp */ = {isa = PBXBuildFile; fileRef = BE2BEF2AFDA2D7DC827CD99F; };
 		151EA319274F46A0FAA400C1 /* DCAMixingCuelistEditor.cpp */ = {isa = PBXBuildFile; fileRef = 8571FD3D0AF45971F9500C31; };
 		1588EA7C47F302A11053FF79 /* ShowInfos.cpp */ = {isa = PBXBuildFile; fileRef = 6619BD74FDE8206E3EB0488B; };
 		16E95EE6358CB3E5DB38AC97 /* MIDIManager.cpp */ = {isa = PBXBuildFile; fileRef = 883097A5E973C360D4B409F7; };
@@ -57,6 +58,7 @@
 		4516BE0A3C9B1F1969E3228C /* CuelistFactory.cpp */ = {isa = PBXBuildFile; fileRef = BF3F818D8694AD4F63578241; };
 		48776D3D02FA0934CDBB3B4B /* CharacterRef.cpp */ = {isa = PBXBuildFile; fileRef = 924590FB9E7780A0337EF697; };
 		49AA0CDD14B435A2320681EB /* QuartzCore.framework */ = {isa = PBXBuildFile; fileRef = 1AC850E793B1ADE9326E09C9; };
+		49F42971DA251A8C805A46F0 /* RFProfileManager.cpp */ = {isa = PBXBuildFile; fileRef = B7439303B17E8F7672F139C0; };
 		4B1A2D76C9537464C18BC36E /* Interface.cpp */ = {isa = PBXBuildFile; fileRef = A626C29C79FB02FD8A0E48E6; };
 		4DA9667206704870349E5252 /* ColorPresets.cpp */ = {isa = PBXBuildFile; fileRef = 0DE611E76438A1E07302A9B2; };
 		4FBD35C98A9275CE3E0948D1 /* CuesTableModel.cpp */ = {isa = PBXBuildFile; fileRef = 5D29EEEDC890B444EDE1F128; };
@@ -137,6 +139,7 @@
 		C2375C6B63E2DA674DE0A7F4 /* TimerActionCue.cpp */ = {isa = PBXBuildFile; fileRef = 38E9D7A9DE9FE669DD76D23F; };
 		C397B52691D8900EB29D532A /* MappingAction.cpp */ = {isa = PBXBuildFile; fileRef = E278CF626246005B7AB8F2C9; };
 		C4F5E5AF2FE4280B000A3C81 /* include_juce_events.mm */ = {isa = PBXBuildFile; fileRef = D98FC71223DDF811D805ADF0; };
+		C53D3FF695EC824949352671 /* RFSourceSettings.cpp */ = {isa = PBXBuildFile; fileRef = 9BF3341C1B3D59B0AFCC9268; };
 		C5BA953BBA2207993A818BA2 /* DCACue.cpp */ = {isa = PBXBuildFile; fileRef = D64698CE8C7A2246827BB905; };
 		C727F0EDBA227906A00EB01D /* AudioWaveformSlicerEditor.cpp */ = {isa = PBXBuildFile; fileRef = 2619D69AD9F2375D60AB0C5F; };
 		CAA9EA5837AAA5B4C3266E63 /* PluginScanner.cpp */ = {isa = PBXBuildFile; fileRef = DFDFCCBD5D767210C2C7AB90; };
@@ -192,6 +195,7 @@
 		08A03183DAD949E7BFC25C1B /* CuelistManager.h */ /* CuelistManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CuelistManager.h; path = ../../src/Cuelist/CuelistManager.h; sourceTree = SOURCE_ROOT; };
 		0A543EB1E99C64A412D91642 /* juce_audio_utils */ /* juce_audio_utils */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_audio_utils; path = ../../modules/juce/modules/juce_audio_utils; sourceTree = SOURCE_ROOT; };
 		0A9475759D6B232025E424E3 /* CuelistManagerItemUI.h */ /* CuelistManagerItemUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CuelistManagerItemUI.h; path = ../../src/Cuelist/ui/CuelistManagerItemUI.h; sourceTree = SOURCE_ROOT; };
+		0AC867F1A01EB0970FA2D735 /* RFProfile.h */ /* RFProfile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RFProfile.h; path = ../../src/RF/RFProfile.h; sourceTree = SOURCE_ROOT; };
 		0ACBFA9A7A0F0306776772F8 /* Brain.h */ /* Brain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Brain.h; path = ../../src/Brain.h; sourceTree = SOURCE_ROOT; };
 		0B8F0C901AEF03A994A2791E /* juce_cryptography */ /* juce_cryptography */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_cryptography; path = ../../modules/juce/modules/juce_cryptography; sourceTree = SOURCE_ROOT; };
 		0C957E2B305ACCB9E8F306D6 /* juce_audio_formats */ /* juce_audio_formats */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_audio_formats; path = ../../modules/juce/modules/juce_audio_formats; sourceTree = SOURCE_ROOT; };
@@ -214,6 +218,7 @@
 		1C81167099AA3BC2A75FA474 /* OBSCommand.h */ /* OBSCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OBSCommand.h; path = ../../src/Interface/obs/OBSCommand.h; sourceTree = SOURCE_ROOT; };
 		1D30B81A9130B655246E8DDE /* OSCInputEditor.cpp */ /* OSCInputEditor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OSCInputEditor.cpp; path = ../../src/Interface/osc/ui/OSCInputEditor.cpp; sourceTree = SOURCE_ROOT; };
 		1DA67014280F5141603E2253 /* ShowTimerManagerItemUI.cpp */ /* ShowTimerManagerItemUI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ShowTimerManagerItemUI.cpp; path = ../../src/Timer/ui/ShowTimerManagerItemUI.cpp; sourceTree = SOURCE_ROOT; };
+		1E82EAF921AE3AF8747CAC51 /* RFProfileManager.h */ /* RFProfileManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RFProfileManager.h; path = ../../src/RF/RFProfileManager.h; sourceTree = SOURCE_ROOT; };
 		1EC63C9F77D56F55E9F472B8 /* default.ponylayout */ /* default.ponylayout */ = {isa = PBXFileReference; lastKnownFileType = file.ponylayout; name = default.ponylayout; path = ../../resources/default.ponylayout; sourceTree = SOURCE_ROOT; };
 		1F261A3CD500DE74A8415EC1 /* SPAssetManager.h */ /* SPAssetManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SPAssetManager.h; path = ../../src/ui/SPAssetManager.h; sourceTree = SOURCE_ROOT; };
 		202A7E89DDDBD6B89521F2BA /* FadeCue.h */ /* FadeCue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FadeCue.h; path = ../../src/Cue/fade/FadeCue.h; sourceTree = SOURCE_ROOT; };
@@ -399,6 +404,7 @@
 		9ABD79ACDDC09CD38B81CCC0 /* include_juce_audio_formats.mm */ /* include_juce_audio_formats.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_audio_formats.mm; path = ../../JuceLibraryCode/include_juce_audio_formats.mm; sourceTree = SOURCE_ROOT; };
 		9AD2D416693BF30ABFAEEA80 /* CharacterRef.h */ /* CharacterRef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CharacterRef.h; path = ../../src/Cue/dca/CharacterRef.h; sourceTree = SOURCE_ROOT; };
 		9BD2CC8E98D9FCDA64B00970 /* ActiveCuesPanel.cpp */ /* ActiveCuesPanel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ActiveCuesPanel.cpp; path = ../../src/ui/panels/ActiveCuesPanel.cpp; sourceTree = SOURCE_ROOT; };
+		9BF3341C1B3D59B0AFCC9268 /* RFSourceSettings.cpp */ /* RFSourceSettings.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RFSourceSettings.cpp; path = ../../src/RF/RFSourceSettings.cpp; sourceTree = SOURCE_ROOT; };
 		9DB483C1F931B0F8D1878224 /* juce_gui_extra */ /* juce_gui_extra */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_gui_extra; path = ../../modules/juce/modules/juce_gui_extra; sourceTree = SOURCE_ROOT; };
 		9E719D3743CB635F52BC5F17 /* OBSCue.h */ /* OBSCue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OBSCue.h; path = ../../src/Cue/obs/OBSCue.h; sourceTree = SOURCE_ROOT; };
 		9E9721FF8A3697A22337A63E /* include_juce_core.mm */ /* include_juce_core.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_core.mm; path = ../../JuceLibraryCode/include_juce_core.mm; sourceTree = SOURCE_ROOT; };
@@ -438,12 +444,14 @@
 		B53324E78ECFF725C9637D9D /* ReorderCuesWindow.h */ /* ReorderCuesWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ReorderCuesWindow.h; path = ../../src/Deck/ui/ReorderCuesWindow.h; sourceTree = SOURCE_ROOT; };
 		B6893A2FED32B5927393A25D /* Cuelist.cpp */ /* Cuelist.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Cuelist.cpp; path = ../../src/Cuelist/Cuelist.cpp; sourceTree = SOURCE_ROOT; };
 		B6FB6362F85FA479E1DFD823 /* AppConfig.h */ /* AppConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppConfig.h; path = ../../JuceLibraryCode/AppConfig.h; sourceTree = SOURCE_ROOT; };
+		B7439303B17E8F7672F139C0 /* RFProfileManager.cpp */ /* RFProfileManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RFProfileManager.cpp; path = ../../src/RF/RFProfileManager.cpp; sourceTree = SOURCE_ROOT; };
 		B7DF2D71525B057D2A3F80AA /* MeteringPanel.cpp */ /* MeteringPanel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MeteringPanel.cpp; path = ../../src/ui/panels/MeteringPanel.cpp; sourceTree = SOURCE_ROOT; };
 		B865209CB8626E0893FC5298 /* AudioInterface.cpp */ /* AudioInterface.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AudioInterface.cpp; path = ../../src/Interface/audio/AudioInterface.cpp; sourceTree = SOURCE_ROOT; };
 		BA828DF6524FC93B0427DA5A /* AudioOutput.cpp */ /* AudioOutput.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AudioOutput.cpp; path = ../../src/Interface/audio/AudioOutput.cpp; sourceTree = SOURCE_ROOT; };
 		BAF6552AE757E9616B9C613D /* WingOscProtocol.h */ /* WingOscProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WingOscProtocol.h; path = ../../src/Interface/mixer/wingosc/WingOscProtocol.h; sourceTree = SOURCE_ROOT; };
 		BB5351BF56AF42D7367B079C /* OBSCueRequest.cpp */ /* OBSCueRequest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OBSCueRequest.cpp; path = ../../src/Cue/obs/OBSCueRequest.cpp; sourceTree = SOURCE_ROOT; };
 		BD26F7E082FA6CF16F59F79F /* OSCNextCueFeedback.cpp */ /* OSCNextCueFeedback.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OSCNextCueFeedback.cpp; path = ../../src/Interface/osc/OSCNextCueFeedback.cpp; sourceTree = SOURCE_ROOT; };
+		BE2BEF2AFDA2D7DC827CD99F /* RFProfile.cpp */ /* RFProfile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RFProfile.cpp; path = ../../src/RF/RFProfile.cpp; sourceTree = SOURCE_ROOT; };
 		BEDB50538CC59886D9D432EE /* MTCMonitor.h */ /* MTCMonitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MTCMonitor.h; path = ../../src/ui/panels/MTCMonitor.h; sourceTree = SOURCE_ROOT; };
 		BF3F818D8694AD4F63578241 /* CuelistFactory.cpp */ /* CuelistFactory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CuelistFactory.cpp; path = ../../src/Cuelist/CuelistFactory.cpp; sourceTree = SOURCE_ROOT; };
 		BF891A338540C26A9BF8DF07 /* MainComponent.h */ /* MainComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MainComponent.h; path = ../../src/MainComponent.h; sourceTree = SOURCE_ROOT; };
@@ -465,6 +473,7 @@
 		CE01FDB47DE124494507B545 /* WingTcpMixerSettings.cpp */ /* WingTcpMixerSettings.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WingTcpMixerSettings.cpp; path = ../../src/Interface/mixer/wingtcp/WingTcpMixerSettings.cpp; sourceTree = SOURCE_ROOT; };
 		CF78ECFA21F0F737C765F30D /* GoCue.cpp */ /* GoCue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = GoCue.cpp; path = ../../src/Cue/go/GoCue.cpp; sourceTree = SOURCE_ROOT; };
 		CF7BF1327A3FD5E809829B64 /* MetalKit.framework */ /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
+		D1432FE6C16261EA3DBA0AAB /* RFSourceSettings.h */ /* RFSourceSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RFSourceSettings.h; path = ../../src/RF/RFSourceSettings.h; sourceTree = SOURCE_ROOT; };
 		D1E4BAC7BAF8AF2EA232C8FE /* ShowTimerManagerUI.cpp */ /* ShowTimerManagerUI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ShowTimerManagerUI.cpp; path = ../../src/Timer/ui/ShowTimerManagerUI.cpp; sourceTree = SOURCE_ROOT; };
 		D28C1972D2EA868022FBD3F3 /* OBSCommand.cpp */ /* OBSCommand.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OBSCommand.cpp; path = ../../src/Interface/obs/OBSCommand.cpp; sourceTree = SOURCE_ROOT; };
 		D37E12E68D909D62B0012E1E /* MTCContainerEditor.cpp */ /* MTCContainerEditor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MTCContainerEditor.cpp; path = ../../src/Cue/audio/ui/MTCContainerEditor.cpp; sourceTree = SOURCE_ROOT; };
@@ -1049,6 +1058,12 @@
 				F3BE4D1B1AB45218663982AB,
 				0D574D7EF42D8DF05D87A6DF,
 				385C19D268B6A709D27F5023,
+				D1432FE6C16261EA3DBA0AAB,
+				9BF3341C1B3D59B0AFCC9268,
+				0AC867F1A01EB0970FA2D735,
+				1E82EAF921AE3AF8747CAC51,
+				BE2BEF2AFDA2D7DC827CD99F,
+				B7439303B17E8F7672F139C0,
 				AB41443684FF04247BAB7B2E,
 				67AC22EAD8E5172628145925,
 				0F991F4D9205E2FDC4360158,
@@ -1546,6 +1561,9 @@
 				782E90787AC1CAF56E4E716F,
 				241561151D89C1E606B0CBCA,
 				8CDA7FFE44517C3EA64CF59F,
+				C53D3FF695EC824949352671,
+				1408DF3BB52A590AE3082861,
+				49F42971DA251A8C805A46F0,
 				E323FE446045ED56170BFC64,
 				BF3A7869098200AC64651493,
 				BECC536151A07FEDAB429A17,
