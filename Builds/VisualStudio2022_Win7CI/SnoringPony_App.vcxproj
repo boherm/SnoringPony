@@ -47,12 +47,12 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\App\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">SnoringPony</TargetName>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(LibraryPath);../../external/servus/lib/win/x64/debug;../../external/wapi/win;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MDd</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(LibraryPath);../../external/servus/lib/win/x64/debug;../../external/wapi/win;../../external/rtlsdr/lib/win/x64;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MDd</LibraryPath>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\..\..\Binaries\CI\App\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\App\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">SnoringPony</TargetName>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(LibraryPath);../../external/servus/lib/win/x64/release;../../external/wapi/win;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MD</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(LibraryPath);../../external/servus/lib/win/x64/release;../../external/wapi/win;../../external/rtlsdr/lib/win/x64;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MD</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Midl>
@@ -65,8 +65,8 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\modules\juce\modules\juce_audio_processors\format_types\VST3_SDK;..\..\JuceLibraryCode;..\..\modules\juce\modules;..\..\modules;../../src;../../external/asio;../../external/asiodriver;../../external/servus/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;DEBUG;_DEBUG;VST_LOGGING=0;BLE_SUPPORT=0;PING_SUPPORT=0;OS_SYSINFO_SUPPORT=0;JUCER_VS2022_BA4A4C2=1;JUCE_APP_VERSION=1.0.0b8;JUCE_APP_VERSION_HEX=0x10000;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;JucePlugin_Build_Unity=0;JucePlugin_Build_LV2=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\modules\juce\modules\juce_audio_processors\format_types\VST3_SDK;..\..\JuceLibraryCode;..\..\modules\juce\modules;..\..\modules;../../src;../../external/asio;../../external/asiodriver;../../external/servus/include;../../external/rtlsdr/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;DEBUG;_DEBUG;VST_LOGGING=0;BLE_SUPPORT=0;PING_SUPPORT=0;OS_SYSINFO_SUPPORT=0;SP_HAS_RTLSDR=1;JUCER_VS2022_BA4A4C2=1;JUCE_APP_VERSION=1.0.0b8;JUCE_APP_VERSION_HEX=0x10000;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;JucePlugin_Build_Unity=0;JucePlugin_Build_LV2=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -80,8 +80,8 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>..\..\modules\juce\modules\juce_audio_processors\format_types\VST3_SDK;..\..\JuceLibraryCode;..\..\modules\juce\modules;..\..\modules;../../src;../../external/asio;../../external/asiodriver;../../external/servus/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;DEBUG;_DEBUG;VST_LOGGING=0;BLE_SUPPORT=0;PING_SUPPORT=0;OS_SYSINFO_SUPPORT=0;JUCER_VS2022_BA4A4C2=1;JUCE_APP_VERSION=1.0.0b8;JUCE_APP_VERSION_HEX=0x10000;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;JucePlugin_Build_Unity=0;JucePlugin_Build_LV2=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\modules\juce\modules\juce_audio_processors\format_types\VST3_SDK;..\..\JuceLibraryCode;..\..\modules\juce\modules;..\..\modules;../../src;../../external/asio;../../external/asiodriver;../../external/servus/include;../../external/rtlsdr/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;DEBUG;_DEBUG;VST_LOGGING=0;BLE_SUPPORT=0;PING_SUPPORT=0;OS_SYSINFO_SUPPORT=0;SP_HAS_RTLSDR=1;JUCER_VS2022_BA4A4C2=1;JUCE_APP_VERSION=1.0.0b8;JUCE_APP_VERSION_HEX=0x10000;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;JucePlugin_Build_Unity=0;JucePlugin_Build_LV2=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
       <OutputFile>$(OutDir)\SnoringPony.exe</OutputFile>
@@ -90,9 +90,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(IntDir)\SnoringPony.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>../../external/servus/lib/win/x64/debug;../../external/wapi/win;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MDd;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../external/servus/lib/win/x64/debug;../../external/wapi/win;../../external/rtlsdr/lib/win/x64;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MDd;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalDependencies>Servus.lib;libwapi.a;libssl.lib;libcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Servus.lib;libwapi.a;rtlsdr.lib;libssl.lib;libcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/HEAP:0x400000,0x10000 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Bscmake>
@@ -100,8 +100,8 @@
       <OutputFile>$(IntDir)\SnoringPony.bsc</OutputFile>
     </Bscmake>
     <Lib>
-      <AdditionalDependencies>Servus.lib;libwapi.a;libssl.lib;libcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../external/servus/lib/win/x64/debug;../../external/wapi/win;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MDd;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Servus.lib;libwapi.a;rtlsdr.lib;libssl.lib;libcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../external/servus/lib/win/x64/debug;../../external/wapi/win;../../external/rtlsdr/lib/win/x64;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MDd;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -114,8 +114,8 @@
     </Midl>
     <ClCompile>
       <Optimization>Full</Optimization>
-      <AdditionalIncludeDirectories>..\..\modules\juce\modules\juce_audio_processors\format_types\VST3_SDK;..\..\JuceLibraryCode;..\..\modules\juce\modules;..\..\modules;../../src;../../external/asio;../../external/asiodriver;../../external/servus/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;NDEBUG;VST_LOGGING=0;BLE_SUPPORT=0;PING_SUPPORT=0;OS_SYSINFO_SUPPORT=0;JUCER_VS2022_BA4A4C2=1;JUCE_APP_VERSION=1.0.0b8;JUCE_APP_VERSION_HEX=0x10000;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;JucePlugin_Build_Unity=0;JucePlugin_Build_LV2=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\modules\juce\modules\juce_audio_processors\format_types\VST3_SDK;..\..\JuceLibraryCode;..\..\modules\juce\modules;..\..\modules;../../src;../../external/asio;../../external/asiodriver;../../external/servus/include;../../external/rtlsdr/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;NDEBUG;VST_LOGGING=0;BLE_SUPPORT=0;PING_SUPPORT=0;OS_SYSINFO_SUPPORT=0;SP_HAS_RTLSDR=1;JUCER_VS2022_BA4A4C2=1;JUCE_APP_VERSION=1.0.0b8;JUCE_APP_VERSION_HEX=0x10000;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;JucePlugin_Build_Unity=0;JucePlugin_Build_LV2=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -129,8 +129,8 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>..\..\modules\juce\modules\juce_audio_processors\format_types\VST3_SDK;..\..\JuceLibraryCode;..\..\modules\juce\modules;..\..\modules;../../src;../../external/asio;../../external/asiodriver;../../external/servus/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;NDEBUG;VST_LOGGING=0;BLE_SUPPORT=0;PING_SUPPORT=0;OS_SYSINFO_SUPPORT=0;JUCER_VS2022_BA4A4C2=1;JUCE_APP_VERSION=1.0.0b8;JUCE_APP_VERSION_HEX=0x10000;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;JucePlugin_Build_Unity=0;JucePlugin_Build_LV2=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\modules\juce\modules\juce_audio_processors\format_types\VST3_SDK;..\..\JuceLibraryCode;..\..\modules\juce\modules;..\..\modules;../../src;../../external/asio;../../external/asiodriver;../../external/servus/include;../../external/rtlsdr/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;NDEBUG;VST_LOGGING=0;BLE_SUPPORT=0;PING_SUPPORT=0;OS_SYSINFO_SUPPORT=0;SP_HAS_RTLSDR=1;JUCER_VS2022_BA4A4C2=1;JUCE_APP_VERSION=1.0.0b8;JUCE_APP_VERSION_HEX=0x10000;JucePlugin_Build_VST=0;JucePlugin_Build_VST3=0;JucePlugin_Build_AU=0;JucePlugin_Build_AUv3=0;JucePlugin_Build_AAX=0;JucePlugin_Build_Standalone=0;JucePlugin_Build_Unity=0;JucePlugin_Build_LV2=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
       <OutputFile>$(OutDir)\SnoringPony.exe</OutputFile>
@@ -141,10 +141,10 @@
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <AdditionalLibraryDirectories>../../external/servus/lib/win/x64/release;../../external/wapi/win;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MD;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../external/servus/lib/win/x64/release;../../external/wapi/win;../../external/rtlsdr/lib/win/x64;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MD;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <LargeAddressAware>true</LargeAddressAware>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-      <AdditionalDependencies>Servus.lib;libwapi.a;libssl.lib;libcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Servus.lib;libwapi.a;rtlsdr.lib;libssl.lib;libcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/HEAP:0x400000,0x10000 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Bscmake>
@@ -152,8 +152,8 @@
       <OutputFile>$(IntDir)\SnoringPony.bsc</OutputFile>
     </Bscmake>
     <Lib>
-      <AdditionalDependencies>Servus.lib;libwapi.a;libssl.lib;libcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../external/servus/lib/win/x64/release;../../external/wapi/win;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MD;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Servus.lib;libwapi.a;rtlsdr.lib;libssl.lib;libcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../external/servus/lib/win/x64/release;../../external/wapi/win;../../external/rtlsdr/lib/win/x64;..\..\modules\juce_simpleweb\libs\VisualStudio2022\$(Platform)\MD;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -254,12 +254,22 @@
     <ClCompile Include="..\..\src\ProjectSettings\ShowProperties.cpp"/>
     <ClCompile Include="..\..\src\ProjectSettings\MeteringSettings.cpp"/>
     <ClCompile Include="..\..\src\ProjectSettings\VolumePresets.cpp"/>
+    <ClCompile Include="..\..\src\RF\ui\RFDeviceManagerItemUI.cpp"/>
+    <ClCompile Include="..\..\src\RF\AllowedRange.cpp"/>
+    <ClCompile Include="..\..\src\RF\FrequencyOptimizer.cpp"/>
+    <ClCompile Include="..\..\src\RF\FrequencyPreset.cpp"/>
+    <ClCompile Include="..\..\src\RF\RFCoordinationSettings.cpp"/>
+    <ClCompile Include="..\..\src\RF\RFDevice.cpp"/>
+    <ClCompile Include="..\..\src\RF\RFDeviceManager.cpp"/>
+    <ClCompile Include="..\..\src\RF\RtlSdrSpectrumSource.cpp"/>
+    <ClCompile Include="..\..\src\RF\SimulatedRFSpectrumSource.cpp"/>
     <ClCompile Include="..\..\src\Timer\ui\ShowTimerEditor.cpp"/>
     <ClCompile Include="..\..\src\Timer\ui\ShowTimerManagerItemUI.cpp"/>
     <ClCompile Include="..\..\src\Timer\ui\ShowTimerManagerUI.cpp"/>
     <ClCompile Include="..\..\src\Timer\ShowTimer.cpp"/>
     <ClCompile Include="..\..\src\Timer\ShowTimerManager.cpp"/>
     <ClCompile Include="..\..\src\ui\panels\Clock.cpp"/>
+    <ClCompile Include="..\..\src\ui\panels\RFCoordinationPanel.cpp"/>
     <ClCompile Include="..\..\src\ui\panels\ShowControl.cpp"/>
     <ClCompile Include="..\..\src\ui\panels\ActiveCuesPanel.cpp"/>
     <ClCompile Include="..\..\src\ui\panels\ShowInfos.cpp"/>
@@ -3496,6 +3506,16 @@
     <ClInclude Include="..\..\src\ProjectSettings\ShowProperties.h"/>
     <ClInclude Include="..\..\src\ProjectSettings\MeteringSettings.h"/>
     <ClInclude Include="..\..\src\ProjectSettings\VolumePresets.h"/>
+    <ClInclude Include="..\..\src\RF\ui\RFDeviceManagerItemUI.h"/>
+    <ClInclude Include="..\..\src\RF\AllowedRange.h"/>
+    <ClInclude Include="..\..\src\RF\FrequencyOptimizer.h"/>
+    <ClInclude Include="..\..\src\RF\FrequencyPreset.h"/>
+    <ClInclude Include="..\..\src\RF\RFCoordinationSettings.h"/>
+    <ClInclude Include="..\..\src\RF\RFDevice.h"/>
+    <ClInclude Include="..\..\src\RF\RFDeviceManager.h"/>
+    <ClInclude Include="..\..\src\RF\RFSpectrumSource.h"/>
+    <ClInclude Include="..\..\src\RF\RtlSdrSpectrumSource.h"/>
+    <ClInclude Include="..\..\src\RF\SimulatedRFSpectrumSource.h"/>
     <ClInclude Include="..\..\src\Timer\ui\ShowTimerEditor.h"/>
     <ClInclude Include="..\..\src\Timer\ui\ShowTimerManagerItemUI.h"/>
     <ClInclude Include="..\..\src\Timer\ui\ShowTimerManagerUI.h"/>
@@ -3503,6 +3523,7 @@
     <ClInclude Include="..\..\src\Timer\ShowTimerManager.h"/>
     <ClInclude Include="..\..\src\ui\panels\ActiveCuesPanel.h"/>
     <ClInclude Include="..\..\src\ui\panels\Clock.h"/>
+    <ClInclude Include="..\..\src\ui\panels\RFCoordinationPanel.h"/>
     <ClInclude Include="..\..\src\ui\panels\MeteringPanel.h"/>
     <ClInclude Include="..\..\src\ui\panels\MTCMonitor.h"/>
     <ClInclude Include="..\..\src\ui\panels\ShowControl.h"/>

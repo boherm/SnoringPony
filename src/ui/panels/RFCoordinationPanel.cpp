@@ -12,6 +12,7 @@
 #include "../../RF/RFCoordinationSettings.h"
 #include "../../RF/RFDeviceManager.h"
 #include "../../RF/SimulatedRFSpectrumSource.h"
+#include "../../RF/RtlSdrSpectrumSource.h"
 #include "../../RF/FrequencyOptimizer.h"
 #include "../../RF/ui/RFDeviceManagerItemUI.h"
 #include <algorithm>
@@ -74,8 +75,7 @@ RFCoordinationPanel::RFCoordinationPanel()
     settings = dynamic_cast<RFCoordinationSettings*>(
         ProjectSettings::getInstance()->getControllableContainerByName("rfCoordinationSettings"));
 
-    sourceFull.reset(new SimulatedRFSpectrumSource());
-    sourceDetail.reset(new SimulatedRFSpectrumSource());
+    createSources();
 
     analyzeBtn.onClick  = [this] { if (analyzing) stopAnalyze(); else startAnalyze(); };
     optimizeBtn.onClick = [this] { runOptimize(); };
@@ -105,6 +105,7 @@ RFCoordinationPanel::RFCoordinationPanel()
     {
         settings->scanMinMHz->addParameterListener(this);
         settings->scanMaxMHz->addParameterListener(this);
+        settings->sourceType->addParameterListener(this);
     }
 
     if (Engine::mainEngine != nullptr)
@@ -123,6 +124,7 @@ RFCoordinationPanel::~RFCoordinationPanel()
     {
         settings->scanMinMHz->removeParameterListener(this);
         settings->scanMaxMHz->removeParameterListener(this);
+        settings->sourceType->removeParameterListener(this);
     }
 
     if (Engine::mainEngine != nullptr)
@@ -156,16 +158,51 @@ void RFCoordinationPanel::startAnalyze()
     updateButtons();
 }
 
+void RFCoordinationPanel::createSources()
+{
+    if (sourceFull != nullptr)   sourceFull->stop();
+    if (sourceDetail != nullptr) sourceDetail->stop();
+
+    const int src = settings != nullptr ? (int)settings->sourceType->getValueData() : 0;
+
+    if (src == RFCoordinationSettings::RTLSDR)
+    {
+        // One physical dongle: a single source feeds both occupancy and the waterfall.
+        sourceFull.reset(new RtlSdrSpectrumSource());
+        sourceDetail.reset();
+    }
+    else
+    {
+        // Simulated: cheap two-source hybrid (full band + fine detail of the view).
+        sourceFull.reset(new SimulatedRFSpectrumSource());
+        sourceDetail.reset(new SimulatedRFSpectrumSource());
+    }
+}
+
 void RFCoordinationPanel::startSources()
 {
-    // Full-band scan at the base resolution (occupancy / optimizer)...
+    const int src = settings != nullptr ? (int)settings->sourceType->getValueData() : 0;
+
+    if (src == RFCoordinationSettings::RTLSDR)
+    {
+        // Single fine full-band scan; the waterfall samples it across the view, so
+        // zoom stays sharp without a second (impossible) simultaneous sweep.
+        if (auto* rtl = dynamic_cast<RtlSdrSpectrumSource*>(sourceFull.get()))
+        {
+            rtl->configure(settings->deviceIndex->intValue(), settings->autoGain->boolValue(),
+                           settings->gainDb->floatValue(), settings->ppmCorrection->intValue());
+            rtl->start(bandMinMHz, bandMaxMHz, settings->scanBinKHz->floatValue() * 1000.0);
+        }
+        return;
+    }
+
+    // Simulated: full band at base resolution + fine detail of the visible range.
     const double baseBinHz = 100000.0; // 100 kHz
     if (sourceFull != nullptr)
     {
         sourceFull->setReferenceBand(bandMinMHz, bandMaxMHz);
         sourceFull->start(bandMinMHz, bandMaxMHz, baseBinHz);
     }
-    // ...plus a fine detail scan of just the visible range for the waterfall.
     retuneDetail();
 }
 
@@ -229,19 +266,23 @@ void RFCoordinationPanel::timerCallback()
             const float decay = (float)(occupancyDecayRate() * dtSec);
             for (int i = 0; i < liveFull.numBins(); ++i)
                 maxHoldDb[(size_t)i] = juce::jmax(liveFull.powerDb[(size_t)i], maxHoldDb[(size_t)i] - decay);
+
+            // With no separate detail source (RTL-SDR: one device), the fine full-band
+            // sweep also feeds the waterfall.
+            if (sourceDetail == nullptr) commitWaterfallColumn(liveFull);
         }
 
-        // Detail scan of the visible range feeds the waterfall.
+        // Detail scan of the visible range feeds the waterfall (simulated hybrid).
         RFSpectrumSweep detail;
         if (sourceDetail != nullptr && sourceDetail->getLatestSweep(detail))
         {
             liveDetail = detail;
             haveDetail = true;
-            commitWaterfallColumn();
+            commitWaterfallColumn(liveDetail);
         }
 
         // Apply a pending (debounced) detail retune after the view settled.
-        if (detailDirty && now >= detailRetuneAtMs)
+        if (sourceDetail != nullptr && detailDirty && now >= detailRetuneAtMs)
             retuneDetail();
     }
 
@@ -297,9 +338,9 @@ double RFCoordinationPanel::computeDisplaySignature() const
     return sig;
 }
 
-void RFCoordinationPanel::commitWaterfallColumn()
+void RFCoordinationPanel::commitWaterfallColumn(const RFSpectrumSweep& s)
 {
-    if (waterfall.isNull() || !haveDetail) return;
+    if (waterfall.isNull() || s.powerDb.empty()) return;
 
     const int w = waterfall.getWidth();
     const int h = waterfall.getHeight();
@@ -310,12 +351,12 @@ void RFCoordinationPanel::commitWaterfallColumn()
     waterfall.moveImageSection(0, 0, 0, 1, w, h - 1);
 
     // The image maps the range it was last built for (wfBand == the view); sample
-    // the detail sweep across it.
+    // the sweep across it.
     const double span = wfBandMax - wfBandMin;
     for (int x = 0; x < w; ++x)
     {
         double freq = wfBandMin + ((double)x + 0.5) / (double)w * span; // low freq -> left
-        float db = liveDetail.powerAt(freq);
+        float db = s.powerAt(freq);
         waterfall.setPixelAt(x, h - 1, powerToColour(db));
     }
 }
@@ -603,6 +644,13 @@ void RFCoordinationPanel::parameterValueChanged(Parameter* p)
     if (settings == nullptr) return;
     if (p == settings->scanMinMHz || p == settings->scanMaxMHz)
         applyBandFromSettings();
+    else if (p == settings->sourceType)
+    {
+        stopAnalyze();      // switch source: stop, rebuild, wait for a new Analyze
+        createSources();
+        clearGraphs();
+        repaint();
+    }
 }
 
 //==============================================================================
@@ -909,13 +957,27 @@ void RFCoordinationPanel::paint(juce::Graphics& g)
         }
         else
         {
-            int total = (int)scanElapsedSec;
-            String t = String::formatted("%02d:%02d:%02d", total / 3600, (total % 3600) / 60, total % 60);
-            if (settings != nullptr) t = settings->sourceType->getValueKey() + " - " + t;
+            // Surface an RTL-SDR error/status (e.g. dongle not found) instead of the timer.
+            String rtlStatus;
+            if (auto* rtl = dynamic_cast<RtlSdrSpectrumSource*>(sourceFull.get()))
+                if (analyzing && !haveFull) rtlStatus = rtl->getStatusMessage();
 
-            g.setColour(Colours::white.withAlpha(analyzing ? .85f : .5f));
-            g.setFont(Font(14.0f, Font::bold));
-            g.drawText(t, headerArea.withTrimmedRight(10), Justification::centredRight);
+            if (rtlStatus.isNotEmpty())
+            {
+                g.setColour(Colours::orange.withAlpha(.9f));
+                g.setFont(Font(12.0f, Font::bold));
+                g.drawText(rtlStatus, headerArea.withTrimmedLeft(192).withTrimmedRight(10), Justification::centredRight);
+            }
+            else
+            {
+                int total = (int)scanElapsedSec;
+                String t = String::formatted("%02d:%02d:%02d", total / 3600, (total % 3600) / 60, total % 60);
+                if (settings != nullptr) t = settings->sourceType->getValueKey() + " - " + t;
+
+                g.setColour(Colours::white.withAlpha(analyzing ? .85f : .5f));
+                g.setFont(Font(14.0f, Font::bold));
+                g.drawText(t, headerArea.withTrimmedRight(10), Justification::centredRight);
+            }
         }
     }
 

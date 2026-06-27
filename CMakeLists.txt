@@ -130,3 +130,69 @@ target_link_libraries("${PROJECT_NAME}"
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags
 )
+
+# ---- RTL-SDR (optional, vendored under external/rtlsdr) -----------------------
+# If the prebuilt librtlsdr (+ libusb) is present for the current platform, link it
+# and enable hardware scanning (SP_HAS_RTLSDR=1). Otherwise the app still builds and
+# runs with the simulated source only. See external/rtlsdr/README.md for the layout.
+set(RTLSDR_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/external/rtlsdr")
+set(RTLSDR_FOUND FALSE)
+
+if (WIN32)
+    set(RTLSDR_LIBDIR "${RTLSDR_ROOT}/lib/win/x64")
+    # MSVC links against the import library (.lib). With only a DLL, generate the
+    # import lib from it (see external/rtlsdr/README.md). libusb is usually bundled
+    # into rtlsdr.dll on the osmocom Windows builds; add libusb-1.0 here if separate.
+    set(RTLSDR_LIBS rtlsdr)
+    if (EXISTS "${RTLSDR_LIBDIR}/rtlsdr.lib")
+        set(RTLSDR_FOUND TRUE)
+    endif()
+elseif (APPLE)
+    if (CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+        set(RTLSDR_LIBDIR "${RTLSDR_ROOT}/lib/osx/arm64")
+    else()
+        set(RTLSDR_LIBDIR "${RTLSDR_ROOT}/lib/osx/x86_64")
+    endif()
+    # Link rtlsdr only; it pulls in libusb transitively (libusb just needs to be
+    # loadable at runtime, via its recorded dependency path / rpath).
+    set(RTLSDR_LIBS rtlsdr)
+    if (EXISTS "${RTLSDR_LIBDIR}/librtlsdr.dylib" OR EXISTS "${RTLSDR_LIBDIR}/librtlsdr.a")
+        set(RTLSDR_FOUND TRUE)
+    endif()
+elseif (UNIX)
+    set(RTLSDR_LIBDIR "${RTLSDR_ROOT}/lib/linux/x86_64")
+    # A static librtlsdr.a does not contain libusb, so link the system libusb plus
+    # pthread/m. (Harmless too when a shared librtlsdr.so is used instead.)
+    set(RTLSDR_LIBS rtlsdr usb-1.0 pthread m)
+    if (EXISTS "${RTLSDR_LIBDIR}/librtlsdr.so" OR EXISTS "${RTLSDR_LIBDIR}/librtlsdr.a")
+        set(RTLSDR_FOUND TRUE)
+    endif()
+endif()
+
+if (RTLSDR_FOUND)
+    message(STATUS "RTL-SDR: found in ${RTLSDR_LIBDIR} -> hardware scanning enabled")
+    target_include_directories("${PROJECT_NAME}" PRIVATE "${RTLSDR_ROOT}/include")
+    target_link_directories("${PROJECT_NAME}" PRIVATE "${RTLSDR_LIBDIR}")
+    target_link_libraries("${PROJECT_NAME}" PRIVATE ${RTLSDR_LIBS})
+    target_compile_definitions("${PROJECT_NAME}" PRIVATE SP_HAS_RTLSDR=1)
+
+    # Let the built app find the vendored dylibs at runtime (@rpath install names
+    # resolve to the vendored folder). For distribution, bundle them into the .app
+    # and add @loader_path-based rpaths instead.
+    if (APPLE)
+        set_target_properties("${PROJECT_NAME}" PROPERTIES BUILD_RPATH "${RTLSDR_LIBDIR}")
+    elseif (UNIX)
+        set_target_properties("${PROJECT_NAME}" PROPERTIES BUILD_RPATH "${RTLSDR_LIBDIR}")
+    elseif (WIN32)
+        # The DLL must sit next to the .exe at runtime; copy any DLLs we vendored.
+        file(GLOB RTLSDR_DLLS "${RTLSDR_LIBDIR}/*.dll")
+        foreach (dll ${RTLSDR_DLLS})
+            add_custom_command(TARGET "${PROJECT_NAME}" POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                        "${dll}" "$<TARGET_FILE_DIR:${PROJECT_NAME}>")
+        endforeach()
+    endif()
+else()
+    message(STATUS "RTL-SDR: not vendored -> simulated source only (SP_HAS_RTLSDR=0)")
+    target_compile_definitions("${PROJECT_NAME}" PRIVATE SP_HAS_RTLSDR=0)
+endif()

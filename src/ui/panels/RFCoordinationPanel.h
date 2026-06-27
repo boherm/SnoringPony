@@ -113,7 +113,8 @@ private:
     void clearGraphs();
     void updateButtons();
     double computeDisplaySignature() const;   // cheap hash to detect idle changes
-    void commitWaterfallColumn();
+    void createSources();                      // (re)create sources for the current source type
+    void commitWaterfallColumn(const RFSpectrumSweep& s);
     void rebuildWaterfall();               // resize/retune the view image, preserving content
     int  waterfallColumns() const;         // image width: ~2 px-worth of bins over the view
     double detailBinHz() const;            // detail resolution for the current view

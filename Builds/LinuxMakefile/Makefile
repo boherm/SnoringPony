@@ -39,13 +39,13 @@ ifeq ($(CONFIG),Debug)
     TARGET_ARCH := -m64
   endif
 
-  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DDEBUG=1" "-D_DEBUG=1" "-DVST_LOGGING=0" "-DLINK_PLATFORM_LINUX=1" "-DGDK_BACKEND=x11" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0b8" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags alsa freetype2 gl libcurl webkit2gtk-4.0 gtk+-x11-3.0) -pthread -I../../modules/juce/modules/juce_audio_processors/format_types/VST3_SDK -I../../JuceLibraryCode -I../../modules/juce/modules -I../../modules -I../../src -I../../external/asio -I../../external/asiodriver -I../../external/servus/include $(CPPFLAGS)
+  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DDEBUG=1" "-D_DEBUG=1" "-DVST_LOGGING=0" "-DLINK_PLATFORM_LINUX=1" "-DGDK_BACKEND=x11" "-DSP_HAS_RTLSDR=1" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0b8" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags alsa freetype2 gl libcurl webkit2gtk-4.0 gtk+-x11-3.0) -pthread -I../../modules/juce/modules/juce_audio_processors/format_types/VST3_SDK -I../../JuceLibraryCode -I../../modules/juce/modules -I../../modules -I../../src -I../../external/asio -I../../external/asiodriver -I../../external/servus/include -I../../external/rtlsdr/include $(CPPFLAGS)
   JUCE_CPPFLAGS_APP :=  "-DJucePlugin_Build_VST=0" "-DJucePlugin_Build_VST3=0" "-DJucePlugin_Build_AU=0" "-DJucePlugin_Build_AUv3=0" "-DJucePlugin_Build_AAX=0" "-DJucePlugin_Build_Standalone=0" "-DJucePlugin_Build_Unity=0" "-DJucePlugin_Build_LV2=0"
   JUCE_TARGET_APP := SnoringPony
 
   JUCE_CFLAGS += $(JUCE_CPPFLAGS) $(TARGET_ARCH) -g -ggdb -O3 -Wno-multichar $(CFLAGS)
   JUCE_CXXFLAGS += $(JUCE_CFLAGS) -std=c++17 $(CXXFLAGS)
-  JUCE_LDFLAGS += $(TARGET_ARCH) -L$(JUCE_BINDIR) -L$(JUCE_LIBDIR) -L../../external/servus/lib/linux -L/usr/lib/x86_64-linux-gnu/ -L../../external/wapi/linux -L../../modules/juce_simpleweb/libs/Linux/x86_64 $(shell $(PKG_CONFIG) --libs alsa freetype2 gl libcurl) -fvisibility=hidden -Wl,-rpath,"lib" -Wl,--as-needed -Wl,--export-dynamic -fvisibility=default -lrt -ldl -lpthread -lssl -lcrypto -lServus -lcurl -lwapi $(LDFLAGS)
+  JUCE_LDFLAGS += $(TARGET_ARCH) -L$(JUCE_BINDIR) -L$(JUCE_LIBDIR) -L../../external/servus/lib/linux -L/usr/lib/x86_64-linux-gnu/ -L../../external/wapi/linux -L../../external/rtlsdr/lib/linux -L../../modules/juce_simpleweb/libs/Linux/x86_64 $(shell $(PKG_CONFIG) --libs alsa freetype2 gl libcurl) -fvisibility=hidden -Wl,-rpath,"lib" -Wl,--as-needed -Wl,--export-dynamic -fvisibility=default -lrt -ldl -lpthread -lssl -lcrypto -lServus -lcurl -lwapi -lrtlsdr $(LDFLAGS)
 
   CLEANCMD = rm -rf $(JUCE_OUTDIR)/$(JUCE_TARGET_APP) $(JUCE_OBJDIR)
 endif
@@ -60,13 +60,13 @@ ifeq ($(CONFIG),Release)
     TARGET_ARCH := -m64
   endif
 
-  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DNDEBUG=1" "-DVST_LOGGING=0" "-DLINK_PLATFORM_LINUX=1" "-DGDK_BACKEND=x11" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0b8" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags alsa freetype2 gl libcurl webkit2gtk-4.0 gtk+-x11-3.0) -pthread -I../../modules/juce/modules/juce_audio_processors/format_types/VST3_SDK -I../../JuceLibraryCode -I../../modules/juce/modules -I../../modules -I../../src -I../../external/asio -I../../external/asiodriver -I../../external/servus/include $(CPPFLAGS)
+  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DNDEBUG=1" "-DVST_LOGGING=0" "-DLINK_PLATFORM_LINUX=1" "-DGDK_BACKEND=x11" "-DSP_HAS_RTLSDR=1" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0b8" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags alsa freetype2 gl libcurl webkit2gtk-4.0 gtk+-x11-3.0) -pthread -I../../modules/juce/modules/juce_audio_processors/format_types/VST3_SDK -I../../JuceLibraryCode -I../../modules/juce/modules -I../../modules -I../../src -I../../external/asio -I../../external/asiodriver -I../../external/servus/include -I../../external/rtlsdr/include $(CPPFLAGS)
   JUCE_CPPFLAGS_APP :=  "-DJucePlugin_Build_VST=0" "-DJucePlugin_Build_VST3=0" "-DJucePlugin_Build_AU=0" "-DJucePlugin_Build_AUv3=0" "-DJucePlugin_Build_AAX=0" "-DJucePlugin_Build_Standalone=0" "-DJucePlugin_Build_Unity=0" "-DJucePlugin_Build_LV2=0"
   JUCE_TARGET_APP := SnoringPony
 
   JUCE_CFLAGS += $(JUCE_CPPFLAGS) $(TARGET_ARCH) -O3 -Wno-multichar $(CFLAGS)
   JUCE_CXXFLAGS += $(JUCE_CFLAGS) -std=c++17 $(CXXFLAGS)
-  JUCE_LDFLAGS += $(TARGET_ARCH) -L$(JUCE_BINDIR) -L$(JUCE_LIBDIR) -L../../external/servus/lib/linux -L/usr/lib/x86_64-linux-gnu/ -L../../external/wapi/linux -L../../modules/juce_simpleweb/libs/Linux/x86_64 $(shell $(PKG_CONFIG) --libs alsa freetype2 gl libcurl) -fvisibility=hidden -Wl,-rpath,"lib" -Wl,--as-needed -Wl,--export-dynamic -fvisibility=default -lrt -ldl -lpthread -lssl -lcrypto -lServus -lcurl -lwapi $(LDFLAGS)
+  JUCE_LDFLAGS += $(TARGET_ARCH) -L$(JUCE_BINDIR) -L$(JUCE_LIBDIR) -L../../external/servus/lib/linux -L/usr/lib/x86_64-linux-gnu/ -L../../external/wapi/linux -L../../external/rtlsdr/lib/linux -L../../modules/juce_simpleweb/libs/Linux/x86_64 $(shell $(PKG_CONFIG) --libs alsa freetype2 gl libcurl) -fvisibility=hidden -Wl,-rpath,"lib" -Wl,--as-needed -Wl,--export-dynamic -fvisibility=default -lrt -ldl -lpthread -lssl -lcrypto -lServus -lcurl -lwapi -lrtlsdr $(LDFLAGS)
 
   CLEANCMD = rm -rf $(JUCE_OUTDIR)/$(JUCE_TARGET_APP) $(JUCE_OBJDIR)
 endif
@@ -169,12 +169,22 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/ShowProperties_a8318b43.o \
   $(JUCE_OBJDIR)/MeteringSettings_7c2c4caf.o \
   $(JUCE_OBJDIR)/VolumePresets_e2087271.o \
+  $(JUCE_OBJDIR)/RFDeviceManagerItemUI_be546394.o \
+  $(JUCE_OBJDIR)/AllowedRange_8f3718fa.o \
+  $(JUCE_OBJDIR)/FrequencyOptimizer_64e75be.o \
+  $(JUCE_OBJDIR)/FrequencyPreset_648ea240.o \
+  $(JUCE_OBJDIR)/RFCoordinationSettings_1bd507d7.o \
+  $(JUCE_OBJDIR)/RFDevice_4dff578f.o \
+  $(JUCE_OBJDIR)/RFDeviceManager_2de54da8.o \
+  $(JUCE_OBJDIR)/RtlSdrSpectrumSource_99a36628.o \
+  $(JUCE_OBJDIR)/SimulatedRFSpectrumSource_2fb315c5.o \
   $(JUCE_OBJDIR)/ShowTimerEditor_3c121a04.o \
   $(JUCE_OBJDIR)/ShowTimerManagerItemUI_a2ed4507.o \
   $(JUCE_OBJDIR)/ShowTimerManagerUI_acf7e594.o \
   $(JUCE_OBJDIR)/ShowTimer_2e0eb528.o \
   $(JUCE_OBJDIR)/ShowTimerManager_d1d721ef.o \
   $(JUCE_OBJDIR)/Clock_bf28f053.o \
+  $(JUCE_OBJDIR)/RFCoordinationPanel_56a34f7a.o \
   $(JUCE_OBJDIR)/ShowControl_5e188ae5.o \
   $(JUCE_OBJDIR)/ActiveCuesPanel_22831923.o \
   $(JUCE_OBJDIR)/ShowInfos_e95c3bcd.o \
@@ -715,6 +725,51 @@ $(JUCE_OBJDIR)/VolumePresets_e2087271.o: ../../src/ProjectSettings/VolumePresets
 	@echo "Compiling VolumePresets.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
+$(JUCE_OBJDIR)/RFDeviceManagerItemUI_be546394.o: ../../src/RF/ui/RFDeviceManagerItemUI.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling RFDeviceManagerItemUI.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/AllowedRange_8f3718fa.o: ../../src/RF/AllowedRange.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling AllowedRange.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/FrequencyOptimizer_64e75be.o: ../../src/RF/FrequencyOptimizer.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling FrequencyOptimizer.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/FrequencyPreset_648ea240.o: ../../src/RF/FrequencyPreset.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling FrequencyPreset.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/RFCoordinationSettings_1bd507d7.o: ../../src/RF/RFCoordinationSettings.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling RFCoordinationSettings.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/RFDevice_4dff578f.o: ../../src/RF/RFDevice.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling RFDevice.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/RFDeviceManager_2de54da8.o: ../../src/RF/RFDeviceManager.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling RFDeviceManager.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/RtlSdrSpectrumSource_99a36628.o: ../../src/RF/RtlSdrSpectrumSource.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling RtlSdrSpectrumSource.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/SimulatedRFSpectrumSource_2fb315c5.o: ../../src/RF/SimulatedRFSpectrumSource.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling SimulatedRFSpectrumSource.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
 $(JUCE_OBJDIR)/ShowTimerEditor_3c121a04.o: ../../src/Timer/ui/ShowTimerEditor.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling ShowTimerEditor.cpp"
@@ -743,6 +798,11 @@ $(JUCE_OBJDIR)/ShowTimerManager_d1d721ef.o: ../../src/Timer/ShowTimerManager.cpp
 $(JUCE_OBJDIR)/Clock_bf28f053.o: ../../src/ui/panels/Clock.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling Clock.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/RFCoordinationPanel_56a34f7a.o: ../../src/ui/panels/RFCoordinationPanel.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling RFCoordinationPanel.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/ShowControl_5e188ae5.o: ../../src/ui/panels/ShowControl.cpp

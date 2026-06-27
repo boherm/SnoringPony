@@ -80,7 +80,7 @@ FrequencyOptimizer::Result FrequencyOptimizer::optimize(const RFSpectrumSweep& s
     const bool do3Tx = c.imdMode == IMD_2TX_3TX || c.imdMode == IMD_2TX_3TX_5TX;
     const bool do5Tx = c.imdMode == IMD_2TX_3TX_5TX;
 
-    auto near = [&](double a, double b) { return std::abs(a - b) <= guardMHz; };
+    auto withinGuard = [&](double a, double b) { return std::abs(a - b) <= guardMHz; };
 
     // Intermod products among a set of assigned carriers.
     auto computeProducts = [&](const std::vector<double>& a, std::vector<double>& out)
@@ -111,18 +111,18 @@ FrequencyOptimizer::Result FrequencyOptimizer::optimize(const RFSpectrumSweep& s
         if (!doImd) return true;
 
         for (double p : prod)                                     // f on an existing product
-            if (near(f, p)) return false;
+            if (withinGuard(f, p)) return false;
 
         std::vector<double> S = assigned; S.push_back(f);
 
         for (double a : assigned)                                 // new 2-Tx products with f
         {
             double p3a = 2.0 * f - a, p3b = 2.0 * a - f;
-            for (double s : S) if (near(p3a, s) || near(p3b, s)) return false;
+            for (double s : S) if (withinGuard(p3a, s) || withinGuard(p3b, s)) return false;
             if (do5Tx)                                            // new 5th-order 2-Tx with f
             {
                 double p5a = 3.0 * f - 2.0 * a, p5b = 3.0 * a - 2.0 * f;
-                for (double s : S) if (near(p5a, s) || near(p5b, s)) return false;
+                for (double s : S) if (withinGuard(p5a, s) || withinGuard(p5b, s)) return false;
             }
         }
 
@@ -135,7 +135,7 @@ FrequencyOptimizer::Result FrequencyOptimizer::optimize(const RFSpectrumSweep& s
                     double pa = f + assigned[i] - assigned[j];
                     double pb = f + assigned[j] - assigned[i];
                     double pc = assigned[i] + assigned[j] - f;
-                    for (double s : S) if (near(pa, s) || near(pb, s) || near(pc, s)) return false;
+                    for (double s : S) if (withinGuard(pa, s) || withinGuard(pb, s) || withinGuard(pc, s)) return false;
                 }
         }
 

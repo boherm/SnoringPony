@@ -3,7 +3,7 @@
 <JUCERPROJECT id="yG6FOt" name="SnoringPony" projectType="guiapp" jucerFormatVersion="1"
               version="1.0.0b8" projectLineFeed="&#10;" companyName="boherm"
               companyCopyright="Boris Hermans" companyWebsite="https://snoringpony.app"
-              companyEmail="dev@snoringpony.app" defines="VST_LOGGING=0" headerPath="../../src&#10;../../external/asio&#10;../../external/asiodriver&#10;../../external/servus/include"
+              companyEmail="dev@snoringpony.app" defines="VST_LOGGING=0" headerPath="../../src&#10;../../external/asio&#10;../../external/asiodriver&#10;../../external/servus/include&#10;../../external/rtlsdr/include"
               bundleIdentifier="boherm.SnoringPony">
   <MAINGROUP id="QuL8Eu" name="SnoringPony">
     <GROUP id="{33CB39F8-43C1-5EE5-E27D-0A9CD562E541}" name="resources">
@@ -433,6 +433,45 @@
               file="src/ProjectSettings/VolumePresets.cpp"/>
         <FILE id="XOPaAx" name="VolumePresets.h" compile="0" resource="0" file="src/ProjectSettings/VolumePresets.h"/>
       </GROUP>
+      <GROUP id="{E091BB17-94ED-073E-4252-A2267FB7FB65}" name="RF">
+        <GROUP id="{A7807ABC-56D6-050E-6473-68CF22884064}" name="ui">
+          <FILE id="TSH5Ah" name="RFDeviceManagerItemUI.cpp" compile="1" resource="0"
+                file="src/RF/ui/RFDeviceManagerItemUI.cpp"/>
+          <FILE id="Iqs5XZ" name="RFDeviceManagerItemUI.h" compile="0" resource="0"
+                file="src/RF/ui/RFDeviceManagerItemUI.h"/>
+        </GROUP>
+        <FILE id="g8B1MI" name="AllowedRange.cpp" compile="1" resource="0"
+              file="src/RF/AllowedRange.cpp"/>
+        <FILE id="B6wByP" name="AllowedRange.h" compile="0" resource="0" file="src/RF/AllowedRange.h"/>
+        <FILE id="racsaM" name="FrequencyOptimizer.cpp" compile="1" resource="0"
+              file="src/RF/FrequencyOptimizer.cpp"/>
+        <FILE id="y192qR" name="FrequencyOptimizer.h" compile="0" resource="0"
+              file="src/RF/FrequencyOptimizer.h"/>
+        <FILE id="qzA3WB" name="FrequencyPreset.cpp" compile="1" resource="0"
+              file="src/RF/FrequencyPreset.cpp"/>
+        <FILE id="y9Wf1A" name="FrequencyPreset.h" compile="0" resource="0"
+              file="src/RF/FrequencyPreset.h"/>
+        <FILE id="adQHwG" name="RFCoordinationSettings.cpp" compile="1" resource="0"
+              file="src/RF/RFCoordinationSettings.cpp"/>
+        <FILE id="Up5rBq" name="RFCoordinationSettings.h" compile="0" resource="0"
+              file="src/RF/RFCoordinationSettings.h"/>
+        <FILE id="NCM9jG" name="RFDevice.cpp" compile="1" resource="0" file="src/RF/RFDevice.cpp"/>
+        <FILE id="tFvXy7" name="RFDevice.h" compile="0" resource="0" file="src/RF/RFDevice.h"/>
+        <FILE id="LKGYW3" name="RFDeviceManager.cpp" compile="1" resource="0"
+              file="src/RF/RFDeviceManager.cpp"/>
+        <FILE id="uC8yTs" name="RFDeviceManager.h" compile="0" resource="0"
+              file="src/RF/RFDeviceManager.h"/>
+        <FILE id="JfXhsK" name="RFSpectrumSource.h" compile="0" resource="0"
+              file="src/RF/RFSpectrumSource.h"/>
+        <FILE id="cucfso" name="RtlSdrSpectrumSource.cpp" compile="1" resource="0"
+              file="src/RF/RtlSdrSpectrumSource.cpp"/>
+        <FILE id="lyl8mG" name="RtlSdrSpectrumSource.h" compile="0" resource="0"
+              file="src/RF/RtlSdrSpectrumSource.h"/>
+        <FILE id="KmC9SF" name="SimulatedRFSpectrumSource.cpp" compile="1"
+              resource="0" file="src/RF/SimulatedRFSpectrumSource.cpp"/>
+        <FILE id="VTMcuF" name="SimulatedRFSpectrumSource.h" compile="0" resource="0"
+              file="src/RF/SimulatedRFSpectrumSource.h"/>
+      </GROUP>
       <GROUP id="{4D5BB3E2-2D87-3432-7871-A795095E1D5C}" name="Timer">
         <GROUP id="{7DCCF350-19A1-608E-78C5-C085EEB6B36E}" name="ui">
           <FILE id="Ko9Vc5" name="ShowTimerEditor.cpp" compile="1" resource="0"
@@ -461,6 +500,10 @@
           <FILE id="ypqJL9" name="ActiveCuesPanel.h" compile="0" resource="0"
                 file="src/ui/panels/ActiveCuesPanel.h"/>
           <FILE id="CYR6ek" name="Clock.h" compile="0" resource="0" file="src/ui/panels/Clock.h"/>
+          <FILE id="UKekpy" name="RFCoordinationPanel.h" compile="0" resource="0"
+                file="src/ui/panels/RFCoordinationPanel.h"/>
+          <FILE id="IGfTfo" name="RFCoordinationPanel.cpp" compile="1" resource="0"
+                file="src/ui/panels/RFCoordinationPanel.cpp"/>
           <FILE id="WpPhD5" name="MeteringPanel.h" compile="0" resource="0" file="src/ui/panels/MeteringPanel.h"/>
           <FILE id="vYjx9A" name="MTCMonitor.h" compile="0" resource="0" file="src/ui/panels/MTCMonitor.h"/>
           <FILE id="cTQgdv" name="ShowControl.cpp" compile="1" resource="0" file="src/ui/panels/ShowControl.cpp"/>
@@ -534,14 +577,14 @@
                JUCE_EXCLUSIVE_BINDING_BY_DEFAULT="1" JUCE_IP_AND_PORT_DETECTION="1"
                ORGANICUI_USE_SERVUS="1" ORGANICUI_USE_WEBSERVER="1" JUCE_PLUGINHOST_VST3="1"/>
   <EXPORTFORMATS>
-    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" extraDefs="LINK_PLATFORM_LINUX=1&#10;GDK_BACKEND=x11"
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" extraDefs="LINK_PLATFORM_LINUX=1&#10;GDK_BACKEND=x11&#10;SP_HAS_RTLSDR=1"
                 extraCompilerFlags="-Wno-multichar" extraLinkerFlags="-Wl,-rpath,&quot;lib&quot;&#10;-Wl,--as-needed&#10;-Wl,--export-dynamic&#10;-fvisibility=default"
-                externalLibraries="Servus&#10;curl&#10;wapi" smallIcon="LR50Nt"
+                externalLibraries="Servus&#10;curl&#10;wapi&#10;rtlsdr" smallIcon="LR50Nt"
                 bigIcon="LR50Nt">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="SnoringPony" libraryPath="../../external/servus/lib/linux&#10;/usr/lib/x86_64-linux-gnu/&#10;../../external/wapi/linux"
+        <CONFIGURATION isDebug="1" name="Debug" targetName="SnoringPony" libraryPath="../../external/servus/lib/linux&#10;/usr/lib/x86_64-linux-gnu/&#10;../../external/wapi/linux&#10;../../external/rtlsdr/lib/linux"
                        optimisation="3" linuxArchitecture="-m64"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="SnoringPony" libraryPath="../../external/servus/lib/linux&#10;/usr/lib/x86_64-linux-gnu/&#10;../../external/wapi/linux"
+        <CONFIGURATION isDebug="0" name="Release" targetName="SnoringPony" libraryPath="../../external/servus/lib/linux&#10;/usr/lib/x86_64-linux-gnu/&#10;../../external/wapi/linux&#10;../../external/rtlsdr/lib/linux"
                        optimisation="3" linuxArchitecture="-m64"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
@@ -564,14 +607,14 @@
         <MODULEPATH id="juce_simpleweb" path="modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
-    <VS2022 targetFolder="Builds/VisualStudio2022_CI" extraDefs="LINK_PLATFORM_WINDOWS=1&#10;BLE_SUPPORT=0"
+    <VS2022 targetFolder="Builds/VisualStudio2022_CI" extraDefs="LINK_PLATFORM_WINDOWS=1&#10;BLE_SUPPORT=0&#10;SP_HAS_RTLSDR=1"
             extraCompilerFlags="/Zm1000 /bigobj" extraLinkerFlags="/HEAP:0x400000,0x10000"
-            externalLibraries="Servus.lib&#10;libwapi.a" smallIcon="LR50Nt"
+            externalLibraries="Servus.lib&#10;libwapi.a&#10;rtlsdr.lib" smallIcon="LR50Nt"
             bigIcon="LR50Nt">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" winArchitecture="x64" libraryPath="../../external/servus/lib/win/x64/debug&#10;../../external/wapi/win"
+        <CONFIGURATION isDebug="1" name="Debug" winArchitecture="x64" libraryPath="../../external/servus/lib/win/x64/debug&#10;../../external/wapi/win&#10;../../external/rtlsdr/lib/win/x64"
                        binaryPath="Binaries/CI"/>
-        <CONFIGURATION isDebug="0" name="Release" libraryPath="../../external/servus/lib/win/x64/release&#10;../../external/wapi/win"
+        <CONFIGURATION isDebug="0" name="Release" libraryPath="../../external/servus/lib/win/x64/release&#10;../../external/wapi/win&#10;../../external/rtlsdr/lib/win/x64"
                        winArchitecture="x64" binaryPath="Binaries/CI"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
@@ -594,15 +637,17 @@
         <MODULEPATH id="juce_simpleweb" path="modules"/>
       </MODULEPATHS>
     </VS2022>
-    <XCODE_MAC targetFolder="Builds/MacOSX" extraDefs="JUCE_SUPPORT_CARBON=0&#10;JUCE_COREGRAPHICS_DRAW_ASYNC=1&#10;LINK_PLATFORM_MACOSX=1"
-               externalLibraries="Servus&#10;wapi" smallIcon="LR50Nt" bigIcon="LR50Nt"
-               documentExtensions="indy" xcodeValidArchs="arm64,x86_64" customPList="&lt;plist&gt;&#10;&lt;dict&gt;&#10;&lt;key&gt;NSAppTransportSecurity&lt;/key&gt;&#10;&#9;&lt;dict&gt;&#10;&#9;&#9;&lt;key&gt;NSAllowsArbitraryLoads&lt;/key&gt;&#10;&#9;&#9;&lt;true/&gt;&#10;&#9;&lt;/dict&gt;&#10;&lt;/dict&gt;&#10;&lt;/plist&gt;"
+    <XCODE_MAC targetFolder="Builds/MacOSX" extraDefs="JUCE_SUPPORT_CARBON=0&#10;JUCE_COREGRAPHICS_DRAW_ASYNC=1&#10;LINK_PLATFORM_MACOSX=1&#10;SP_HAS_RTLSDR=1"
+               externalLibraries="Servus&#10;wapi&#10;rtlsdr" extraLinkerFlags="-Wl,-rpath,@executable_path/../Frameworks"
+               postbuildCommand="mkdir -p &quot;$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH&quot; &amp;&amp; cp -f &quot;$PROJECT_DIR/../../external/rtlsdr/lib/osx/$ARCHS/&quot;*.dylib &quot;$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH/&quot;"
+               smallIcon="LR50Nt" bigIcon="LR50Nt" documentExtensions="indy"
+               xcodeValidArchs="arm64,x86_64" customPList="&lt;plist&gt;&#10;&lt;dict&gt;&#10;&lt;key&gt;NSAppTransportSecurity&lt;/key&gt;&#10;&#9;&lt;dict&gt;&#10;&#9;&#9;&lt;key&gt;NSAllowsArbitraryLoads&lt;/key&gt;&#10;&#9;&#9;&lt;true/&gt;&#10;&#9;&lt;/dict&gt;&#10;&lt;/dict&gt;&#10;&lt;/plist&gt;"
                microphonePermissionNeeded="1" microphonePermissionsText="SnoringPony uses the microphone for the Metering panel (level meter and spectrogram).">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="SnoringPony" libraryPath="../../external/servus/lib/osx/debug&#10;../../external/wapi/osx"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="SnoringPony" libraryPath="../../external/servus/lib/osx/release&#10;../../external/wapi/osx"/>
-        <CONFIGURATION isDebug="1" name="DebugSilicon" targetName="SnoringPony" libraryPath="../../external/servus/lib/silicon/debug&#10;../../external/wapi/osx"/>
-        <CONFIGURATION isDebug="0" name="ReleaseSilicon" targetName="SnoringPony" libraryPath="../../external/servus/lib/silicon/release&#10;../../external/wapi/osx"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="SnoringPony" libraryPath="../../external/servus/lib/osx/debug&#10;../../external/wapi/osx&#10;../../external/rtlsdr/lib/osx/x86_64"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="SnoringPony" libraryPath="../../external/servus/lib/osx/release&#10;../../external/wapi/osx&#10;../../external/rtlsdr/lib/osx/x86_64"/>
+        <CONFIGURATION isDebug="1" name="DebugSilicon" targetName="SnoringPony" libraryPath="../../external/servus/lib/silicon/debug&#10;../../external/wapi/osx&#10;../../external/rtlsdr/lib/osx/arm64"/>
+        <CONFIGURATION isDebug="0" name="ReleaseSilicon" targetName="SnoringPony" libraryPath="../../external/servus/lib/silicon/release&#10;../../external/wapi/osx&#10;../../external/rtlsdr/lib/osx/arm64"/>
         <CONFIGURATION isDebug="0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
@@ -625,15 +670,17 @@
         <MODULEPATH id="juce_simpleweb" path="modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <XCODE_MAC targetFolder="Builds/MacOSX_CI" extraDefs="JUCE_SUPPORT_CARBON=0&#10;JUCE_COREGRAPHICS_DRAW_ASYNC=1&#10;LINK_PLATFORM_MACOSX=1"
-               externalLibraries="Servus&#10;wapi" smallIcon="LR50Nt" bigIcon="LR50Nt"
-               documentExtensions="indy" xcodeValidArchs="arm64,x86_64" customPList="&lt;plist&gt;&#10;&lt;dict&gt;&#10;&lt;key&gt;NSAppTransportSecurity&lt;/key&gt;&#10;&#9;&lt;dict&gt;&#10;&#9;&#9;&lt;key&gt;NSAllowsArbitraryLoads&lt;/key&gt;&#10;&#9;&#9;&lt;true/&gt;&#10;&#9;&lt;/dict&gt;&#10;&lt;/dict&gt;&#10;&lt;/plist&gt;"
+    <XCODE_MAC targetFolder="Builds/MacOSX_CI" extraDefs="JUCE_SUPPORT_CARBON=0&#10;JUCE_COREGRAPHICS_DRAW_ASYNC=1&#10;LINK_PLATFORM_MACOSX=1&#10;SP_HAS_RTLSDR=1"
+               externalLibraries="Servus&#10;wapi&#10;rtlsdr" extraLinkerFlags="-Wl,-rpath,@executable_path/../Frameworks"
+               postbuildCommand="mkdir -p &quot;$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH&quot; &amp;&amp; cp -f &quot;$PROJECT_DIR/../../external/rtlsdr/lib/osx/$ARCHS/&quot;*.dylib &quot;$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH/&quot;"
+               smallIcon="LR50Nt" bigIcon="LR50Nt" documentExtensions="indy"
+               xcodeValidArchs="arm64,x86_64" customPList="&lt;plist&gt;&#10;&lt;dict&gt;&#10;&lt;key&gt;NSAppTransportSecurity&lt;/key&gt;&#10;&#9;&lt;dict&gt;&#10;&#9;&#9;&lt;key&gt;NSAllowsArbitraryLoads&lt;/key&gt;&#10;&#9;&#9;&lt;true/&gt;&#10;&#9;&lt;/dict&gt;&#10;&lt;/dict&gt;&#10;&lt;/plist&gt;"
                extraFrameworks="IOBluetooth, ForceFeedback, IOKit" microphonePermissionNeeded="1"
                microphonePermissionsText="SnoringPony uses the microphone for the Metering panel (level meter and spectrogram).">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="0" name="Release" binaryPath="Release" libraryPath="../../external/servus/lib/osx/release&#10;../../external/wapi/osx"
+        <CONFIGURATION isDebug="0" name="Release" binaryPath="Release" libraryPath="../../external/servus/lib/osx/release&#10;../../external/wapi/osx&#10;../../external/rtlsdr/lib/osx/x86_64"
                        macOSDeploymentTarget="10.10" osxCompatibility="10.10 SDK"/>
-        <CONFIGURATION isDebug="0" name="ReleaseSilicon" binaryPath="Release" libraryPath="../../external/servus/lib/silicon/release&#10;../../external/wapi/osx"
+        <CONFIGURATION isDebug="0" name="ReleaseSilicon" binaryPath="Release" libraryPath="../../external/servus/lib/silicon/release&#10;../../external/wapi/osx&#10;../../external/rtlsdr/lib/osx/arm64"
                        macOSDeploymentTarget="10.10" osxCompatibility="10.10 SDK"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
@@ -656,14 +703,14 @@
         <MODULEPATH id="juce_simpleweb" path="modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <VS2022 targetFolder="Builds/VisualStudio2022_Win7CI" extraDefs="BLE_SUPPORT=0&#10;PING_SUPPORT=0&#10;OS_SYSINFO_SUPPORT=0"
+    <VS2022 targetFolder="Builds/VisualStudio2022_Win7CI" extraDefs="BLE_SUPPORT=0&#10;PING_SUPPORT=0&#10;OS_SYSINFO_SUPPORT=0&#10;SP_HAS_RTLSDR=1"
             extraCompilerFlags="/Zm1000 /bigobj" extraLinkerFlags="/HEAP:0x400000,0x10000"
-            externalLibraries="Servus.lib&#10;libwapi.a" smallIcon="LR50Nt"
+            externalLibraries="Servus.lib&#10;libwapi.a&#10;rtlsdr.lib" smallIcon="LR50Nt"
             bigIcon="LR50Nt">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" binaryPath="Binaries/CI" libraryPath="../../external/servus/lib/win/x64/debug&#10;../../external/wapi/win"
+        <CONFIGURATION isDebug="1" name="Debug" binaryPath="Binaries/CI" libraryPath="../../external/servus/lib/win/x64/debug&#10;../../external/wapi/win&#10;../../external/rtlsdr/lib/win/x64"
                        winArchitecture="x64"/>
-        <CONFIGURATION isDebug="0" name="Release" binaryPath="Binaries/CI" libraryPath="../../external/servus/lib/win/x64/release&#10;../../external/wapi/win"
+        <CONFIGURATION isDebug="0" name="Release" binaryPath="Binaries/CI" libraryPath="../../external/servus/lib/win/x64/release&#10;../../external/wapi/win&#10;../../external/rtlsdr/lib/win/x64"
                        winArchitecture="x64"/>
       </CONFIGURATIONS>
       <MODULEPATHS>

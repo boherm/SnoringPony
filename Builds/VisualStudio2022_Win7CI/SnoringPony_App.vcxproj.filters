@@ -122,6 +122,12 @@
     <Filter Include="SnoringPony\Source\ProjectSettings">
       <UniqueIdentifier>{65B4B78B-00AF-0E10-CF06-79E1CA443041}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SnoringPony\Source\RF\ui">
+      <UniqueIdentifier>{717C5FDA-F071-093A-E0A4-83AC72EFA65F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SnoringPony\Source\RF">
+      <UniqueIdentifier>{89B3AC2B-46EB-BB77-DC8B-C1327AFC1818}</UniqueIdentifier>
+    </Filter>
     <Filter Include="SnoringPony\Source\Timer\ui">
       <UniqueIdentifier>{14CC9520-6C97-CE4D-A075-C9D74A86C318}</UniqueIdentifier>
     </Filter>
@@ -1402,6 +1408,33 @@
     <ClCompile Include="..\..\src\ProjectSettings\VolumePresets.cpp">
       <Filter>SnoringPony\Source\ProjectSettings</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\RF\ui\RFDeviceManagerItemUI.cpp">
+      <Filter>SnoringPony\Source\RF\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\RF\AllowedRange.cpp">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\RF\FrequencyOptimizer.cpp">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\RF\FrequencyPreset.cpp">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\RF\RFCoordinationSettings.cpp">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\RF\RFDevice.cpp">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\RF\RFDeviceManager.cpp">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\RF\RtlSdrSpectrumSource.cpp">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\RF\SimulatedRFSpectrumSource.cpp">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Timer\ui\ShowTimerEditor.cpp">
       <Filter>SnoringPony\Source\Timer\ui</Filter>
     </ClCompile>
@@ -1418,6 +1451,9 @@
       <Filter>SnoringPony\Source\Timer</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\ui\panels\Clock.cpp">
+      <Filter>SnoringPony\Source\ui\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\panels\RFCoordinationPanel.cpp">
       <Filter>SnoringPony\Source\ui\panels</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\ui\panels\ShowControl.cpp">
@@ -5130,6 +5166,36 @@
     <ClInclude Include="..\..\src\ProjectSettings\VolumePresets.h">
       <Filter>SnoringPony\Source\ProjectSettings</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\RF\ui\RFDeviceManagerItemUI.h">
+      <Filter>SnoringPony\Source\RF\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\RF\AllowedRange.h">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\RF\FrequencyOptimizer.h">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\RF\FrequencyPreset.h">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\RF\RFCoordinationSettings.h">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\RF\RFDevice.h">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\RF\RFDeviceManager.h">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\RF\RFSpectrumSource.h">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\RF\RtlSdrSpectrumSource.h">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\RF\SimulatedRFSpectrumSource.h">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Timer\ui\ShowTimerEditor.h">
       <Filter>SnoringPony\Source\Timer\ui</Filter>
     </ClInclude>
@@ -5149,6 +5215,9 @@
       <Filter>SnoringPony\Source\ui\panels</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\ui\panels\Clock.h">
+      <Filter>SnoringPony\Source\ui\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\panels\RFCoordinationPanel.h">
       <Filter>SnoringPony\Source\ui\panels</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\ui\panels\MeteringPanel.h">

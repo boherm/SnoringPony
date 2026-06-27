@@ -10,6 +10,7 @@
 
 #include "RFCoordinationSettings.h"
 #include "RFDeviceManager.h"
+#include "RtlSdrSpectrumSource.h"
 
 RFCoordinationSettings::RFCoordinationSettings() :
     ControllableContainer("RF Coordination Settings")
@@ -34,7 +35,14 @@ RFCoordinationSettings::RFCoordinationSettings() :
     scanMaxMHz = addFloatParameter("Scan Max", "Upper edge of the scanned band, in MHz", 870.0f, 1.0f, 6000.0f);
 
     sourceType = addEnumParameter("Source", "Spectrum source used by the scan");
-    sourceType->addOption("Simulated", (int)SIMULATED);
+    sourceType->addOption("Simulated", (int)SIMULATED)->addOption("RTL-SDR", (int)RTLSDR);
+
+    deviceIndex = addIntParameter("Device Index", "RTL-SDR dongle index (0 = first)", 0, 0, 16);
+    autoGain = addBoolParameter("Auto Gain", "Let the tuner choose its gain", true);
+    gainDb = addFloatParameter("Gain", "Manual tuner gain in dB (when Auto Gain is off)", 30.0f, 0.0f, 50.0f);
+    ppmCorrection = addIntParameter("PPM Correction", "Tuner frequency correction (ppm)", 0, -200, 200);
+    scanBinKHz = addFloatParameter("Scan Resolution", "RTL-SDR scan bin width in kHz", 25.0f, 2.0f, 200.0f);
+    listDevices = addTrigger("List Devices", "Log the connected RTL-SDR dongles");
 
     minSpacingKHz = addFloatParameter("Min Spacing", "Minimum spacing between any two carriers, in kHz", 400.0f, 25.0f, 5000.0f);
     guardKHz = addFloatParameter("Guard", "Guard band around occupied peaks and intermodulation products, in kHz", 100.0f, 10.0f, 2000.0f);
@@ -55,6 +63,21 @@ RFCoordinationSettings::~RFCoordinationSettings()
 {
 }
 
+void RFCoordinationSettings::onContainerTriggerTriggered(Trigger* t)
+{
+    if (t == listDevices)
+    {
+        if (!RtlSdrSpectrumSource::isSupported())
+        {
+            NLOGWARNING(niceName, "RTL-SDR support is not compiled in (librtlsdr not vendored).");
+            return;
+        }
+        juce::StringArray devs = RtlSdrSpectrumSource::listDevices();
+        if (devs.isEmpty()) NLOGWARNING(niceName, "No RTL-SDR dongle found.");
+        else for (auto& d : devs) NLOG(niceName, "RTL-SDR " + d);
+    }
+}
+
 void RFCoordinationSettings::clear()
 {
     RFDeviceManager::getInstance()->clear();
@@ -62,6 +85,11 @@ void RFCoordinationSettings::clear()
     scanMinMHz->resetValue();
     scanMaxMHz->resetValue();
     sourceType->resetValue();
+    deviceIndex->resetValue();
+    autoGain->resetValue();
+    gainDb->resetValue();
+    ppmCorrection->resetValue();
+    scanBinKHz->resetValue();
     minSpacingKHz->resetValue();
     guardKHz->resetValue();
     imdOrder->resetValue();
