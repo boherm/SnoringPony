@@ -51,18 +51,27 @@ public:
     void changeListenerCallback (ChangeBroadcaster* source) override;
 
     float timeToX(double t, Rectangle<float> area);
+    double xToTime(float x);
     static double chooseGridStepSeconds (double visibleSpanSeconds, int pixelWidth);
     static String formatTime(double seconds);
 
     void drawTimeSlices (Graphics& g, Rectangle<float> area);
     void drawSlices(Graphics& g);
+    void drawSelection(Graphics& g);
     void drawCurrentTime(Graphics& g);
+
+    void showContextMenu(const MouseEvent& event);
 
     bool isMouseHovering = false;
     float mouseX = 0.0f;
     float selectedX = 0.0f;
-    bool shiftSelection = false;
-    float startSelectionX = 0.0f;
+
+    // Range selection (in seconds)
+    bool isSelecting = false;
+    bool hasSelection = false;
+    float selectionStartX = 0.0f;
+    double selectionStartTime = 0.0;
+    double selectionEndTime = 0.0;
     // void mouseEnter(const MouseEvent& event) override;
     // void mouseExit(const MouseEvent& event) override;
     void mouseMove(const MouseEvent& event) override;

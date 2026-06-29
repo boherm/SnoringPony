@@ -25,6 +25,7 @@ public:
     AudioCue* audioCue;
     int playedRepetitions = 0;
     bool skipRepetitions = false;
+    bool isClamping = false;
 
     FloatParameter* startTime;
     FloatParameter* endTime;

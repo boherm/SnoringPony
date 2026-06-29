@@ -88,22 +88,10 @@ void AudioWaveform::paint(Graphics& g)
                 g.drawLine(mouseX, 0, mouseX, 150, 1.0f);
             }
 
+            // selection overlay
+            drawSelection(g);
+
             drawCurrentTime(g);
-
-            // if (shiftSelection) {
-            //     g.setColour(Colours::yellow.withAlpha(0.5f));
-            //     float xBegin;
-            //     float xEnd;
-
-            //     if (mouseX < startSelectionX) {
-            //         xBegin = startSelectionX;
-            //         xEnd = mouseX;
-            //     } else {
-            //         xBegin = mouseX;
-            //         xEnd = startSelectionX;
-            //     }
-            //     g.fillRect(xEnd, 0.0f, xBegin - xEnd, 150.0f);
-            // }
         }
     }
 }
@@ -162,6 +150,22 @@ void AudioWaveform::drawCurrentTime(Graphics& g)
     g.drawLine(x, 0, x, 150, 2.0f);
 }
 
+void AudioWaveform::drawSelection(Graphics& g)
+{
+    if (!hasSelection && !isSelecting)
+        return;
+
+    Rectangle<float> area(0, 0, getWidth(), getHeight());
+    const float x1 = timeToX(jmin(selectionStartTime, selectionEndTime), area);
+    const float x2 = timeToX(jmax(selectionStartTime, selectionEndTime), area);
+
+    g.setColour(HIGHLIGHT_COLOR.withAlpha(0.25f));
+    g.fillRect(x1, 0.0f, x2 - x1, 150.0f);
+    g.setColour(HIGHLIGHT_COLOR.withAlpha(0.8f));
+    g.drawLine(x1, 0, x1, 150, 1.0f);
+    g.drawLine(x2, 0, x2, 150, 1.0f);
+}
+
 void AudioWaveform::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
     if (source == &thumbnail)
@@ -181,6 +185,14 @@ float AudioWaveform::timeToX(double t, Rectangle<float> area)
 
     const double norm = (t - visibleStartTime) / span;
     return (float) (area.getX() + norm * area.getWidth());
+}
+
+double AudioWaveform::xToTime(float x)
+{
+    const double width = getWidth();
+    if (width <= 0.0) return visibleStartTime;
+
+    return visibleStartTime + (x / width) * (visibleEndTime - visibleStartTime);
 }
 
 double AudioWaveform::chooseGridStepSeconds(double visibleSpanSeconds, int pixelWidth)
@@ -302,60 +314,117 @@ void AudioWaveform::mouseMove(const MouseEvent& event)
 
 void AudioWaveform::mouseDrag(const MouseEvent& event)
 {
-    // shiftSelection = true;
-
     if (parameterResizing != nullptr) {
-        Rectangle<float> area(0, 0, getWidth(), getHeight());
-        double timeAtMouse = visibleStartTime + (event.position.x / area.getWidth()) * (visibleEndTime - visibleStartTime);
-
-        parameterResizing->setValue(timeAtMouse);
+        parameterResizing->setValue(xToTime(event.position.x));
+    } else if (isSelecting) {
+        selectionEndTime = xToTime(event.position.x);
+        // only treat as a range once the drag is meaningful
+        if (std::abs(event.position.x - selectionStartX) > 3.0f)
+            hasSelection = true;
     }
-
 
     mouseMove(event);
 }
 
 void AudioWaveform::mouseUp(const MouseEvent& event)
 {
-    // shiftSelection = false;
-    // startSelectionX = 0.0f;
+    const bool wasSelecting = isSelecting;
+    isSelecting = false;
     mouseDragging = false;
+
+    // a left click without a meaningful drag acts as a preview seek
+    if (parameterResizing == nullptr && wasSelecting && !hasSelection
+        && audioCue->filesManager->haveOnePlaying() && audioCue->isPreviewing)
+    {
+        double timeAtMouse = xToTime(event.position.x);
+        audioCue->filesManager->setCurrentTime(jmax(timeAtMouse, audioCue->slicesManager->startTime->doubleValue()));
+    }
+
     repaint();
 }
 
 void AudioWaveform::mouseDown(const MouseEvent& event)
 {
-    // selectedX = event.position.x;
-    // startSelectionX = event.position.x;
     mouseDragging = true;
-    repaint();
 
     if (event.mods.isRightButtonDown()) {
-        PopupMenu menu;
-        menu.addItem(1, "Set start here");
-        menu.addItem(2, "Set end here");
-
-        menu.showMenuAsync(PopupMenu::Options(),
-            [this, event](int result)
-            {
-                Rectangle<float> area(0, 0, getWidth(), getHeight());
-                double timeAtMouse = visibleStartTime + (event.position.x / area.getWidth()) * (visibleEndTime - visibleStartTime);
-
-                if (result == 1) {
-                    audioCue->slicesManager->startTime->setValue(timeAtMouse);
-                }
-
-                if (result == 2) {
-                    audioCue->slicesManager->endTime->setValue(timeAtMouse);
-                }
-            }
-        );
-
-    } else if (audioCue->filesManager->haveOnePlaying() && audioCue->isPreviewing) {
-        Rectangle<float> area(0, 0, getWidth(), getHeight());
-        double timeAtMouse = visibleStartTime + (event.position.x / area.getWidth()) * (visibleEndTime - visibleStartTime);
-        audioCue->filesManager->setCurrentTime(jmax(timeAtMouse, audioCue->slicesManager->startTime->doubleValue()));
+        showContextMenu(event);
+        repaint();
+        return;
     }
+
+    // Left button on an empty area starts a range selection.
+    // (boundary dragging is handled via parameterResizing in mouseDrag)
+    if (parameterResizing == nullptr) {
+        isSelecting = true;
+        hasSelection = false;
+        selectionStartX = event.position.x;
+        selectionStartTime = xToTime(event.position.x);
+        selectionEndTime = selectionStartTime;
+    }
+
+    repaint();
+}
+
+void AudioWaveform::showContextMenu(const MouseEvent& event)
+{
+    const double timeAtMouse = xToTime(event.position.x);
+    const double selStart = jmin(selectionStartTime, selectionEndTime);
+    const double selEnd = jmax(selectionStartTime, selectionEndTime);
+
+    PopupMenu menu;
+
+    if (hasSelection) {
+        menu.addItem(3, "Create slice from selection");
+        menu.addItem(4, "Set selection as start/end range");
+        menu.addItem(5, "Clear selection");
+        menu.addSeparator();
+    }
+
+    menu.addItem(1, "Set start here");
+    menu.addItem(2, "Set end here");
+
+    menu.showMenuAsync(PopupMenu::Options(),
+        [this, timeAtMouse, selStart, selEnd](int result)
+        {
+            switch (result)
+            {
+                case 1:
+                    audioCue->slicesManager->startTime->setValue(timeAtMouse);
+                    break;
+
+                case 2:
+                    audioCue->slicesManager->endTime->setValue(timeAtMouse);
+                    break;
+
+                case 3:
+                {
+                    AudioSlice* slice = audioCue->slicesManager->addItem();
+                    if (slice != nullptr) {
+                        slice->endTime->setValue(selEnd);
+                        slice->startTime->setValue(selStart);
+                    }
+                    hasSelection = false;
+                    break;
+                }
+
+                case 4:
+                    // set both bounds; re-apply start so it is not clamped against
+                    // a stale end value while the range is being widened
+                    audioCue->slicesManager->startTime->setValue(selStart);
+                    audioCue->slicesManager->endTime->setValue(selEnd);
+                    audioCue->slicesManager->startTime->setValue(selStart);
+                    hasSelection = false;
+                    break;
+
+                case 5:
+                    hasSelection = false;
+                    break;
+            }
+
+            repaint();
+        }
+    );
 }
 
 void AudioWaveform::modifierKeysChanged(const ModifierKeys& modifiers)

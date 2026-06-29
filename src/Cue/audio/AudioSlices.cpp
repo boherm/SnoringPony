@@ -43,23 +43,29 @@ AudioSlice::~AudioSlice()
 
 void AudioSlice::parameterValueChanged(Parameter* parameter)
 {
-    if (parameter == startTime || parameter == endTime)
+    // Clamp both bounds into the manager's [start, end] window in a single, non
+    // re-entrant pass. Doing it piecemeal (one setValue per condition) lets the
+    // start/end clamps fight each other and recurse forever when a slice ends up
+    // outside the window (e.g. the manager shrinks its range past the slice).
+    if ((parameter == startTime || parameter == endTime) && !isClamping)
     {
-        double dur = endTime->doubleValue() - startTime->doubleValue();
-        duration->setValue(juce::jmax(dur, .0));
+        isClamping = true;
 
-        if (startTime->doubleValue() < 0.0)
-            startTime->setValue(0.0);
-        if (endTime->doubleValue() < startTime->doubleValue())
-            endTime->setValue(startTime->doubleValue());
-        if (endTime->doubleValue() > audioCue->initialDuration->doubleValue())
-            endTime->setValue(audioCue->initialDuration->doubleValue());
-        if (startTime->doubleValue() > audioCue->initialDuration->doubleValue())
-            startTime->setValue(audioCue->initialDuration->doubleValue());
-        if (startTime->doubleValue() < audioCue->slicesManager->startTime->doubleValue())
-            startTime->setValue(audioCue->slicesManager->startTime->doubleValue());
-        if (endTime->doubleValue() > audioCue->slicesManager->endTime->doubleValue())
-            endTime->setValue(audioCue->slicesManager->endTime->doubleValue());
+        const double minT = audioCue->slicesManager->startTime->doubleValue();
+        const double maxT = audioCue->slicesManager->endTime->doubleValue();
+
+        double s = juce::jlimit(minT, maxT, startTime->doubleValue());
+        double e = juce::jlimit(minT, maxT, endTime->doubleValue());
+
+        // keep end >= start, pushing the bound the user did not just edit
+        if (parameter == startTime && e < s) e = s;
+        if (parameter == endTime && s > e)   s = e;
+
+        startTime->setValue(s);
+        endTime->setValue(e);
+        duration->setValue(juce::jmax(e - s, 0.0));
+
+        isClamping = false;
     }
     BaseItem::parameterValueChanged(parameter);
 }
