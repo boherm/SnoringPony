@@ -45,7 +45,7 @@ ifeq ($(CONFIG),Debug)
 
   JUCE_CFLAGS += $(JUCE_CPPFLAGS) $(TARGET_ARCH) -g -ggdb -O3 -Wno-multichar $(CFLAGS)
   JUCE_CXXFLAGS += $(JUCE_CFLAGS) -std=c++17 $(CXXFLAGS)
-  JUCE_LDFLAGS += $(TARGET_ARCH) -L$(JUCE_BINDIR) -L$(JUCE_LIBDIR) -L../../external/servus/lib/linux -L/usr/lib/x86_64-linux-gnu/ -L../../external/wapi/linux -L../../external/rtlsdr/lib/linux -L../../modules/juce_simpleweb/libs/Linux/x86_64 $(shell $(PKG_CONFIG) --libs alsa freetype2 gl libcurl) -fvisibility=hidden -Wl,-rpath,"lib" -Wl,--as-needed -Wl,--export-dynamic -fvisibility=default -lrt -ldl -lpthread -lssl -lcrypto -lServus -lcurl -lwapi -lrtlsdr $(LDFLAGS)
+  JUCE_LDFLAGS += $(TARGET_ARCH) -L$(JUCE_BINDIR) -L$(JUCE_LIBDIR) -L../../external/servus/lib/linux -L/usr/lib/x86_64-linux-gnu/ -L../../external/wapi/linux -L../../external/rtlsdr/lib/linux -L../../modules/juce_simpleweb/libs/Linux/x86_64 $(shell $(PKG_CONFIG) --libs alsa freetype2 gl libcurl) -fvisibility=hidden -Wl,-rpath,"lib" -Wl,--as-needed -Wl,--export-dynamic -fvisibility=default -lrt -ldl -lpthread -lssl -lcrypto -lServus -lcurl -lwapi -lrtlsdr -lusb-1.0 $(LDFLAGS)
 
   CLEANCMD = rm -rf $(JUCE_OUTDIR)/$(JUCE_TARGET_APP) $(JUCE_OBJDIR)
 endif
@@ -66,7 +66,7 @@ ifeq ($(CONFIG),Release)
 
   JUCE_CFLAGS += $(JUCE_CPPFLAGS) $(TARGET_ARCH) -O3 -Wno-multichar $(CFLAGS)
   JUCE_CXXFLAGS += $(JUCE_CFLAGS) -std=c++17 $(CXXFLAGS)
-  JUCE_LDFLAGS += $(TARGET_ARCH) -L$(JUCE_BINDIR) -L$(JUCE_LIBDIR) -L../../external/servus/lib/linux -L/usr/lib/x86_64-linux-gnu/ -L../../external/wapi/linux -L../../external/rtlsdr/lib/linux -L../../modules/juce_simpleweb/libs/Linux/x86_64 $(shell $(PKG_CONFIG) --libs alsa freetype2 gl libcurl) -fvisibility=hidden -Wl,-rpath,"lib" -Wl,--as-needed -Wl,--export-dynamic -fvisibility=default -lrt -ldl -lpthread -lssl -lcrypto -lServus -lcurl -lwapi -lrtlsdr $(LDFLAGS)
+  JUCE_LDFLAGS += $(TARGET_ARCH) -L$(JUCE_BINDIR) -L$(JUCE_LIBDIR) -L../../external/servus/lib/linux -L/usr/lib/x86_64-linux-gnu/ -L../../external/wapi/linux -L../../external/rtlsdr/lib/linux -L../../modules/juce_simpleweb/libs/Linux/x86_64 $(shell $(PKG_CONFIG) --libs alsa freetype2 gl libcurl) -fvisibility=hidden -Wl,-rpath,"lib" -Wl,--as-needed -Wl,--export-dynamic -fvisibility=default -lrt -ldl -lpthread -lssl -lcrypto -lServus -lcurl -lwapi -lrtlsdr -lusb-1.0 $(LDFLAGS)
 
   CLEANCMD = rm -rf $(JUCE_OUTDIR)/$(JUCE_TARGET_APP) $(JUCE_OBJDIR)
 endif

@@ -601,8 +601,8 @@
   <EXPORTFORMATS>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile" extraDefs="LINK_PLATFORM_LINUX=1&#10;GDK_BACKEND=x11&#10;SP_HAS_RTLSDR=1"
                 extraCompilerFlags="-Wno-multichar" extraLinkerFlags="-Wl,-rpath,&quot;lib&quot;&#10;-Wl,--as-needed&#10;-Wl,--export-dynamic&#10;-fvisibility=default"
-                externalLibraries="Servus&#10;curl&#10;wapi&#10;rtlsdr" smallIcon="LR50Nt"
-                bigIcon="LR50Nt">
+                externalLibraries="Servus&#10;curl&#10;wapi&#10;rtlsdr&#10;usb-1.0"
+                smallIcon="LR50Nt" bigIcon="LR50Nt">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="SnoringPony" libraryPath="../../external/servus/lib/linux&#10;/usr/lib/x86_64-linux-gnu/&#10;../../external/wapi/linux&#10;../../external/rtlsdr/lib/linux"
                        optimisation="3" linuxArchitecture="-m64"/>
