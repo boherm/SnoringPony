@@ -24,7 +24,7 @@ RFProfile::RFProfile(var params) :
     rangeMaxMHz = addFloatParameter("Range Max", "Highest tunable frequency, in MHz", 870.0f, 1.0f, 6000.0f);
     gridStepKHz = addFloatParameter("Tuning Step", "Tuning grid step, in kHz", 25.0f, 5.0f, 1000.0f);
 
-    presetsManager.reset(new BaseManager<FrequencyPreset>("Presets"));
+    presetsManager.reset(new FrequencyPresetsManager());
     presetsManager->selectItemWhenCreated = false;
     addChildControllableContainer(presetsManager.get());
 

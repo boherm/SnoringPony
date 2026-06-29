@@ -17,6 +17,7 @@
 
 #include "../MainIncludes.h"
 #include "FrequencyPreset.h"
+#include "FrequencyPresetsManager.h"
 
 class RFProfile :
     public BaseItem
@@ -33,7 +34,7 @@ public:
     FloatParameter*  gridStepKHz;        // tuning grid step
 
     // Presets mode: the list of selectable frequencies ("mode a / mode b ...")
-    std::unique_ptr<BaseManager<FrequencyPreset>> presetsManager;
+    std::unique_ptr<FrequencyPresetsManager> presetsManager;
 
     struct Candidate { double freqMHz; juce::String presetName; };
 

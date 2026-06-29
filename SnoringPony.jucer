@@ -437,6 +437,14 @@
         <GROUP id="{A7807ABC-56D6-050E-6473-68CF22884064}" name="ui">
           <FILE id="TSH5Ah" name="RFDeviceManagerItemUI.cpp" compile="1" resource="0"
                 file="src/RF/ui/RFDeviceManagerItemUI.cpp"/>
+          <FILE id="WWIhqG" name="FrequencyPresetsImportDialog.h" compile="0"
+                resource="0" file="src/RF/ui/FrequencyPresetsImportDialog.h"/>
+          <FILE id="eRugoo" name="FrequencyPresetsManagerEditor.h" compile="0"
+                resource="0" file="src/RF/ui/FrequencyPresetsManagerEditor.h"/>
+          <FILE id="aFTDBY" name="FrequencyPresetsImportDialog.cpp" compile="1"
+                resource="0" file="src/RF/ui/FrequencyPresetsImportDialog.cpp"/>
+          <FILE id="vbMz7t" name="FrequencyPresetsManagerEditor.cpp" compile="1"
+                resource="0" file="src/RF/ui/FrequencyPresetsManagerEditor.cpp"/>
           <FILE id="Iqs5XZ" name="RFDeviceManagerItemUI.h" compile="0" resource="0"
                 file="src/RF/ui/RFDeviceManagerItemUI.h"/>
         </GROUP>
@@ -460,6 +468,10 @@
               file="src/RF/RFSourceSettings.h"/>
         <FILE id="DcDXrM" name="RFSourceSettings.cpp" compile="1" resource="0"
               file="src/RF/RFSourceSettings.cpp"/>
+        <FILE id="q2ve4S" name="FrequencyPresetsManager.h" compile="0" resource="0"
+              file="src/RF/FrequencyPresetsManager.h"/>
+        <FILE id="l8abhM" name="FrequencyPresetsManager.cpp" compile="1" resource="0"
+              file="src/RF/FrequencyPresetsManager.cpp"/>
         <FILE id="ZomV8o" name="RFProfile.h" compile="0" resource="0" file="src/RF/RFProfile.h"/>
         <FILE id="vhlMwV" name="RFProfileManager.h" compile="0" resource="0"
               file="src/RF/RFProfileManager.h"/>

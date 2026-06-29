@@ -1411,6 +1411,12 @@
     <ClCompile Include="..\..\src\RF\ui\RFDeviceManagerItemUI.cpp">
       <Filter>SnoringPony\Source\RF\ui</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\RF\ui\FrequencyPresetsImportDialog.cpp">
+      <Filter>SnoringPony\Source\RF\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\RF\ui\FrequencyPresetsManagerEditor.cpp">
+      <Filter>SnoringPony\Source\RF\ui</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\RF\AllowedRange.cpp">
       <Filter>SnoringPony\Source\RF</Filter>
     </ClCompile>
@@ -1427,6 +1433,9 @@
       <Filter>SnoringPony\Source\RF</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\RF\RFSourceSettings.cpp">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\RF\FrequencyPresetsManager.cpp">
       <Filter>SnoringPony\Source\RF</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\RF\RFProfile.cpp">
@@ -5175,6 +5184,12 @@
     <ClInclude Include="..\..\src\ProjectSettings\VolumePresets.h">
       <Filter>SnoringPony\Source\ProjectSettings</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\RF\ui\FrequencyPresetsImportDialog.h">
+      <Filter>SnoringPony\Source\RF\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\RF\ui\FrequencyPresetsManagerEditor.h">
+      <Filter>SnoringPony\Source\RF\ui</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\RF\ui\RFDeviceManagerItemUI.h">
       <Filter>SnoringPony\Source\RF\ui</Filter>
     </ClInclude>
@@ -5191,6 +5206,9 @@
       <Filter>SnoringPony\Source\RF</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\RF\RFSourceSettings.h">
+      <Filter>SnoringPony\Source\RF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\RF\FrequencyPresetsManager.h">
       <Filter>SnoringPony\Source\RF</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\RF\RFProfile.h">

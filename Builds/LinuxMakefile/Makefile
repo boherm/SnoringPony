@@ -170,12 +170,15 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/MeteringSettings_7c2c4caf.o \
   $(JUCE_OBJDIR)/VolumePresets_e2087271.o \
   $(JUCE_OBJDIR)/RFDeviceManagerItemUI_be546394.o \
+  $(JUCE_OBJDIR)/FrequencyPresetsImportDialog_36f85c25.o \
+  $(JUCE_OBJDIR)/FrequencyPresetsManagerEditor_9cbc46ec.o \
   $(JUCE_OBJDIR)/AllowedRange_8f3718fa.o \
   $(JUCE_OBJDIR)/FrequencyOptimizer_64e75be.o \
   $(JUCE_OBJDIR)/FrequencyPreset_648ea240.o \
   $(JUCE_OBJDIR)/RFCoordinationSettings_1bd507d7.o \
   $(JUCE_OBJDIR)/RFDevice_4dff578f.o \
   $(JUCE_OBJDIR)/RFSourceSettings_5a6aee97.o \
+  $(JUCE_OBJDIR)/FrequencyPresetsManager_7bf649fa.o \
   $(JUCE_OBJDIR)/RFProfile_db223eda.o \
   $(JUCE_OBJDIR)/RFProfileManager_94f8abfd.o \
   $(JUCE_OBJDIR)/RFDeviceManager_2de54da8.o \
@@ -733,6 +736,16 @@ $(JUCE_OBJDIR)/RFDeviceManagerItemUI_be546394.o: ../../src/RF/ui/RFDeviceManager
 	@echo "Compiling RFDeviceManagerItemUI.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
+$(JUCE_OBJDIR)/FrequencyPresetsImportDialog_36f85c25.o: ../../src/RF/ui/FrequencyPresetsImportDialog.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling FrequencyPresetsImportDialog.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/FrequencyPresetsManagerEditor_9cbc46ec.o: ../../src/RF/ui/FrequencyPresetsManagerEditor.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling FrequencyPresetsManagerEditor.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
 $(JUCE_OBJDIR)/AllowedRange_8f3718fa.o: ../../src/RF/AllowedRange.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling AllowedRange.cpp"
@@ -761,6 +774,11 @@ $(JUCE_OBJDIR)/RFDevice_4dff578f.o: ../../src/RF/RFDevice.cpp
 $(JUCE_OBJDIR)/RFSourceSettings_5a6aee97.o: ../../src/RF/RFSourceSettings.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling RFSourceSettings.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/FrequencyPresetsManager_7bf649fa.o: ../../src/RF/FrequencyPresetsManager.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling FrequencyPresetsManager.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/RFProfile_db223eda.o: ../../src/RF/RFProfile.cpp
