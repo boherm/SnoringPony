@@ -15,6 +15,7 @@
 
 #include "../MainIncludes.h"
 #include "RFDevice.h"
+#include "juce_organicui/controllable/parameter/BoolParameter.h"
 
 class RFDeviceManager :
     public BaseManager<RFDevice>
@@ -22,8 +23,11 @@ class RFDeviceManager :
 public:
     juce_DeclareSingleton(RFDeviceManager, true);
 
+    BoolParameter* displayPresets;
+
     RFDeviceManager();
     ~RFDeviceManager();
 
     RFDevice* createItem() override;
+
 };

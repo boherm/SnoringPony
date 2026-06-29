@@ -16,6 +16,10 @@ RFDeviceManager::RFDeviceManager() :
     BaseManager<RFDevice>("RF Devices")
 {
     itemDataType = "RF Device";
+
+    displayPresets = addBoolParameter("Display presets", "Display presets instead of frequencies for devices that use presets", true);
+    displayPresets->isSavable = false;
+    displayPresets->hideInEditor = true;   // toggled by clicking the value box in the device list
 }
 
 RFDeviceManager::~RFDeviceManager()

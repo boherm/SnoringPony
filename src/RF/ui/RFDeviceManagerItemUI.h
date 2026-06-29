@@ -27,4 +27,12 @@ public:
 
     void paint(Graphics& g) override;
     void controllableFeedbackUpdateInternal(Controllable* c) override;
+    void mouseDown(const MouseEvent& e) override;
+
+    // Listen to the manager's "Display presets" toggle to refresh the row.
+    void newMessage(const ContainerAsyncEvent& e) override;
+
+private:
+    // Bounds of the value box drawn in paint(), used to hit-test clicks.
+    Rectangle<int> valueBox;
 };
