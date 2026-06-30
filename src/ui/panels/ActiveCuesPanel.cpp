@@ -39,19 +39,49 @@ namespace
     {
         if (s < 0) s = 0;
         int t = (int)s;
-        return String::formatted("%d:%02d", t / 60, t % 60);
+        int cc = (int)((s - t) * 100.0);
+        return String::formatted("%02d:%02d.%02d", t / 60, t % 60, cc);
     }
 
-    // Rounded background + centered white square icon.
-    void drawStopButton(Graphics& g, Rectangle<int> btn, Colour bg)
+    void drawStopCircle(Graphics& g, Rectangle<int> btn, Colour bg)
     {
         g.setColour(bg);
-        g.fillRoundedRectangle(btn.toFloat(), 5.0f);
-        float sq = jmin(btn.getWidth(), btn.getHeight()) * 0.42f;
-        Rectangle<float> sr = Rectangle<float>(sq, sq).withCentre(btn.getCentre().toFloat());
-        g.setColour(Colours::white);
-        g.fillRoundedRectangle(sr, 1.5f);
+        g.fillEllipse(btn.toFloat());
     }
+
+    // Centered white "X".
+    void drawXIcon(Graphics& g, Rectangle<int> btn)
+    {
+        Rectangle<float> x = btn.toFloat().reduced(btn.getWidth() * 0.32f);
+        g.setColour(Colours::white);
+        g.drawLine(x.getX(), x.getY(), x.getRight(), x.getBottom(), 2.2f);
+        g.drawLine(x.getRight(), x.getY(), x.getX(), x.getBottom(), 2.2f);
+    }
+
+    // Rotating spinner (fading spokes), used while the cue is fading out on panic.
+    void drawSpinner(Graphics& g, Rectangle<int> btn)
+    {
+        Point<float> ctr = btn.getCentre().toFloat();
+        float rOuter = btn.getWidth() * 0.30f;
+        float rInner = btn.getWidth() * 0.15f;
+        const int n = 8;
+        int step = (int)(juce::Time::getMillisecondCounter() / 100) % n; // one spoke per 100 ms
+        for (int k = 0; k < n; k++)
+        {
+            int idx = ((step - k) % n + n) % n; // 0 = leading (brightest) spoke
+            float alpha = jmax(0.15f, (float)(n - idx) / (float)n);
+            float a = juce::MathConstants<float>::twoPi * k / n;
+            Point<float> p1 = ctr.getPointOnCircumference(rInner, a);
+            Point<float> p2 = ctr.getPointOnCircumference(rOuter, a);
+            g.setColour(Colours::white.withAlpha(alpha));
+            g.drawLine(p1.x, p1.y, p2.x, p2.y, 1.8f);
+        }
+    }
+
+    const Colour rowBaseColor = Colour::fromRGB(43, 43, 43);   // unfilled part of the row
+    const Colour progressColor = Colour::fromRGB(82, 121, 63); // green progress fill (playing)
+    const Colour waitColor = Colour::fromRGB(150, 112, 45);    // amber fill (pre / post-wait)
+    const Colour timeColor = Colour::fromRGB(132, 214, 90);    // elapsed / remaining text
 }
 
 //==============================================================================
@@ -60,22 +90,15 @@ namespace
 
 Rectangle<int> ActiveCuesRows::getStopRect(int rowIndex) const
 {
-    const int s = rowH - 26;
-    return Rectangle<int>(getWidth() - s - 12, rowIndex * rowH + (rowH - s) / 2, s, s);
+    const int s = 24; // small circle, vertically centered in the row
+    return Rectangle<int>(getWidth() - s - 14, rowIndex * rowH + (rowH - s) / 2, s, s);
 }
 
-// Horizontal extent of the progress track for a row (mirrors the layout in paint()).
-// Used to hit-test clicks and map them to a position for seeking.
+// The whole row is the progress bar: clicking anywhere on it seeks. Returns the filled
+// track area (mirrors the green fill drawn in paint()).
 Rectangle<int> ActiveCuesRows::getProgressRect(int rowIndex) const
 {
-    Rectangle<int> row(0, rowIndex * rowH, getWidth(), rowH);
-    Rectangle<int> content = row.reduced(12, 6).withTrimmedRight(getStopRect(rowIndex).getWidth() + 20);
-    content.removeFromTop(14); // cuelist name
-    content.removeFromTop(20); // cue id + description
-    Rectangle<int> prog = content.removeFromTop(16);
-    prog.removeFromLeft(42);   // elapsed time label
-    prog.removeFromRight(46);  // remaining time label
-    return prog.reduced(6, 0); // matches the drawn track's horizontal extent
+    return Rectangle<int>(0, rowIndex * rowH, getWidth(), rowH).reduced(2, 2);
 }
 
 void ActiveCuesRows::paint(juce::Graphics& g)
@@ -95,71 +118,93 @@ void ActiveCuesRows::paint(juce::Graphics& g)
     for (int i = 0; i < cues.size(); i++)
     {
         Cue* c = cues[i];
-        Cuelist* cl = c->parentCuelist;
 
-        Rectangle<int> row(0, i * rowH, getWidth(), rowH);
-
-        // Row background tinted with the cuelist color + color bar on the left.
-        Colour clColor = (cl != nullptr) ? cl->itemColor->getColor() : BG_COLOR.brighter(.1f);
-        g.setColour(clColor.withAlpha(.18f));
-        g.fillRect(row.reduced(2, 2));
-        g.setColour(clColor);
-        g.fillRect(row.reduced(2, 2).removeFromLeft(4));
-
-        Rectangle<int> content = row.reduced(12, 6).withTrimmedRight(getStopRect(i).getWidth() + 20);
-
-        // 1) Cuelist name (top).
-        g.setColour(Colours::white.withAlpha(.55f));
-        g.setFont(11.0f);
-        g.drawText((cl != nullptr) ? cl->niceName : String("?"),
-                   content.removeFromTop(14), Justification::topLeft, true);
-
-        // 2) Cue id + description.
-        g.setColour(Colours::white);
-        g.setFont(Font(15.0f, Font::bold));
-        g.drawText(c->id->stringValue() + "   " + c->getDescription(),
-                   content.removeFromTop(20), Justification::centredLeft, true);
-
-        // 3) Progress bar with elapsed (left) and remaining (right) times.
+        // Status drives the progress values and the fill color: pre/post-wait share an
+        // amber background (labeled below), playback is green.
         double cur = 0.0, total = 0.0;
+        Colour fillColor = progressColor;
+        String waitLabel;
         if (c->preWaitActive->boolValue())
         {
             cur = c->preWaitCurrentTime->doubleValue();
             total = c->preWaitDuration->doubleValue();
+            fillColor = waitColor;
+            waitLabel = "Pre-wait";
+        }
+        else if (c->postWaitActive->boolValue() && !c->isPlaying->boolValue())
+        {
+            cur = c->postWaitCurrentTime->doubleValue();
+            total = c->postWaitDuration->doubleValue();
+            fillColor = waitColor;
+            waitLabel = "Post-wait";
         }
         else
         {
             cur = c->currentTime->doubleValue();
             total = c->duration->doubleValue();
+            fillColor = progressColor;
         }
 
-        Rectangle<int> prog = content.removeFromTop(16);
+        Rectangle<int> track = getProgressRect(i);
+
+        // Row background = dark base + full-height progress fill in the status color.
+        g.setColour(rowBaseColor);
+        g.fillRect(track);
         if (total > 0.0)
         {
-            g.setColour(Colours::white.withAlpha(.7f));
-            g.setFont(11.0f);
-            g.drawText(fmtTime(cur), prog.removeFromLeft(42), Justification::centredLeft);
-            g.drawText("-" + fmtTime(total - cur), prog.removeFromRight(46), Justification::centredRight);
-
-            Rectangle<float> track = prog.reduced(6, 0).withSizeKeepingCentre((float)prog.getWidth() - 12, 6.0f).toFloat();
-            g.setColour(BG_COLOR.darker(.35f));
-            g.fillRoundedRectangle(track, 3.0f);
-            float pos = (float)jlimit(0.0, 1.0, cur / total);
-            if (pos > 0.0f)
+            float frac = (float)jlimit(0.0, 1.0, cur / total);
+            if (frac > 0.0f)
             {
-                g.setColour(clColor.brighter(.2f));
-                g.fillRoundedRectangle(track.withWidth(track.getWidth() * pos), 3.0f);
+                g.setColour(fillColor);
+                g.fillRect(track.withWidth(roundToInt(track.getWidth() * frac)));
             }
         }
 
-        // STOP button (square icon). While fading after the first click, blink red/orange.
-        Colour stopColor = Colours::darkred;
+        // Cue color strip on the far left.
+        g.setColour(c->itemColor->getColor());
+        g.fillRect(track.withWidth(4));
+
+        // Text block (id + description, then elapsed / remaining times), vertically centered.
+        Rectangle<int> content = track.reduced(12, 8).withTrimmedRight(getStopRect(i).getWidth() + 16);
+
+        Rectangle<int> line1 = content.removeFromTop(24);
+        g.setColour(Colours::white);
+        g.setFont(Font(16.0f, Font::bold));
+        g.drawText(c->id->stringValue() + "  ·  " + c->getDescription(),
+                   line1, Justification::centredLeft, true);
+
+        content.removeFromTop(2);
+        Rectangle<int> line2 = content.removeFromTop(18);
+
+        // Pre/Post-wait label, centered at the bottom between the two times.
+        if (waitLabel.isNotEmpty())
+        {
+            g.setColour(Colours::white.withAlpha(.8f));
+            g.setFont(Font(12.0f, Font::bold));
+            g.drawText(waitLabel, line2, Justification::centred);
+        }
+
+        g.setColour(timeColor);
+        g.setFont(Font(15.0f, Font::bold));
+        g.drawText(fmtTime(cur), line2.removeFromLeft(90), Justification::centredLeft);
+        if (total > 0.0)
+            g.drawText("-" + fmtTime(total - cur), line2, Justification::centredRight);
+
+        // STOP button (circular). While fading after the first click, the background
+        // blinks base/red and the icon becomes a rotating spinner; otherwise a white X.
+        const Colour stopBase = Colours::black.withAlpha(.45f);
+        Rectangle<int> btn = getStopRect(i);
         if (c->isPanicking)
         {
             bool blinkOn = (juce::Time::getMillisecondCounter() / 400) % 2 == 0;
-            stopColor = blinkOn ? Colours::red : Colours::orange;
+            drawStopCircle(g, btn, blinkOn ? Colours::red : stopBase);
+            drawSpinner(g, btn);
         }
-        drawStopButton(g, getStopRect(i), stopColor);
+        else
+        {
+            drawStopCircle(g, btn, stopBase);
+            drawXIcon(g, btn);
+        }
     }
 }
 
@@ -186,11 +231,7 @@ void ActiveCuesRows::mouseDown(const juce::MouseEvent& e)
         if (ac == nullptr || !ac->isPlaying->boolValue()) continue;
 
         Rectangle<int> track = getProgressRect(i);
-        if (track.getWidth() <= 0) continue;
-
-        // A little vertical slack so the thin bar is easy to hit.
-        Rectangle<int> hit = track.withTop(track.getY() - 6).withBottom(track.getBottom() + 6);
-        if (!hit.contains(e.getPosition())) continue;
+        if (track.getWidth() <= 0 || !track.contains(e.getPosition())) continue;
 
         double total = c->duration->doubleValue();
         if (total <= 0.0) continue;
