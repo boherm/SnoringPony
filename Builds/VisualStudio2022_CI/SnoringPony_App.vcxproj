@@ -5757,11 +5757,11 @@
     <ClInclude Include="..\..\JuceLibraryCode\JuceHeader.h"/>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\resources\default.ponylayout"/>
     <None Include="..\..\resources\about.png"/>
     <None Include="..\..\resources\audio_cue.png"/>
     <None Include="..\..\resources\audio_interface.png"/>
     <None Include="..\..\resources\crash.png"/>
+    <None Include="..\..\resources\default.ponylayout"/>
     <None Include="..\..\resources\go_cue.png"/>
     <None Include="..\..\resources\fade_cue.png"/>
     <None Include="..\..\resources\group_cue.png"/>

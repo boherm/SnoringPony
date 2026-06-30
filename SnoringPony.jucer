@@ -7,13 +7,13 @@
               bundleIdentifier="boherm.SnoringPony">
   <MAINGROUP id="QuL8Eu" name="SnoringPony">
     <GROUP id="{33CB39F8-43C1-5EE5-E27D-0A9CD562E541}" name="resources">
-      <FILE id="zg0p1d" name="default.ponylayout" compile="0" resource="1"
-            file="resources/default.ponylayout"/>
       <FILE id="TBBD6Q" name="about.png" compile="0" resource="1" file="resources/about.png"/>
       <FILE id="DgS5vE" name="audio_cue.png" compile="0" resource="1" file="resources/audio_cue.png"/>
       <FILE id="HWcti6" name="audio_interface.png" compile="0" resource="1"
             file="resources/audio_interface.png"/>
       <FILE id="WhxZqQ" name="crash.png" compile="0" resource="1" file="resources/crash.png"/>
+      <FILE id="nf8L62" name="default.ponylayout" compile="0" resource="1"
+            file="resources/default.ponylayout"/>
       <FILE id="Dma1kB" name="go_cue.png" compile="0" resource="1" file="resources/go_cue.png"/>
       <FILE id="xWkqPV" name="fade_cue.png" compile="0" resource="1" file="resources/fade_cue.png"/>
       <FILE id="ZfdlKT" name="group_cue.png" compile="0" resource="1" file="resources/group_cue.png"/>

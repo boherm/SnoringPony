@@ -11915,9 +11915,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\resources\default.ponylayout">
-      <Filter>SnoringPony\resources</Filter>
-    </None>
     <None Include="..\..\resources\about.png">
       <Filter>SnoringPony\resources</Filter>
     </None>
@@ -11928,6 +11925,9 @@
       <Filter>SnoringPony\resources</Filter>
     </None>
     <None Include="..\..\resources\crash.png">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
+    <None Include="..\..\resources\default.ponylayout">
       <Filter>SnoringPony\resources</Filter>
     </None>
     <None Include="..\..\resources\go_cue.png">
