@@ -33,6 +33,12 @@ public:
     String getTypeString() const override { return "AudioFile"; }
     static AudioFile* create(var params) { return new AudioFile(params); }
 
+    // Apply the playback gain: the file's volume when enabled, silence when disabled.
+    // Disabled files keep running (transport never stops) so they stay sample-locked
+    // with the others and can be unmuted in perfect sync. This sits on the transport
+    // gain stage, independent of the cue fades (which use the mixer's fading gain).
+    void updateGain();
+
     void parameterValueChanged(Parameter* p) override;
     void parameterControlModeChanged(Parameter* p) override;
 };

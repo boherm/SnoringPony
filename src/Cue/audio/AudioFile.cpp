@@ -42,6 +42,7 @@ void AudioFilesManager::playAll(bool resetFade)
         audioFile->player->setOutput(audioOutput);
         audioFile->player->play(resetFade);
         audioFile->player->transport->setPosition(this->audioCue->slicesManager->startTime->doubleValue());
+        audioFile->updateGain(); // disabled files start muted but in sync
     }
 }
 
@@ -56,6 +57,7 @@ void AudioFilesManager::previewAll(bool resetFade)
         audioFile->player->setOutput(previewOutput);
         audioFile->player->play(resetFade);
         audioFile->player->transport->setPosition(this->audioCue->slicesManager->startTime->doubleValue());
+        audioFile->updateGain(); // disabled files start muted but in sync
     }
 }
 
@@ -159,6 +161,12 @@ AudioFile::~AudioFile()
     player->transport->removeChangeListener(audioCue);
 }
 
+void AudioFile::updateGain()
+{
+    if (player != nullptr && player->transport != nullptr)
+        player->transport->setGain(enabled->boolValue() ? volume->floatValue() : 0.0f);
+}
+
 void AudioFile::parameterValueChanged(Parameter* p)
 {
     BaseItem::parameterValueChanged(p);
@@ -198,8 +206,11 @@ void AudioFile::parameterValueChanged(Parameter* p)
         player->setOutput(audioOutput);
     }
 
-    if (p == volume)
-        player->transport->setGain(volume->floatValue());
+    // Volume and the enabled toggle both feed the playback gain. Toggling enabled while
+    // the cue plays just mutes/unmutes this file's transport (gain), so it stays in sync
+    // with the others instead of being stopped and restarted.
+    if (p == volume || p == enabled)
+        updateGain();
 }
 
 void AudioFile::parameterControlModeChanged(Parameter* p)
