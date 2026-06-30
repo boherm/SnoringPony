@@ -39,8 +39,18 @@ MeteringSettings::MeteringSettings() :
 
     resetMaxPeak = addTrigger("Reset Max/Peak", "Clear the held Max and Peak readouts");
 
-    displayMode = addEnumParameter("Display Mode", "Show the scrolling spectrogram, the real-time analyzer (RTA), or the dB SPL time graph");
+    displayMode = addEnumParameter("Display Mode", "Left column: scrolling spectrogram, real-time analyzer (RTA), or dB SPL time graph");
     displayMode->addOption("Spectrogram", (int)Spectrogram)->addOption("RTA", (int)RTA)->addOption("dB SPL", (int)SPL);
+    displayMode->setValueWithKey("RTA"); // default left column
+
+    displayMode2 = addEnumParameter("Second Display", "Optional second column shown to the right (None to hide it)");
+    displayMode2->addOption("None", -1)->addOption("Spectrogram", (int)Spectrogram)->addOption("RTA", (int)RTA)->addOption("dB SPL", (int)SPL);
+    displayMode2->setValueWithKey("Spectrogram"); // default right column
+
+    // Adjusted by dragging the splitter between the two columns; hidden from the inspector
+    // but saved in the project file.
+    splitPosition = addFloatParameter("Split Position", "Horizontal split between the two metering columns", 0.5f, 0.15f, 0.85f);
+    splitPosition->hideInEditor = true;
 
     verticalOrientation = addBoolParameter("Vertical Spectrogram", "Spectrogram time axis vertical instead of horizontal", false);
     active = addBoolParameter("Active", "Whether the metering input is running", false);
@@ -162,7 +172,9 @@ void MeteringSettings::clear()
     weighting->resetValue();
     laeqWindow->resetValue();
     threshold->resetValue();
-    displayMode->resetValue();
+    displayMode->setValueWithKey("RTA");          // default: RTA on the left
+    displayMode2->setValueWithKey("Spectrogram"); // default: spectrogram on the right
+    splitPosition->resetValue();
     verticalOrientation->resetValue();
     active->resetValue();
 }

@@ -63,6 +63,8 @@ MeteringPanel::MeteringPanel()
         settings->laeqWindow->addParameterListener(this);
         settings->threshold->addParameterListener(this);
         settings->displayMode->addParameterListener(this);
+        settings->displayMode2->addParameterListener(this);
+        settings->splitPosition->addParameterListener(this);
         settings->verticalOrientation->addParameterListener(this);
         settings->active->addParameterListener(this);
 
@@ -92,6 +94,8 @@ MeteringPanel::~MeteringPanel()
         settings->laeqWindow->removeParameterListener(this);
         settings->threshold->removeParameterListener(this);
         settings->displayMode->removeParameterListener(this);
+        settings->displayMode2->removeParameterListener(this);
+        settings->splitPosition->removeParameterListener(this);
         settings->verticalOrientation->removeParameterListener(this);
         settings->active->removeParameterListener(this);
     }
@@ -133,6 +137,8 @@ void MeteringPanel::applySettings()
     weightingType = (int)settings->weighting->getValueData();
     laeqWindowSec = (int)settings->laeqWindow->getValueData();
     displayMode = (int)settings->displayMode->getValueData();
+    displayMode2 = (int)settings->displayMode2->getValueData();
+    splitPos = settings->splitPosition->floatValue();
     verticalTime = settings->verticalOrientation->boolValue();
     updatePlayPauseIcon();
 }
@@ -148,6 +154,16 @@ void MeteringPanel::parameterValueChanged(Parameter* p)
     else if (p == settings->displayMode)
     {
         displayMode = (int)settings->displayMode->getValueData();
+        resized();
+    }
+    else if (p == settings->displayMode2)
+    {
+        displayMode2 = (int)settings->displayMode2->getValueData();
+        resized();
+    }
+    else if (p == settings->splitPosition)
+    {
+        splitPos = settings->splitPosition->floatValue();
         resized();
     }
     else if (p == settings->verticalOrientation) { verticalTime = settings->verticalOrientation->boolValue(); resized(); }
@@ -520,16 +536,23 @@ double MeteringPanel::computeMeterSignature() const
 //==============================================================================
 // Mouse
 
+bool MeteringPanel::isOverSplitter(juce::Point<int> p) const
+{
+    return numCols == 2 && std::abs(p.x - splitterX) <= 4
+        && p.y >= centralArea.getY() && p.y < centralArea.getBottom();
+}
+
 void MeteringPanel::mouseMove(const juce::MouseEvent& e)
 {
     mousePos = e.getPosition();
-    mouseInSpectro = spectroImageArea.contains(mousePos);
+    setMouseCursor(isOverSplitter(mousePos) ? juce::MouseCursor::LeftRightResizeCursor
+                                            : juce::MouseCursor::NormalCursor);
     repaint();
 }
 
 void MeteringPanel::mouseExit(const juce::MouseEvent&)
 {
-    mouseInSpectro = false;
+    mousePos = { -1, -1 };
     repaint();
 }
 
@@ -538,6 +561,13 @@ void MeteringPanel::mouseDown(const juce::MouseEvent& e)
     if (e.mods.isPopupMenu())   // right-click anywhere: display options
     {
         showContextMenu();
+        return;
+    }
+
+    // Grab the splitter to resize the two columns.
+    if (isOverSplitter(e.getPosition()))
+    {
+        draggingSplitter = true;
         return;
     }
 
@@ -553,6 +583,26 @@ void MeteringPanel::mouseDown(const juce::MouseEvent& e)
     if (settings != nullptr)
     {
         settings->selectThis();
+        repaint();
+    }
+}
+
+void MeteringPanel::mouseDrag(const juce::MouseEvent& e)
+{
+    if (!draggingSplitter || centralArea.getWidth() <= 0) return;
+
+    float f = (float)(e.getPosition().x - centralArea.getX()) / (float)centralArea.getWidth();
+    splitPos = juce::jlimit(0.15f, 0.85f, f);
+    resized();   // relayout live; the parameter (saved value) is committed on mouseUp
+    repaint();
+}
+
+void MeteringPanel::mouseUp(const juce::MouseEvent&)
+{
+    if (draggingSplitter)
+    {
+        draggingSplitter = false;
+        if (settings != nullptr) settings->splitPosition->setValue(splitPos); // persist once
         repaint();
     }
 }
@@ -591,8 +641,9 @@ void MeteringPanel::showContextMenu()
             sub.addItem(base + i, keys[i], true, keys[i] == cur);
     };
 
-    juce::PopupMenu disp, weight, laeq;
-    addEnumItems(disp, settings->displayMode, 100);
+    juce::PopupMenu left, right, weight, laeq;
+    addEnumItems(left, settings->displayMode, 100);
+    addEnumItems(right, settings->displayMode2, 150);
     addEnumItems(weight, settings->weighting, 200);
     addEnumItems(laeq, settings->laeqWindow, 300);
 
@@ -601,7 +652,8 @@ void MeteringPanel::showContextMenu()
     ref.addItem(401, "Clear", rtaHasReference);
 
     juce::PopupMenu m;
-    m.addSubMenu("Display", disp);
+    m.addSubMenu("Left column", left);
+    m.addSubMenu("Right column", right);
     m.addSubMenu("Weighting", weight);
     m.addSubMenu("LAeq window", laeq);
     m.addSubMenu("RTA reference", ref);
@@ -613,9 +665,12 @@ void MeteringPanel::showContextMenu()
             if (result == 400) { captureRtaReference(); return; }
             if (result == 401) { clearRtaReference();   return; }
 
-            EnumParameter* p = result < 200 ? settings->displayMode
-                             : (result < 300 ? settings->weighting : settings->laeqWindow);
-            int base = result < 200 ? 100 : (result < 300 ? 200 : 300);
+            EnumParameter* p = nullptr; int base = 0;
+            if      (result < 150) { p = settings->displayMode;  base = 100; }
+            else if (result < 200) { p = settings->displayMode2; base = 150; }
+            else if (result < 300) { p = settings->weighting;    base = 200; }
+            else                   { p = settings->laeqWindow;   base = 300; }
+
             juce::StringArray keys = p->getAllKeys();
             int idx = result - base;
             if (idx >= 0 && idx < keys.size()) p->setValueWithKey(keys[idx]);
@@ -653,25 +708,52 @@ void MeteringPanel::resized()
     // Start/Stop (play/pause) icon button, bottom-right, centred under the dBFS meter.
     startStopBtn.setBounds(getWidth() - 41, getHeight() - 24, 24, 20);
 
-    // All scales (frequency and level) are drawn inside the plot in the same style,
-    // so the plot uses the whole central area with no reserved axis gutter.
-    spectroImageArea = r;
+    // Central plot region, split into one or two columns. All scales are drawn inside
+    // the plots, so each column uses its whole area with no reserved axis gutter.
+    centralArea = r;
+    colType[0] = displayMode;
+    colType[1] = displayMode2;
 
-    int w = verticalTime ? spectroImageArea.getHeight() : spectroImageArea.getWidth();
-    int h = verticalTime ? spectroImageArea.getWidth()  : spectroImageArea.getHeight();
-    if (w > 0 && h > 0 && (spectro.getWidth() != w || spectro.getHeight() != h))
+    if (colType[1] < 0)
     {
-        // Rescale the existing spectrogram into the new size instead of starting
-        // from a blank image, so resizing the panel keeps the current content.
-        // The buffer always stores time on X and frequency on Y, so a plain
-        // rescale stays correct in both orientations.
-        juce::Image resized(juce::Image::RGB, w, h, true);
-        if (!spectro.isNull())
+        numCols = 1;
+        colArea[0] = centralArea;
+        colArea[1] = juce::Rectangle<int>();
+        splitterX = centralArea.getRight();
+    }
+    else
+    {
+        numCols = 2;
+        const int sx = centralArea.getX() + juce::roundToInt(centralArea.getWidth() * juce::jlimit(0.15f, 0.85f, splitPos));
+        splitterX = sx;
+        const int half = 3; // splitter half-width
+        colArea[0] = centralArea.withRight(sx - half);
+        colArea[1] = centralArea.withLeft(sx + half);
+    }
+
+    // The spectrogram image is sized to whichever column displays it (left preferred).
+    spectroImageArea = juce::Rectangle<int>();
+    for (int i = 0; i < numCols; ++i)
+        if (colType[i] == 0) { spectroImageArea = colArea[i]; break; }
+
+    if (!spectroImageArea.isEmpty())
+    {
+        int w = verticalTime ? spectroImageArea.getHeight() : spectroImageArea.getWidth();
+        int h = verticalTime ? spectroImageArea.getWidth()  : spectroImageArea.getHeight();
+        if (w > 0 && h > 0 && (spectro.getWidth() != w || spectro.getHeight() != h))
         {
-            juce::Graphics ig(resized);
-            ig.drawImage(spectro, 0, 0, w, h, 0, 0, spectro.getWidth(), spectro.getHeight());
+            // Rescale the existing spectrogram into the new size instead of starting
+            // from a blank image, so resizing keeps the current content. The buffer
+            // always stores time on X and frequency on Y, so a plain rescale stays
+            // correct in both orientations.
+            juce::Image resized(juce::Image::RGB, w, h, true);
+            if (!spectro.isNull())
+            {
+                juce::Graphics ig(resized);
+                ig.drawImage(spectro, 0, 0, w, h, 0, 0, spectro.getWidth(), spectro.getHeight());
+            }
+            spectro = resized;
         }
-        spectro = resized;
     }
 }
 
@@ -776,11 +858,10 @@ void MeteringPanel::drawMeter(juce::Graphics& g, juce::Rectangle<int> area)
     }
 }
 
-void MeteringPanel::drawFreqAxis(juce::Graphics& g, double sr)
+void MeteringPanel::drawFreqAxis(juce::Graphics& g, juce::Rectangle<int> area, double sr, bool freqOnX)
 {
     static const int ticks[] = { 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000 };
     double fMax = juce::jmax(40.0, sr * 0.5);
-    auto area = spectroImageArea;
 
     g.setFont(9.0f);
     for (int f : ticks)
@@ -789,7 +870,7 @@ void MeteringPanel::drawFreqAxis(juce::Graphics& g, double sr)
         double frac = fracFromFreq((double)f, sr);
         String label = (f >= 1000) ? String(f / 1000) + "k" : String(f);
 
-        if (freqOnX())
+        if (freqOnX)
         {
             int x = area.getX() + (int)(frac * area.getWidth());
             g.setColour(Colours::white.withAlpha(.08f));
@@ -810,9 +891,8 @@ void MeteringPanel::drawFreqAxis(juce::Graphics& g, double sr)
     }
 }
 
-void MeteringPanel::drawRTA(juce::Graphics& g, double sr)
+void MeteringPanel::drawRTA(juce::Graphics& g, juce::Rectangle<int> area, double sr)
 {
-    auto area = spectroImageArea;
     if (area.getWidth() <= 0 || area.getHeight() <= 0) return;
 
     const float left = (float)area.getX();
@@ -899,9 +979,8 @@ void MeteringPanel::drawRTA(juce::Graphics& g, double sr)
     }
 }
 
-void MeteringPanel::drawSplGraph(juce::Graphics& g)
+void MeteringPanel::drawSplGraph(juce::Graphics& g, juce::Rectangle<int> area)
 {
-    auto area = spectroImageArea;
     if (area.getWidth() <= 0 || area.getHeight() <= 0) return;
 
     const float left = (float)area.getX();
@@ -959,6 +1038,131 @@ void MeteringPanel::drawSplGraph(juce::Graphics& g)
     }
 }
 
+int MeteringPanel::columnAt(juce::Point<int> p) const
+{
+    for (int i = 0; i < numCols; ++i)
+        if (colArea[i].contains(p)) return i;
+    return -1;
+}
+
+void MeteringPanel::drawColumn(juce::Graphics& g, int idx, double sr)
+{
+    juce::Rectangle<int> area = colArea[idx];
+    if (area.isEmpty()) return;
+    int type = colType[idx];
+
+    // Black background so the not-yet-filled part matches the active graph.
+    g.setColour(Colours::black);
+    g.fillRect(area);
+
+    if (type == 2)
+    {
+        drawSplGraph(g, area);
+    }
+    else if (type == 1)
+    {
+        drawRTA(g, area, sr);
+    }
+    else // spectrogram
+    {
+        // The buffer is sized to the first spectrogram column; scale it into this column
+        // so a second spectrogram column shows the same data (rescaled) instead of being
+        // empty. For the primary column the scale factors are 1.
+        if (!spectro.isNull())
+        {
+            int imgW = juce::jmax(1, spectro.getWidth());
+            int imgH = juce::jmax(1, spectro.getHeight());
+            if (verticalTime)
+            {
+                // Image: X = time, Y = frequency; displayed rotated (time vertical).
+                float sw = (float)area.getWidth()  / (float)imgH; // frequency -> horizontal
+                float sh = (float)area.getHeight() / (float)imgW; // time -> vertical
+                juce::AffineTransform t(0.0f, -sw, (float)area.getRight(), sh, 0.0f, (float)area.getY());
+                g.drawImageTransformed(spectro, t);
+            }
+            else
+            {
+                // Newest data on the LEFT (mirror X), low frequencies at the TOP (mirror Y).
+                float sx = (float)area.getWidth()  / (float)imgW;
+                float sy = (float)area.getHeight() / (float)imgH;
+                juce::AffineTransform t(-sx, 0.0f, (float)area.getRight(), 0.0f, -sy, (float)area.getBottom());
+                g.drawImageTransformed(spectro, t);
+            }
+        }
+        drawFreqAxis(g, area, sr, verticalTime);
+    }
+}
+
+void MeteringPanel::drawSplitter(juce::Graphics& g)
+{
+    g.setColour(BG_COLOR.brighter(draggingSplitter ? .55f : .28f));
+    g.fillRect(splitterX - 1, centralArea.getY(), 2, centralArea.getHeight());
+
+    g.setColour(Colours::white.withAlpha(draggingSplitter ? .65f : .35f));
+    int cy = centralArea.getCentreY();
+    for (int k = -1; k <= 1; ++k)
+        g.fillRect(splitterX - 1, cy + k * 6 - 1, 2, 2);
+}
+
+void MeteringPanel::drawHover(juce::Graphics& g, double sr)
+{
+    int idx = columnAt(mousePos);
+    if (idx < 0) return;
+
+    juce::Rectangle<int> area = colArea[idx];
+    int type = colType[idx];
+
+    auto drawLabelBox = [&](const String& label)
+    {
+        g.setFont(Font(12.0f, Font::bold));
+        int tw = g.getCurrentFont().getStringWidth(label) + 12;
+        juce::Rectangle<int> box(juce::jlimit(area.getX(), area.getRight() - tw, mousePos.x + 8),
+                                 juce::jlimit(area.getY(), area.getBottom() - 18, mousePos.y - 18),
+                                 tw, 16);
+        g.setColour(Colours::black.withAlpha(.7f));
+        g.fillRoundedRectangle(box.toFloat(), 3.0f);
+        g.setColour(Colours::white);
+        g.drawText(label, box, Justification::centred);
+    };
+
+    if (type == 2)   // dB SPL graph: read the level at the cursor's vertical position.
+    {
+        double frac = (double)(area.getBottom() - mousePos.y) / (double)juce::jmax(1, area.getHeight());
+        double spl = 30.0 + juce::jlimit(0.0, 1.0, frac) * (120.0 - 30.0);
+        g.setColour(Colours::white.withAlpha(.5f));
+        g.drawHorizontalLine(mousePos.y, (float)area.getX(), (float)area.getRight());
+        drawLabelBox(String(spl, 1) + " dB SPL");
+        return;
+    }
+
+    // Spectrogram / RTA: read the frequency at the cursor.
+    double freq;
+    if (freqOnXFor(type))
+    {
+        double frac = (double)(mousePos.x - area.getX()) / (double)juce::jmax(1, area.getWidth());
+        freq = freqFromFrac(juce::jlimit(0.0, 1.0, frac), sr);
+        g.setColour(Colours::white.withAlpha(.5f));
+        g.drawVerticalLine(mousePos.x, (float)area.getY(), (float)area.getBottom());
+    }
+    else
+    {
+        double frac = (double)(mousePos.y - area.getY()) / (double)juce::jmax(1, area.getHeight());
+        freq = freqFromFrac(juce::jlimit(0.0, 1.0, frac), sr);
+        g.setColour(Colours::white.withAlpha(.5f));
+        g.drawHorizontalLine(mousePos.y, (float)area.getX(), (float)area.getRight());
+    }
+
+    String label = (freq >= 1000.0) ? String(freq / 1000.0, 2) + " kHz" : String((int)(freq + 0.5)) + " Hz";
+    if (type == 1 && numRtaBands > 0)   // RTA: also show the level of the band under the cursor
+    {
+        int band = juce::jlimit(0, numRtaBands - 1,
+                                (int)std::lround(std::log2(freq / rtaFMin) * rtaBandsPerOctave));
+        float spl = 10.0f * std::log10(juce::jmax(rtaSmooth[(size_t)band], 1e-12f)) + calibrationDb;
+        label += "   " + String(spl, 1) + " dB SPL";
+    }
+    drawLabelBox(label);
+}
+
 void MeteringPanel::paint(juce::Graphics& g)
 {
     g.fillAll(BG_COLOR);
@@ -968,48 +1172,12 @@ void MeteringPanel::paint(juce::Graphics& g)
 
     double sr = sampleRate.load();
 
-    // Black background for the whole spectrogram area, so the not-yet-filled
-    // part matches the active spectrogram instead of the panel's grey.
-    g.setColour(Colours::black);
-    g.fillRect(spectroImageArea);
+    // Draw each column (dark background + its graph), then the splitter handle.
+    for (int i = 0; i < numCols; ++i)
+        drawColumn(g, i, sr);
 
-    if (displayMode == 2)
-    {
-        drawSplGraph(g);
-    }
-    else
-    {
-        if (displayMode == 1)
-        {
-            drawRTA(g, sr);
-        }
-        else if (!spectro.isNull())
-        {
-            if (verticalTime)
-            {
-                int h = spectro.getHeight();
-                juce::AffineTransform t(0.0f, -1.0f, (float)(spectroImageArea.getX() + h - 1),
-                                        1.0f, 0.0f, (float)spectroImageArea.getY());
-                g.drawImageTransformed(spectro, t);
-            }
-            else
-            {
-                // New columns are committed at the buffer's right edge (x = w-1) and
-                // scroll left. Mirror on X so the newest data emerges on the LEFT, next to
-                // the frequency axis - matching the vertical layout, where the newest row
-                // emerges at the bottom next to its axis. Mirror on Y too so low
-                // frequencies sit at the top and highs at the bottom (the buffer stores
-                // highs at y=0 for the vertical path).
-                int w = spectro.getWidth();
-                int h = spectro.getHeight();
-                juce::AffineTransform t(-1.0f, 0.0f, (float)(spectroImageArea.getX() + w - 1),
-                                        0.0f, -1.0f, (float)(spectroImageArea.getY() + h - 1));
-                g.drawImageTransformed(spectro, t);
-            }
-        }
-
-        drawFreqAxis(g, sr);
-    }
+    if (numCols == 2)
+        drawSplitter(g);
 
     // Selection border (drawn before the early returns below so it shows even when
     // the input is stopped), shown when the Metering settings are selected.
@@ -1021,75 +1189,16 @@ void MeteringPanel::paint(juce::Graphics& g)
 
     bool active = (settings != nullptr && settings->active->boolValue());
     if (!active)
-    {
-        g.setColour(Colours::white.withAlpha(.4f));
-        g.setFont(15.0f);
-        g.drawText("Stopped - press Start", spectroImageArea, Justification::centred);
         return;
-    }
     if (!deviceRunning.load())
     {
         g.setColour(Colours::orangered.withAlpha(.85f));
         g.setFont(14.0f);
-        g.drawText("No audio input (check microphone / permissions)", spectroImageArea, Justification::centred);
+        g.drawText("No audio input (check microphone / permissions)", centralArea, Justification::centred);
         return;
     }
 
-    if (mouseInSpectro && displayMode != 2)   // frequency hover doesn't apply to the SPL graph
-    {
-        double freq;
-        if (freqOnX())
-        {
-            double frac = (double)(mousePos.x - spectroImageArea.getX()) / (double)juce::jmax(1, spectroImageArea.getWidth());
-            freq = freqFromFrac(juce::jlimit(0.0, 1.0, frac), sr);
-            g.setColour(Colours::white.withAlpha(.5f));
-            g.drawVerticalLine(mousePos.x, (float)spectroImageArea.getY(), (float)spectroImageArea.getBottom());
-        }
-        else
-        {
-            double frac = (double)(mousePos.y - spectroImageArea.getY()) / (double)juce::jmax(1, spectroImageArea.getHeight());
-            freq = freqFromFrac(juce::jlimit(0.0, 1.0, frac), sr);
-            g.setColour(Colours::white.withAlpha(.5f));
-            g.drawHorizontalLine(mousePos.y, (float)spectroImageArea.getX(), (float)spectroImageArea.getRight());
-        }
-
-        String label = (freq >= 1000.0) ? String(freq / 1000.0, 2) + " kHz" : String((int)(freq + 0.5)) + " Hz";
-        if (displayMode == 1)   // RTA: also show the level of the band under the cursor
-        {
-            int band = juce::jlimit(0, numRtaBands - 1,
-                                    (int)std::lround(std::log2(freq / rtaFMin) * rtaBandsPerOctave));
-            float spl = 10.0f * std::log10(juce::jmax(rtaSmooth[(size_t)band], 1e-12f)) + calibrationDb;
-            label += "   " + String(spl, 1) + " dB SPL";
-        }
-        g.setFont(Font(12.0f, Font::bold));
-        int tw = g.getCurrentFont().getStringWidth(label) + 12;
-        juce::Rectangle<int> box(juce::jlimit(spectroImageArea.getX(), spectroImageArea.getRight() - tw, mousePos.x + 8),
-                                 juce::jlimit(spectroImageArea.getY(), spectroImageArea.getBottom() - 18, mousePos.y - 18),
-                                 tw, 16);
-        g.setColour(Colours::black.withAlpha(.7f));
-        g.fillRoundedRectangle(box.toFloat(), 3.0f);
-        g.setColour(Colours::white);
-        g.drawText(label, box, Justification::centred);
-    }
-    else if (mouseInSpectro && displayMode == 2)
-    {
-        // dB SPL graph: read the level at the cursor's vertical position (30..120 scale).
-        double frac = (double)(spectroImageArea.getBottom() - mousePos.y) / (double)juce::jmax(1, spectroImageArea.getHeight());
-        double spl = 30.0 + juce::jlimit(0.0, 1.0, frac) * (120.0 - 30.0);
-        g.setColour(Colours::white.withAlpha(.5f));
-        g.drawHorizontalLine(mousePos.y, (float)spectroImageArea.getX(), (float)spectroImageArea.getRight());
-
-        String label = String(spl, 1) + " dB SPL";
-        g.setFont(Font(12.0f, Font::bold));
-        int tw = g.getCurrentFont().getStringWidth(label) + 12;
-        juce::Rectangle<int> box(juce::jlimit(spectroImageArea.getX(), spectroImageArea.getRight() - tw, mousePos.x + 8),
-                                 juce::jlimit(spectroImageArea.getY(), spectroImageArea.getBottom() - 18, mousePos.y - 18),
-                                 tw, 16);
-        g.setColour(Colours::black.withAlpha(.7f));
-        g.fillRoundedRectangle(box.toFloat(), 3.0f);
-        g.setColour(Colours::white);
-        g.drawText(label, box, Justification::centred);
-    }
+    drawHover(g, sr);
 
     // Strong over-threshold alert: a thick red border around the whole panel,
     // held briefly (see alertHoldTicks) so it doesn't flicker.

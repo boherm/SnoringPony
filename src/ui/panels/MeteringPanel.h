@@ -48,6 +48,8 @@ public:
     void mouseMove(const juce::MouseEvent& e) override;
     void mouseExit(const juce::MouseEvent& e) override;
     void mouseDown(const juce::MouseEvent& e) override;
+    void mouseDrag(const juce::MouseEvent& e) override;
+    void mouseUp(const juce::MouseEvent& e) override;
 
     void parameterValueChanged(Parameter* p) override;
 
@@ -80,12 +82,23 @@ private:
     float calibrationDb { 100.0f };
     float thresholdDb { 90.0f };
     int   weightingType { 0 };
-    int   displayMode { 0 };          // 0 = spectrogram, 1 = RTA, 2 = dB SPL time graph
+    int   displayMode { 0 };          // left column: 0 = spectrogram, 1 = RTA, 2 = dB SPL graph
+    int   displayMode2 { -1 };        // right column: -1 = none, else same codes as displayMode
+    float splitPos { 0.5f };          // horizontal split fraction between the two columns
     bool  verticalTime { false };
 
-    // Frequencies are shown on the horizontal axis for the RTA (always) and for the
-    // vertical-time spectrogram; on the vertical axis for the horizontal spectrogram.
-    bool  freqOnX() const { return displayMode == 1 || verticalTime; }
+    // Two side-by-side columns (the right one is optional). Filled in resized().
+    juce::Rectangle<int> colArea[2];
+    int  colType[2] { 0, -1 };        // display code per column (-1 = none)
+    int  numCols { 1 };
+    int  splitterX { 0 };             // x of the draggable splitter (when numCols == 2)
+    bool draggingSplitter { false };
+
+    // For a spectrogram column the time axis can be vertical; the RTA always plots
+    // frequency on X. SPL has no frequency axis.
+    bool  freqOnXFor(int type) const { return type == 1 || (type == 0 && verticalTime); }
+    int   columnAt(juce::Point<int> p) const;
+    bool  isOverSplitter(juce::Point<int> p) const;
 
     juce::AbstractFifo fifo { 1 << 16 };
     std::vector<float> fifoData;
@@ -137,9 +150,9 @@ private:
     float meterDb { -100.0f };
     int   alertHoldTicks { 0 };   // frames left to keep the over-threshold red border
     juce::Point<int> mousePos { -1, -1 };
-    bool  mouseInSpectro { false };
 
     juce::Rectangle<int> readoutArea, meterArea, spectroImageArea;
+    juce::Rectangle<int> centralArea;   // whole plot region (both columns + splitter)
     juce::Rectangle<int> maxClickArea, peakClickArea;   // click to reset Max / Peak
 
     double lastMeterSig { 1.0e18 };   // change-detection for idle (stopped) repaints
@@ -154,9 +167,12 @@ private:
 
     void drawMeter(juce::Graphics& g, juce::Rectangle<int> area);
     void drawReadout(juce::Graphics& g);
-    void drawFreqAxis(juce::Graphics& g, double sr);
-    void drawRTA(juce::Graphics& g, double sr);
-    void drawSplGraph(juce::Graphics& g);
+    void drawFreqAxis(juce::Graphics& g, juce::Rectangle<int> area, double sr, bool freqOnX);
+    void drawRTA(juce::Graphics& g, juce::Rectangle<int> area, double sr);
+    void drawSplGraph(juce::Graphics& g, juce::Rectangle<int> area);
+    void drawColumn(juce::Graphics& g, int idx, double sr);
+    void drawSplitter(juce::Graphics& g);
+    void drawHover(juce::Graphics& g, double sr);
     void captureRtaReference();
     void clearRtaReference();
 

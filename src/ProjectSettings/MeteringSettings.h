@@ -40,7 +40,9 @@ public:
     EnumParameter*   laeqWindow;           // LAeq averaging window (seconds)
     FloatParameter*  threshold;            // dB SPL over which the readout turns red
     Trigger*         resetMaxPeak;         // clear the held Max / Peak readouts
-    EnumParameter*   displayMode;          // Spectrogram / RTA
+    EnumParameter*   displayMode;          // left column: Spectrogram / RTA / SPL
+    EnumParameter*   displayMode2;         // right column: None / Spectrogram / RTA / SPL
+    FloatParameter*  splitPosition;        // horizontal split fraction (saved, hidden in editor)
     BoolParameter*   verticalOrientation;
     BoolParameter*   active;
 
