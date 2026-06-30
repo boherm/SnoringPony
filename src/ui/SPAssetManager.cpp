@@ -67,6 +67,8 @@ Image SPAssetManager::getCueIcon(String type)
         return ImageCache::getFromMemory(BinaryData::timerpause_cue_png, BinaryData::timerpause_cue_pngSize);
     } else if (type == "TimerReset") {
         return ImageCache::getFromMemory(BinaryData::timerreset_cue_png, BinaryData::timerreset_cue_pngSize);
+    } else if (type == "TimerMark") {
+        return ImageCache::getFromMemory(BinaryData::timermark_cue_png, BinaryData::timermark_cue_pngSize);
     } else {
         return ImageCache::getFromMemory(BinaryData::noicon_png, BinaryData::noicon_pngSize);
     }

@@ -14,6 +14,7 @@
 #pragma once
 
 #include "../MainIncludes.h"
+#include "MarksManager.h"
 
 class ShowTimer :
     public BaseItem
@@ -33,16 +34,27 @@ public:
     Trigger* playTrigger;
     Trigger* pauseTrigger;
     Trigger* resetTrigger;
+    Trigger* markTrigger;
 
     // Runtime state (never saved)
     bool running = false;
     double accumulatedSec = 0.0;   // time accumulated while paused
     double startCounterMs = 0.0;   // hi-res ms counter at last start
 
+    // Marks live in their own (non-saved) child manager so they render as a container.
+    std::unique_ptr<MarksManager> marksManager;
+
     void start();
     void pause();
     void resetTimer();
     bool isRunning() const { return running; }
+
+    // Append a mark whose duration spans from the previous mark to now. An empty label
+    // is replaced with an auto-numbered one ("Mark N").
+    void addMark(const String& label = String());
+    void clearMarks() { marksManager->clear(); }
+    int getNumMarks() const { return marksManager->items.size(); }
+    double getMarksTotalSeconds() const; // elapsed time covered by every mark so far
 
     TimerType getTimerType() const { return (TimerType)(int)timerType->getValueData(); }
     // Countdowns can never be "general" by definition.

@@ -1453,6 +1453,12 @@
     <ClCompile Include="..\..\src\RF\SimulatedRFSpectrumSource.cpp">
       <Filter>SnoringPony\Source\RF</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Timer\ui\MarksManagerUI.cpp">
+      <Filter>SnoringPony\Source\Timer\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Timer\ui\MarkUI.cpp">
+      <Filter>SnoringPony\Source\Timer\ui</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Timer\ui\ShowTimerEditor.cpp">
       <Filter>SnoringPony\Source\Timer\ui</Filter>
     </ClCompile>
@@ -1461,6 +1467,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Timer\ui\ShowTimerManagerUI.cpp">
       <Filter>SnoringPony\Source\Timer\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Timer\Mark.cpp">
+      <Filter>SnoringPony\Source\Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Timer\MarksManager.cpp">
+      <Filter>SnoringPony\Source\Timer</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Timer\ShowTimer.cpp">
       <Filter>SnoringPony\Source\Timer</Filter>
@@ -4950,6 +4962,9 @@
     <ClInclude Include="..\..\src\Cue\go\GoCue.h">
       <Filter>SnoringPony\Source\Cue\go</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Cue\timer\MarkTimerCue.h">
+      <Filter>SnoringPony\Source\Cue\timer</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Cue\timer\PauseTimerCue.h">
       <Filter>SnoringPony\Source\Cue\timer</Filter>
     </ClInclude>
@@ -5232,6 +5247,12 @@
     <ClInclude Include="..\..\src\RF\SimulatedRFSpectrumSource.h">
       <Filter>SnoringPony\Source\RF</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Timer\ui\MarksManagerUI.h">
+      <Filter>SnoringPony\Source\Timer\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Timer\ui\MarkUI.h">
+      <Filter>SnoringPony\Source\Timer\ui</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Timer\ui\ShowTimerEditor.h">
       <Filter>SnoringPony\Source\Timer\ui</Filter>
     </ClInclude>
@@ -5240,6 +5261,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Timer\ui\ShowTimerManagerUI.h">
       <Filter>SnoringPony\Source\Timer\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Timer\Mark.h">
+      <Filter>SnoringPony\Source\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Timer\MarksManager.h">
+      <Filter>SnoringPony\Source\Timer</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Timer\ShowTimer.h">
       <Filter>SnoringPony\Source\Timer</Filter>
@@ -11940,6 +11967,9 @@
       <Filter>SnoringPony\resources</Filter>
     </None>
     <None Include="..\..\resources\setmain_cue.png">
+      <Filter>SnoringPony\resources</Filter>
+    </None>
+    <None Include="..\..\resources\timermark_cue.png">
       <Filter>SnoringPony\resources</Filter>
     </None>
     <None Include="..\..\resources\timerpause_cue.png">

@@ -32,6 +32,8 @@
       <FILE id="uDpLpc" name="playlist_cue.png" compile="0" resource="1"
             file="resources/playlist_cue.png"/>
       <FILE id="P2mXBN" name="setmain_cue.png" compile="0" resource="1" file="resources/setmain_cue.png"/>
+      <FILE id="ZFjKmU" name="timermark_cue.png" compile="0" resource="1"
+            file="resources/timermark_cue.png"/>
       <FILE id="lSm2J2" name="timerpause_cue.png" compile="0" resource="1"
             file="resources/timerpause_cue.png"/>
       <FILE id="mRAioX" name="timerreset_cue.png" compile="0" resource="1"
@@ -144,6 +146,7 @@
           <FILE id="vGcRza" name="GoCue.h" compile="0" resource="0" file="src/Cue/go/GoCue.h"/>
         </GROUP>
         <GROUP id="{7B82D836-613B-C5FE-BCF3-EF0CF9E7A7F9}" name="timer">
+          <FILE id="KUCIsv" name="MarkTimerCue.h" compile="0" resource="0" file="src/Cue/timer/MarkTimerCue.h"/>
           <FILE id="MoRF2b" name="PauseTimerCue.h" compile="0" resource="0" file="src/Cue/timer/PauseTimerCue.h"/>
           <FILE id="WNA9KW" name="ResetTimerCue.h" compile="0" resource="0" file="src/Cue/timer/ResetTimerCue.h"/>
           <FILE id="Fi5zjt" name="StartTimerCue.h" compile="0" resource="0" file="src/Cue/timer/StartTimerCue.h"/>
@@ -496,6 +499,12 @@
       </GROUP>
       <GROUP id="{4D5BB3E2-2D87-3432-7871-A795095E1D5C}" name="Timer">
         <GROUP id="{7DCCF350-19A1-608E-78C5-C085EEB6B36E}" name="ui">
+          <FILE id="jHCa64" name="MarksManagerUI.h" compile="0" resource="0"
+                file="src/Timer/ui/MarksManagerUI.h"/>
+          <FILE id="mAAeWQ" name="MarkUI.h" compile="0" resource="0" file="src/Timer/ui/MarkUI.h"/>
+          <FILE id="RNvjIv" name="MarksManagerUI.cpp" compile="1" resource="0"
+                file="src/Timer/ui/MarksManagerUI.cpp"/>
+          <FILE id="ZplA21" name="MarkUI.cpp" compile="1" resource="0" file="src/Timer/ui/MarkUI.cpp"/>
           <FILE id="Ko9Vc5" name="ShowTimerEditor.cpp" compile="1" resource="0"
                 file="src/Timer/ui/ShowTimerEditor.cpp"/>
           <FILE id="fQ6ZoV" name="ShowTimerEditor.h" compile="0" resource="0"
@@ -509,6 +518,11 @@
           <FILE id="PPxiCI" name="ShowTimerManagerUI.h" compile="0" resource="0"
                 file="src/Timer/ui/ShowTimerManagerUI.h"/>
         </GROUP>
+        <FILE id="RN8mvd" name="Mark.h" compile="0" resource="0" file="src/Timer/Mark.h"/>
+        <FILE id="qVcN3M" name="MarksManager.h" compile="0" resource="0" file="src/Timer/MarksManager.h"/>
+        <FILE id="iP5Y2m" name="Mark.cpp" compile="1" resource="0" file="src/Timer/Mark.cpp"/>
+        <FILE id="RhM7pr" name="MarksManager.cpp" compile="1" resource="0"
+              file="src/Timer/MarksManager.cpp"/>
         <FILE id="bQK7lI" name="ShowTimer.cpp" compile="1" resource="0" file="src/Timer/ShowTimer.cpp"/>
         <FILE id="U5Nc4E" name="ShowTimer.h" compile="0" resource="0" file="src/Timer/ShowTimer.h"/>
         <FILE id="rPcOoC" name="ShowTimerManager.cpp" compile="1" resource="0"

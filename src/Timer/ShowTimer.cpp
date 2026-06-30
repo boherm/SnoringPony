@@ -30,14 +30,20 @@ ShowTimer::ShowTimer(var params) :
 
     isGeneral = addBoolParameter("General", "Include this timer in the general total (e.g. one per act)", true);
 
+    marksManager.reset(new MarksManager());
+    marksManager->hideInEditor = true; // the editor embeds a dedicated MarksManagerUI instead
+    addChildControllableContainer(marksManager.get());
+
     playTrigger = addTrigger("Play", "Start / resume the timer");
     pauseTrigger = addTrigger("Pause", "Pause the timer");
     resetTrigger = addTrigger("Reset", "Reset the timer to zero");
+    markTrigger = addTrigger("Mark", "Add a mark at the current time");
 
     // Triggers are exposed through the custom editor's header instead of the body.
     playTrigger->hideInEditor = true;
     pauseTrigger->hideInEditor = true;
     resetTrigger->hideInEditor = true;
+    markTrigger->hideInEditor = true;
 
     countdownDuration->hideInEditor = (getTimerType() != COUNTDOWN);
 }
@@ -91,6 +97,28 @@ void ShowTimer::resetTimer()
     running = false;
     accumulatedSec = 0.0;
     startCounterMs = juce::Time::getMillisecondCounterHiRes();
+    clearMarks();
+}
+
+double ShowTimer::getMarksTotalSeconds() const
+{
+    double total = 0.0;
+    for (auto* m : marksManager->items) total += m->duration->doubleValue();
+    return total;
+}
+
+void ShowTimer::addMark(const String& label)
+{
+    // The new mark spans from the previous mark (i.e. the elapsed time already covered
+    // by existing marks) up to the current elapsed time.
+    double cumulative = getElapsedSeconds();
+    double duration = cumulative - getMarksTotalSeconds();
+    if (duration < 0.0) duration = 0.0;
+
+    String l = label.trim();
+    if (l.isEmpty()) l = "Mark " + String(marksManager->items.size() + 1);
+
+    marksManager->addMark(l, duration, cumulative);
 }
 
 void ShowTimer::onContainerTriggerTriggered(Trigger* t)
@@ -98,6 +126,7 @@ void ShowTimer::onContainerTriggerTriggered(Trigger* t)
     if (t == playTrigger) start();
     else if (t == pauseTrigger) pause();
     else if (t == resetTrigger) resetTimer();
+    else if (t == markTrigger) addMark();
 }
 
 void ShowTimer::onContainerParameterChangedInternal(Parameter* p)

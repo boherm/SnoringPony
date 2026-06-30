@@ -269,9 +269,13 @@
     <ClCompile Include="..\..\src\RF\RFDeviceManager.cpp"/>
     <ClCompile Include="..\..\src\RF\RtlSdrSpectrumSource.cpp"/>
     <ClCompile Include="..\..\src\RF\SimulatedRFSpectrumSource.cpp"/>
+    <ClCompile Include="..\..\src\Timer\ui\MarksManagerUI.cpp"/>
+    <ClCompile Include="..\..\src\Timer\ui\MarkUI.cpp"/>
     <ClCompile Include="..\..\src\Timer\ui\ShowTimerEditor.cpp"/>
     <ClCompile Include="..\..\src\Timer\ui\ShowTimerManagerItemUI.cpp"/>
     <ClCompile Include="..\..\src\Timer\ui\ShowTimerManagerUI.cpp"/>
+    <ClCompile Include="..\..\src\Timer\Mark.cpp"/>
+    <ClCompile Include="..\..\src\Timer\MarksManager.cpp"/>
     <ClCompile Include="..\..\src\Timer\ShowTimer.cpp"/>
     <ClCompile Include="..\..\src\Timer\ShowTimerManager.cpp"/>
     <ClCompile Include="..\..\src\ui\panels\Clock.cpp"/>
@@ -3434,6 +3438,7 @@
     <ClInclude Include="..\..\src\Cue\dca\DCACue.h"/>
     <ClInclude Include="..\..\src\Cue\setmaincuelist\SetMainCuelistCue.h"/>
     <ClInclude Include="..\..\src\Cue\go\GoCue.h"/>
+    <ClInclude Include="..\..\src\Cue\timer\MarkTimerCue.h"/>
     <ClInclude Include="..\..\src\Cue\timer\PauseTimerCue.h"/>
     <ClInclude Include="..\..\src\Cue\timer\ResetTimerCue.h"/>
     <ClInclude Include="..\..\src\Cue\timer\StartTimerCue.h"/>
@@ -3528,9 +3533,13 @@
     <ClInclude Include="..\..\src\RF\RFSpectrumSource.h"/>
     <ClInclude Include="..\..\src\RF\RtlSdrSpectrumSource.h"/>
     <ClInclude Include="..\..\src\RF\SimulatedRFSpectrumSource.h"/>
+    <ClInclude Include="..\..\src\Timer\ui\MarksManagerUI.h"/>
+    <ClInclude Include="..\..\src\Timer\ui\MarkUI.h"/>
     <ClInclude Include="..\..\src\Timer\ui\ShowTimerEditor.h"/>
     <ClInclude Include="..\..\src\Timer\ui\ShowTimerManagerItemUI.h"/>
     <ClInclude Include="..\..\src\Timer\ui\ShowTimerManagerUI.h"/>
+    <ClInclude Include="..\..\src\Timer\Mark.h"/>
+    <ClInclude Include="..\..\src\Timer\MarksManager.h"/>
     <ClInclude Include="..\..\src\Timer\ShowTimer.h"/>
     <ClInclude Include="..\..\src\Timer\ShowTimerManager.h"/>
     <ClInclude Include="..\..\src\ui\panels\ActiveCuesPanel.h"/>
@@ -5766,6 +5775,7 @@
     <None Include="..\..\resources\obs_interface.png"/>
     <None Include="..\..\resources\playlist_cue.png"/>
     <None Include="..\..\resources\setmain_cue.png"/>
+    <None Include="..\..\resources\timermark_cue.png"/>
     <None Include="..\..\resources\timerpause_cue.png"/>
     <None Include="..\..\resources\timerreset_cue.png"/>
     <None Include="..\..\resources\timerstart_cue.png"/>

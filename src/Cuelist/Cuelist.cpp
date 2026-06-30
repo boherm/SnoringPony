@@ -21,6 +21,7 @@
 #include "../Cue/timer/StartTimerCue.h"
 #include "../Cue/timer/PauseTimerCue.h"
 #include "../Cue/timer/ResetTimerCue.h"
+#include "../Cue/timer/MarkTimerCue.h"
 #include "../ui/SPAssetManager.h"
 #include "juce_organicui/inspectable/ui/InspectableEditor.h"
 #include "ui/CuelistEditor.h"
@@ -132,6 +133,7 @@ void Cuelist::registerCueTypes(Factory<Cue>& f)
     f.defs.add(Factory<Cue>::Definition::createDef("Timer", "Start Timer", &StartTimerCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("TimerStart")));
     f.defs.add(Factory<Cue>::Definition::createDef("Timer", "Pause Timer", &PauseTimerCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("TimerPause")));
     f.defs.add(Factory<Cue>::Definition::createDef("Timer", "Reset Timer", &ResetTimerCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("TimerReset")));
+    f.defs.add(Factory<Cue>::Definition::createDef("Timer", "Mark Timer", &MarkTimerCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("TimerMark")));
     f.defs.add(Factory<Cue>::Definition::createDef("Network", "OSC Cue", &OSCCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("OSC")));
     f.defs.add(Factory<Cue>::Definition::createDef("Network", "OBS Cue", &OBSCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("OBS")));
 }

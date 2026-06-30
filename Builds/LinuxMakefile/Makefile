@@ -184,9 +184,13 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/RFDeviceManager_2de54da8.o \
   $(JUCE_OBJDIR)/RtlSdrSpectrumSource_99a36628.o \
   $(JUCE_OBJDIR)/SimulatedRFSpectrumSource_2fb315c5.o \
+  $(JUCE_OBJDIR)/MarksManagerUI_71e78456.o \
+  $(JUCE_OBJDIR)/MarkUI_3cf66b1c.o \
   $(JUCE_OBJDIR)/ShowTimerEditor_3c121a04.o \
   $(JUCE_OBJDIR)/ShowTimerManagerItemUI_a2ed4507.o \
   $(JUCE_OBJDIR)/ShowTimerManagerUI_acf7e594.o \
+  $(JUCE_OBJDIR)/Mark_f195f7f7.o \
+  $(JUCE_OBJDIR)/MarksManager_c7c3f8b1.o \
   $(JUCE_OBJDIR)/ShowTimer_2e0eb528.o \
   $(JUCE_OBJDIR)/ShowTimerManager_d1d721ef.o \
   $(JUCE_OBJDIR)/Clock_bf28f053.o \
@@ -806,6 +810,16 @@ $(JUCE_OBJDIR)/SimulatedRFSpectrumSource_2fb315c5.o: ../../src/RF/SimulatedRFSpe
 	@echo "Compiling SimulatedRFSpectrumSource.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
+$(JUCE_OBJDIR)/MarksManagerUI_71e78456.o: ../../src/Timer/ui/MarksManagerUI.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MarksManagerUI.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MarkUI_3cf66b1c.o: ../../src/Timer/ui/MarkUI.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MarkUI.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
 $(JUCE_OBJDIR)/ShowTimerEditor_3c121a04.o: ../../src/Timer/ui/ShowTimerEditor.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling ShowTimerEditor.cpp"
@@ -819,6 +833,16 @@ $(JUCE_OBJDIR)/ShowTimerManagerItemUI_a2ed4507.o: ../../src/Timer/ui/ShowTimerMa
 $(JUCE_OBJDIR)/ShowTimerManagerUI_acf7e594.o: ../../src/Timer/ui/ShowTimerManagerUI.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling ShowTimerManagerUI.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/Mark_f195f7f7.o: ../../src/Timer/Mark.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling Mark.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MarksManager_c7c3f8b1.o: ../../src/Timer/MarksManager.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MarksManager.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/ShowTimer_2e0eb528.o: ../../src/Timer/ShowTimer.cpp
