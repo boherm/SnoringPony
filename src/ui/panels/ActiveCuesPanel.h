@@ -28,6 +28,7 @@ public:
     void mouseDown(const juce::MouseEvent& e) override;
 
     juce::Rectangle<int> getStopRect(int rowIndex) const;
+    juce::Rectangle<int> getProgressRect(int rowIndex) const; // clickable track area (for seeking)
 };
 
 class ActiveCuesPanelUI : public ShapeShifterContent {

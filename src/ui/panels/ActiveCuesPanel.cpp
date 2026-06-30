@@ -13,6 +13,9 @@
 #include "../../Cuelist/Cuelist.h"
 #include "../../Cue/CueManager.h"
 #include "../../Cue/Cue.h"
+#include "../../Cue/audio/AudioCue.h"
+#include "../../Cue/audio/AudioFile.h"
+#include "../../Cue/audio/AudioSlices.h"
 
 namespace
 {
@@ -59,6 +62,20 @@ Rectangle<int> ActiveCuesRows::getStopRect(int rowIndex) const
 {
     const int s = rowH - 26;
     return Rectangle<int>(getWidth() - s - 12, rowIndex * rowH + (rowH - s) / 2, s, s);
+}
+
+// Horizontal extent of the progress track for a row (mirrors the layout in paint()).
+// Used to hit-test clicks and map them to a position for seeking.
+Rectangle<int> ActiveCuesRows::getProgressRect(int rowIndex) const
+{
+    Rectangle<int> row(0, rowIndex * rowH, getWidth(), rowH);
+    Rectangle<int> content = row.reduced(12, 6).withTrimmedRight(getStopRect(rowIndex).getWidth() + 20);
+    content.removeFromTop(14); // cuelist name
+    content.removeFromTop(20); // cue id + description
+    Rectangle<int> prog = content.removeFromTop(16);
+    prog.removeFromLeft(42);   // elapsed time label
+    prog.removeFromRight(46);  // remaining time label
+    return prog.reduced(6, 0); // matches the drawn track's horizontal extent
 }
 
 void ActiveCuesRows::paint(juce::Graphics& g)
@@ -157,6 +174,38 @@ void ActiveCuesRows::mouseDown(const juce::MouseEvent& e)
             repaint();
             return;
         }
+    }
+
+    // Click on the progress bar of a playing audio cue to seek it.
+    for (int i = 0; i < cues.size(); i++)
+    {
+        Cue* c = cues[i];
+        if (c->preWaitActive->boolValue()) continue; // the bar shows the pre-wait, not the audio
+
+        AudioCue* ac = dynamic_cast<AudioCue*>(c);
+        if (ac == nullptr || !ac->isPlaying->boolValue()) continue;
+
+        Rectangle<int> track = getProgressRect(i);
+        if (track.getWidth() <= 0) continue;
+
+        // A little vertical slack so the thin bar is easy to hit.
+        Rectangle<int> hit = track.withTop(track.getY() - 6).withBottom(track.getBottom() + 6);
+        if (!hit.contains(e.getPosition())) continue;
+
+        double total = c->duration->doubleValue();
+        if (total <= 0.0) continue;
+
+        double frac = jlimit(0.0, 1.0, (double)(e.getPosition().x - track.getX()) / (double)track.getWidth());
+
+        // Map the fraction onto the cue's playable window, then seek every file there.
+        double winStart = ac->slicesManager->startTime->doubleValue();
+        double winEnd = ac->slicesManager->endTime->doubleValue();
+        double target = winStart + frac * (winEnd - winStart);
+
+        ac->slicesManager->resetSlices(); // drop stale repetition counters so the bar matches
+        ac->filesManager->setCurrentTime(target);
+        repaint();
+        return;
     }
 }
 
