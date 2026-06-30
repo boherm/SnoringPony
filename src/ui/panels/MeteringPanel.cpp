@@ -607,6 +607,16 @@ void MeteringPanel::mouseUp(const juce::MouseEvent&)
     }
 }
 
+void MeteringPanel::mouseDoubleClick(const juce::MouseEvent& e)
+{
+    // Double-click the splitter to reset it to the default (centered) position.
+    if (settings != nullptr && isOverSplitter(e.getPosition()))
+    {
+        draggingSplitter = false;
+        settings->splitPosition->resetValue();
+    }
+}
+
 void MeteringPanel::updatePlayPauseIcon()
 {
     bool running = settings != nullptr && settings->active->boolValue();
@@ -625,6 +635,11 @@ void MeteringPanel::updatePlayPauseIcon()
     icon.setPath(p);
     icon.setFill(juce::Colours::white);
     startStopBtn.setImages(&icon);
+
+    if (running)
+        startStopBtn.removeColour(juce::TextButton::buttonColourId);
+    else
+        startStopBtn.setColour(juce::TextButton::buttonColourId, juce::Colour::fromRGB(46, 150, 70));
 }
 
 void MeteringPanel::showContextMenu()
@@ -652,8 +667,11 @@ void MeteringPanel::showContextMenu()
     ref.addItem(401, "Clear", rtaHasReference);
 
     juce::PopupMenu m;
+    m.addSectionHeader("Display");
     m.addSubMenu("Left column", left);
     m.addSubMenu("Right column", right);
+    m.addSeparator();
+    m.addSectionHeader("Configuration");
     m.addSubMenu("Weighting", weight);
     m.addSubMenu("LAeq window", laeq);
     m.addSubMenu("RTA reference", ref);
