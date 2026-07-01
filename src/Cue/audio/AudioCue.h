@@ -51,6 +51,31 @@ public:
     EnumParameter* mtcFrameRate;
     StringParameter* mtcTimecodeDisplay;
 
+    // --- Duck others ---
+    // When enabled, launching this cue fades out every other playing audio/playlist cue,
+    // waits (pre-play), plays this cue alone, then (post-play) fades the others back in.
+    EnablingControllableContainer* duckOthersCC;
+    FloatParameter* duckVolume;              // gain the other cues are ducked down to (0..1)
+    FloatParameter* duckFadeOutDuration;     // fade out applied to the other cues on launch
+    FloatParameter* duckPrePlayDuration;     // delay before this cue's audio starts
+    FloatParameter* duckPostPlayDuration;    // delay after this cue's audio ends
+    FloatParameter* duckFadeInDuration;      // fade in used to bring the others back
+    FloatParameter* duckPrePlayCurrentTime;  // read-only, display
+    FloatParameter* duckPostPlayCurrentTime; // read-only, display
+    BoolParameter*  duckActive;              // read-only, hidden
+
+    Cue::CueTimer* duckPrePlayTimer = nullptr;
+    Cue::CueTimer* duckPostPlayTimer = nullptr;
+
+    void startAudioPlayback();       // the actual audio start (former playInternal body)
+    void startDuckSequence();        // fade others out + start pre-play timer
+    void startDuckRestore();         // start post-play timer after the audio ends naturally
+    void fadeOthersBackIn();         // fade(1, fadeIn) on the other playing cues
+    void cancelDuckSequence(bool fadeInImmediately); // stop/panic during the sequence
+    Array<Cue*> getOtherPlayingAudioCues();          // playing audio/playlist cues except this
+
+    void onCueTimerFinished(Cue::CueTimer* timer) override;
+
     class MTCTimer : public juce::HighResolutionTimer
     {
     public:

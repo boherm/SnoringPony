@@ -13,6 +13,9 @@
 #include "AudioSlices.h"
 #include "AudioWaveformSlicer.h"
 #include "../../Cuelist/Cuelist.h"
+#include "../../Cuelist/CuelistManager.h"
+#include "../CueManager.h"
+#include "../playlist/PlaylistCue.h"
 #include "../../Audio/AudioPlayer.h"
 #include "../../Audio/PluginSlot.h"
 #include "../../Interface/audio/AudioOutput.h"
@@ -58,6 +61,37 @@ AudioCue::AudioCue(var params)
 
     mtcCC->customGetEditorFunc = &MTCContainerEditor::create;
 
+    // --- Duck others ---
+    duckPrePlayTimer = new Cue::CueTimer(this);
+    duckPostPlayTimer = new Cue::CueTimer(this);
+
+    duckOthersCC = new EnablingControllableContainer("Duck others");
+    duckOthersCC->enabled->setValue(false);
+    duckOthersCC->editorIsCollapsed = true;
+    // Place it right below "Post-wait" (added by the base Cue constructor) rather than at the
+    // bottom of the container list.
+    addChildControllableContainer(duckOthersCC, true, controllableContainers.indexOf(postWaitCC) + 1);
+
+    duckVolume = duckOthersCC->addFloatParameter("Volume", "Gain the other cues are ducked down to (1 = unchanged, 0 = silent)", 0.1, 0.0, 1.0);
+    duckFadeOutDuration = duckOthersCC->addFloatParameter("Fade Out", "Fade out duration applied to the other playing cues when this cue starts", 5.0, 0.0);
+    duckPrePlayDuration = duckOthersCC->addFloatParameter("Pre-play", "Delay before this cue's audio starts", 5.0, 0.0);
+    duckPostPlayDuration = duckOthersCC->addFloatParameter("Post-play", "Delay after this cue's audio ends, before the others fade back in", 5.0, 0.0);
+    duckFadeInDuration = duckOthersCC->addFloatParameter("Fade In", "Fade in duration used to bring the other cues back", 5.0, 0.0);
+    for (auto* p : { duckFadeOutDuration, duckPrePlayDuration, duckPostPlayDuration, duckFadeInDuration })
+        p->defaultUI = FloatParameter::TIME;
+
+    duckPrePlayCurrentTime = duckOthersCC->addFloatParameter("Pre-play current time", "Current time of the pre-play delay", 0.0, 0.0);
+    duckPostPlayCurrentTime = duckOthersCC->addFloatParameter("Post-play current time", "Current time of the post-play delay", 0.0, 0.0);
+    for (auto* p : { duckPrePlayCurrentTime, duckPostPlayCurrentTime })
+    {
+        p->defaultUI = FloatParameter::TIME;
+        p->setEnabled(false);
+    }
+
+    duckActive = duckOthersCC->addBoolParameter("Active", "Duck sequence currently active", false);
+    duckActive->setEnabled(false);
+    duckActive->hideInEditor = true;
+
     audioSlicer.reset(new ControllableContainer("Audio Slicer"));
     audioSlicer->editorIsCollapsed = true;
     audioSlicer->saveAndLoadRecursiveData = true;
@@ -91,6 +125,11 @@ AudioCue::AudioCue(var params)
 
 AudioCue::~AudioCue()
 {
+    duckPrePlayTimer->stop();
+    duckPostPlayTimer->stop();
+    delete duckPrePlayTimer;
+    delete duckPostPlayTimer;
+
     if (mtcTimer != nullptr)
     {
         mtcTimer->stopTimer();
@@ -165,6 +204,19 @@ void AudioCue::newMessage(const ContainerAsyncEvent& e)
 
 void AudioCue::playInternal()
 {
+    // When "Duck others" is enabled, launching the cue first fades the other cues out and waits
+    // the pre-play delay before this cue's audio actually starts.
+    if (duckOthersCC->enabled->boolValue())
+    {
+        startDuckSequence();
+        return;
+    }
+
+    startAudioPlayback();
+}
+
+void AudioCue::startAudioPlayback()
+{
     if (isPreviewing) {
         filesManager->stopAll();
         isPreviewing = false;
@@ -189,6 +241,95 @@ void AudioCue::playInternal()
     }
 
     startMTC();
+}
+
+Array<Cue*> AudioCue::getOtherPlayingAudioCues()
+{
+    Array<Cue*> result;
+    for (Cuelist* cl : CuelistManager::getInstance()->items)
+    {
+        if (cl == nullptr || cl->cues == nullptr) continue;
+        for (Cue* c : cl->cues->items)
+        {
+            if (c == nullptr || c == this) continue;
+            if (!c->isPlaying->boolValue()) continue;
+            if (dynamic_cast<AudioCue*>(c) != nullptr || dynamic_cast<PlaylistCue*>(c) != nullptr)
+                result.add(c);
+        }
+    }
+    return result;
+}
+
+void AudioCue::startDuckSequence()
+{
+    duckActive->setValue(true);
+
+    // Fade the other cues down to the duck volume, running in parallel with the pre-play delay.
+    double fadeOutTime = duckFadeOutDuration->doubleValue();
+    double target = duckVolume->doubleValue();
+    for (Cue* c : getOtherPlayingAudioCues())
+        c->fade(target, fadeOutTime);
+
+    // Pre-play gates the start of this cue's audio.
+    double prePlay = duckPrePlayDuration->doubleValue();
+    if (prePlay > 0.0)
+        duckPrePlayTimer->start(prePlay, duckPrePlayCurrentTime);
+    else
+        startAudioPlayback();
+}
+
+void AudioCue::startDuckRestore()
+{
+    // Called when this cue's audio finished naturally: wait post-play, then fade the others in.
+    double postPlay = duckPostPlayDuration->doubleValue();
+    if (postPlay > 0.0)
+    {
+        duckPostPlayTimer->start(postPlay, duckPostPlayCurrentTime);
+    }
+    else
+    {
+        fadeOthersBackIn();
+        duckActive->setValue(false);
+    }
+}
+
+void AudioCue::fadeOthersBackIn()
+{
+    double fadeInTime = duckFadeInDuration->doubleValue();
+    for (Cue* c : getOtherPlayingAudioCues())
+        c->fade(1.0, fadeInTime);
+}
+
+void AudioCue::cancelDuckSequence(bool fadeInImmediately)
+{
+    duckPrePlayTimer->stop();
+    duckPostPlayTimer->stop();
+    duckPrePlayCurrentTime->setValue(0.0f);
+    duckPostPlayCurrentTime->setValue(0.0f);
+
+    if (duckActive->boolValue() && fadeInImmediately)
+        fadeOthersBackIn();
+
+    duckActive->setValue(false);
+}
+
+void AudioCue::onCueTimerFinished(Cue::CueTimer* timer)
+{
+    if (timer == duckPrePlayTimer)
+    {
+        duckPrePlayCurrentTime->setValue(0.0f);
+        startAudioPlayback();
+        return;
+    }
+    if (timer == duckPostPlayTimer)
+    {
+        duckPostPlayCurrentTime->setValue(0.0f);
+        fadeOthersBackIn();
+        duckActive->setValue(false);
+        return;
+    }
+
+    Cue::onCueTimerFinished(timer); // pre-wait / post-wait
 }
 
 void AudioCue::previewInternal()
@@ -220,16 +361,31 @@ void AudioCue::previewInternal()
 
 void AudioCue::stopInternal()
 {
+    // If the duck pre-play delay is still running, no transport was ever started, so the
+    // change-listener that normally resets the playing state won't fire.
+    bool wasAudioPlaying = filesManager->haveOnePlaying();
+
+    // Duck others: abort the sequence and fade the ducked cues back in immediately.
+    cancelDuckSequence(true);
+
     stopMTC();
     filesManager->stopAll();
     for (auto& audioFile : filesManager->items)
         audioFile->player->mixer->setPluginChain(nullptr);
     slicesManager->resetSlices();
     askedToStop = true;
+
+    if (!wasAudioPlaying)
+    {
+        isPlaying->setValue(false);
+        if (parentCuelist != nullptr && parentCuelist->currentCue->getTargetContainerAs<Cue>() == this)
+            parentCuelist->currentCue->resetValue();
+    }
 }
 
 void AudioCue::retriggerStop()
 {
+    cancelDuckSequence(true);
     isRetriggerStopping = true;
     double fadeOutTime = retriggerStopFadeOut->doubleValue();
     if (fadeOutTime > 0.0)
@@ -248,8 +404,19 @@ void AudioCue::retriggerStop()
 
 void AudioCue::panicInternal()
 {
+    bool wasAudioPlaying = filesManager->haveOnePlaying();
+
+    cancelDuckSequence(true);
+
     filesManager->panicAll();
     askedToStop = true;
+
+    if (!wasAudioPlaying)
+    {
+        isPlaying->setValue(false);
+        if (parentCuelist != nullptr && parentCuelist->currentCue->getTargetContainerAs<Cue>() == this)
+            parentCuelist->currentCue->resetValue();
+    }
 }
 
 void AudioCue::timerCallback()
@@ -318,7 +485,14 @@ void AudioCue::changeListenerCallback(ChangeBroadcaster* source)
                 filesManager->resetCurrentTime();
 
             if (!loop->boolValue() && !askedToStop && !isPreviewing)
+            {
                 endCue();
+
+                // Duck others: the audio finished on its own → wait post-play, then fade the
+                // other cues back in.
+                if (duckOthersCC->enabled->boolValue() && duckActive->boolValue())
+                    startDuckRestore();
+            }
 
             if (askedToStop) {
                 if (isRetriggerStopping) {
@@ -395,7 +569,12 @@ void AudioCue::onControllableFeedbackUpdateInternal(ControllableContainer* cc, C
 {
     Cue::onControllableFeedbackUpdateInternal(cc, c);
 
-    if (Engine::mainEngine != nullptr && Engine::mainEngine->isLoadingFile) return;
+    if (Engine::mainEngine != nullptr && Engine::mainEngine->isLoadingFile)
+    {
+        if (duckOthersCC == cc && c == duckOthersCC->enabled)
+            duckOthersCC->editorIsCollapsed = !duckOthersCC->enabled->boolValue();
+        return;
+    }
 
     // Allow turning MTC on/off (or choosing its interface) while the cue is already
     // playing: start it at the cue's current position, or stop it.

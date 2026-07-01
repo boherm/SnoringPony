@@ -133,5 +133,5 @@ public:
     virtual String autoDescriptionInternal() { return "Cue " + id->stringValue(); }
 
     void setGoNext();
-    void onCueTimerFinished(Cue::CueTimer* timer);
+    virtual void onCueTimerFinished(Cue::CueTimer* timer);
 };
