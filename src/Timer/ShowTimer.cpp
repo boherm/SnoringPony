@@ -22,11 +22,15 @@ ShowTimer::ShowTimer(var params) :
     itemColor->setDefaultValue(BG_COLOR.brighter(.2f));
     itemColor->setControlMode(Parameter::ControlMode::REFERENCE);
 
-    timerType = addEnumParameter("Type", "Chrono counts up; Countdown counts down from a duration");
-    timerType->addOption("Chrono", CHRONO)->addOption("Countdown", COUNTDOWN);
+    timerType = addEnumParameter("Type", "Chrono counts up; Countdown counts down from a duration; Time of Day counts down to a wall-clock time");
+    timerType->addOption("Chrono", CHRONO)->addOption("Countdown", COUNTDOWN)->addOption("Time of Day", TIME_OF_DAY);
 
     countdownDuration = addFloatParameter("Countdown Duration", "Start value for a countdown timer", 600.0, 0.0);
     countdownDuration->defaultUI = FloatParameter::TIME;
+
+    // Target wall-clock time (seconds since midnight) for a Time of Day timer. Default 20:00:00.
+    targetTimeOfDay = addFloatParameter("Target Time", "Wall-clock time this timer counts down to (time of day)", 72000.0, 0.0, 86399.0);
+    targetTimeOfDay->defaultUI = FloatParameter::TIME;
 
     isGeneral = addBoolParameter("General", "Include this timer in the general total (e.g. one per act)", true);
 
@@ -46,6 +50,8 @@ ShowTimer::ShowTimer(var params) :
     markTrigger->hideInEditor = true;
 
     countdownDuration->hideInEditor = (getTimerType() != COUNTDOWN);
+    targetTimeOfDay->hideInEditor = (getTimerType() != TIME_OF_DAY);
+    isGeneral->hideInEditor = (getTimerType() != CHRONO); // only chronos can be "general"
 }
 
 ShowTimer::~ShowTimer()
@@ -63,17 +69,40 @@ double ShowTimer::getDisplaySeconds() const
 {
     if (getTimerType() == COUNTDOWN)
         return countdownDuration->doubleValue() - getElapsedSeconds(); // signed: negative = overrun
+
+    if (getTimerType() == TIME_OF_DAY)
+    {
+        // Signed offset from the target: negative before it (time remaining), positive after.
+        juce::Time now = juce::Time::getCurrentTime();
+        double secOfDay = now.getHours() * 3600.0 + now.getMinutes() * 60.0
+                        + now.getSeconds() + now.getMilliseconds() / 1000.0;
+        return secOfDay - targetTimeOfDay->doubleValue();
+    }
+
     return getElapsedSeconds();
 }
 
 bool ShowTimer::isOverrun() const
 {
-    return getTimerType() == COUNTDOWN && getDisplaySeconds() < 0.0;
+    switch (getTimerType())
+    {
+    case COUNTDOWN:    return getDisplaySeconds() < 0.0;
+    case TIME_OF_DAY:  return getDisplaySeconds() >= 0.0; // reached / passed the target time
+    default:           return false;
+    }
 }
 
 String ShowTimer::getDisplayString(bool withHundredths) const
 {
     double v = getDisplaySeconds();
+
+    if (getTimerType() == TIME_OF_DAY)
+    {
+        // "-" while the target is still ahead, "+" once it has passed.
+        String sign = v < 0.0 ? "-" : "+";
+        return sign + secondsToString(v < 0.0 ? -v : v, withHundredths);
+    }
+
     bool over = (getTimerType() == COUNTDOWN && v < 0.0);
     return (over ? "+" : "") + secondsToString(over ? -v : v, withHundredths);
 }
@@ -133,14 +162,15 @@ void ShowTimer::onContainerParameterChangedInternal(Parameter* p)
 {
     if (p == timerType)
     {
-        bool countdown = (getTimerType() == COUNTDOWN);
+        TimerType type = getTimerType();
 
-        // Show the start-value field only for countdowns.
-        countdownDuration->hideInEditor = !countdown;
+        // Show each type-specific value field only for its own type.
+        countdownDuration->hideInEditor = (type != COUNTDOWN);
+        targetTimeOfDay->hideInEditor = (type != TIME_OF_DAY);
 
-        // Countdowns can never be "general": disable and clear the flag.
-        isGeneral->setEnabled(!countdown);
-        if (countdown) isGeneral->setValue(false);
+        // Only chronos can be "general": hide and clear the flag for the others.
+        isGeneral->hideInEditor = (type != CHRONO);
+        if (type != CHRONO) isGeneral->setValue(false);
 
         // Rebuild the open editor so the changes are reflected live.
         queuedNotifier.addMessage(new ContainerAsyncEvent(ContainerAsyncEvent::ControllableContainerNeedsRebuild, this));

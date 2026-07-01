@@ -35,6 +35,7 @@ public:
     Label marksTitle;
     std::unique_ptr<MarksManagerUI> marksUI;
     int lastMarksContentHeight = -1;
+    int lastControllable = -1; // tracks isControllable() to refresh header controls on type change
 
     void resizedInternalHeaderItemInternal(Rectangle<int>& r) override;
     void resizedInternalContent(Rectangle<int>& r) override;

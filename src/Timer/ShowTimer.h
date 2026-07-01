@@ -23,12 +23,13 @@ public:
     ShowTimer(var params = var());
     virtual ~ShowTimer();
 
-    enum TimerType { CHRONO, COUNTDOWN };
+    enum TimerType { CHRONO, COUNTDOWN, TIME_OF_DAY };
 
     // Saved configuration
     BoolParameter* isGeneral;          // include in the "general" total (e.g. one per act)
-    EnumParameter* timerType;          // Chrono (count up) / Countdown (count down)
+    EnumParameter* timerType;          // Chrono (count up) / Countdown (count down) / Time of Day
     FloatParameter* countdownDuration; // start value for a countdown, in seconds
+    FloatParameter* targetTimeOfDay;   // wall-clock time to count down to, in seconds since midnight
 
     // Inspector actions
     Trigger* playTrigger;
@@ -59,11 +60,15 @@ public:
     TimerType getTimerType() const { return (TimerType)(int)timerType->getValueData(); }
     // Countdowns can never be "general" by definition.
     bool isGeneralTimer() const { return isGeneral->boolValue() && getTimerType() == CHRONO; }
+    // Time-of-day timers just track the wall clock; they can't be started/paused/reset/marked.
+    bool isControllable() const { return getTimerType() != TIME_OF_DAY; }
 
     double getElapsedSeconds() const;  // raw elapsed since first start
-    double getDisplaySeconds() const;  // chrono: elapsed; countdown: remaining (negative = overrun)
-    bool isOverrun() const;            // countdown that has passed zero
-    String getDisplayString(bool withHundredths = false) const; // formatted, with "+" when overrun
+    // chrono: elapsed; countdown: remaining (negative = overrun);
+    // time-of-day: seconds relative to the target (negative before it, positive after).
+    double getDisplaySeconds() const;
+    bool isOverrun() const;            // countdown past zero, or time-of-day past its target
+    String getDisplayString(bool withHundredths = false) const; // formatted, signed "+"/"-"
 
     void onContainerTriggerTriggered(Trigger* t) override;
     void onContainerParameterChangedInternal(Parameter* p) override;

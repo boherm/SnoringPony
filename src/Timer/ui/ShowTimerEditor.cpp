@@ -36,6 +36,13 @@ ShowTimerEditor::ShowTimerEditor(Array<ShowTimer*> timers, bool isRoot) :
     addAndMakeVisible(resetBtnUI);
     addAndMakeVisible(markBtnUI);
 
+    // Time-of-day timers just track the wall clock: no play/pause/reset/mark controls.
+    bool controllable = timer->isControllable();
+    playBtnUI->setVisible(controllable);
+    pauseBtnUI->setVisible(controllable);
+    resetBtnUI->setVisible(controllable);
+    markBtnUI->setVisible(controllable);
+
     timeLabel.setJustificationType(Justification::centred);
     timeLabel.setColour(Label::backgroundColourId, BG_COLOR.darker(.2f).withAlpha(.6f));
     timeLabel.setColour(Label::outlineColourId, BG_COLOR.brighter(.1f));
@@ -67,12 +74,18 @@ ShowTimerEditor::~ShowTimerEditor()
 
 void ShowTimerEditor::resizedInternalHeaderItemInternal(Rectangle<int>& r)
 {
-    resetBtnUI->setBounds(r.removeFromRight(46).reduced(2));
-    markBtnUI->setBounds(r.removeFromRight(46).reduced(2));
-    pauseBtnUI->setBounds(r.removeFromRight(46).reduced(2));
-    playBtnUI->setBounds(r.removeFromRight(46).reduced(2));
-    r.removeFromRight(4);
+    // Time pinned to the far right; controls (if any) centered in the remaining space.
     timeLabel.setBounds(r.removeFromRight(110).reduced(1, 2));
+
+    if (timer->isControllable())
+    {
+        const int btnW = 46;
+        Rectangle<int> group = r.withSizeKeepingCentre(btnW * 4, r.getHeight());
+        playBtnUI->setBounds(group.removeFromLeft(btnW).reduced(2));
+        pauseBtnUI->setBounds(group.removeFromLeft(btnW).reduced(2));
+        markBtnUI->setBounds(group.removeFromLeft(btnW).reduced(2));
+        resetBtnUI->setBounds(group.removeFromLeft(btnW).reduced(2));
+    }
 }
 
 void ShowTimerEditor::resizedInternalContent(Rectangle<int>& r)
@@ -97,6 +110,19 @@ void ShowTimerEditor::resizedInternalContent(Rectangle<int>& r)
 
 void ShowTimerEditor::timerCallback()
 {
+    // Show/hide the header controls when the timer type changes (a type switch rebuilds the
+    // body but keeps this editor instance, so the constructor's visibility isn't re-run).
+    int controllable = timer->isControllable() ? 1 : 0;
+    if (controllable != lastControllable)
+    {
+        lastControllable = controllable;
+        playBtnUI->setVisible(controllable);
+        pauseBtnUI->setVisible(controllable);
+        resetBtnUI->setVisible(controllable);
+        markBtnUI->setVisible(controllable);
+        resized();
+    }
+
     // Relayout the editor when the marks container changes size (marks added/cleared).
     int mh = timer->getNumMarks() > 0 ? marksUI->getHeight() : 0;
     if (mh != lastMarksContentHeight)
@@ -110,7 +136,12 @@ void ShowTimerEditor::timerCallback()
         timeLabel.setText(t, dontSendNotification);
 
     Colour col;
-    if (timer->isOverrun())
+    if (timer->getTimerType() == ShowTimer::TIME_OF_DAY)
+    {
+        // Time of day: white while the target is ahead, solid red (no blink) once passed.
+        col = timer->isOverrun() ? Colours::red : Colours::white;
+    }
+    else if (timer->isOverrun())
     {
         // Blink only while running; stay solid red when paused in overrun.
         if (timer->isRunning())

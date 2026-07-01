@@ -34,7 +34,12 @@ void ShowTimerManagerItemUI::paint(Graphics& g)
     Font valFont(14.0f);
 
     Colour col;
-    if (item->isOverrun())
+    if (item->getTimerType() == ShowTimer::TIME_OF_DAY)
+    {
+        // Time of day: white while the target is ahead, solid red (no blink) once passed.
+        col = item->isOverrun() ? Colours::red : Colours::white.withAlpha(.85f);
+    }
+    else if (item->isOverrun())
     {
         // Blink only while running; stay solid red when paused in overrun.
         if (item->isRunning())
