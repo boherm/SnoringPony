@@ -9,6 +9,7 @@
 */
 
 #include "Cue/audio/AudioCue.h"
+#include "Cue/audio/AudioFile.h"
 #include "Cue/playlist/PlaylistCue.h"
 #include "Cue/CueManager.h"
 #include "Cuelist/CuelistFactory.h"
@@ -240,7 +241,7 @@ void PonyEngine::importSelection(File f)
 {
 	if (!f.existsAsFile())
 	{
-		FileChooser* fc(new FileChooser("Load a LilNut", File::getCurrentWorkingDirectory(), "*.lilnut"));
+		FileChooser* fc(new FileChooser("Load a LilPony", File::getCurrentWorkingDirectory(), "*.lilpony"));
 		fc->launchAsync(FileBrowserComponent::FileChooserFlags::openMode | FileBrowserComponent::FileChooserFlags::canSelectFiles, [this](const FileChooser& fc)
 			{
 				File f = fc.getResult();
@@ -266,7 +267,7 @@ void PonyEngine::exportSelection()
 
 	String s = JSON::toString(data);
 
-	FileChooser* fc(new FileChooser("Save a LilNut", File::getCurrentWorkingDirectory(), "*.lilnut"));
+	FileChooser* fc(new FileChooser("Save a LilPony", File::getCurrentWorkingDirectory(), "*.lilpony"));
 	fc->launchAsync(FileBrowserComponent::FileChooserFlags::saveMode | FileBrowserComponent::FileChooserFlags::canSelectFiles, [s](const FileChooser& fc)
 		{
 			File f = fc.getResult();
@@ -275,6 +276,327 @@ void PonyEngine::exportSelection()
 			f.replaceWithText(s);
 		}
 	);
+}
+
+// Runs the slow part of packaging (copying audio files, then compressing) on a background
+// thread with a progress window, so the UI stays responsive and shows what is happening.
+// The .indy is already written and the live parameters restored before this starts.
+class PackageProjectTask : public ThreadWithProgressWindow
+{
+public:
+	PackageProjectTask(Array<std::pair<File, File>> jobs, bool compress, File packageRoot,
+		File finalOutput, File indyFile, bool openAfter, StringArray missing, PonyEngine* engine) :
+		ThreadWithProgressWindow("Packaging project...", true, true),
+		copyJobs(std::move(jobs)), compress(compress), packageRoot(packageRoot),
+		finalOutput(finalOutput), indyFile(indyFile), openAfter(openAfter),
+		missingFiles(std::move(missing)), engine(engine)
+	{
+	}
+
+	void run() override
+	{
+		int total = copyJobs.size() + (compress ? 1 : 0);
+		if (total == 0) total = 1;
+		int step = 0;
+
+		for (auto& job : copyJobs)
+		{
+			if (threadShouldExit()) return;
+			setStatusMessage("Copying " + job.second.getFileName() + "...");
+			if (job.first.copyFileTo(job.second)) copied++;
+			setProgress(++step / (double)total);
+		}
+
+		if (compress)
+		{
+			if (threadShouldExit()) return;
+			setStatusMessage("Compressing archive...");
+
+			ZipFile::Builder builder;
+			Array<File> files;
+			packageRoot.findChildFiles(files, File::findFiles, true);
+			for (auto& f : files)
+				builder.addFile(f, 9, packageRoot.getFileName() + "/" + f.getRelativePathFrom(packageRoot).replace("\\", "/"));
+
+			if (std::unique_ptr<FileOutputStream> os = std::unique_ptr<FileOutputStream>(finalOutput.createOutputStream()))
+			{
+				zipOk = builder.writeToStream(*os, nullptr);
+				os->flush();
+			}
+
+			packageRoot.deleteRecursively(); // keep only the archive
+			setProgress(1.0);
+		}
+	}
+
+	void threadComplete(bool userPressedCancel) override
+	{
+		if (userPressedCancel)
+		{
+			// Remove any partial output so nothing residual is left behind.
+			packageRoot.deleteRecursively();
+			if (compress) finalOutput.deleteFile();
+			LOG("Package Project: cancelled.");
+		}
+		else if (compress && !zipOk)
+		{
+			LOGERROR("Package Project: failed to write the archive " << finalOutput.getFullPathName());
+			AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Package Project",
+				"Could not write the .zip archive.", "OK");
+		}
+		else
+		{
+			String msg = "Package created:\n" + finalOutput.getFullPathName()
+				+ "\n\nAudio files copied: " + String(copied);
+			if (!missingFiles.isEmpty())
+			{
+				msg += "\n\nMissing files (left unchanged): " + String(missingFiles.size());
+				for (auto& m : missingFiles) msg += "\n  - " + m;
+			}
+			LOG(msg);
+			AlertWindow::showMessageBoxAsync(AlertWindow::InfoIcon, "Package Project", msg, "OK");
+
+			// Opening a .zip makes no sense, so only switch to the package when it stays a folder.
+			if (openAfter && !compress && engine != nullptr)
+				engine->loadDocumentAsync(indyFile);
+		}
+
+		delete this;
+	}
+
+private:
+	Array<std::pair<File, File>> copyJobs; // source -> destination inside sounds/
+	bool compress;
+	File packageRoot;
+	File finalOutput;
+	File indyFile;
+	bool openAfter;
+	StringArray missingFiles;
+	PonyEngine* engine;
+	int copied = 0;
+	bool zipOk = false;
+};
+
+Array<FileParameter*> PonyEngine::collectAudioFileParameters()
+{
+	Array<FileParameter*> result;
+
+	for (auto* cuelist : CuelistManager::getInstance()->items)
+	{
+		if (cuelist->cues == nullptr) continue;
+
+		for (auto* cue : cuelist->cues->items)
+		{
+			if (auto* audioCue = dynamic_cast<AudioCue*>(cue))
+			{
+				if (audioCue->filesManager != nullptr)
+					for (auto* f : audioCue->filesManager->items)
+						if (f->audioFile != nullptr) result.add(f->audioFile);
+			}
+			else if (auto* playlistCue = dynamic_cast<PlaylistCue*>(cue))
+			{
+				if (playlistCue->filesManager != nullptr)
+					for (auto* f : playlistCue->filesManager->items)
+						if (f->audioFile != nullptr) result.add(f->audioFile);
+			}
+		}
+	}
+
+	return result;
+}
+
+void PonyEngine::packageProject()
+{
+	// The whole flow chains async dialogs: ask the packaging options, then a destination.
+	auto askOptions = [this]()
+	{
+		auto* aw = new AlertWindow("Package Project",
+			"All audio files used by Audio and Playlist cues will be copied into a \"sounds\" "
+			"subfolder and their paths made relative to the project.",
+			AlertWindow::QuestionIcon);
+
+		StringArray yesNo;
+		yesNo.add("No");
+		yesNo.add("Yes");
+
+		aw->addComboBox("compress", yesNo, "Compress to a .zip archive");
+		aw->addComboBox("open", yesNo, "Open the packaged project afterwards");
+		aw->getComboBoxComponent("compress")->setSelectedItemIndex(0);
+		aw->getComboBoxComponent("open")->setSelectedItemIndex(0);
+
+		aw->addButton("Cancel", 0, KeyPress(KeyPress::escapeKey));
+		aw->addButton("Let's pack!", 1, KeyPress(KeyPress::returnKey));
+
+		aw->enterModalState(true, ModalCallbackFunction::create([this, aw](int result)
+			{
+				bool compress = aw->getComboBoxComponent("compress")->getSelectedItemIndex() == 1;
+				bool openAfter = aw->getComboBoxComponent("open")->getSelectedItemIndex() == 1;
+				delete aw;
+
+				if (result == 0) return;
+				choosePackageDestination(compress, openAfter);
+			}), false);
+	};
+
+	// Packaging relies on a saved, clean project: audio paths resolve against the .indy folder
+	// and we reuse its file name. Offer to save first if the project is new or dirty.
+	if (!getFile().existsAsFile() || hasChangedSinceSaved())
+	{
+		saveIfNeededAndUserAgreesAsync([this, askOptions](FileBasedDocument::SaveResult r)
+			{
+				if (r == FileBasedDocument::savedOk && getFile().existsAsFile()) askOptions();
+			});
+		return;
+	}
+
+	askOptions();
+}
+
+void PonyEngine::choosePackageDestination(bool compress, bool openAfter)
+{
+	FileChooser* fc(new FileChooser("Choose where to create the package", getFile().getParentDirectory()));
+	fc->launchAsync(FileBrowserComponent::FileChooserFlags::openMode | FileBrowserComponent::FileChooserFlags::canSelectDirectories,
+		[this, compress, openAfter](const FileChooser& fc)
+		{
+			File dir = fc.getResult();
+			delete& fc;
+			if (dir == File() || !dir.isDirectory()) return;
+			runPackageExport(dir, compress, openAfter);
+		}
+	);
+}
+
+void PonyEngine::runPackageExport(const File& destinationDir, bool compress, bool openAfter)
+{
+	// Base name used for both the package folder and the .zip: "company - project - version".
+	String base = File::createLegalFileName(
+		showProperties.companyName->stringValue() + " - "
+		+ showProperties.projectName->stringValue() + " - "
+		+ showProperties.showFileVersion->stringValue());
+	if (base.isEmpty()) base = "Package";
+
+	// What ends up at the chosen location: a .zip archive, or the package folder itself.
+	File finalOutput = compress ? destinationDir.getChildFile(base + ".zip")
+		: destinationDir.getChildFile(base);
+
+	// The message-thread part: create the folder, copy list + relative paths, write the .indy,
+	// then hand the slow copy/compress work to a background task with a progress window.
+	auto performBuild = [this, compress, openAfter, base, finalOutput]()
+	{
+		// When compressing we only keep the .zip, so build in a temp folder removed afterwards.
+		File packageRoot = compress
+			? File::getSpecialLocation(File::tempDirectory).getChildFile("SnoringPonyPackage").getChildFile(base)
+			: finalOutput;
+
+		if (packageRoot.exists()) packageRoot.deleteRecursively();
+		Result created = packageRoot.createDirectory();
+		if (created.failed())
+		{
+			LOGERROR("Package Project: could not create folder " << packageRoot.getFullPathName());
+			AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Package Project",
+				"Could not create the package folder. Check that you have write access to the chosen location.", "OK");
+			return;
+		}
+
+		File soundsDir = packageRoot.getChildFile("sounds");
+		soundsDir.createDirectory();
+
+		Array<FileParameter*> params = collectAudioFileParameters();
+
+		// Snapshot so the currently open project is left untouched once packaging is done.
+		struct Snapshot { FileParameter* p; String value; bool forceRel; bool forceAbs; String base; };
+		Array<Snapshot> snapshots;
+
+		Array<std::pair<File, File>> copyJobs; // deferred to the background task
+		HashMap<String, String> sourceToName;  // absolute source path -> unique file name inside sounds/
+		StringArray usedNames;
+		StringArray missingFiles;
+
+		for (auto* p : params)
+		{
+			snapshots.add({ p, p->stringValue(), p->forceRelativePath, p->forceAbsolutePath, p->customBasePath });
+
+			File src = p->getFile();
+			if (!src.existsAsFile())
+			{
+				// Report by the missing path, or by the owning file's name when the path is empty.
+				String label = src.getFullPathName();
+				if (label.isEmpty()) label = p->parentContainer != nullptr ? p->parentContainer->niceName : p->niceName;
+				missingFiles.addIfNotAlreadyThere(label);
+				continue;
+			}
+
+			String srcKey = src.getFullPathName();
+			String name;
+
+			if (sourceToName.contains(srcKey))
+			{
+				name = sourceToName[srcKey];
+			}
+			else
+			{
+				// Resolve name collisions between files coming from different folders.
+				name = src.getFileName();
+				int idx = 2;
+				while (usedNames.contains(name.toLowerCase()))
+					name = src.getFileNameWithoutExtension() + " (" + String(idx++) + ")" + src.getFileExtension();
+
+				usedNames.add(name.toLowerCase());
+				copyJobs.add({ src, soundsDir.getChildFile(name) });
+				sourceToName.set(srcKey, name);
+			}
+
+			// Repoint the parameter to the packaged copy, relative to the package root, silently
+			// (no listener notifications, so players are not reloaded during packaging). The
+			// relative value is set directly, so it holds even though the copy happens later.
+			p->customBasePath = packageRoot.getFullPathName();
+			p->forceRelativePath = true;
+			p->forceAbsolutePath = false;
+			p->setValue("sounds/" + name, true, true);
+		}
+
+		// Write the packaged .indy from the now-relative live state.
+		File indyFile = packageRoot.getChildFile(getFile().getFileName());
+		var data = getJSONData();
+		if (indyFile.exists()) indyFile.deleteFile();
+		if (std::unique_ptr<OutputStream> os = indyFile.createOutputStream())
+		{
+			JSON::writeToStream(*os, data);
+			os->flush();
+		}
+
+		// Restore every parameter to its original value so the open project is unchanged.
+		for (auto& s : snapshots)
+		{
+			s.p->customBasePath = s.base;
+			s.p->forceRelativePath = s.forceRel;
+			s.p->forceAbsolutePath = s.forceAbs;
+			s.p->setValue(s.value, true, true);
+		}
+
+		// Copy the audio files (and compress) on a background thread with a progress window.
+		(new PackageProjectTask(std::move(copyJobs), compress, packageRoot, finalOutput,
+			indyFile, openAfter, std::move(missingFiles), this))->launchThread();
+	};
+
+	// Ask before overwriting an existing package: if the user agrees, delete it first (folder or
+	// archive) so no residual files remain; otherwise cancel.
+	if (finalOutput.exists())
+	{
+		String what = compress ? "A .zip archive" : "A folder";
+		AlertWindow::showOkCancelBox(AlertWindow::WarningIcon, "Package Project",
+			what + " named \"" + finalOutput.getFileName() + "\" already exists at this location.\n\nReplace it?",
+			"Cancel", "Replace", nullptr,
+			ModalCallbackFunction::create([performBuild, finalOutput](int result)
+				{
+					if (result == 1) return; // Cancel
+					finalOutput.deleteRecursively();
+					performBuild();
+				}));
+		return;
+	}
+
+	performBuild();
 }
 
 String PonyEngine::getMinimumRequiredFileVersion()

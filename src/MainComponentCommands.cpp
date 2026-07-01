@@ -27,11 +27,11 @@ namespace PonyCommandIDs
 	static const int postGithubIssue = 0x60004;
 	static const int donate = 0x60005;
 	static const int sponsor = 0x60055;
-	static const int showWelcome = 0x60006;
 	static const int gotoChangelog = 0x60007;
 
 	static const int exportSelection = 0x800;
 	static const int importSelection = 0x801;
+    static const int packageProject = 0x802;
 
     static const int keyGo = 0x9001;
     static const int keyPanic = 0x9002;
@@ -43,10 +43,6 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
 	{
 	case PonyCommandIDs::showAbout:
 		result.setInfo("About...", "", "General", result.readOnlyInKeyEditor);
-		break;
-
-	case PonyCommandIDs::showWelcome:
-		result.setInfo("Show Welcome Screen...", "", "General", result.readOnlyInKeyEditor);
 		break;
 
 	case PonyCommandIDs::donate:
@@ -98,6 +94,10 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
 		result.addDefaultKeypress(KeyPress::createFromDescription("escape").getKeyCode(), 0);
         break;
 
+    case PonyCommandIDs::packageProject:
+        result.setInfo("Package Project...", "This will package the current project into a folder with all ressources needed to run it on another computer", "File", 0);
+        break;
+
 	default:
 		OrganicMainContentComponent::getCommandInfo(commandID, result);
 		break;
@@ -121,6 +121,7 @@ void MainContentComponent::getAllCommands(Array<CommandID>& commands) {
 
 		PonyCommandIDs::importSelection,
 		PonyCommandIDs::exportSelection,
+        PonyCommandIDs::packageProject,
 
         PonyCommandIDs::keyGo,
         PonyCommandIDs::keyPanic
@@ -131,6 +132,8 @@ void MainContentComponent::getAllCommands(Array<CommandID>& commands) {
 
 void MainContentComponent::fillFileMenuInternal(PopupMenu& menu)
 {
+    menu.addCommandItem(&getCommandManager(), PonyCommandIDs::packageProject);
+    menu.addSeparator();
 	menu.addCommandItem(&getCommandManager(), PonyCommandIDs::importSelection);
 	menu.addCommandItem(&getCommandManager(), PonyCommandIDs::exportSelection);
 }
@@ -142,7 +145,6 @@ PopupMenu MainContentComponent::getMenuForIndex(int topLevelMenuIndex, const Str
 	if (menuName == "Help")
 	{
 		menu.addCommandItem(&getCommandManager(), PonyCommandIDs::showAbout);
-//		menu.addCommandItem(&getCommandManager(), PonyCommandIDs::showWelcome);
 		menu.addCommandItem(&getCommandManager(), PonyCommandIDs::donate);
 		menu.addCommandItem(&getCommandManager(), PonyCommandIDs::sponsor);
 		menu.addSeparator();
@@ -166,13 +168,6 @@ bool MainContentComponent::perform(const InvocationInfo& info)
 	{
 		aboutWindow.reset(new AboutWindow());
 		DialogWindow::showDialog("About", aboutWindow.get(), getTopLevelComponent(), Colours::transparentBlack, true);
-	}
-	break;
-
-	case PonyCommandIDs::showWelcome:
-	{
-//		welcomeScreen.reset(new WelcomeScreen());
-//		DialogWindow::showDialog("Welcome", welcomeScreen.get(), getTopLevelComponent(), Colours::black, true);
 	}
 	break;
 
@@ -216,6 +211,12 @@ bool MainContentComponent::perform(const InvocationInfo& info)
 		((PonyEngine*)Engine::mainEngine)->importSelection();
 	}
 	break;
+
+    case PonyCommandIDs::packageProject:
+    {
+        ((PonyEngine*)Engine::mainEngine)->packageProject();
+    }
+    break;
 
     case PonyCommandIDs::keyGo:
     {

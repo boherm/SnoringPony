@@ -52,5 +52,12 @@ public:
 	void importSelection(File f = File());
 	void exportSelection();
 
+	void packageProject();
+
 	String getMinimumRequiredFileVersion() override;
+
+private:
+	juce::Array<FileParameter*> collectAudioFileParameters();
+	void choosePackageDestination(bool compress, bool openAfter);
+	void runPackageExport(const juce::File& destinationDir, bool compress, bool openAfter);
 };
