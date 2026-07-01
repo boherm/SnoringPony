@@ -448,6 +448,32 @@ void PlaylistCue::fade(double targetGain, double duration)
     }
 }
 
+float PlaylistCue::getFaderVolume()
+{
+    return volume->floatValue();
+}
+
+void PlaylistCue::setFaderVolume(float v)
+{
+    volume->setValue(jlimit(0.0f, 1.5f, v));
+}
+
+float PlaylistCue::getOutputLevel()
+{
+    // Live output level = the volume scaled by the current fade/panic multiplier of the file
+    // currently playing, so the fader fill reflects ducking.
+    float mult = 1.0f;
+    for (auto& file : filesManager->items)
+    {
+        if (file->player != nullptr && file->player->transport->isPlaying())
+        {
+            mult = (float)file->player->getFadeMultiplier();
+            break;
+        }
+    }
+    return jlimit(0.0f, 1.5f, getFaderVolume() * mult);
+}
+
 String PlaylistCue::autoDescriptionInternal()
 {
     String desc = "Playlist: ";

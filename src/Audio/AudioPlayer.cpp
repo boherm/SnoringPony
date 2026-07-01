@@ -310,6 +310,11 @@ void AudioPlayer::fadeOut(double duration, bool stopAfterFade)
     mixer->fadeOut(duration, stopAfterFade);
 }
 
+double AudioPlayer::getFadeMultiplier() const
+{
+    return mixer->fadingGain.getCurrentValue() * mixer->panicFadingGain.getCurrentValue();
+}
+
 void AudioPlayerMixer::setPluginChain(PluginChainManager* chain)
 {
     pluginChain = chain;

@@ -123,6 +123,16 @@ public:
 
     virtual void fade(double targetGain, double duration) {}
 
+    // Volume fader shown in the Active Cues panel (audio/playlist cues only).
+    // getFaderVolume/setFaderVolume expose the user-set volume as an actual value in
+    // [0, getMaxFaderVolume()] (the thumb); getOutputLevel is the live output level in the
+    // same units including the fade/panic multiplier (the fill).
+    virtual bool  hasVolumeFader() { return false; }
+    virtual float getFaderVolume() { return 1.0f; }
+    virtual float getMaxFaderVolume() { return 1.0f; }
+    virtual void  setFaderVolume(float v) {}
+    virtual float getOutputLevel() { return 1.0f; }
+
     void endCue();
     void playNextCue();
     bool isAutoStartCue();

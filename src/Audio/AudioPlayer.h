@@ -82,6 +82,10 @@ public:
     void fadeIn(double duration);
     void fadeOut(double duration, bool stopAfterFade = true);
 
+    // Current fade/panic multiplier (0..1), i.e. the transient gain applied on top of the
+    // transport volume. Used to display the live output level (e.g. while ducking).
+    double getFadeMultiplier() const;
+
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPlayer)
 };

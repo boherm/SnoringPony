@@ -164,7 +164,10 @@ AudioFile::~AudioFile()
 void AudioFile::updateGain()
 {
     if (player != nullptr && player->transport != nullptr)
-        player->transport->setGain(enabled->boolValue() ? volume->floatValue() : 0.0f);
+    {
+        float master = (audioCue != nullptr && audioCue->volume != nullptr) ? audioCue->volume->floatValue() : 1.0f;
+        player->transport->setGain(enabled->boolValue() ? volume->floatValue() * master : 0.0f);
+    }
 }
 
 void AudioFile::parameterValueChanged(Parameter* p)

@@ -43,6 +43,7 @@ public:
 
     FloatParameter* initialDuration;
     BoolParameter* loop;
+    FloatParameter* volume; // master volume, combined with each file's own volume
 
     // MTC
     EnablingControllableContainer* mtcCC;
@@ -63,6 +64,8 @@ public:
     FloatParameter* duckPrePlayCurrentTime;  // read-only, display
     FloatParameter* duckPostPlayCurrentTime; // read-only, display
     BoolParameter*  duckActive;              // read-only, hidden
+    BoolParameter*  duckPrePlayActive;       // read-only, hidden: pre-play delay running
+    BoolParameter*  duckPostPlayActive;      // read-only, hidden: post-play delay running
 
     Cue::CueTimer* duckPrePlayTimer = nullptr;
     Cue::CueTimer* duckPostPlayTimer = nullptr;
@@ -75,6 +78,15 @@ public:
     Array<Cue*> getOtherPlayingAudioCues();          // playing audio/playlist cues except this
 
     void onCueTimerFinished(Cue::CueTimer* timer) override;
+
+    void refreshVolume(); // push the master volume down to every file
+
+    // Volume fader (Active Cues panel).
+    bool  hasVolumeFader() override { return true; }
+    float getFaderVolume() override;
+    float getMaxFaderVolume() override { return 1.5f; }
+    void  setFaderVolume(float v) override;
+    float getOutputLevel() override;
 
     class MTCTimer : public juce::HighResolutionTimer
     {
@@ -118,6 +130,7 @@ public:
     String autoDescriptionInternal() override;
 
     void onControllableFeedbackUpdateInternal(ControllableContainer* cc, Controllable* c) override;
+    void parameterValueChanged(Parameter* p) override;
 
     void startMTC();
     void stopMTC();

@@ -30,6 +30,8 @@ AudioCue::AudioCue(var params)
 
     loop = addBoolParameter("Loop", "If enabled, audio files will loop when they reach the end.", false);
 
+    volume = addFloatParameter("Volume", "Master volume for this cue, combined with each file's own volume", 1.0, 0.0, 1.5, 0.01);
+
     initialDuration = addFloatParameter("Initial Duration", "Initial duration for new audio files added to this cue.", 0.0f);
     initialDuration->defaultUI = FloatParameter::TIME;
     initialDuration->setEnabled(false);
@@ -89,8 +91,13 @@ AudioCue::AudioCue(var params)
     }
 
     duckActive = duckOthersCC->addBoolParameter("Active", "Duck sequence currently active", false);
-    duckActive->setEnabled(false);
-    duckActive->hideInEditor = true;
+    duckPrePlayActive = duckOthersCC->addBoolParameter("Pre-play active", "Pre-play delay currently running", false);
+    duckPostPlayActive = duckOthersCC->addBoolParameter("Post-play active", "Post-play delay currently running", false);
+    for (auto* p : { duckActive, duckPrePlayActive, duckPostPlayActive })
+    {
+        p->setEnabled(false);
+        p->hideInEditor = true;
+    }
 
     audioSlicer.reset(new ControllableContainer("Audio Slicer"));
     audioSlicer->editorIsCollapsed = true;
@@ -273,7 +280,10 @@ void AudioCue::startDuckSequence()
     // Pre-play gates the start of this cue's audio.
     double prePlay = duckPrePlayDuration->doubleValue();
     if (prePlay > 0.0)
+    {
+        duckPrePlayActive->setValue(true);
         duckPrePlayTimer->start(prePlay, duckPrePlayCurrentTime);
+    }
     else
         startAudioPlayback();
 }
@@ -284,6 +294,7 @@ void AudioCue::startDuckRestore()
     double postPlay = duckPostPlayDuration->doubleValue();
     if (postPlay > 0.0)
     {
+        duckPostPlayActive->setValue(true);
         duckPostPlayTimer->start(postPlay, duckPostPlayCurrentTime);
     }
     else
@@ -304,6 +315,8 @@ void AudioCue::cancelDuckSequence(bool fadeInImmediately)
 {
     duckPrePlayTimer->stop();
     duckPostPlayTimer->stop();
+    duckPrePlayActive->setValue(false);
+    duckPostPlayActive->setValue(false);
     duckPrePlayCurrentTime->setValue(0.0f);
     duckPostPlayCurrentTime->setValue(0.0f);
 
@@ -317,12 +330,14 @@ void AudioCue::onCueTimerFinished(Cue::CueTimer* timer)
 {
     if (timer == duckPrePlayTimer)
     {
+        duckPrePlayActive->setValue(false);
         duckPrePlayCurrentTime->setValue(0.0f);
         startAudioPlayback();
         return;
     }
     if (timer == duckPostPlayTimer)
     {
+        duckPostPlayActive->setValue(false);
         duckPostPlayCurrentTime->setValue(0.0f);
         fadeOthersBackIn();
         duckActive->setValue(false);
@@ -529,6 +544,46 @@ void AudioCue::fadeOut(double duration, bool stopAfterFade)
     {
         audioFile->player->fadeOut(duration, stopAfterFade);
     }
+}
+
+void AudioCue::refreshVolume()
+{
+    for (auto& audioFile : filesManager->items)
+        audioFile->updateGain();
+}
+
+void AudioCue::parameterValueChanged(Parameter* p)
+{
+    Cue::parameterValueChanged(p);
+
+    if (p == volume)
+        refreshVolume();
+}
+
+float AudioCue::getFaderVolume()
+{
+    return volume->floatValue();
+}
+
+void AudioCue::setFaderVolume(float v)
+{
+    volume->setValue(jlimit(0.0f, 1.5f, v));
+}
+
+float AudioCue::getOutputLevel()
+{
+    // Live output level = the master volume scaled by the current fade/panic multiplier of a
+    // playing file, so the fader fill drops and recovers while ducking.
+    float mult = 1.0f;
+    for (auto& audioFile : filesManager->items)
+    {
+        if (audioFile->player != nullptr && audioFile->player->transport->isPlaying())
+        {
+            mult = (float)audioFile->player->getFadeMultiplier();
+            break;
+        }
+    }
+    return jlimit(0.0f, 1.5f, getFaderVolume() * mult);
 }
 
 String AudioCue::autoDescriptionInternal()

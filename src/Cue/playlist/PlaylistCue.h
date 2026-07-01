@@ -76,6 +76,13 @@ public:
     void panicInternal() override;
     void fade(double targetGain, double duration) override;
     void fadeOut(double duration, bool stopAfterFade = true);
+
+    // Volume fader (Active Cues panel).
+    bool  hasVolumeFader() override { return true; }
+    float getFaderVolume() override;
+    float getMaxFaderVolume() override { return 1.5f; }
+    void  setFaderVolume(float v) override;
+    float getOutputLevel() override;
     void refreshGlobalDuration();
     void refreshAudioOutput();
     void refreshVolume();

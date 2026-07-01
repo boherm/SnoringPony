@@ -19,16 +19,25 @@
 class Cue;
 
 // Scrollable content holding one row per active cue.
-class ActiveCuesRows : public juce::Component
+class ActiveCuesRows : public juce::Component,
+                       public juce::SettableTooltipClient
 {
 public:
-    static constexpr int rowH = 64;
+    static constexpr int rowH = 66;
 
     void paint(juce::Graphics&) override;
     void mouseDown(const juce::MouseEvent& e) override;
+    void mouseDrag(const juce::MouseEvent& e) override;
+    void mouseUp(const juce::MouseEvent& e) override;
+    void mouseDoubleClick(const juce::MouseEvent& e) override; // type a volume value
+    juce::String getTooltip() override; // volume value when hovering a fader
 
     juce::Rectangle<int> getStopRect(int rowIndex) const;
     juce::Rectangle<int> getProgressRect(int rowIndex) const; // clickable track area (for seeking)
+    juce::Rectangle<int> getFaderRect(int rowIndex) const;     // draggable volume fader (audio/playlist)
+
+private:
+    int dragFaderRow = -1; // row whose volume fader is being dragged, -1 if none
 };
 
 class ActiveCuesPanelUI : public ShapeShifterContent {
