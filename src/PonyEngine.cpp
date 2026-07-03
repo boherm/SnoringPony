@@ -18,7 +18,6 @@
 #include "Interface/midi/MIDIFeedbackFactory.h"
 #include "Interface/osc/OSCFeedbackFactory.h"
 #include "Interface/midi/MIDIManager.h"
-#include "MainIncludes.h"
 #include "PonyEngine.h"
 #include "Brain.h"
 #include "UserInputManager.h"
@@ -257,6 +256,10 @@ void PonyEngine::importSelection(File f)
 	if (!data.isObject()) return;
 
 	CuelistManager::getInstance()->addItemsFromData(data.getProperty(CuelistManager::getInstance()->shortName, var()));
+    InterfaceManager::getInstance()->addItemsFromData(data.getProperty(InterfaceManager::getInstance()->shortName, var()));
+	RFProfileManager::getInstance()->addItemsFromData(data.getProperty(RFProfileManager::getInstance()->shortName, var()));
+    RFDeviceManager::getInstance()->addItemsFromData(data.getProperty(RFDeviceManager::getInstance()->shortName, var()));
+    ShowTimerManager::getInstance()->addItemsFromData(data.getProperty(ShowTimerManager::getInstance()->shortName, var()));
 }
 
 void PonyEngine::exportSelection()
@@ -264,6 +267,10 @@ void PonyEngine::exportSelection()
 	var data(new DynamicObject());
 
 	data.getDynamicObject()->setProperty(CuelistManager::getInstance()->shortName, CuelistManager::getInstance()->getExportSelectionData());
+    data.getDynamicObject()->setProperty(InterfaceManager::getInstance()->shortName, InterfaceManager::getInstance()->getExportSelectionData());
+	data.getDynamicObject()->setProperty(RFProfileManager::getInstance()->shortName, RFProfileManager::getInstance()->getExportSelectionData());
+    data.getDynamicObject()->setProperty(RFDeviceManager::getInstance()->shortName, RFDeviceManager::getInstance()->getExportSelectionData());
+    data.getDynamicObject()->setProperty(ShowTimerManager::getInstance()->shortName, ShowTimerManager::getInstance()->getExportSelectionData());
 
 	String s = JSON::toString(data);
 
