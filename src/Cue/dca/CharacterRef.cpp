@@ -65,5 +65,5 @@ void CharacterRef::updateRootFromCue()
     if (mixer == nullptr) return;
 
     characterRef->setRootContainer(mixer->channels.get(), false, false);
-    fxRef->setRootContainer(mixer->fxs.get(), false, false);
+    fxRef->setRootContainer(mixer->fxs.get(), false, true);
 }

@@ -76,7 +76,7 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
 	case PonyCommandIDs::exportSelection:
 		result.setInfo("Export Selection", "This will export the current selection as *.lilpony file that can be later imported", "File", result.readOnlyInKeyEditor);
 		result.addDefaultKeypress(KeyPress::createFromDescription("s").getKeyCode(), ModifierKeys::altModifier);
-		result.setActive(InspectableSelectionManager::mainSelectionManager->currentInspectables.size() > 0);
+		// result.setActive(InspectableSelectionManager::mainSelectionManager->currentInspectables.size() > 0);
 		break;
 
 	case PonyCommandIDs::importSelection:
