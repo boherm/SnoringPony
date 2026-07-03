@@ -12,7 +12,7 @@
 #include "MixerInterface.h"
 
 MixerChannel::MixerChannel(var params) :
-    BaseItem(params.getProperty("name", "Channel"))
+    BaseItem(params.getProperty("name", "Ch 1"))
 {
     itemDataType = "Channel";
     saveAndLoadRecursiveData = true;
