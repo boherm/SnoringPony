@@ -23,7 +23,7 @@ class AHCQProtocol
 public:
     static constexpr int DEFAULT_TCP_PORT = 51325;
     static constexpr int MAX_INPUT_CHANNELS = 24;  // CQ-20B: 16 mono + 4 stereo + USB + BT
-    static constexpr int MAX_DCAS = 4;
+    static constexpr int MAX_DCAS = 12;
 
     // -----------------------------------------------------------------------
     // NRPN message builder (12 bytes: CC99, CC98, CC6, CC38 on MIDI ch 0)
