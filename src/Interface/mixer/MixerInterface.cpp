@@ -32,12 +32,14 @@ MixerInterface::MixerInterface() :
 
     fxs.reset(new BaseManager<MixerFX>("FX"));
     fxs->selectItemWhenCreated = false;
+    fxs->addBaseManagerListener(this);
     addChildControllableContainer(fxs.get());
 }
 
 MixerInterface::~MixerInterface()
 {
     if (channels != nullptr) channels->removeBaseManagerListener(this);
+    if (fxs != nullptr) fxs->removeBaseManagerListener(this);
     if (mixerSettings != nullptr) mixerSettings->disconnect();
 }
 
@@ -197,7 +199,48 @@ void MixerInterface::applyLoadBaseline()
 void MixerInterface::itemAdded(MixerChannel* c)
 {
     c->parentMixer = this;
+
+    // itemAdded (singular) only fires for a fresh manual add via the "+" button;
+    // file load, import and paste go through itemsAdded, preserving saved numbers.
+    // Guard anyway (isCurrentlyLoadingData also covers import, where isLoadingFile
+    // is false). Assign the next free channel number only when the default would
+    // collide with an existing channel, so console channel numbers stay unique.
+    const bool loading = Engine::mainEngine != nullptr && Engine::mainEngine->isLoadingFile;
+    if (!loading && !channels->isCurrentlyLoadingData)
+    {
+        int maxNum = 0;
+        bool conflict = false;
+        for (auto* other : channels->items)
+        {
+            if (other == c) continue;
+            int n = other->channelNumber->intValue();
+            maxNum = jmax(maxNum, n);
+            if (n == c->channelNumber->intValue()) conflict = true;
+        }
+        if (conflict) c->channelNumber->setValue(maxNum + 1);
+    }
+
     if (!Engine::mainEngine->isLoadingFile) pushChannel(c);
+}
+
+void MixerInterface::itemAdded(MixerFX* fx)
+{
+    // Skip on file load / import (see itemAdded(MixerChannel*) for details).
+    const bool loading = Engine::mainEngine != nullptr && Engine::mainEngine->isLoadingFile;
+    if (loading || fxs->isCurrentlyLoadingData) return;
+
+    // Same auto-increment logic as channels: bump the bus number to the next free
+    // value on a fresh manual add when it would collide with an existing FX.
+    int maxNum = 0;
+    bool conflict = false;
+    for (auto* other : fxs->items)
+    {
+        if (other == fx) continue;
+        int n = other->busNumber->intValue();
+        maxNum = jmax(maxNum, n);
+        if (n == fx->busNumber->intValue()) conflict = true;
+    }
+    if (conflict) fx->busNumber->setValue(maxNum + 1);
 }
 
 void MixerInterface::itemsAdded(Array<MixerChannel*> items)

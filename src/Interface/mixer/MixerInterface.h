@@ -20,7 +20,8 @@
 
 class MixerInterface :
     public Interface,
-    public BaseManager<MixerChannel>::ManagerListener
+    public BaseManager<MixerChannel>::ManagerListener,
+    public BaseManager<MixerFX>::ManagerListener
 {
 public:
     MixerInterface();
@@ -60,6 +61,7 @@ public:
 
     void itemAdded(MixerChannel* c) override;
     void itemsAdded(Array<MixerChannel*> items) override;
+    void itemAdded(MixerFX* fx) override;
 
     void onContainerParameterChangedInternal(Parameter* p) override;
     void onControllableFeedbackUpdateInternal(ControllableContainer* cc, Controllable* c) override;
