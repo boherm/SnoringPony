@@ -64,7 +64,7 @@ void DCAMixingCuelist::ensureLineCheckCue()
 
     DCACue* lineCheck = new DCACue();
     lineCheck->id->setValue(0);
-    lineCheck->description->setValue("Line check");
+    lineCheck->description->setValue("-- Line check");
     lineCheck->userCanRemove = false;
     lineCheck->canBeReorderedInEditor = false;
     var data(new DynamicObject());

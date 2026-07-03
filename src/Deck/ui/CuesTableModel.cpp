@@ -12,7 +12,6 @@
 #include "ReorderCuesWindow.h"
 #include "../../Cuelist/Cuelist.h"
 #include "../../Cuelist/CuelistManager.h"
-#include "../../Cuelist/dca/DCAMixingCuelist.h"
 #include "../../Cue/CueManager.h"
 #include "../../Cue/dca/DCACue.h"
 #include "../../Cue/dca/DCAAssignment.h"
@@ -464,7 +463,7 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         if (cue->isAutoStartCue())
             g.setOpacity(0.4f);
 
-        if (!cue->userCanRemove)
+        if (!cue->userCanRemove || cue->getDescription().startsWith("--"))
             g.setFont(Font(14.0f, Font::italic));
 
         g.drawText(cue->getDescription(), r.reduced(10, 0), Justification::centredLeft);
