@@ -32,7 +32,7 @@ DCACue::DCACue(var params) :
 
     targetMixer = addTargetParameter("Target Mixer", "Mixing console interface to apply this DCA assignment to", InterfaceManager::getInstance());
     targetMixer->targetType = TargetParameter::CONTAINER;
-    targetMixer->maxDefaultSearchLevel = 1;
+    targetMixer->maxDefaultSearchLevel = 0;
 
     triggerCue = addTargetParameter("GO cue on play", "When this DCA cue is played, also GO this cue (or trigger this cuelist's next cue). Leave empty to do nothing.", CuelistManager::getInstance());
     triggerCue->targetType = TargetParameter::CONTAINER;
