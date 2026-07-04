@@ -86,6 +86,13 @@ DCAAssignmentDialog::DCAAssignmentDialog(DCACue* cue, DCAAssignment* assignment)
     charactersLabel->setColour(Label::textColourId, Colours::lightgrey);
     addAndMakeVisible(charactersLabel.get());
 
+    resetCharsBtn = std::make_unique<TextButton>("Reset");
+    resetCharsBtn->setTooltip("Remove every character from this DCA");
+    resetCharsBtn->setColour(TextButton::buttonColourId, BG_COLOR.brighter(.06f));
+    resetCharsBtn->setColour(TextButton::textColourOffId, TEXT_COLOR);
+    resetCharsBtn->addListener(this);
+    addAndMakeVisible(resetCharsBtn.get());
+
     listContent = std::make_unique<DarkPanel>();
     listViewport = std::make_unique<Viewport>();
     listViewport->setViewedComponent(listContent.get(), false);
@@ -255,6 +262,18 @@ void DCAAssignmentDialog::buttonClicked(Button* b)
         return;
     }
 
+    if (b == resetCharsBtn.get())
+    {
+        // Remove every character. Each removal is a normal model op, so in a multi-cue
+        // selection the DCA sync propagates the removals to the other selected cues too.
+        for (int i = assignment->characters->items.size() - 1; i >= 0; --i)
+            assignment->characters->removeItem(assignment->characters->items[i]);
+
+        rebuildCharacterList();
+        resized();
+        return;
+    }
+
     if (b == globalFXBtn.get())
     {
         MixerInterface* mixer = cue != nullptr ? cue->getMixer() : nullptr;
@@ -394,7 +413,9 @@ void DCAAssignmentDialog::resized()
     faderSlider->setBounds(faderRow.reduced(4, 0));
     r.removeFromTop(10);
 
-    charactersLabel->setBounds(r.removeFromTop(18));
+    auto charsHeaderRow = r.removeFromTop(18);
+    resetCharsBtn->setBounds(charsHeaderRow.removeFromRight(70));
+    charactersLabel->setBounds(charsHeaderRow);
     r.removeFromTop(4);
 
     auto bottom = r.removeFromBottom(32);
