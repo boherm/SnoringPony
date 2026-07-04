@@ -53,6 +53,8 @@ DCAAssignmentDialog::DCAAssignmentDialog(DCACue* cue, DCAAssignment* assignment)
     cue(cue),
     assignment(assignment)
 {
+    currentDca = assignment != nullptr ? assignment->dcaNumber->intValue() : 0;
+
     nameLabel = std::make_unique<Label>("nameLabel", "Display name:");
     nameLabel->setColour(Label::textColourId, Colours::lightgrey);
     addAndMakeVisible(nameLabel.get());
@@ -143,6 +145,8 @@ DCAAssignmentDialog::DCAAssignmentDialog(DCACue* cue, DCAAssignment* assignment)
 
 DCAAssignmentDialog::~DCAAssignmentDialog()
 {
+    if (onClosed) onClosed();
+
     if (cue != nullptr && assignment != nullptr && assignment->characters->items.isEmpty())
         cue->dcaAssignments->removeItem(assignment);
 }
@@ -438,6 +442,8 @@ void DCAAssignmentDialog::loadAssignment(DCAAssignment* a)
 {
     if (a == nullptr) return;
     assignment = a;
+    currentDca = a->dcaNumber->intValue();
+    if (onStateChanged) onStateChanged();
 
     nameEditor->setText(a->displayName->stringValue(), dontSendNotification);
     forceFaderBtn->setToggleState(a->forceFader->boolValue(), dontSendNotification);

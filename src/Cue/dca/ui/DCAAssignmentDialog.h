@@ -33,6 +33,12 @@ public:
     DCACue* cue;
     DCAAssignment* assignment;
 
+    // DCA number currently shown (kept in sync through navigation) and hooks the cues table
+    // uses to highlight the edited cell and follow << / >> navigation and closing.
+    int currentDca = 0;
+    std::function<void()> onStateChanged; // DCA shown changed (navigation)
+    std::function<void()> onClosed;       // dialog is being destroyed
+
     std::unique_ptr<juce::Label> nameLabel;
     std::unique_ptr<juce::TextEditor> nameEditor;
     std::unique_ptr<juce::Label> globalFXLabel;

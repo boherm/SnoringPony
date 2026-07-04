@@ -76,6 +76,13 @@ CuesTableModel::~CuesTableModel()
 {
     cl->nextCue->removeParameterListener(this);
 	InspectableSelectionManager::mainSelectionManager->removeAsyncSelectionManagerListener(this);
+
+    // Drop the callbacks a still-open DCA dialog holds into this (about-to-die) model.
+    if (auto* d = dynamic_cast<DCAAssignmentDialog*>(activeDcaDialog.getComponent()))
+    {
+        d->onStateChanged = nullptr;
+        d->onClosed = nullptr;
+    }
 }
 
 int CuesTableModel::getNumRows()
@@ -412,6 +419,19 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
                     g.setColour(Colours::lightblue);
                     g.drawText("FX", width - 22, 2, 20, 12, Justification::topRight, false);
                 }
+            }
+
+            // Border around the cell whose DCA modal is currently open (also for empty cells),
+            // and a distinct one on the other selected DCA cues the modal would also affect.
+            if (rowNumber == editingRow && dcaIdx == editingDca) {
+                g.setOpacity(1.0f);
+                g.setColour(Colours::orange);
+                g.drawRect(0, 0, width, height, 2);
+            }
+            else if (editingRow != -1 && dcaIdx == editingDca && dcaCue->isSelected) {
+                g.setOpacity(1.0f);
+                g.setColour(Colours::deepskyblue);
+                g.drawRect(0, 0, width, height, 2);
             }
         }
         return;
@@ -828,8 +848,27 @@ void CuesTableModel::cellDoubleClicked(int rowNumber, int columnId, const MouseE
         if (a == nullptr) a = dcaCue->createAssignment(dcaIdx);
         if (a == nullptr) return;
 
+        auto* dialog = new DCAAssignmentDialog(dcaCue, a);
+
+        // Highlight the edited cell, and follow the dialog's DCA navigation / closing.
+        activeDcaDialog = dialog;
+        editingRow = rowNumber;
+        editingDca = dcaIdx;
+        dialog->onStateChanged = [this, dialog]() {
+            if (activeDcaDialog.getComponent() != dialog) return; // superseded by another dialog
+            editingDca = dialog->currentDca;
+            if (tlb != nullptr) tlb->repaint();
+        };
+        dialog->onClosed = [this, dialog]() {
+            if (activeDcaDialog.getComponent() != dialog) return; // a newer dialog owns the highlight
+            editingRow = -1;
+            editingDca = -1;
+            if (tlb != nullptr) tlb->repaint();
+        };
+        if (tlb != nullptr) tlb->repaint();
+
         DialogWindow::LaunchOptions dw;
-        dw.content.setOwned(new DCAAssignmentDialog(dcaCue, a));
+        dw.content.setOwned(dialog);
         dw.dialogTitle = "DCA " + String(dcaIdx) + " — characters";
         dw.dialogBackgroundColour = BG_COLOR;
         dw.escapeKeyTriggersCloseButton = true;

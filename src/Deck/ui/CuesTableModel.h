@@ -28,6 +28,12 @@ public:
     TableListBox* tlb = nullptr;
     Cuelist* cl = nullptr;
 
+    // Cell whose DCA assignment modal is currently open (for a highlight border).
+    // -1 when none. Kept in sync via the dialog's onStateChanged / onClosed hooks.
+    int editingRow = -1;
+    int editingDca = -1;
+    juce::Component::SafePointer<juce::Component> activeDcaDialog;
+
     void addListeners();
 
     std::unique_ptr<ReorderCuesWindow> reorderWindow;
