@@ -154,6 +154,12 @@
           <FILE id="vGcRza" name="GoCue.h" compile="0" resource="0" file="src/Cue/go/GoCue.h"/>
         </GROUP>
         <GROUP id="{24A52D65-F5D7-CCBD-6DA5-71E99A5DE41B}" name="group">
+          <GROUP id="{71B53367-BFA7-1592-9B58-C69CC2B8AA32}" name="ui">
+            <FILE id="WTFVDK" name="GroupCueEditor.cpp" compile="1" resource="0"
+                  file="src/Cue/group/ui/GroupCueEditor.cpp"/>
+            <FILE id="nifA0r" name="GroupCueEditor.h" compile="0" resource="0"
+                  file="src/Cue/group/ui/GroupCueEditor.h"/>
+          </GROUP>
           <FILE id="TJQ3zs" name="GroupCue.cpp" compile="1" resource="0" file="src/Cue/group/GroupCue.cpp"/>
           <FILE id="SWpzgd" name="GroupCue.h" compile="0" resource="0" file="src/Cue/group/GroupCue.h"/>
         </GROUP>

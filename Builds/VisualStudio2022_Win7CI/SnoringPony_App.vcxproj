@@ -184,6 +184,7 @@
     <ClCompile Include="..\..\src\Cue\dca\DCACue.cpp"/>
     <ClCompile Include="..\..\src\Cue\setmaincuelist\SetMainCuelistCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\go\GoCue.cpp"/>
+    <ClCompile Include="..\..\src\Cue\group\ui\GroupCueEditor.cpp"/>
     <ClCompile Include="..\..\src\Cue\group\GroupCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\timer\TimerActionCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\note\NoteCue.cpp"/>
@@ -3446,6 +3447,7 @@
     <ClInclude Include="..\..\src\Cue\dca\DCACue.h"/>
     <ClInclude Include="..\..\src\Cue\setmaincuelist\SetMainCuelistCue.h"/>
     <ClInclude Include="..\..\src\Cue\go\GoCue.h"/>
+    <ClInclude Include="..\..\src\Cue\group\ui\GroupCueEditor.h"/>
     <ClInclude Include="..\..\src\Cue\group\GroupCue.h"/>
     <ClInclude Include="..\..\src\Cue\timer\MarkTimerCue.h"/>
     <ClInclude Include="..\..\src\Cue\timer\PauseTimerCue.h"/>

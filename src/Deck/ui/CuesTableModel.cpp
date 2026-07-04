@@ -479,9 +479,12 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         if (auto* grp = dynamic_cast<GroupCue*>(cue)) {
             auto tri = r.removeFromRight(kGroupToggleWidth);
             g.setOpacity(1.0f);
-            // Match the group's box: orange when sequential, green when parallel.
-            const bool sequential = grp->fireMode->intValue() == GroupCue::SEQUENTIAL;
-            g.setColour((sequential ? Colours::orange : Colours::green).brighter(0.3f));
+            // Match the group's box: orange sequential, sky-blue timeline, green parallel.
+            const int grpMode = grp->fireMode->intValue();
+            const Colour triColour = grpMode == GroupCue::SEQUENTIAL ? Colours::orange
+                                   : grpMode == GroupCue::TIMELINE   ? Colours::skyblue
+                                                                     : Colours::green;
+            g.setColour(triColour.brighter(0.3f));
             float cx = tri.getCentreX(), cy = tri.getCentreY(), s = 6.5f;
             Path p;
             if (grp->collapsed->boolValue())

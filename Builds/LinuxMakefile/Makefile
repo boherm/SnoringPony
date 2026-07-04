@@ -99,6 +99,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/DCACue_2d8b60fa.o \
   $(JUCE_OBJDIR)/SetMainCuelistCue_759e5540.o \
   $(JUCE_OBJDIR)/GoCue_f384cdc0.o \
+  $(JUCE_OBJDIR)/GroupCueEditor_88b4401a.o \
   $(JUCE_OBJDIR)/GroupCue_28221940.o \
   $(JUCE_OBJDIR)/TimerActionCue_b060c69e.o \
   $(JUCE_OBJDIR)/NoteCue_105829c0.o \
@@ -389,6 +390,11 @@ $(JUCE_OBJDIR)/SetMainCuelistCue_759e5540.o: ../../src/Cue/setmaincuelist/SetMai
 $(JUCE_OBJDIR)/GoCue_f384cdc0.o: ../../src/Cue/go/GoCue.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling GoCue.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/GroupCueEditor_88b4401a.o: ../../src/Cue/group/ui/GroupCueEditor.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling GroupCueEditor.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/GroupCue_28221940.o: ../../src/Cue/group/GroupCue.cpp

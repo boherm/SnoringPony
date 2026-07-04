@@ -11,6 +11,7 @@
 #include "GroupCue.h"
 #include "../../Cuelist/Cuelist.h"
 #include "../CueManager.h"
+#include "ui/GroupCueEditor.h"
 
 GroupCue::GroupCue(var params) :
     Cue(params)
@@ -26,6 +27,7 @@ GroupCue::GroupCue(var params) :
     fireMode = addEnumParameter("Fire Mode", "How the group triggers its sub-cues when GO'd");
     fireMode->addOption("Parallel (all at once)", PARALLEL);
     fireMode->addOption("Sequential", SEQUENTIAL);
+    fireMode->addOption("Timeline", TIMELINE);
 
     collapsed = addBoolParameter("Collapsed", "Whether the group is folded in the deck", false);
     collapsed->hideInEditor = true;
@@ -38,6 +40,18 @@ GroupCue::GroupCue(var params) :
 GroupCue::~GroupCue()
 {
     stopListening();
+}
+
+InspectableEditor* GroupCue::getEditorInternal(bool isRoot, Array<Inspectable*> inspectables)
+{
+    // Multi-selection keeps the standard (multi-cue) editor; a single group gets the
+    // timeline-aware editor.
+    if (inspectables.size() > 1)
+        return Cue::getEditorInternal(isRoot, inspectables);
+
+    Array<Cue*> cues;
+    cues.add(this);
+    return new GroupCueEditor(cues, isRoot);
 }
 
 Array<Cue*> GroupCue::getMembers() const
@@ -433,6 +447,8 @@ void GroupCue::panicInternal()
 String GroupCue::autoDescriptionInternal()
 {
     int n = getMembers().size();
-    String mode = fireMode->intValue() == SEQUENTIAL ? "Sequential" : "Parallel";
+    String mode = fireMode->intValue() == SEQUENTIAL ? "Sequential"
+                : fireMode->intValue() == TIMELINE   ? "Timeline"
+                                                      : "Parallel";
     return mode + " group (" + String(n) + (n == 1 ? " cue)" : " cues)");
 }

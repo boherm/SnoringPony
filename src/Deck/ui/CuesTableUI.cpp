@@ -209,9 +209,12 @@ void CuesTableUI::paintOverChildren(Graphics& g)
             // their touching borders into one thick band; rounded for a softer look.
             Rectangle<float> box((float) tb.getX() + 1.0f, yTop + 2.0f,
                                  (float) tb.getWidth() - 2.0f, (yBot - yTop) - 4.0f);
-            // Sequential groups get an orange box, parallel ones green.
-            const bool sequential = grp->fireMode->intValue() == GroupCue::SEQUENTIAL;
-            g.setColour((sequential ? Colours::orange : Colours::green).brighter(0.1f));
+            // Box colour by mode: sequential = orange, timeline = sky-blue, parallel = green.
+            const int mode = grp->fireMode->intValue();
+            const Colour boxColour = mode == GroupCue::SEQUENTIAL ? Colours::orange
+                                   : mode == GroupCue::TIMELINE   ? Colours::skyblue
+                                                                  : Colours::green;
+            g.setColour(boxColour.brighter(0.1f));
             g.drawRoundedRectangle(box, 5.0f, 2.0f);
 
             // Redraw the status cursor over the box so it isn't cut by the green border.

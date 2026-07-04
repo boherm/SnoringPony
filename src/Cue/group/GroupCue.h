@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "../../MainIncludes.h"
 #include "../Cue.h"
 
 class GroupCue :
@@ -36,7 +35,8 @@ public:
     enum FireMode
     {
         PARALLEL = 0,
-        SEQUENTIAL = 1
+        SEQUENTIAL = 1,
+        TIMELINE = 2
     };
 
     EnumParameter* fireMode;
@@ -48,6 +48,9 @@ public:
     String getTypeString() const override { return "Group Cue"; }
     String getCueType() const override { return "Group"; }
     static GroupCue* create(var params) { return new GroupCue(params); }
+
+    // Timeline mode gets a custom inspector editor (draggable timeline of the sub-cues).
+    InspectableEditor* getEditorInternal(bool isRoot, Array<Inspectable*> inspectables) override;
 
     // Every cue in the cuelist whose parentGroup == this, in cuelist order.
     Array<Cue*> getMembers() const;

@@ -49,6 +49,7 @@
 		31442203BD5BE74BEE7930A4 /* Cue.cpp */ = {isa = PBXBuildFile; fileRef = 407B500238CB39ACE3DD88AB; };
 		319F958DD98D3818CD94B530 /* CoreMIDI.framework */ = {isa = PBXBuildFile; fileRef = 3B1BBD59124886C5E5570952; };
 		33CE5DCC719D0D49EA50F5B6 /* OBSInterface.cpp */ = {isa = PBXBuildFile; fileRef = 94E393B1210ED7A39FFB0C6C; };
+		382F405651A496B84E376319 /* GroupCueEditor.cpp */ = {isa = PBXBuildFile; fileRef = 8A261F47BD98B98FC47285D8; };
 		38CBABC7640E1A6C8F09AFD1 /* include_juce_organicui.cpp */ = {isa = PBXBuildFile; fileRef = 2EE2AB4CA7FB36ECCE56EB14; };
 		3B41F74C7D58C2EB12F553C5 /* CuelistManager.cpp */ = {isa = PBXBuildFile; fileRef = 988D81FDC52A6D562463FC90; };
 		3E3A239D6FFC3BC9AD6679E6 /* CuelistManagerItemUI.cpp */ = {isa = PBXBuildFile; fileRef = B2758E9EE0C00B1977BB5EF8; };
@@ -401,6 +402,7 @@
 		8908CB2783F49EB0DE080CA1 /* MIDIIsPlayingFeedback.h */ /* MIDIIsPlayingFeedback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MIDIIsPlayingFeedback.h; path = ../../src/Interface/midi/MIDIIsPlayingFeedback.h; sourceTree = SOURCE_ROOT; };
 		89E41D3B17BB6C1AFCAEFFDF /* RFDeviceManagerItemUI.cpp */ /* RFDeviceManagerItemUI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RFDeviceManagerItemUI.cpp; path = ../../src/RF/ui/RFDeviceManagerItemUI.cpp; sourceTree = SOURCE_ROOT; };
 		8A1324C4FF12606707D830DE /* MainIncludes.h */ /* MainIncludes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MainIncludes.h; path = ../../src/MainIncludes.h; sourceTree = SOURCE_ROOT; };
+		8A261F47BD98B98FC47285D8 /* GroupCueEditor.cpp */ /* GroupCueEditor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = GroupCueEditor.cpp; path = ../../src/Cue/group/ui/GroupCueEditor.cpp; sourceTree = SOURCE_ROOT; };
 		8A6D309C788EF1CACD3EDB17 /* WingOscProtocol.cpp */ /* WingOscProtocol.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WingOscProtocol.cpp; path = ../../src/Interface/mixer/wingosc/WingOscProtocol.cpp; sourceTree = SOURCE_ROOT; };
 		8A837C2CA24E36B83D0747D7 /* IOKit.framework */ /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		8BA2FDBFD258A70443041C0C /* wext.h */ /* wext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = wext.h; path = ../../src/Interface/mixer/wingtcp/wext.h; sourceTree = SOURCE_ROOT; };
@@ -466,6 +468,7 @@
 		B04A000C99E13F15DE168C99 /* juce_audio_processors */ /* juce_audio_processors */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_audio_processors; path = ../../modules/juce/modules/juce_audio_processors; sourceTree = SOURCE_ROOT; };
 		B0E401B06EE9C07B195EE8C8 /* juce_core */ /* juce_core */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_core; path = ../../modules/juce/modules/juce_core; sourceTree = SOURCE_ROOT; };
 		B1196EABA308B6C0F4A1C5F0 /* LookAndFeelTable.h */ /* LookAndFeelTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LookAndFeelTable.h; path = ../../src/ui/LookAndFeelTable.h; sourceTree = SOURCE_ROOT; };
+		B1DD7E3E7CEFE94AA796C552 /* GroupCueEditor.h */ /* GroupCueEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GroupCueEditor.h; path = ../../src/Cue/group/ui/GroupCueEditor.h; sourceTree = SOURCE_ROOT; };
 		B25D7482AE764A048436D6FF /* VolumePresets.cpp */ /* VolumePresets.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VolumePresets.cpp; path = ../../src/ProjectSettings/VolumePresets.cpp; sourceTree = SOURCE_ROOT; };
 		B27394054AC282DB6D14CDB6 /* PonyEngine.h */ /* PonyEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PonyEngine.h; path = ../../src/PonyEngine.h; sourceTree = SOURCE_ROOT; };
 		B2758E9EE0C00B1977BB5EF8 /* CuelistManagerItemUI.cpp */ /* CuelistManagerItemUI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CuelistManagerItemUI.cpp; path = ../../src/Cuelist/ui/CuelistManagerItemUI.cpp; sourceTree = SOURCE_ROOT; };
@@ -634,6 +637,7 @@
 		07409D9A2C184FC0D99AC0F0 /* group */ = {
 			isa = PBXGroup;
 			children = (
+				E6C26F142C9AE9823D6D466A,
 				92D7002576A5AF5EFF670AA7,
 				D3FA7A2AFBE5C655366B157C,
 			);
@@ -1361,6 +1365,15 @@
 			name = action;
 			sourceTree = "<group>";
 		};
+		E6C26F142C9AE9823D6D466A /* ui */ = {
+			isa = PBXGroup;
+			children = (
+				8A261F47BD98B98FC47285D8,
+				B1DD7E3E7CEFE94AA796C552,
+			);
+			name = ui;
+			sourceTree = "<group>";
+		};
 		EEDAAB81B51599392D93B1C3 /* dca */ = {
 			isa = PBXGroup;
 			children = (
@@ -1580,6 +1593,7 @@
 				C5BA953BBA2207993A818BA2,
 				5020B01692FF82975AFA6BA4,
 				8963305DB6F73051102C1BEF,
+				382F405651A496B84E376319,
 				850319BACED74AE04768E5F8,
 				C2375C6B63E2DA674DE0A7F4,
 				9AD5ADA5C2C0D2E4B847A19E,
