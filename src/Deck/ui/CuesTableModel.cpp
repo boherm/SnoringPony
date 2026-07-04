@@ -543,7 +543,12 @@ void CuesTableModel::selectedRowsChanged(int lastRowSelected)
 void CuesTableModel::syncSelectionToInspector()
 {
     SparseSet<int> rows = tlb->getSelectedRows();
-    if (rows.size() == 1) {
+    if (rows.size() == 0) {
+        // No row selected: also clear the inspectable selection, otherwise the previously
+        // selected cue lingers (e.g. paste would still anchor to it instead of appending).
+        if (auto* sm = InspectableSelectionManager::mainSelectionManager)
+            if (!sm->isEmpty()) sm->clearSelection();
+    } else if (rows.size() == 1) {
         inspectCue(rows[0]);
     } else if (rows.size() > 1) {
         // Multiple rows: select every corresponding cue so the Inspector shows the
