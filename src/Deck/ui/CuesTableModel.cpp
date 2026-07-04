@@ -517,8 +517,25 @@ String CuesTableModel::getCellTooltip(int rowNumber, int columnId)
 
 void CuesTableModel::selectedRowsChanged(int lastRowSelected)
 {
-    if (tlb->getSelectedRows().size() == 1) {
-        inspectCue(lastRowSelected);
+    syncSelectionToInspector();
+}
+
+void CuesTableModel::syncSelectionToInspector()
+{
+    SparseSet<int> rows = tlb->getSelectedRows();
+    if (rows.size() == 1) {
+        inspectCue(rows[0]);
+    } else if (rows.size() > 1) {
+        // Multiple rows: select every corresponding cue so the Inspector shows the
+        // multi-cue editor.
+        Array<Inspectable*> cues;
+        for (int i = 0; i < rows.size(); i++) {
+            int r = rows[i];
+            if (r >= 0 && r < cl->cues->items.size())
+                cues.add(cl->cues->items[r]);
+        }
+        if (cues.size() > 1)
+            InspectableSelectionManager::mainSelectionManager->selectInspectables(cues);
     }
 }
 
@@ -642,7 +659,9 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
             }
         });
     } else {
-        inspectCue(rowNumber);
+        // Respect a multi-row selection (e.g. mouse shift/cmd-click): don't collapse it
+        // back to a single cue. selectedRowsChanged already updated the table selection.
+        syncSelectionToInspector();
     }
 }
 

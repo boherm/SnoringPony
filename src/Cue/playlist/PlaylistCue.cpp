@@ -474,6 +474,13 @@ float PlaylistCue::getOutputLevel()
     return jlimit(0.0f, 1.5f, getFaderVolume() * mult);
 }
 
+StringArray PlaylistCue::getMultiEditHiddenControllableNames() const
+{
+    StringArray names;
+    if (filesManager != nullptr) names.add(filesManager->shortName);
+    return names;
+}
+
 String PlaylistCue::autoDescriptionInternal()
 {
     String desc = "Playlist: ";

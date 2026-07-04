@@ -46,6 +46,9 @@ public:
     void returnKeyPressed (int lastRowSelected) override;
 
     void inspectCue(int rowNumber);
+    // Push the current table selection to the Inspector: single row -> that cue,
+    // several rows -> all of them (multi-cue editor).
+    void syncSelectionToInspector();
     void askDeleteSelectedCues();
 
     // Drag and drop support

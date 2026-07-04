@@ -59,6 +59,8 @@ public:
 
     String getTypeString() const override { return "DCA Cue"; }
     String getCueType() const override { return "DCA"; }
+    MultiCueSync* createMultiEditSync(const juce::Array<Cue*>& scopeCues) override;
+    juce::StringArray getMultiEditMirrorExcludedNames() const override;
     static DCACue* create(var params) { return new DCACue(params); }
 
     void onContainerParameterChangedInternal(Parameter* p) override;

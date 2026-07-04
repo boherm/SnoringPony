@@ -99,6 +99,10 @@
                   file="src/Cue/audio/ui/MTCContainerEditor.cpp"/>
             <FILE id="iNuWFQ" name="MTCContainerEditor.h" compile="0" resource="0"
                   file="src/Cue/audio/ui/MTCContainerEditor.h"/>
+            <FILE id="IuNzG1" name="AudioMultiFilesEditor.h" compile="0" resource="0"
+                  file="src/Cue/audio/ui/AudioMultiFilesEditor.h"/>
+            <FILE id="LOdq8T" name="AudioMultiFilesEditor.cpp" compile="1" resource="0"
+                  file="src/Cue/audio/ui/AudioMultiFilesEditor.cpp"/>
             <FILE id="q4wXEZ" name="AudioWaveformSlicerEditor.cpp" compile="1"
                   resource="0" file="src/Cue/audio/ui/AudioWaveformSlicerEditor.cpp"/>
             <FILE id="eRTt8p" name="AudioWaveformSlicerEditor.h" compile="0" resource="0"
@@ -131,6 +135,10 @@
           <FILE id="hO34bb" name="CharacterRef.h" compile="0" resource="0" file="src/Cue/dca/CharacterRef.h"/>
           <FILE id="TKOevM" name="DCAAssignment.cpp" compile="1" resource="0"
                 file="src/Cue/dca/DCAAssignment.cpp"/>
+          <FILE id="qQ8gwx" name="DCACueMultiSync.h" compile="0" resource="0"
+                file="src/Cue/dca/DCACueMultiSync.h"/>
+          <FILE id="ftOKKP" name="DCACueMultiSync.cpp" compile="1" resource="0"
+                file="src/Cue/dca/DCACueMultiSync.cpp"/>
           <FILE id="xaxV84" name="DCAAssignment.h" compile="0" resource="0" file="src/Cue/dca/DCAAssignment.h"/>
           <FILE id="Fo1LLn" name="DCACue.cpp" compile="1" resource="0" file="src/Cue/dca/DCACue.cpp"/>
           <FILE id="lxKHco" name="DCACue.h" compile="0" resource="0" file="src/Cue/dca/DCACue.h"/>
@@ -157,6 +165,11 @@
         </GROUP>
         <GROUP id="{C9CAAE13-5938-AA3A-C591-71AA92FD3494}" name="ui">
           <FILE id="YOOYkS" name="CueEditor.cpp" compile="1" resource="0" file="src/Cue/ui/CueEditor.cpp"/>
+          <FILE id="dgTzS1" name="MultiCueEditor.h" compile="0" resource="0"
+                file="src/Cue/ui/MultiCueEditor.h"/>
+          <FILE id="xSdF3P" name="MultiCueSync.h" compile="0" resource="0" file="src/Cue/ui/MultiCueSync.h"/>
+          <FILE id="nknH2N" name="MultiCueEditor.cpp" compile="1" resource="0"
+                file="src/Cue/ui/MultiCueEditor.cpp"/>
           <FILE id="cjtZkz" name="CueEditor.h" compile="0" resource="0" file="src/Cue/ui/CueEditor.h"/>
         </GROUP>
         <FILE id="oAPlTB" name="Cue.cpp" compile="1" resource="0" file="src/Cue/Cue.cpp"/>

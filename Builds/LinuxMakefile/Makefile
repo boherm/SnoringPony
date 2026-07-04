@@ -85,6 +85,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/OBSCue_b6c639fe.o \
   $(JUCE_OBJDIR)/OBSCueRequest_90d4423b.o \
   $(JUCE_OBJDIR)/MTCContainerEditor_10bd4c82.o \
+  $(JUCE_OBJDIR)/AudioMultiFilesEditor_4aedd35b.o \
   $(JUCE_OBJDIR)/AudioWaveformSlicerEditor_302e651a.o \
   $(JUCE_OBJDIR)/AudioSlices_6406366c.o \
   $(JUCE_OBJDIR)/AudioWaveformSlicer_8710d808.o \
@@ -94,11 +95,13 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/DCAAssignmentEditor_58ab002a.o \
   $(JUCE_OBJDIR)/CharacterRef_390d4313.o \
   $(JUCE_OBJDIR)/DCAAssignment_a075f530.o \
+  $(JUCE_OBJDIR)/DCACueMultiSync_230b2764.o \
   $(JUCE_OBJDIR)/DCACue_2d8b60fa.o \
   $(JUCE_OBJDIR)/SetMainCuelistCue_759e5540.o \
   $(JUCE_OBJDIR)/GoCue_f384cdc0.o \
   $(JUCE_OBJDIR)/TimerActionCue_b060c69e.o \
   $(JUCE_OBJDIR)/CueEditor_6ade7941.o \
+  $(JUCE_OBJDIR)/MultiCueEditor_c6dbbdf0.o \
   $(JUCE_OBJDIR)/Cue_4c4af201.o \
   $(JUCE_OBJDIR)/CueManager_4c7e6ef6.o \
   $(JUCE_OBJDIR)/DCAMixingCuelistEditor_2970c9d0.o \
@@ -315,6 +318,11 @@ $(JUCE_OBJDIR)/MTCContainerEditor_10bd4c82.o: ../../src/Cue/audio/ui/MTCContaine
 	@echo "Compiling MTCContainerEditor.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
+$(JUCE_OBJDIR)/AudioMultiFilesEditor_4aedd35b.o: ../../src/Cue/audio/ui/AudioMultiFilesEditor.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling AudioMultiFilesEditor.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
 $(JUCE_OBJDIR)/AudioWaveformSlicerEditor_302e651a.o: ../../src/Cue/audio/ui/AudioWaveformSlicerEditor.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling AudioWaveformSlicerEditor.cpp"
@@ -360,6 +368,11 @@ $(JUCE_OBJDIR)/DCAAssignment_a075f530.o: ../../src/Cue/dca/DCAAssignment.cpp
 	@echo "Compiling DCAAssignment.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
+$(JUCE_OBJDIR)/DCACueMultiSync_230b2764.o: ../../src/Cue/dca/DCACueMultiSync.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling DCACueMultiSync.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
 $(JUCE_OBJDIR)/DCACue_2d8b60fa.o: ../../src/Cue/dca/DCACue.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling DCACue.cpp"
@@ -383,6 +396,11 @@ $(JUCE_OBJDIR)/TimerActionCue_b060c69e.o: ../../src/Cue/timer/TimerActionCue.cpp
 $(JUCE_OBJDIR)/CueEditor_6ade7941.o: ../../src/Cue/ui/CueEditor.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling CueEditor.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MultiCueEditor_c6dbbdf0.o: ../../src/Cue/ui/MultiCueEditor.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MultiCueEditor.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/Cue_4c4af201.o: ../../src/Cue/Cue.cpp

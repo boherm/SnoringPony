@@ -13,6 +13,7 @@
 #include "../MainIncludes.h"
 
 class Cuelist;
+class MultiCueSync;
 
 class Cue:
     public BaseItem,
@@ -98,6 +99,23 @@ public:
     String getTypeString() const override { return "Cue"; }
     virtual String getCueType() const { return "Cue"; }
     static Cue* create(var params) { return new Cue(params); }
+
+    // shortNames of controllables/containers this cue type wants hidden in the
+    // multi-cue editor (e.g. per-file lists that make no sense to edit as a group).
+    virtual juce::StringArray getMultiEditHiddenControllableNames() const { return {}; }
+
+    // Optional extra component shown in the multi-cue editor for this cue type, driving
+    // bulk edits across `scopeCues` (e.g. set output/volume of all files at once).
+    // Ownership passes to the caller. Default: none.
+    virtual juce::Component* createMultiEditExtraEditor(const juce::Array<Cue*>& scopeCues) { return nullptr; }
+
+    // Optional structural sync for this cue type in multi-edit (mirrors state the generic
+    // value mirror can't, e.g. DCA assignments). Ownership passes to the caller. Default: none.
+    virtual MultiCueSync* createMultiEditSync(const juce::Array<Cue*>& scopeCues) { return nullptr; }
+
+    // Top-level shortNames the generic value mirror must NOT propagate for this type even
+    // though they are shown (e.g. handled by a custom sync, or genuinely per-cue).
+    virtual juce::StringArray getMultiEditMirrorExcludedNames() const { return {}; }
 
     InspectableEditor* getEditorInternal(bool isRoot, Array<Inspectable*> inspectables);
 

@@ -170,6 +170,7 @@
     <ClCompile Include="..\..\src\Cue\obs\OBSCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\obs\OBSCueRequest.cpp"/>
     <ClCompile Include="..\..\src\Cue\audio\ui\MTCContainerEditor.cpp"/>
+    <ClCompile Include="..\..\src\Cue\audio\ui\AudioMultiFilesEditor.cpp"/>
     <ClCompile Include="..\..\src\Cue\audio\ui\AudioWaveformSlicerEditor.cpp"/>
     <ClCompile Include="..\..\src\Cue\audio\AudioSlices.cpp"/>
     <ClCompile Include="..\..\src\Cue\audio\AudioWaveformSlicer.cpp"/>
@@ -179,11 +180,13 @@
     <ClCompile Include="..\..\src\Cue\dca\ui\DCAAssignmentEditor.cpp"/>
     <ClCompile Include="..\..\src\Cue\dca\CharacterRef.cpp"/>
     <ClCompile Include="..\..\src\Cue\dca\DCAAssignment.cpp"/>
+    <ClCompile Include="..\..\src\Cue\dca\DCACueMultiSync.cpp"/>
     <ClCompile Include="..\..\src\Cue\dca\DCACue.cpp"/>
     <ClCompile Include="..\..\src\Cue\setmaincuelist\SetMainCuelistCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\go\GoCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\timer\TimerActionCue.cpp"/>
     <ClCompile Include="..\..\src\Cue\ui\CueEditor.cpp"/>
+    <ClCompile Include="..\..\src\Cue\ui\MultiCueEditor.cpp"/>
     <ClCompile Include="..\..\src\Cue\Cue.cpp"/>
     <ClCompile Include="..\..\src\Cue\CueManager.cpp"/>
     <ClCompile Include="..\..\src\Cuelist\dca\ui\DCAMixingCuelistEditor.cpp"/>
@@ -3426,6 +3429,7 @@
     <ClInclude Include="..\..\src\Cue\obs\OBSCue.h"/>
     <ClInclude Include="..\..\src\Cue\obs\OBSCueRequest.h"/>
     <ClInclude Include="..\..\src\Cue\audio\ui\MTCContainerEditor.h"/>
+    <ClInclude Include="..\..\src\Cue\audio\ui\AudioMultiFilesEditor.h"/>
     <ClInclude Include="..\..\src\Cue\audio\ui\AudioWaveformSlicerEditor.h"/>
     <ClInclude Include="..\..\src\Cue\audio\AudioSlices.h"/>
     <ClInclude Include="..\..\src\Cue\audio\AudioWaveformSlicer.h"/>
@@ -3434,6 +3438,7 @@
     <ClInclude Include="..\..\src\Cue\dca\ui\DCAAssignmentDialog.h"/>
     <ClInclude Include="..\..\src\Cue\dca\ui\DCAAssignmentEditor.h"/>
     <ClInclude Include="..\..\src\Cue\dca\CharacterRef.h"/>
+    <ClInclude Include="..\..\src\Cue\dca\DCACueMultiSync.h"/>
     <ClInclude Include="..\..\src\Cue\dca\DCAAssignment.h"/>
     <ClInclude Include="..\..\src\Cue\dca\DCACue.h"/>
     <ClInclude Include="..\..\src\Cue\setmaincuelist\SetMainCuelistCue.h"/>
@@ -3443,6 +3448,8 @@
     <ClInclude Include="..\..\src\Cue\timer\ResetTimerCue.h"/>
     <ClInclude Include="..\..\src\Cue\timer\StartTimerCue.h"/>
     <ClInclude Include="..\..\src\Cue\timer\TimerActionCue.h"/>
+    <ClInclude Include="..\..\src\Cue\ui\MultiCueEditor.h"/>
+    <ClInclude Include="..\..\src\Cue\ui\MultiCueSync.h"/>
     <ClInclude Include="..\..\src\Cue\ui\CueEditor.h"/>
     <ClInclude Include="..\..\src\Cue\Cue.h"/>
     <ClInclude Include="..\..\src\Cue\CueManager.h"/>

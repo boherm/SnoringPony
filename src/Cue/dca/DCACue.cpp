@@ -9,6 +9,7 @@
 */
 
 #include "DCACue.h"
+#include "DCACueMultiSync.h"
 #include "../../Cuelist/CuelistManager.h"
 #include "../../Interface/mixer/MixerInterface.h"
 #include "../../Interface/mixer/MixerChannel.h"
@@ -54,6 +55,21 @@ DCACue::DCACue(var params) :
 DCACue::~DCACue()
 {
     if (dcaAssignments != nullptr) dcaAssignments->removeBaseManagerListener(this);
+}
+
+MultiCueSync* DCACue::createMultiEditSync(const Array<Cue*>& scopeCues)
+{
+    return new DCACueMultiSync(scopeCues);
+}
+
+StringArray DCACue::getMultiEditMirrorExcludedNames() const
+{
+    // dcaAssignments is handled by DCACueMultiSync; triggerCue (the GO-on-play target)
+    // is genuinely per-cue, so neither should be cross-written by the generic mirror.
+    StringArray names;
+    if (dcaAssignments != nullptr) names.add(dcaAssignments->shortName);
+    if (triggerCue != nullptr) names.add(triggerCue->shortName);
+    return names;
 }
 
 MixerInterface* DCACue::getMixer() const

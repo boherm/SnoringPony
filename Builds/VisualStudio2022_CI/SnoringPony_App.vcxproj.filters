@@ -1156,6 +1156,9 @@
     <ClCompile Include="..\..\src\Cue\audio\ui\MTCContainerEditor.cpp">
       <Filter>SnoringPony\Source\Cue\audio\ui</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Cue\audio\ui\AudioMultiFilesEditor.cpp">
+      <Filter>SnoringPony\Source\Cue\audio\ui</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Cue\audio\ui\AudioWaveformSlicerEditor.cpp">
       <Filter>SnoringPony\Source\Cue\audio\ui</Filter>
     </ClCompile>
@@ -1183,6 +1186,9 @@
     <ClCompile Include="..\..\src\Cue\dca\DCAAssignment.cpp">
       <Filter>SnoringPony\Source\Cue\dca</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Cue\dca\DCACueMultiSync.cpp">
+      <Filter>SnoringPony\Source\Cue\dca</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Cue\dca\DCACue.cpp">
       <Filter>SnoringPony\Source\Cue\dca</Filter>
     </ClCompile>
@@ -1196,6 +1202,9 @@
       <Filter>SnoringPony\Source\Cue\timer</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Cue\ui\CueEditor.cpp">
+      <Filter>SnoringPony\Source\Cue\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cue\ui\MultiCueEditor.cpp">
       <Filter>SnoringPony\Source\Cue\ui</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Cue\Cue.cpp">
@@ -4926,6 +4935,9 @@
     <ClInclude Include="..\..\src\Cue\audio\ui\MTCContainerEditor.h">
       <Filter>SnoringPony\Source\Cue\audio\ui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Cue\audio\ui\AudioMultiFilesEditor.h">
+      <Filter>SnoringPony\Source\Cue\audio\ui</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Cue\audio\ui\AudioWaveformSlicerEditor.h">
       <Filter>SnoringPony\Source\Cue\audio\ui</Filter>
     </ClInclude>
@@ -4948,6 +4960,9 @@
       <Filter>SnoringPony\Source\Cue\dca\ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Cue\dca\CharacterRef.h">
+      <Filter>SnoringPony\Source\Cue\dca</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cue\dca\DCACueMultiSync.h">
       <Filter>SnoringPony\Source\Cue\dca</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Cue\dca\DCAAssignment.h">
@@ -4976,6 +4991,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Cue\timer\TimerActionCue.h">
       <Filter>SnoringPony\Source\Cue\timer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cue\ui\MultiCueEditor.h">
+      <Filter>SnoringPony\Source\Cue\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cue\ui\MultiCueSync.h">
+      <Filter>SnoringPony\Source\Cue\ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Cue\ui\CueEditor.h">
       <Filter>SnoringPony\Source\Cue\ui</Filter>

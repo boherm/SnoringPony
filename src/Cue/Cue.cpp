@@ -10,6 +10,7 @@
 
 #include "Cue.h"
 #include "ui/CueEditor.h"
+#include "ui/MultiCueEditor.h"
 #include "../Cuelist/Cuelist.h"
 #include "../Cue/CueManager.h"
 
@@ -171,6 +172,18 @@ Cue::~Cue()
 
 InspectableEditor* Cue::getEditorInternal(bool isRoot, Array<Inspectable*> inspectables)
 {
+    if (inspectables.size() > 1)
+    {
+        // Multi-selection: edit every selected cue at once. Restricted to cues of the
+        // same cuelist as this one (single-cuelist rule).
+        Array<Cue*> sameCuelistCues;
+        for (auto* c : Inspectable::getArrayAs<Inspectable, Cue>(inspectables))
+            if (c != nullptr && c->parentCuelist == parentCuelist)
+                sameCuelistCues.add(c);
+
+        if (sameCuelistCues.size() > 1) return new MultiCueEditor(sameCuelistCues, isRoot);
+    }
+
     return new CueEditor(this, isRoot);
 }
 

@@ -108,6 +108,8 @@ public:
 
     String getTypeString() const override { return "Audio Cue"; }
     String getCueType() const override { return "Audio"; }
+    juce::StringArray getMultiEditHiddenControllableNames() const override;
+    juce::Component* createMultiEditExtraEditor(const juce::Array<Cue*>& scopeCues) override;
     static AudioCue* create(var params) { return new AudioCue(params); }
 
     void newMessage(const ContainerAsyncEvent& e) override;

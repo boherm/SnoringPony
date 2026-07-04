@@ -22,6 +22,7 @@
 #include "../../Interface/midi/MIDIInterface.h"
 #include "../../Interface/InterfaceManager.h"
 #include "ui/MTCContainerEditor.h"
+#include "ui/AudioMultiFilesEditor.h"
 
 AudioCue::AudioCue(var params)
 {
@@ -584,6 +585,19 @@ float AudioCue::getOutputLevel()
         }
     }
     return jlimit(0.0f, 1.5f, getFaderVolume() * mult);
+}
+
+StringArray AudioCue::getMultiEditHiddenControllableNames() const
+{
+    StringArray names;
+    if (filesManager != nullptr) names.add(filesManager->shortName);
+    if (audioSlicer != nullptr) names.add(audioSlicer->shortName);
+    return names;
+}
+
+Component* AudioCue::createMultiEditExtraEditor(const Array<Cue*>& scopeCues)
+{
+    return new AudioMultiFilesEditor(scopeCues);
 }
 
 String AudioCue::autoDescriptionInternal()
