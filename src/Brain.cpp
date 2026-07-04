@@ -13,6 +13,7 @@
 #include "Cue/Cue.h"
 #include "Cue/CueManager.h"
 #include "Cuelist/Cuelist.h"
+#include "Cuelist/CuelistManager.h"
 #include "ui/panels/ShowControl.h"
 
 juce_ImplementSingleton(Brain);
@@ -28,11 +29,12 @@ void Brain::go()
 void Brain::panic()
 {
     const MessageManagerLock mmLock;
-    Cuelist* cl = dynamic_cast<PonyEngine*>(Engine::mainEngine)->showProperties.mainCuelist->getTargetContainerAs<Cuelist>();
-    if (cl != nullptr) {
-        cl->panic();
-        ShowControl::getInstance()->startPanicking();
-    }
+
+    // Emergency stop applies to EVERY cuelist, not just the main one.
+    for (auto* cl : CuelistManager::getInstance()->items)
+        if (cl != nullptr) cl->panic();
+
+    ShowControl::getInstance()->startPanicking();
 }
 
 void Brain::selectNextCue()

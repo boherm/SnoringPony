@@ -26,7 +26,8 @@ public:
 class ShowControl :
     public ControllableContainer,
     public Component,
-    public Timer
+    public Timer,
+    public BaseManagerListener<Cuelist>
 {
 public:
     juce_DeclareSingleton(ShowControl, true);
@@ -41,6 +42,18 @@ public:
 
     void startPanicking();
     void stopPanicking();
+
+    // Panic is global (all cuelists): track each cuelist's play/panic state.
+    bool anyCuelistPlaying() const;
+    bool anyCuelistPanicking() const;
+    void addCuelistPanicListeners(Cuelist* cl);
+    void removeCuelistPanicListeners(Cuelist* cl);
+    void refreshPanicState();
+
+    void itemAdded(Cuelist* c) override;
+    void itemsAdded(Array<Cuelist*> items) override;
+    void itemRemoved(Cuelist* c) override;
+    void itemsRemoved(Array<Cuelist*> items) override;
 
     void paint (Graphics&) override;
     void resized() override;

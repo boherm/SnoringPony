@@ -13,6 +13,7 @@
 #include "../../Brain.h"
 #include "../../Cue/Cue.h"
 #include "../../Cuelist/Cuelist.h"
+#include "../../Cuelist/CuelistManager.h"
 
 //==============================================================================
 
@@ -53,11 +54,16 @@ ShowControl::ShowControl():
 
     mainCuelist = engine->showProperties.mainCuelist->getTargetContainerAs<Cuelist>();
 
-    if (mainCuelist != nullptr) {
+    // GO still targets the main cuelist's next cue.
+    if (mainCuelist != nullptr)
         mainCuelist->nextCue->addParameterListener(this);
-        mainCuelist->isPlaying->addParameterListener(this);
-        mainCuelist->isPanicking->addParameterListener(this);
-    }
+
+    // Panic is global: watch every cuelist's play / panic state.
+    CuelistManager::getInstance()->addBaseManagerListener(this);
+    for (auto* cl : CuelistManager::getInstance()->items)
+        addCuelistPanicListeners(cl);
+
+    refreshPanicState();
 }
 
 ShowControl::~ShowControl()
@@ -66,10 +72,14 @@ ShowControl::~ShowControl()
     delete btnGo;
     delete btnPanic;
 
-    if (mainCuelist != nullptr) {
+    if (mainCuelist != nullptr)
         mainCuelist->nextCue->removeParameterListener(this);
-        mainCuelist->isPlaying->removeParameterListener(this);
-        mainCuelist->isPanicking->removeParameterListener(this);
+
+    if (auto* clm = CuelistManager::getInstanceWithoutCreating())
+    {
+        clm->removeBaseManagerListener(this);
+        for (auto* cl : clm->items)
+            removeCuelistPanicListeners(cl);
     }
 
     PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
@@ -97,77 +107,96 @@ void ShowControl::triggerTriggered(Trigger *t)
 
 void ShowControl::parameterValueChanged(Parameter *p)
 {
+    // Don't react while the engine tears down (cuelists clearing fire play/panic changes);
+    // touching singletons here would recreate ones already deleted (freeze + assert on quit).
+    if (Engine::mainEngine == nullptr || Engine::mainEngine->isClearing) return;
+
     PonyEngine* engine = dynamic_cast<PonyEngine*>(Engine::mainEngine);
 
+    // Main cuelist retargeted: GO follows it (Panic stays global, handled below).
     if (p == engine->showProperties.mainCuelist) {
-        if (mainCuelist != nullptr) {
+        if (mainCuelist != nullptr)
             mainCuelist->nextCue->removeParameterListener(this);
-            mainCuelist->isPlaying->removeParameterListener(this);
-            mainCuelist->isPanicking->removeParameterListener(this);
-        }
 
         mainCuelist = engine->showProperties.mainCuelist->getTargetContainerAs<Cuelist>();
 
         if (mainCuelist != nullptr) {
             mainCuelist->nextCue->addParameterListener(this);
-            mainCuelist->isPlaying->addParameterListener(this);
-            mainCuelist->isPanicking->addParameterListener(this);
-
-            TargetParameter* tp = dynamic_cast<TargetParameter*>(mainCuelist->nextCue);
-            Cue* nextCue = tp->getTargetContainerAs<Cue>();
-
-            if (nextCue != nullptr) {
-                paramGo->setEnabled(true);
-            } else {
-                paramGo->setEnabled(false);
-            }
-
-            // Re-evaluate Panic against the NEW main cuelist. Without this, switching the
-            // main cuelist away from a cuelist that had a cue playing leaves the Panic button stuck
-            // active, since we stop listening to the old cuelist's "Is Playing" before it goes false.
-            paramPanic->setEnabled(mainCuelist->isPlaying->boolValue());
-            if (mainCuelist->isPanicking->boolValue())
-                startPanicking();
-            else
-                stopPanicking();
+            paramGo->setEnabled(mainCuelist->nextCue->getTargetContainerAs<Cue>() != nullptr);
         } else {
             paramGo->setEnabled(false);
-            paramPanic->setEnabled(false);
-            stopPanicking();
         }
         repaint();
+        return;
     }
 
     if (mainCuelist && p == mainCuelist->nextCue) {
-        TargetParameter* tp = dynamic_cast<TargetParameter*>(p);
-        Cue* nextCue = tp->getTargetContainerAs<Cue>();
-
-        if (nextCue != nullptr) {
-            paramGo->setEnabled(true);
-        } else {
-            paramGo->setEnabled(false);
-        }
+        paramGo->setEnabled(mainCuelist->nextCue->getTargetContainerAs<Cue>() != nullptr);
         repaint();
+        return;
     }
 
-    if (mainCuelist && p == mainCuelist->isPlaying) {
-        if (mainCuelist->isPlaying->boolValue()) {
-            paramPanic->setEnabled(true);
-        } else {
-            paramPanic->setEnabled(false);
+    // Any cuelist's play / panic state changed -> refresh the global Panic button.
+    if (auto* clm = CuelistManager::getInstanceWithoutCreating())
+        for (auto* cl : clm->items) {
+            if (cl == nullptr) continue;
+            if (p == cl->isPlaying || p == cl->isPanicking) {
+                refreshPanicState();
+                return;
+            }
         }
-        repaint();
-    }
-
-    if (mainCuelist && p == mainCuelist->isPanicking) {
-        if (mainCuelist->isPanicking->boolValue()) {
-            startPanicking();
-        } else {
-            stopPanicking();
-        }
-        repaint();
-    }
 }
+
+bool ShowControl::anyCuelistPlaying() const
+{
+    auto* clm = CuelistManager::getInstanceWithoutCreating();
+    if (clm == nullptr) return false;
+    for (auto* cl : clm->items)
+        if (cl != nullptr && cl->isPlaying->boolValue()) return true;
+    return false;
+}
+
+bool ShowControl::anyCuelistPanicking() const
+{
+    auto* clm = CuelistManager::getInstanceWithoutCreating();
+    if (clm == nullptr) return false;
+    for (auto* cl : clm->items)
+        if (cl != nullptr && cl->isPanicking->boolValue()) return true;
+    return false;
+}
+
+void ShowControl::addCuelistPanicListeners(Cuelist* cl)
+{
+    if (cl == nullptr) return;
+    cl->isPlaying->addParameterListener(this);
+    cl->isPanicking->addParameterListener(this);
+}
+
+void ShowControl::removeCuelistPanicListeners(Cuelist* cl)
+{
+    if (cl == nullptr) return;
+    cl->isPlaying->removeParameterListener(this);
+    cl->isPanicking->removeParameterListener(this);
+}
+
+void ShowControl::refreshPanicState()
+{
+    if (Engine::mainEngine == nullptr || Engine::mainEngine->isClearing) return;
+
+    const bool panicking = anyCuelistPanicking();
+    // Keep the button available while anything plays or is panicking.
+    paramPanic->setEnabled(anyCuelistPlaying() || panicking);
+
+    if (panicking) startPanicking();
+    else stopPanicking();
+
+    repaint();
+}
+
+void ShowControl::itemAdded(Cuelist* c) { addCuelistPanicListeners(c); refreshPanicState(); }
+void ShowControl::itemsAdded(Array<Cuelist*> items) { for (auto* c : items) addCuelistPanicListeners(c); refreshPanicState(); }
+void ShowControl::itemRemoved(Cuelist* c) { removeCuelistPanicListeners(c); refreshPanicState(); }
+void ShowControl::itemsRemoved(Array<Cuelist*> items) { for (auto* c : items) removeCuelistPanicListeners(c); refreshPanicState(); }
 
 void ShowControl::startPanicking()
 {
@@ -177,6 +206,7 @@ void ShowControl::startPanicking()
     startTimer(150);
     isPanicking->setValue(true);
     btnPanic->customLabel = "Don't\nPanic!";
+    btnPanic->customTextSize = 22;
 }
 
 void ShowControl::stopPanicking()
@@ -185,6 +215,7 @@ void ShowControl::stopPanicking()
     isPanicking->setValue(false);
     btnPanic->customBGColor = Colours::darkred;
     btnPanic->customLabel = "";
+    btnPanic->customTextSize = 30;
 }
 
 void ShowControl::timerCallback()
