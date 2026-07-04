@@ -121,11 +121,22 @@ DCAAssignmentDialog::DCAAssignmentDialog(DCACue* cue, DCAAssignment* assignment)
     faderSlider->addListener(this);
     addAndMakeVisible(faderSlider.get());
 
+    prevDcaBtn = std::make_unique<TextButton>("<<");
+    prevDcaBtn->setTooltip("Previous DCA of this cue");
+    prevDcaBtn->addListener(this);
+    addAndMakeVisible(prevDcaBtn.get());
+
+    nextDcaBtn = std::make_unique<TextButton>(">>");
+    nextDcaBtn->setTooltip("Next DCA of this cue");
+    nextDcaBtn->addListener(this);
+    addAndMakeVisible(nextDcaBtn.get());
+
     closeBtn = std::make_unique<TextButton>("Close");
     closeBtn->addListener(this);
     addAndMakeVisible(closeBtn.get());
 
     rebuildCharacterList();
+    updateNavButtons();
 
     setSize(420, 570);
 }
@@ -262,10 +273,33 @@ void DCAAssignmentDialog::buttonClicked(Button* b)
         return;
     }
 
+    if (b == prevDcaBtn.get()) { gotoDca(-1); return; }
+    if (b == nextDcaBtn.get()) { gotoDca(1); return; }
+
     if (b == resetCharsBtn.get())
     {
-        // Remove every character. Each removal is a normal model op, so in a multi-cue
-        // selection the DCA sync propagates the removals to the other selected cues too.
+        // Reset clears this DCA entirely on EVERY selected DCA cue (not a per-character
+        // delta): each selected cue loses all its members for this DCA number.
+        const int k = assignment->dcaNumber->intValue();
+
+        Array<DCACue*> targets;
+        if (auto* sm = InspectableSelectionManager::mainSelectionManager)
+            targets = sm->getInspectablesAs<DCACue>();
+        targets.removeAllInstancesOf(cue); // handle our own cue last, separately
+
+        // Remove the whole DCA on the other selected cues.
+        for (auto* dc : targets)
+        {
+            if (dc == nullptr) continue;
+            if (DCAAssignment* a = dc->findAssignment(k))
+                dc->dcaAssignments->removeItem(a);
+        }
+
+        // Re-fetch our own assignment: a synchronous sync reaction to the removals above may
+        // have dropped (or recreated) it, so never trust the previous pointer here.
+        assignment = cue->findAssignment(k);
+        if (assignment == nullptr) assignment = cue->createAssignment(k);
+
         for (int i = assignment->characters->items.size() - 1; i >= 0; --i)
             assignment->characters->removeItem(assignment->characters->items[i]);
 
@@ -377,6 +411,59 @@ void DCAAssignmentDialog::buttonClicked(Button* b)
     resized();
 }
 
+void DCAAssignmentDialog::gotoDca(int delta)
+{
+    if (cue == nullptr || assignment == nullptr) return;
+
+    int maxDca = cue->getMixerNumDCAs();
+    if (maxDca <= 0) maxDca = 16;
+
+    const int target = assignment->dcaNumber->intValue() + delta;
+    if (target < 1 || target > maxDca) return;
+
+    DCAAssignment* leaving = assignment;
+
+    DCAAssignment* next = cue->findAssignment(target);
+    if (next == nullptr) next = cue->createAssignment(target);
+    if (next == nullptr || next == leaving) return;
+
+    loadAssignment(next);
+
+    // Drop the DCA we left if it ended up empty (same rule as closing).
+    if (leaving->characters->items.isEmpty())
+        cue->dcaAssignments->removeItem(leaving);
+}
+
+void DCAAssignmentDialog::loadAssignment(DCAAssignment* a)
+{
+    if (a == nullptr) return;
+    assignment = a;
+
+    nameEditor->setText(a->displayName->stringValue(), dontSendNotification);
+    forceFaderBtn->setToggleState(a->forceFader->boolValue(), dontSendNotification);
+    faderSlider->setValue(a->faderPosition->floatValue(), dontSendNotification);
+    faderSlider->setEnabled(a->forceFader->boolValue());
+
+    if (auto* w = findParentComponentOfClass<DialogWindow>())
+        w->setName("DCA " + String(a->dcaNumber->intValue()) + " — characters");
+
+    rebuildCharacterList();
+    updateNavButtons();
+    resized();
+}
+
+void DCAAssignmentDialog::updateNavButtons()
+{
+    if (cue == nullptr || assignment == nullptr) return;
+
+    int maxDca = cue->getMixerNumDCAs();
+    if (maxDca <= 0) maxDca = 16;
+
+    const int n = assignment->dcaNumber->intValue();
+    prevDcaBtn->setEnabled(n > 1);
+    nextDcaBtn->setEnabled(n < maxDca);
+}
+
 void DCAAssignmentDialog::textEditorTextChanged(TextEditor& te)
 {
     if (&te == nameEditor.get())
@@ -419,7 +506,13 @@ void DCAAssignmentDialog::resized()
     r.removeFromTop(4);
 
     auto bottom = r.removeFromBottom(32);
-    closeBtn->setBounds(bottom.removeFromRight(80));
+    // Close stays pinned to the right; the two DCA-nav buttons are centered in the row.
+    closeBtn->setBounds(bottom.getRight() - 80, bottom.getY(), 80, bottom.getHeight());
+
+    const int navW = 44, navGap = 8, navTotal = navW * 2 + navGap;
+    const int navX = bottom.getCentreX() - navTotal / 2;
+    prevDcaBtn->setBounds(navX, bottom.getY(), navW, bottom.getHeight());
+    nextDcaBtn->setBounds(navX + navW + navGap, bottom.getY(), navW, bottom.getHeight());
 
     r.removeFromBottom(6);
     listViewport->setBounds(r);

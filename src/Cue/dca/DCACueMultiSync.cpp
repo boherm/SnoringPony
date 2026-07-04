@@ -223,6 +223,11 @@ void DCACueMultiSync::applyDcaDelta(DCACue* peer, int dcaNumber, const DcaInfo& 
 {
     DCAAssignment* pa = peer->findAssignment(dcaNumber);
 
+    // Whether this peer's DCA had characters before the delta: only such a DCA should be
+    // dropped when the delta empties it (never touch an already-empty one that another
+    // context — e.g. an open modal — may be editing).
+    const bool paHadChars = (pa != nullptr && !pa->characters->items.isEmpty());
+
     // Characters removed on the source: drop them from this peer's DCA (if present).
     for (auto& kv : prev.chars)
         if (cur.chars.find(kv.first) == cur.chars.end())
@@ -260,8 +265,9 @@ void DCACueMultiSync::applyDcaDelta(DCACue* peer, int dcaNumber, const DcaInfo& 
         if (cur.fader != prev.fader && (float)pa->faderPosition->floatValue() != cur.fader) pa->faderPosition->setValue(cur.fader);
     }
 
-    // A DCA emptied by the delta is dropped (an empty DCA means "no DCA").
-    if (pa != nullptr && pa->characters->items.isEmpty())
+    // A DCA emptied *by this delta* is dropped (an empty DCA means "no DCA"). An already-
+    // empty assignment is left alone (it may be the one an open modal is editing).
+    if (pa != nullptr && paHadChars && pa->characters->items.isEmpty())
         peer->dcaAssignments->removeItem(pa);
 }
 

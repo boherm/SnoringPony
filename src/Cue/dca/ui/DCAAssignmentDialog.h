@@ -47,6 +47,8 @@ public:
     std::unique_ptr<juce::ToggleButton> forceFaderBtn;
     std::unique_ptr<juce::Slider> faderSlider;
     std::unique_ptr<juce::Label> faderValueLabel;
+    std::unique_ptr<juce::TextButton> prevDcaBtn;
+    std::unique_ptr<juce::TextButton> nextDcaBtn;
     std::unique_ptr<juce::TextButton> closeBtn;
 
     void buttonClicked(juce::Button* b) override;
@@ -56,6 +58,12 @@ public:
     void resized() override;
 
     void rebuildCharacterList();
+
+    // Switch this dialog to another DCA of the same cue (delta = -1 / +1).
+    void gotoDca(int delta);
+    // Rebind the dialog to assignment `a` and refresh all fields, title and nav buttons.
+    void loadAssignment(DCAAssignment* a);
+    void updateNavButtons();
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DCAAssignmentDialog)
