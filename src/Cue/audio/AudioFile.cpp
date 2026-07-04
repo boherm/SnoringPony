@@ -9,6 +9,7 @@
 */
 
 #include "AudioFile.h"
+#include "../../util/SPUnicode.h"
 #include "AudioCue.h"
 #include "AudioSlices.h"
 #include "../../Audio/AudioPlayer.h"
@@ -181,6 +182,12 @@ void AudioFile::parameterValueChanged(Parameter* p)
 
     if (p == audioFile)
     {
+        // macOS filenames are NFD (decomposed accents); normalize the stored path to NFC so
+        // it displays correctly. File access is normalization-insensitive, so this is safe.
+        const String rawPath = audioFile->stringValue();
+        const String nfcPath = SPUnicode::toNFC(rawPath);
+        if (nfcPath != rawPath) { audioFile->setValue(nfcPath); return; }
+
         File f = audioFile->getFile();
 
         if (f.existsAsFile()) {

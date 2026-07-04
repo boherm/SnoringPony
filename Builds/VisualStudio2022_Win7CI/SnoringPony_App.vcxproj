@@ -291,6 +291,7 @@
     <ClCompile Include="..\..\src\ui\LookAndFeelTable.cpp"/>
     <ClCompile Include="..\..\src\ui\AboutWindow.cpp"/>
     <ClCompile Include="..\..\src\ui\SPAssetManager.cpp"/>
+    <ClCompile Include="..\..\src\util\SPUnicode.cpp"/>
     <ClCompile Include="..\..\src\Brain.cpp"/>
     <ClCompile Include="..\..\src\Main.cpp"/>
     <ClCompile Include="..\..\src\MainComponent.cpp"/>
@@ -3559,6 +3560,7 @@
     <ClInclude Include="..\..\src\ui\LookAndFeelTable.h"/>
     <ClInclude Include="..\..\src\ui\AboutWindow.h"/>
     <ClInclude Include="..\..\src\ui\SPAssetManager.h"/>
+    <ClInclude Include="..\..\src\util\SPUnicode.h"/>
     <ClInclude Include="..\..\src\Brain.h"/>
     <ClInclude Include="..\..\src\Main.h"/>
     <ClInclude Include="..\..\src\MainComponent.h"/>

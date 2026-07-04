@@ -9,6 +9,7 @@
 */
 
 #include "PlaylistCue.h"
+#include "../../util/SPUnicode.h"
 #include "../../Audio/PluginSlot.h"
 #include "../../Cuelist/Cuelist.h"
 #include "../../Interface/InterfaceManager.h"
@@ -59,6 +60,12 @@ void PlaylistFile::parameterValueChanged(Parameter* p)
 
     if (p == audioFile)
     {
+        // macOS filenames are NFD (decomposed accents); normalize the stored path to NFC so
+        // it displays correctly. File access is normalization-insensitive, so this is safe.
+        const String rawPath = audioFile->stringValue();
+        const String nfcPath = SPUnicode::toNFC(rawPath);
+        if (nfcPath != rawPath) { audioFile->setValue(nfcPath); return; }
+
         File f = audioFile->getFile();
 
         if (f.existsAsFile()) {

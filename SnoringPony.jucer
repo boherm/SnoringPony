@@ -576,6 +576,10 @@
         <FILE id="fh4VOw" name="SPAssetManager.h" compile="0" resource="0"
               file="src/ui/SPAssetManager.h"/>
       </GROUP>
+      <GROUP id="{7597451F-9DC9-B667-8269-872C6E5174E1}" name="util">
+        <FILE id="Q8mPXN" name="SPUnicode.cpp" compile="1" resource="0" file="src/util/SPUnicode.cpp"/>
+        <FILE id="EGYfGZ" name="SPUnicode.h" compile="0" resource="0" file="src/util/SPUnicode.h"/>
+      </GROUP>
       <FILE id="Ka83EP" name="Brain.cpp" compile="1" resource="0" file="src/Brain.cpp"/>
       <FILE id="HIlKLJ" name="Brain.h" compile="0" resource="0" file="src/Brain.h"/>
       <FILE id="pZKegw" name="Main.cpp" compile="1" resource="0" file="src/Main.cpp"/>

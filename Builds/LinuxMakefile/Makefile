@@ -206,6 +206,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/LookAndFeelTable_17cb8c95.o \
   $(JUCE_OBJDIR)/AboutWindow_db489c22.o \
   $(JUCE_OBJDIR)/SPAssetManager_e9ba871f.o \
+  $(JUCE_OBJDIR)/SPUnicode_f9a7a8d3.o \
   $(JUCE_OBJDIR)/Brain_7bbbce80.o \
   $(JUCE_OBJDIR)/Main_36be1979.o \
   $(JUCE_OBJDIR)/MainComponent_dd9a9ece.o \
@@ -921,6 +922,11 @@ $(JUCE_OBJDIR)/AboutWindow_db489c22.o: ../../src/ui/AboutWindow.cpp
 $(JUCE_OBJDIR)/SPAssetManager_e9ba871f.o: ../../src/ui/SPAssetManager.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling SPAssetManager.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/SPUnicode_f9a7a8d3.o: ../../src/util/SPUnicode.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling SPUnicode.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/Brain_7bbbce80.o: ../../src/Brain.cpp

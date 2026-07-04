@@ -140,6 +140,9 @@
     <Filter Include="SnoringPony\Source\ui">
       <UniqueIdentifier>{A7DF289B-CE27-240A-2AE8-D50431AA5282}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SnoringPony\Source\util">
+      <UniqueIdentifier>{06CED573-442E-0628-9782-3100F6B281DF}</UniqueIdentifier>
+    </Filter>
     <Filter Include="SnoringPony\Source">
       <UniqueIdentifier>{069262C7-3F3C-CB5D-213F-85F4DFD7C190}</UniqueIdentifier>
     </Filter>
@@ -1518,6 +1521,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\ui\SPAssetManager.cpp">
       <Filter>SnoringPony\Source\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\SPUnicode.cpp">
+      <Filter>SnoringPony\Source\util</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Brain.cpp">
       <Filter>SnoringPony\Source</Filter>
@@ -5324,6 +5330,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\ui\SPAssetManager.h">
       <Filter>SnoringPony\Source\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\util\SPUnicode.h">
+      <Filter>SnoringPony\Source\util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Brain.h">
       <Filter>SnoringPony\Source</Filter>
