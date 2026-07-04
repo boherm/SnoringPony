@@ -47,6 +47,9 @@
     <Filter Include="SnoringPony\Source\Cue\go">
       <UniqueIdentifier>{81130B15-1CE3-AB3F-E213-1DBBA6E5FDCD}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SnoringPony\Source\Cue\group">
+      <UniqueIdentifier>{5A5BDB81-1670-824C-1093-612FE0147D3D}</UniqueIdentifier>
+    </Filter>
     <Filter Include="SnoringPony\Source\Cue\timer">
       <UniqueIdentifier>{8E808C5C-C5FB-722A-F688-34F0C0B5FDCF}</UniqueIdentifier>
     </Filter>
@@ -1203,6 +1206,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Cue\go\GoCue.cpp">
       <Filter>SnoringPony\Source\Cue\go</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cue\group\GroupCue.cpp">
+      <Filter>SnoringPony\Source\Cue\group</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Cue\timer\TimerActionCue.cpp">
       <Filter>SnoringPony\Source\Cue\timer</Filter>
@@ -4988,6 +4994,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Cue\go\GoCue.h">
       <Filter>SnoringPony\Source\Cue\go</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Cue\group\GroupCue.h">
+      <Filter>SnoringPony\Source\Cue\group</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Cue\timer\MarkTimerCue.h">
       <Filter>SnoringPony\Source\Cue\timer</Filter>

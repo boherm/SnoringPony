@@ -11,6 +11,7 @@
 #include "CueManager.h"
 #include "audio/AudioCue.h"
 #include "playlist/PlaylistCue.h"
+#include "group/GroupCue.h"
 #include "../Cue/Cue.h"
 #include "../Cuelist/Cuelist.h"
 
@@ -111,9 +112,97 @@ Array<Cue*> CueManager::addItemsFromClipboard(bool showWarning)
     return pasted;
 }
 
+void CueManager::addToGroup(Cue* cue, GroupCue* group, bool reposition)
+{
+    if (cue == nullptr || group == nullptr || cue == group)
+        return;
+    // v1: no nested groups — a group cannot be a member of another group.
+    if (dynamic_cast<GroupCue*>(cue) != nullptr)
+        return;
+
+    cue->parentGroup = group;
+    cue->parentGroupUID->setValue(group->groupUID->stringValue());
+    cue->notSetNextCueAuto = true;
+    cue->applyGroupMembershipConstraints();
+
+    // Keep members contiguous: move the cue right after the group's last member. Skipped
+    // for drag-drop, which already dropped the cue at the intended (contiguous) position.
+    if (reposition)
+    {
+        int groupIdx = items.indexOf(group);
+        if (groupIdx >= 0)
+        {
+            int lastMemberIdx = groupIdx;
+            for (int i = groupIdx + 1; i < items.size(); i++)
+            {
+                Cue* c = items[i];
+                if (c == cue) continue;
+                if (c->parentGroup == group) lastMemberIdx = i;
+            }
+
+            int target = lastMemberIdx + 1;
+            int currentIdx = items.indexOf(cue);
+            if (currentIdx >= 0 && currentIdx < target) target--; // account for the removal shift
+            target = jlimit(0, items.size() - 1, target);
+            if (currentIdx != target)
+                setItemIndex(cue, target, true);
+        }
+    }
+
+    // A freshly grouped cue can no longer be a next cue: hand the pointer to the group.
+    if (parentCuelist != nullptr && parentCuelist->nextCue->getTargetContainerAs<Cue>() == cue)
+        group->setGoNext();
+
+    group->refreshDuration();
+}
+
+void CueManager::removeFromGroup(Cue* cue)
+{
+    if (cue == nullptr) return;
+    GroupCue* g = cue->parentGroup;
+    cue->parentGroup = nullptr;
+    cue->parentGroupUID->setValue("");
+    cue->notSetNextCueAuto = false;
+    cue->applyGroupMembershipConstraints(); // ungrouped: restore post-wait availability
+    if (g != nullptr) g->refreshDuration();
+}
+
+GroupCue* CueManager::findGroupByUID(const String& uid)
+{
+    if (uid.isEmpty()) return nullptr;
+    for (auto* c : items)
+        if (auto* g = dynamic_cast<GroupCue*>(c))
+            if (g->groupUID->stringValue() == uid) return g;
+    return nullptr;
+}
+
+void CueManager::resolveGroupMemberships()
+{
+    for (auto* c : items)
+    {
+        if (c == nullptr) continue;
+        GroupCue* g = findGroupByUID(c->parentGroupUID->stringValue());
+        c->parentGroup = g;
+        c->notSetNextCueAuto = (g != nullptr);
+        c->applyGroupMembershipConstraints();
+    }
+
+    // Now that memberships are known, seed each group's derived duration.
+    for (auto* c : items)
+        if (auto* g = dynamic_cast<GroupCue*>(c))
+            g->refreshDuration();
+}
+
 void CueManager::askForRemoveBaseItem(BaseItem* item)
 {
     Cue* itemCue = static_cast<Cue*>(item);
+
+    // Deleting a group ungroups its members (they stay in the cuelist), rather than
+    // deleting them along with it.
+    if (auto* g = dynamic_cast<GroupCue*>(itemCue))
+        for (auto* m : g->getMembers())
+            removeFromGroup(m);
+
     Cue* nextCue = parentCuelist->nextCue->getTargetContainerAs<Cue>();
 
     if (nextCue == itemCue) {
@@ -137,6 +226,9 @@ void CueManager::askForRemoveBaseItem(BaseItem* item)
 void CueManager::loadJSONDataManagerInternal(var data)
 {
     BaseManager<Cue>::loadJSONDataManagerInternal(data);
+
+    // Re-attach grouped sub-cues to their group now that every cue exists.
+    resolveGroupMemberships();
 
     // If we have multiple cues with same ID, we set a warning on them
     refreshDuplicateIdWarnings();

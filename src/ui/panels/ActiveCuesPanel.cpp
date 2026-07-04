@@ -16,6 +16,7 @@
 #include "../../Cue/audio/AudioCue.h"
 #include "../../Cue/audio/AudioFile.h"
 #include "../../Cue/audio/AudioSlices.h"
+#include "../../Cue/group/GroupCue.h"
 
 namespace
 {
@@ -347,14 +348,12 @@ void ActiveCuesRows::mouseDown(const juce::MouseEvent& e)
         }
     }
 
-    // Click on the progress bar of a playing audio cue to seek it.
+    // Click on the progress bar of a seekable cue (audio, group, ...) to seek it.
     for (int i = 0; i < cues.size(); i++)
     {
         Cue* c = cues[i];
-        if (c->preWaitActive->boolValue()) continue; // the bar shows the pre-wait, not the audio
-
-        AudioCue* ac = dynamic_cast<AudioCue*>(c);
-        if (ac == nullptr || !ac->isPlaying->boolValue()) continue;
+        if (c->preWaitActive->boolValue()) continue; // the bar shows the pre-wait, not playback
+        if (!c->canSeekTo()) continue;
 
         Rectangle<int> track = getProgressRect(i);
         if (track.getWidth() <= 0 || !track.contains(e.getPosition())) continue;
@@ -363,14 +362,7 @@ void ActiveCuesRows::mouseDown(const juce::MouseEvent& e)
         if (total <= 0.0) continue;
 
         double frac = jlimit(0.0, 1.0, (double)(e.getPosition().x - track.getX()) / (double)track.getWidth());
-
-        // Map the fraction onto the cue's playable window, then seek every file there.
-        double winStart = ac->slicesManager->startTime->doubleValue();
-        double winEnd = ac->slicesManager->endTime->doubleValue();
-        double target = winStart + frac * (winEnd - winStart);
-
-        ac->slicesManager->resetSlices(); // drop stale repetition counters so the bar matches
-        ac->filesManager->setCurrentTime(target);
+        c->seekToTime(frac * total);
         repaint();
         return;
     }
@@ -496,7 +488,11 @@ void ActiveCuesPanel::mouseDown(const juce::MouseEvent& e)
 {
     if (getStopAllRect().contains(e.getPosition()))
     {
-        for (Cue* c : collectActiveCues()) c->panic();
+        // A sub-cue whose group is playing is panicked by that group (single fade); skip it
+        // here. One launched on its own is panicked directly.
+        for (Cue* c : collectActiveCues())
+            if (c->parentGroup == nullptr || !c->parentGroup->isPlaying->boolValue())
+                c->panic();
         repaint();
     }
 }

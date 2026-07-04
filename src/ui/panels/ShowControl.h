@@ -50,6 +50,10 @@ public:
     void removeCuelistPanicListeners(Cuelist* cl);
     void refreshPanicState();
 
+    // Drop the cached mainCuelist pointer (and its listener) if `c` is it — called when a
+    // cuelist is removed so a later retarget doesn't dereference freed memory.
+    void forgetIfMainCuelist(Cuelist* c);
+
     void itemAdded(Cuelist* c) override;
     void itemsAdded(Array<Cuelist*> items) override;
     void itemRemoved(Cuelist* c) override;

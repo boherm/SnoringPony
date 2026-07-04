@@ -16,6 +16,7 @@
 class Cuelist;
 class CuesTableModel;
 class LookAndFeelTable;
+class GroupCue;
 
 class CuesTableUI :
     public Component,
@@ -107,6 +108,12 @@ public:
 
 private:
     int insertIndex = -1;
+    // During a drag near a group boundary: whether the drop would nest into `insertGroup`
+    // (indented insertion line) or land outside it (full-width line). Decided by mouse X.
+    bool insertIntoGroup = false;
+    GroupCue* insertGroup = nullptr;
+    // X (in table coords) past which a drop at a group's bottom edge nests into the group.
+    int groupNestThresholdX() const;
 
     void rebuildColumns();
     int dcaColumnCount = 0;

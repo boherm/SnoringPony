@@ -13,6 +13,7 @@
 #include "../../MainIncludes.h"
 
 class Cuelist;
+class Cue;
 
 class ReorderCuesWindow;
 
@@ -27,6 +28,13 @@ public:
 
     TableListBox* tlb = nullptr;
     Cuelist* cl = nullptr;
+
+    // Rows currently shown: the flat cue list minus the members of collapsed groups.
+    // Rebuilt on demand; every table callback indexes THIS, not cl->cues->items.
+    juce::Array<Cue*> visibleCues;
+    void rebuildVisibleCues();
+    Cue* rowToCue(int row) const;
+    int visibleRowForCue(Cue* c);
 
     // Cell whose DCA assignment modal is currently open (for a highlight border).
     // -1 when none. Kept in sync via the dialog's onStateChanged / onClosed hooks.
@@ -52,6 +60,8 @@ public:
     void returnKeyPressed (int lastRowSelected) override;
 
     void inspectCue(int rowNumber);
+    // Cues under the current selection, or `fallback` alone if nothing is selected.
+    juce::Array<Cue*> currentSelectionOr(Cue* fallback);
     // Push the current table selection to the Inspector: single row -> that cue,
     // several rows -> all of them (multi-cue editor).
     void syncSelectionToInspector();
@@ -63,6 +73,11 @@ public:
     void parameterValueChanged(Parameter* p) override;
 
     static String valueToTimeString(double timeVal);
+
+    // Draws the status "cursor" (playing = green / next = orange arrow, or split when both)
+    // at (x, y) with height h. Shared by the cell renderer and the group-border overlay so
+    // the cursor can be redrawn on top of a group's green box.
+    static void paintStatusArrow(juce::Graphics& g, float x, float y, float h, bool playing, bool isNext);
 
     void newMessage(const InspectableSelectionManager::SelectionEvent& e) override;
 

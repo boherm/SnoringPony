@@ -195,8 +195,21 @@ void ShowControl::refreshPanicState()
 
 void ShowControl::itemAdded(Cuelist* c) { addCuelistPanicListeners(c); refreshPanicState(); }
 void ShowControl::itemsAdded(Array<Cuelist*> items) { for (auto* c : items) addCuelistPanicListeners(c); refreshPanicState(); }
-void ShowControl::itemRemoved(Cuelist* c) { removeCuelistPanicListeners(c); refreshPanicState(); }
-void ShowControl::itemsRemoved(Array<Cuelist*> items) { for (auto* c : items) removeCuelistPanicListeners(c); refreshPanicState(); }
+
+// A cuelist being removed (e.g. cleared during a file load) must invalidate our cached
+// main cuelist pointer, otherwise a later retarget (startup cuelist resolving at
+// endLoadFile) would remove a listener from the freed cuelist's nextCue and crash.
+void ShowControl::forgetIfMainCuelist(Cuelist* c)
+{
+    if (c != nullptr && c == mainCuelist)
+    {
+        mainCuelist->nextCue->removeParameterListener(this);
+        mainCuelist = nullptr;
+    }
+}
+
+void ShowControl::itemRemoved(Cuelist* c) { forgetIfMainCuelist(c); removeCuelistPanicListeners(c); refreshPanicState(); }
+void ShowControl::itemsRemoved(Array<Cuelist*> items) { for (auto* c : items) { forgetIfMainCuelist(c); removeCuelistPanicListeners(c); } refreshPanicState(); }
 
 void ShowControl::startPanicking()
 {

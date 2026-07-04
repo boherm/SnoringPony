@@ -18,6 +18,7 @@
 #include "../Cue/fade/FadeCue.h"
 #include "../Cue/go/GoCue.h"
 #include "../Cue/note/NoteCue.h"
+#include "../Cue/group/GroupCue.h"
 #include "../Cue/setmaincuelist/SetMainCuelistCue.h"
 #include "../Cue/timer/StartTimerCue.h"
 #include "../Cue/timer/PauseTimerCue.h"
@@ -95,6 +96,9 @@ void Cuelist::stop()
 {
     for (int i = 0; i < cues->items.size(); i++) {
         Cue* c = cues->items[i];
+        // A sub-cue whose group is playing is stopped by that group (skip to avoid a double
+        // stop). One launched on its own (group idle) is stopped here like any other cue.
+        if (c->parentGroup != nullptr && c->parentGroup->isPlaying->boolValue()) continue;
         if (c->isPlaying->boolValue()) {
             c->stop();
         }
@@ -117,6 +121,10 @@ void Cuelist::panic()
     isPanicking->setValue(true);
     for (int i = 0; i < cues->items.size(); i++) {
         Cue* c = cues->items[i];
+        // A sub-cue whose group is playing is panicked (faded) by that group; panicking it
+        // here too would double-panic it into an abrupt cut. One launched on its own (group
+        // idle) is panicked here like any other cue.
+        if (c->parentGroup != nullptr && c->parentGroup->isPlaying->boolValue()) continue;
         if (c->isPlaying->boolValue() || c->preWaitActive->boolValue() || c->postWaitActive->boolValue()) {
             c->panic();
         }
@@ -138,6 +146,7 @@ void Cuelist::registerCueTypes(Factory<Cue>& f)
     f.defs.add(Factory<Cue>::Definition::createDef("Network", "OSC Cue", &OSCCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("OSC")));
     f.defs.add(Factory<Cue>::Definition::createDef("Network", "OBS Cue", &OBSCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("OBS")));
     f.defs.add(Factory<Cue>::Definition::createDef("Other", "Note Cue", &NoteCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Note")));
+    f.defs.add(Factory<Cue>::Definition::createDef("Other", "Group Cue", &GroupCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Group")));
 }
 
 InspectableEditor* Cuelist::getEditorInternal(bool isRoot, Array<Inspectable*> inspectables)

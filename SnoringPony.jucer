@@ -153,6 +153,10 @@
           <FILE id="BKQLmE" name="GoCue.cpp" compile="1" resource="0" file="src/Cue/go/GoCue.cpp"/>
           <FILE id="vGcRza" name="GoCue.h" compile="0" resource="0" file="src/Cue/go/GoCue.h"/>
         </GROUP>
+        <GROUP id="{24A52D65-F5D7-CCBD-6DA5-71E99A5DE41B}" name="group">
+          <FILE id="TJQ3zs" name="GroupCue.cpp" compile="1" resource="0" file="src/Cue/group/GroupCue.cpp"/>
+          <FILE id="SWpzgd" name="GroupCue.h" compile="0" resource="0" file="src/Cue/group/GroupCue.h"/>
+        </GROUP>
         <GROUP id="{7B82D836-613B-C5FE-BCF3-EF0CF9E7A7F9}" name="timer">
           <FILE id="KUCIsv" name="MarkTimerCue.h" compile="0" resource="0" file="src/Cue/timer/MarkTimerCue.h"/>
           <FILE id="MoRF2b" name="PauseTimerCue.h" compile="0" resource="0" file="src/Cue/timer/PauseTimerCue.h"/>

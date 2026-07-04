@@ -14,6 +14,7 @@
 #include "../MainIncludes.h"
 
 class Cuelist;
+class GroupCue;
 
 class CueManager :
     public BaseManager<Cue>
@@ -39,6 +40,18 @@ public:
     bool hasCuePanickingPlaying();
 
     void addItemInternal(Cue* c, var data);
+
+    // --- Group membership ---------------------------------------------------
+    // Attach `cue` to `group`: mark it, and (when reposition) move it contiguously right
+    // after the group's current members. No-op if cue is the group or already a GroupCue.
+    // Drag-drop passes reposition=false since it already placed the cue at the drop spot.
+    void addToGroup(Cue* cue, GroupCue* group, bool reposition = true);
+    // Detach `cue` from its group (leaves it in place, now ungrouped).
+    void removeFromGroup(Cue* cue);
+    // The group owning `uid`, or nullptr.
+    GroupCue* findGroupByUID(const juce::String& uid);
+    // After load: turn each cue's saved parentGroupUID back into a parentGroup pointer.
+    void resolveGroupMemberships();
 
     // Pasted / duplicated cues keep everything but their ID: each gets the previous cue's
     // ID plus 0.01 steps (skipping IDs already taken), instead of copying the source ID.

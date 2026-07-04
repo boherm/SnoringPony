@@ -17,6 +17,7 @@
 #include "../../Cue/dca/DCAAssignment.h"
 #include "../../Cue/dca/ui/DCAAssignmentDialog.h"
 #include "../../Cue/fade/FadeCue.h"
+#include "../../Cue/group/GroupCue.h"
 #include "../../Interface/mixer/MixerChannel.h"
 #include "../../ui/SPAssetManager.h"
 #include "../../Cue/audio/AudioCue.h"
@@ -35,6 +36,10 @@ enum ColumnIds
     FirstDCAColumn = 100,    // 100..115 reserved for DCAs 1..16
     LastDCAColumn = 115
 };
+
+// Width of the fold/unfold disclosure drawn at the right edge of a group cue's
+// description cell (also the click target — see cellClicked).
+static constexpr int kGroupToggleWidth = 30;
 
 namespace
 {
@@ -85,14 +90,36 @@ CuesTableModel::~CuesTableModel()
     }
 }
 
+void CuesTableModel::rebuildVisibleCues()
+{
+    visibleCues.clearQuick();
+    if (cl == nullptr || cl->cues == nullptr) return;
+
+    for (auto* c : cl->cues->items)
+    {
+        if (c == nullptr) continue;
+        // Hide members of a collapsed group.
+        if (c->parentGroup != nullptr && c->parentGroup->collapsed->boolValue())
+            continue;
+        visibleCues.add(c);
+    }
+}
+
+Cue* CuesTableModel::rowToCue(int row) const
+{
+    if (row < 0 || row >= visibleCues.size()) return nullptr;
+    return visibleCues[row];
+}
+
 int CuesTableModel::getNumRows()
 {
-    return cl->cues->items.size();
+    rebuildVisibleCues();
+    return visibleCues.size();
 }
 
 void CuesTableModel::paintRowBackground(Graphics& g, int rowNumber, int width, int height, bool rowIsSelected)
 {
-    Cue* cue = cl->cues->items[rowNumber];
+    Cue* cue = rowToCue(rowNumber);
 
     if (cue == nullptr)
         return;
@@ -120,8 +147,11 @@ void CuesTableModel::parameterValueChanged(Parameter* p)
         if (cl->nextCue->getTargetContainerAs<Cue>() == nullptr)
             return;
 
-        auto nextCueIndex = cl->cues->items.indexOf(cl->nextCue->getTargetContainerAs<Cue>());
-        if (nextCueIndex + 1 < cl->cues->items.size()) {
+        rebuildVisibleCues();
+        auto nextCueIndex = visibleRowForCue(cl->nextCue->getTargetContainerAs<Cue>());
+        if (nextCueIndex < 0)
+            return;
+        if (nextCueIndex + 1 < visibleCues.size()) {
             tlb->scrollToEnsureRowIsOnscreen(nextCueIndex + 1);
         } else {
             tlb->scrollToEnsureRowIsOnscreen(nextCueIndex);
@@ -131,49 +161,29 @@ void CuesTableModel::parameterValueChanged(Parameter* p)
 
 void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
 {
-    if (rowNumber >= cl->cues->items.size())
+    if (rowNumber >= visibleCues.size())
         return;
 
     g.setFont(14.0f);
     g.setColour(Colours::white);
 
-    Cue* cue = cl->cues->items[rowNumber];
+    Cue* cue = rowToCue(rowNumber);
+    if (cue == nullptr)
+        return;
     Cue* nextCue = cl->nextCue->getTargetContainerAs<Cue>();
+
+    // Group cues get slightly shorter timer boxes (pre-wait / time / post-wait); normal
+    // cues keep the standard height.
+    const int timerBoxVInset = (dynamic_cast<GroupCue*>(cue) != nullptr) ? 7 : 4;
 
 
     // Status column
     if (StatusColumn == columnId) {
         bool isCuePlaying = cue->isPlaying->boolValue() || cue->preWaitActive->boolValue() || cue->postWaitActive->boolValue();
         bool isNextCue = (nextCue == cue);
-
-        if (isCuePlaying && isNextCue) {
-            float midY = height * 0.5f;
-            float tipX = 10.0f;
-
-            Path topHalf;
-            topHalf.addRectangle(0, 0, 5, midY);
-            topHalf.addTriangle(5, 0, 5, midY, tipX, midY);
-            g.setColour(Colours::green.brighter(0.2f));
-            g.fillPath(topHalf);
-
-            Path bottomHalf;
-            bottomHalf.addRectangle(0, midY, 5, midY);
-            bottomHalf.addTriangle(5, midY, 5, (float)height, tipX, midY);
-            g.setColour(Colours::orange.brighter(0.2f));
-            g.fillPath(bottomHalf);
-        } else if (isCuePlaying) {
-            Path myPath;
-            g.setColour(Colours::green.brighter(0.2f));
-            myPath.addRectangle(0, 0, 5, height);
-            myPath.addTriangle(5, 0, 5, height, 10, height * 0.5f);
-            g.fillPath(myPath);
-        } else if (isNextCue) {
-            Path myPath;
-            g.setColour(Colours::orange.brighter(0.2f));
-            myPath.addRectangle(0, 0, 5, height);
-            myPath.addTriangle(5, 0, 5, height, 10, height * 0.5f);
-            g.fillPath(myPath);
-        }
+        // Inset the cursor a few px top/bottom; group cues get a bit more so it lines up with
+        // the top/bottom of their green box.
+        paintStatusArrow(g, 0.0f, 1.0f, (float)height - 2.0f, isCuePlaying, isNextCue);
         return;
     }
 
@@ -215,7 +225,7 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         String text = CuesTableModel::valueToTimeString(jmax<double>(timeLeft, 0.0));
 
         Rectangle<float> r = Rectangle<float>(0, 0, width, height);
-        r.reduce(4, 4);
+        r.reduce(4, timerBoxVInset);
 
         Path myPath;
         myPath.addRectangle(r.getX(), r.getY(), r.getWidth(), r.getHeight());
@@ -261,7 +271,7 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
     if (TimeColumn == columnId) {
 
         Rectangle<float> r = Rectangle<float>(0, 0, width, height);
-        r.reduce(4, 4);
+        r.reduce(4, timerBoxVInset);
 
         double timeLeft = cue->duration->doubleValue() - cue->currentTime->doubleValue();
         double positionPercent = cue->duration->doubleValue() == 0 ? 0 : cue->currentTime->doubleValue() / cue->duration->doubleValue();
@@ -320,7 +330,7 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
             return;
 
         Rectangle<float> r = Rectangle<float>(0, 0, width, height);
-        r.reduce(4, 4);
+        r.reduce(4, timerBoxVInset);
 
         double timeLeft = cue->postWaitDuration->doubleValue() - cue->postWaitCurrentTime->doubleValue();
         double positionPercent = cue->postWaitDuration->doubleValue() == 0 ? 0 : cue->postWaitCurrentTime->doubleValue() / cue->postWaitDuration->doubleValue();
@@ -369,9 +379,9 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
 
                 // Same assignment as the next DCA cue? (not on the last occurrence)
                 bool sameAsNext = false;
-                if (rowNumber + 1 < cl->cues->items.size())
+                if (rowNumber + 1 < visibleCues.size())
                 {
-                    if (auto* nextDCA = dynamic_cast<DCACue*>(cl->cues->items[rowNumber + 1]))
+                    if (auto* nextDCA = dynamic_cast<DCACue*>(rowToCue(rowNumber + 1)))
                     {
                         if (auto* nextA = nextDCA->findAssignment(dcaIdx))
                         {
@@ -464,6 +474,24 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
     if (DescriptionColumn == columnId) {
         Rectangle<float> r = Rectangle<float>(0, 0, width, height);
 
+        // Group cues carry the fold/unfold disclosure at the right of the description
+        // (click toggles it — see cellClicked). Drawn first so it's the rightmost badge.
+        if (auto* grp = dynamic_cast<GroupCue*>(cue)) {
+            auto tri = r.removeFromRight(kGroupToggleWidth);
+            g.setOpacity(1.0f);
+            // Match the group's box: orange when sequential, green when parallel.
+            const bool sequential = grp->fireMode->intValue() == GroupCue::SEQUENTIAL;
+            g.setColour((sequential ? Colours::orange : Colours::green).brighter(0.3f));
+            float cx = tri.getCentreX(), cy = tri.getCentreY(), s = 6.5f;
+            Path p;
+            if (grp->collapsed->boolValue())
+                p.addTriangle(cx - s * 0.5f, cy - s, cx - s * 0.5f, cy + s, cx + s * 0.85f, cy); // ▶
+            else
+                p.addTriangle(cx - s, cy - s * 0.55f, cx + s, cy - s * 0.55f, cx, cy + s * 0.85f); // ▼
+            g.fillPath(p);
+            g.setColour(Colours::white);
+        }
+
         AudioCue* audioCue = dynamic_cast<AudioCue*>(cue);
         if (cue->getControllableByName("Loop") != nullptr && dynamic_cast<BoolParameter*>(cue->getControllableByName("Loop"))->boolValue()) {
             g.setOpacity(0.5f);
@@ -491,7 +519,9 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         if (isNote || !cue->userCanRemove || cue->getDescription().startsWith("--"))
             g.setFont(Font(14.0f, Font::italic));
 
-        g.drawText(cue->getDescription(), r.reduced(10, 0), Justification::centredLeft);
+        // Indent grouped sub-cues so the group nesting reads visually.
+        const int leftPad = (cue->parentGroup != nullptr) ? 26 : 10;
+        g.drawText(cue->getDescription(), r.reduced(10, 0).withTrimmedLeft(leftPad - 10), Justification::centredLeft);
         return;
     }
 }
@@ -503,12 +533,12 @@ Component* CuesTableModel::refreshComponentForCell(int rowNumber, int columnId, 
 
 String CuesTableModel::getCellTooltip(int rowNumber, int columnId)
 {
-    if (rowNumber >= cl->cues->items.size())
+    if (rowNumber >= visibleCues.size())
         return {};
 
     if (columnId == TriggerCueColumn)
     {
-        DCACue* dcaCue = dynamic_cast<DCACue*>(cl->cues->items[rowNumber]);
+        DCACue* dcaCue = dynamic_cast<DCACue*>(rowToCue(rowNumber));
         if (dcaCue == nullptr || dcaCue->triggerCue->getTargetContainer() == nullptr)
             return {};
 
@@ -519,7 +549,7 @@ String CuesTableModel::getCellTooltip(int rowNumber, int columnId)
     {
         // Show the MTC interface when hovering the "TC" badge (right side of the cell,
         // just left of the loop icon when present).
-        AudioCue* audioCue = dynamic_cast<AudioCue*>(cl->cues->items[rowNumber]);
+        AudioCue* audioCue = dynamic_cast<AudioCue*>(rowToCue(rowNumber));
         if (audioCue == nullptr || !audioCue->mtcCC->enabled->boolValue())
             return {};
 
@@ -560,45 +590,94 @@ void CuesTableModel::syncSelectionToInspector()
         // multi-cue editor.
         Array<Inspectable*> cues;
         for (int i = 0; i < rows.size(); i++) {
-            int r = rows[i];
-            if (r >= 0 && r < cl->cues->items.size())
-                cues.add(cl->cues->items[r]);
+            if (Cue* c = rowToCue(rows[i]))
+                cues.add(c);
         }
         if (cues.size() > 1)
             InspectableSelectionManager::mainSelectionManager->selectInspectables(cues);
     }
 }
 
+// A cue's row among the currently visible rows, or -1 if it's hidden (collapsed group).
+int CuesTableModel::visibleRowForCue(Cue* c)
+{
+    return visibleCues.indexOf(c);
+}
+
 void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& event)
 {
+    Cue* clicked = rowToCue(rowNumber);
+
+    // Left-click the disclosure at the right of a group's description folds/unfolds it.
+    if (!event.mods.isPopupMenu() && columnId == DescriptionColumn)
+    {
+        if (auto* grp = dynamic_cast<GroupCue*>(clicked))
+        {
+            auto cell = tlb->getCellPosition(DescriptionColumn, rowNumber, true);
+            if (event.x >= cell.getRight() - kGroupToggleWidth)
+            {
+                grp->collapsed->setValue(!grp->collapsed->boolValue());
+                tlb->updateContent();
+                tlb->repaint();
+                return;
+            }
+        }
+    }
+
     if (event.mods.isPopupMenu())
     {
+        if (clicked == nullptr) return;
+
         PopupMenu p;
 
+        // Existing groups in this cuelist (targets of the "Add to group" submenu).
+        Array<GroupCue*> groups;
+        for (auto* c : cl->cues->items)
+            if (auto* g = dynamic_cast<GroupCue*>(c))
+                groups.add(g);
+
         bool canDelete = true;
-        if (tlb->getSelectedRows().size() == 1) {
-            Cue* selectedCue = cl->cues->items[rowNumber];
+        const bool singleSel = tlb->getSelectedRows().size() == 1;
+        if (singleSel) {
+            Cue* selectedCue = clicked;
             p.addSectionHeader("Cue " + selectedCue->id->stringValue() + " - " + selectedCue->getCueType());
             // p.addItem(1, "Play this cue");
             p.addItem(2, "Go after current cue");
             p.addSeparator();
             p.addItem(3, "Edit this cue");
-            p.addItem(9, "Replace with new cue");
+            if (dynamic_cast<GroupCue*>(selectedCue) == nullptr)
+                p.addItem(9, "Replace with new cue");
             canDelete = selectedCue->userCanRemove;
         } else {
             p.addItem(6, "Reorder selected cues ids...");
         }
         if (canDelete)
-            p.addColouredItem(4, tlb->getSelectedRows().size() > 1 ? "Delete selected cues" : "Delete this cue", Colours::red);
+            p.addColouredItem(4, singleSel ? "Delete this cue" : "Delete selected cues", Colours::red);
 
-        if (tlb->getSelectedRows().size() == 1) {
+        // --- Grouping ---
+        p.addSeparator();
+        if (dynamic_cast<GroupCue*>(clicked) != nullptr) {
+            if (singleSel) p.addItem(21, "Ungroup");
+        } else {
+            p.addItem(22, singleSel ? "Group this cue" : "Group selected cues");
+            if (!groups.isEmpty()) {
+                PopupMenu sub;
+                for (int i = 0; i < groups.size(); i++)
+                    sub.addItem(300 + i, "Group " + groups[i]->id->stringValue() + " - " + groups[i]->getDescription());
+                p.addSubMenu("Add to group", sub);
+            }
+            if (singleSel && clicked->parentGroup != nullptr)
+                p.addItem(20, "Remove from group");
+        }
+
+        if (singleSel) {
             p.addSeparator();
 
             p.addItem(7, "Add new cue before...");
             p.addItem(8, "Add new cue after...");
         }
 
-        p.showMenuAsync(PopupMenu::Options(), [this, rowNumber](int result) {
+        p.showMenuAsync(PopupMenu::Options(), [this, rowNumber, clicked, groups](int result) {
             // if (result == 1){
             //     // Play action
             //     if (rowNumber < cl->cues.items.size()) {
@@ -608,22 +687,31 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
             // }
             if (result == 2){
                 // Set go next action
-                if (rowNumber < cl->cues->items.size()) {
-                    Cue* item = cl->cues->items[rowNumber];
-                    item->setGoNext();
-                }
+                if (clicked != nullptr)
+                    clicked->setGoNext();
             }
             if (result == 3) {
                 // Edit action
-                if (rowNumber < cl->cues->items.size()) {
-                    inspectCue(rowNumber);
-                }
+                if (clicked != nullptr)
+                    InspectableSelectionManager::mainSelectionManager->selectInspectable(clicked);
 
             } else if (result == 4) {
                 askDeleteSelectedCues();
             } else if (result == 7 || result == 8) {
-                // Add new cue before/after
-                int newIndex = (result == 7) ? rowNumber : rowNumber + 1;
+                if (clicked == nullptr) return;
+                // Add new cue before/after — mapped to a real flat-list index. "After" a
+                // group inserts past its whole (possibly hidden) member block.
+                int clickedIdx = cl->cues->items.indexOf(clicked);
+                int newIndex;
+                if (result == 7) {
+                    newIndex = clickedIdx;
+                } else if (auto* g = dynamic_cast<GroupCue*>(clicked)) {
+                    newIndex = clickedIdx + 1;
+                    for (auto* m : g->getMembers())
+                        newIndex = jmax(newIndex, cl->cues->items.indexOf(m) + 1);
+                } else {
+                    newIndex = clickedIdx + 1;
+                }
                 this->cl->cues->factory.showCreateMenu([this, newIndex](Cue* newCue)
                     {
                         if (newCue != nullptr)
@@ -636,11 +724,12 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
                 );
             } else if (result == 9) {
                 // Replace with new cue
-                this->cl->cues->factory.showCreateMenu([this, rowNumber](Cue* newCue)
+                Cue* oldCue = clicked;
+                this->cl->cues->factory.showCreateMenu([this, oldCue](Cue* newCue)
                     {
-                        if (newCue != nullptr)
+                        if (newCue != nullptr && oldCue != nullptr)
                         {
-                            Cue* oldCue = this->cl->cues->items[rowNumber];
+                            int rowNumber = this->cl->cues->items.indexOf(oldCue);
 
                             if (newCue->getCueType() == oldCue->getCueType())
                             {
@@ -669,7 +758,7 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
                                         newCue->notes->setValue(oldCue->notes->stringValue());
                                         oldCue->remove();
                                         this->cl->cues->addItem(newCue, newCueData);
-                                        this->inspectCue(rowNumber);
+                                        InspectableSelectionManager::mainSelectionManager->selectInspectable(newCue);
 
                                     }
                             );
@@ -686,6 +775,50 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
                 dw.dialogBackgroundColour = BG_COLOR;
                 dw.resizable = false;
                 dw.launchAsync();
+            } else if (result == 20) {
+                // Remove selected cue(s) from their group.
+                for (Cue* c : currentSelectionOr(clicked))
+                    if (c->parentGroup != nullptr) cl->cues->removeFromGroup(c);
+                tlb->updateContent();
+                tlb->repaint();
+            } else if (result == 21) {
+                // Ungroup: dissolve the group, keep its members.
+                if (auto* g = dynamic_cast<GroupCue*>(clicked)) {
+                    for (auto* m : g->getMembers()) cl->cues->removeFromGroup(m);
+                    g->remove();
+                    tlb->updateContent();
+                    tlb->repaint();
+                }
+            } else if (result == 22) {
+                // Wrap the selected cues in a brand-new group.
+                Array<Cue*> members;
+                for (auto* c : cl->cues->items)
+                    if (currentSelectionOr(clicked).contains(c) && dynamic_cast<GroupCue*>(c) == nullptr)
+                        members.add(c);
+                if (members.isEmpty()) return;
+
+                int insertIdx = cl->cues->items.size();
+                for (auto* c : members) insertIdx = jmin(insertIdx, cl->cues->items.indexOf(c));
+
+                auto* group = dynamic_cast<GroupCue*>(cl->cues->factory.create("Group Cue"));
+                if (group == nullptr) return;
+                var d(new DynamicObject());
+                d.getDynamicObject()->setProperty("index", insertIdx);
+                cl->cues->addItem(group, d);
+                for (auto* c : members) cl->cues->addToGroup(c, group);
+
+                InspectableSelectionManager::mainSelectionManager->selectInspectable(group);
+                tlb->updateContent();
+                tlb->repaint();
+            } else if (result >= 300 && result < 300 + groups.size()) {
+                // Add the selected cues to an existing group.
+                GroupCue* group = groups[result - 300];
+                Array<Cue*> sel = currentSelectionOr(clicked);
+                for (auto* c : cl->cues->items)
+                    if (sel.contains(c) && dynamic_cast<GroupCue*>(c) == nullptr)
+                        cl->cues->addToGroup(c, group);
+                tlb->updateContent();
+                tlb->repaint();
             }
         });
     } else {
@@ -693,6 +826,18 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
         // back to a single cue. selectedRowsChanged already updated the table selection.
         syncSelectionToInspector();
     }
+}
+
+// The cues under the current table selection, or just `fallback` if nothing is selected
+// (e.g. a right-click that didn't change selection).
+Array<Cue*> CuesTableModel::currentSelectionOr(Cue* fallback)
+{
+    Array<Cue*> out;
+    auto rows = tlb->getSelectedRows();
+    for (int i = 0; i < rows.size(); i++)
+        if (Cue* c = rowToCue(rows[i])) out.add(c);
+    if (out.isEmpty() && fallback != nullptr) out.add(fallback);
+    return out;
 }
 
 
@@ -761,12 +906,16 @@ void CuesTableModel::cellDoubleClicked(int rowNumber, int columnId, const MouseE
         || columnId == PreWaitColumn || columnId == PostWaitColumn
         || columnId == TimeColumn)
     {
-        if (rowNumber < 0 || rowNumber >= cl->cues->items.size()) return;
+        if (rowNumber < 0 || rowNumber >= visibleCues.size()) return;
 
-        Cue* c = cl->cues->items[rowNumber];
+        Cue* c = rowToCue(rowNumber);
+        if (c == nullptr) return;
 
         // The Time cell is only editable for FadeCue (its duration is the fade time).
         if (columnId == TimeColumn && dynamic_cast<FadeCue*>(c) == nullptr) return;
+
+        // Grouped sub-cues can't have a post-wait, so its cell isn't editable either.
+        if (columnId == PostWaitColumn && c->parentGroup != nullptr) return;
 
         String initial;
         std::function<void(const String&)> onCommit;
@@ -831,9 +980,9 @@ void CuesTableModel::cellDoubleClicked(int rowNumber, int columnId, const MouseE
 
     if (columnId == TriggerCueColumn)
     {
-        if (rowNumber < 0 || rowNumber >= cl->cues->items.size()) return;
+        if (rowNumber < 0 || rowNumber >= visibleCues.size()) return;
 
-        DCACue* dcaCue = dynamic_cast<DCACue*>(cl->cues->items[rowNumber]);
+        DCACue* dcaCue = dynamic_cast<DCACue*>(rowToCue(rowNumber));
         if (dcaCue == nullptr) return;
 
         // Edit the "GO cue on play" target via a bubble holding the TargetParameter's
@@ -848,10 +997,10 @@ void CuesTableModel::cellDoubleClicked(int rowNumber, int columnId, const MouseE
 
     if (columnId >= FirstDCAColumn && columnId <= LastDCAColumn)
     {
-        if (rowNumber < 0 || rowNumber >= cl->cues->items.size()) return;
+        if (rowNumber < 0 || rowNumber >= visibleCues.size()) return;
 
         int dcaIdx = columnId - FirstDCAColumn + 1;
-        DCACue* dcaCue = dynamic_cast<DCACue*>(cl->cues->items[rowNumber]);
+        DCACue* dcaCue = dynamic_cast<DCACue*>(rowToCue(rowNumber));
         if (dcaCue == nullptr) return;
 
         DCAAssignment* a = dcaCue->findAssignment(dcaIdx);
@@ -888,8 +1037,11 @@ void CuesTableModel::cellDoubleClicked(int rowNumber, int columnId, const MouseE
         return;
     }
 
-    cl->nextCue->setTarget(cl->cues->items[rowNumber]);
-    cl->nextCue->notifyValueChanged();
+    if (Cue* c = rowToCue(rowNumber))
+    {
+        cl->nextCue->setTarget(c);
+        cl->nextCue->notifyValueChanged();
+    }
 }
 
 void CuesTableModel::backgroundClicked(const MouseEvent& event)
@@ -915,15 +1067,17 @@ void CuesTableModel::deleteKeyPressed(int lastRowSelected)
 
 void CuesTableModel::returnKeyPressed(int lastRowSelected)
 {
-    if (lastRowSelected < 0 || lastRowSelected >= cl->cues->items.size()) return;
+    Cue* c = rowToCue(lastRowSelected);
+    if (c == nullptr) return;
 
-    cl->nextCue->setTarget(cl->cues->items[lastRowSelected]);
+    cl->nextCue->setTarget(c);
     cl->nextCue->notifyValueChanged();
 }
 
 void CuesTableModel::inspectCue(int rowNumber)
 {
-    InspectableSelectionManager::mainSelectionManager->selectInspectable(cl->cues->items[rowNumber]);
+    if (Cue* c = rowToCue(rowNumber))
+        InspectableSelectionManager::mainSelectionManager->selectInspectable(c);
 }
 
 void CuesTableModel::askDeleteSelectedCues()
@@ -937,10 +1091,8 @@ void CuesTableModel::askDeleteSelectedCues()
     Array<Cue*> removable;
     for (int i = 0; i < selected.size(); ++i)
     {
-        int r = selected[i];
-        if (r < 0 || r >= cl->cues->items.size()) continue;
-        Cue* item = cl->cues->items[r];
-        if (item->userCanRemove) removable.add(item);
+        Cue* item = rowToCue(selected[i]);
+        if (item != nullptr && item->userCanRemove) removable.add(item);
     }
 
     if (removable.isEmpty()) return;
@@ -996,6 +1148,35 @@ var CuesTableModel::getDragSourceDescription(const SparseSet<int>& selectedRows)
     return var();
 }
 
+void CuesTableModel::paintStatusArrow(Graphics& g, float x, float y, float h, bool playing, bool isNext)
+{
+    auto at = AffineTransform::translation(x, y);
+
+    if (playing && isNext)
+    {
+        float midY = h * 0.5f;
+        Path top;
+        top.addRectangle(0, 0, 5, midY);
+        top.addTriangle(5, 0, 5, midY, 10, midY);
+        g.setColour(Colours::green.brighter(0.2f));
+        g.fillPath(top, at);
+
+        Path bottom;
+        bottom.addRectangle(0, midY, 5, midY);
+        bottom.addTriangle(5, midY, 5, h, 10, midY);
+        g.setColour(Colours::orange.brighter(0.2f));
+        g.fillPath(bottom, at);
+    }
+    else if (playing || isNext)
+    {
+        Path p;
+        p.addRectangle(0, 0, 5, h);
+        p.addTriangle(5, 0, 5, h, 10, h * 0.5f);
+        g.setColour((playing ? Colours::green : Colours::orange).brighter(0.2f));
+        g.fillPath(p, at);
+    }
+}
+
 String CuesTableModel::valueToTimeString(double timeVal)
 {
     int numDecimals = 3;
@@ -1032,7 +1213,8 @@ void CuesTableModel::reorderCues(float startId, float increment)
     float currentId = startId;
     for (int i = 0; i < tlb->getNumRows(); i++) {
         if (tlb->isRowSelected(i)) {
-            Cue* cue = cl->cues->items[i];
+            Cue* cue = rowToCue(i);
+            if (cue == nullptr) continue;
             cue->id->setValue(currentId);
             cue->id->notifyValueChanged();
             currentId += increment;

@@ -399,6 +399,26 @@ void AudioCue::stopInternal()
     }
 }
 
+bool AudioCue::canSeekTo() const
+{
+    return isPlaying->boolValue() && !preWaitActive->boolValue() && duration->doubleValue() > 0.0;
+}
+
+void AudioCue::seekToTime(double t)
+{
+    double total = duration->doubleValue();
+    if (total <= 0.0) return;
+
+    // Map the [0, duration] time onto the cue's playable window, then seek every file there.
+    double frac = jlimit(0.0, 1.0, t / total);
+    double winStart = slicesManager->startTime->doubleValue();
+    double winEnd = slicesManager->endTime->doubleValue();
+    double target = winStart + frac * (winEnd - winStart);
+
+    slicesManager->resetSlices(); // drop stale repetition counters so the bar matches
+    filesManager->setCurrentTime(target);
+}
+
 void AudioCue::retriggerStop()
 {
     cancelDuckSequence(true);

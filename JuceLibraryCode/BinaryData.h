@@ -30,7 +30,7 @@ namespace BinaryData
     const int            fade_cue_pngSize = 3388;
 
     extern const char*   group_cue_png;
-    const int            group_cue_pngSize = 2036;
+    const int            group_cue_pngSize = 5026;
 
     extern const char*   icon_png;
     const int            icon_pngSize = 40809;

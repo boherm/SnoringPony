@@ -14,6 +14,7 @@
 #include "../../Cuelist/dca/DCAMixingCuelist.h"
 #include "../../Cue/CueManager.h"
 #include "../../Cue/dca/DCACue.h"
+#include "../../Cue/group/GroupCue.h"
 #include "../../Interface/mixer/MixerInterface.h"
 #include "../../ui/LookAndFeelTable.h"
 #include "juce_gui_basics/juce_gui_basics.h"
@@ -174,6 +175,62 @@ bool CuesTableUI::keyPressed(const KeyPress& key)
 
 void CuesTableUI::paintOverChildren(Graphics& g)
 {
+    // Draw a green box around each group block (header + its visible members).
+    if (tableModel != nullptr)
+    {
+        tableModel->rebuildVisibleCues();
+        auto& vc = tableModel->visibleCues;
+
+        const int rowHeight = tableListBox.getRowHeight();
+        const int headerHeight = tableListBox.getHeader().getHeight();
+        const int scrollY = tableListBox.getViewport()->getViewPositionY();
+        const Rectangle<int> tb = tableListBox.getBounds();
+
+        Cue* nextCue = (cl != nullptr) ? cl->nextCue->getTargetContainerAs<Cue>() : nullptr;
+
+        g.saveState();
+        g.reduceClipRegion(tb.getX(), tb.getY() + headerHeight, tb.getWidth(), jmax(0, tb.getHeight() - headerHeight));
+
+        for (int r = 0; r < vc.size(); r++)
+        {
+            auto* grp = dynamic_cast<GroupCue*>(vc[r]);
+            if (grp == nullptr) continue;
+
+            int rEnd = r;
+            if (!grp->collapsed->boolValue())
+            {
+                int k = r + 1;
+                while (k < vc.size() && vc[k]->parentGroup == grp) { rEnd = k; k++; }
+            }
+
+            float yTop = (float) (tb.getY() + headerHeight + r * rowHeight - scrollY);
+            float yBot = (float) (tb.getY() + headerHeight + (rEnd + 1) * rowHeight - scrollY);
+            // Inset the box so two consecutive groups leave a clean gap instead of merging
+            // their touching borders into one thick band; rounded for a softer look.
+            Rectangle<float> box((float) tb.getX() + 1.0f, yTop + 2.0f,
+                                 (float) tb.getWidth() - 2.0f, (yBot - yTop) - 4.0f);
+            // Sequential groups get an orange box, parallel ones green.
+            const bool sequential = grp->fireMode->intValue() == GroupCue::SEQUENTIAL;
+            g.setColour((sequential ? Colours::orange : Colours::green).brighter(0.1f));
+            g.drawRoundedRectangle(box, 5.0f, 2.0f);
+
+            // Redraw the status cursor over the box so it isn't cut by the green border.
+            for (int rr = r; rr <= rEnd; rr++)
+            {
+                Cue* c = vc[rr];
+                bool playing = c->isPlaying->boolValue() || c->preWaitActive->boolValue() || c->postWaitActive->boolValue();
+                bool isNext = (c == nextCue);
+                if (playing || isNext)
+                {
+                    float ry = (float) (tb.getY() + headerHeight + rr * rowHeight - scrollY);
+                    CuesTableModel::paintStatusArrow(g, (float) tb.getX(), ry + 1.0f, (float) rowHeight - 2.0f, playing, isNext);
+                }
+            }
+        }
+
+        g.restoreState();
+    }
+
     // Draw insertion line during drag
     if (insertIndex >= 0)
     {
@@ -186,8 +243,21 @@ void CuesTableUI::paintOverChildren(Graphics& g)
         // Get the table's bounds within this component
         Rectangle<int> tableBounds = tableListBox.getBounds();
 
-        g.setColour(Colours::orange);
-        g.fillRect(tableBounds.getX(), yPos - 1, tableBounds.getWidth(), 3);
+        int xLeft = tableBounds.getX();
+        int w = tableBounds.getWidth();
+        if (insertIntoGroup)
+        {
+            // Indented + green: the drop nests into insertGroup.
+            int indent = groupNestThresholdX();
+            xLeft += indent;
+            w -= indent;
+            g.setColour(Colours::green.brighter(0.2f));
+        }
+        else
+        {
+            g.setColour(Colours::orange);
+        }
+        g.fillRect(xLeft, yPos - 1, w, 3);
     }
 }
 
@@ -255,7 +325,18 @@ bool CuesTableUI::isInterestedInDragSource(const SourceDetails& dragSourceDetail
 void CuesTableUI::itemDragEnter(const SourceDetails& dragSourceDetails)
 {
     insertIndex = -1;
+    insertIntoGroup = false;
+    insertGroup = nullptr;
     repaint();
+}
+
+int CuesTableUI::groupNestThresholdX() const
+{
+    // Nesting kicks in once the mouse passes the start of the Description column plus the
+    // member indent — matching where nested cues are drawn.
+    int descIdx = tableListBox.getHeader().getIndexOfColumnId(DescriptionColumn, true);
+    if (descIdx < 0) return 120;
+    return tableListBox.getHeader().getColumnPosition(descIdx).getX() + 20;
 }
 
 void CuesTableUI::itemDragMove(const SourceDetails& dragSourceDetails)
@@ -282,12 +363,41 @@ void CuesTableUI::itemDragMove(const SourceDetails& dragSourceDetails)
     else
         insertIndex = jlimit(0, numRows, row + 1);
 
+    // Decide whether this insertion point nests into a group. At a group's bottom edge the
+    // horizontal position chooses (drag right = inside, left = outside); in the middle of a
+    // group it's always inside.
+    insertGroup = nullptr;
+    insertIntoGroup = false;
+    if (tableModel != nullptr)
+    {
+        tableModel->rebuildVisibleCues();
+        auto& vc = tableModel->visibleCues;
+
+        GroupCue* cand = nullptr;
+        if (insertIndex > 0 && insertIndex - 1 < vc.size())
+        {
+            Cue* pred = vc[insertIndex - 1];
+            if (auto* g = dynamic_cast<GroupCue*>(pred)) cand = g;
+            else if (pred->parentGroup != nullptr)       cand = pred->parentGroup;
+        }
+
+        if (cand != nullptr)
+        {
+            Cue* succ = (insertIndex < vc.size()) ? vc[insertIndex] : nullptr;
+            const bool succInGroup = (succ != nullptr && succ->parentGroup == cand);
+            insertIntoGroup = succInGroup || (pos.x >= groupNestThresholdX());
+            insertGroup = cand;
+        }
+    }
+
     repaint();
 }
 
 void CuesTableUI::itemDragExit(const SourceDetails& dragSourceDetails)
 {
     insertIndex = -1;
+    insertIntoGroup = false;
+    insertGroup = nullptr;
     repaint();
 }
 
@@ -325,108 +435,92 @@ void CuesTableUI::itemDropped(const SourceDetails& dragSourceDetails)
         return;
     }
 
-    // Get the cues to move (skip protected cues — they are pinned in place)
-    Array<Cue*> cuesToMove;
+    // Map the dragged VISIBLE rows to cues (skip protected/pinned cues).
+    Array<Cue*> dragged;
     for (int i = 0; i < sourceRows.size(); i++)
     {
-        int rowIndex = sourceRows[i];
-        if (rowIndex >= 0 && rowIndex < cl->cues->items.size())
-        {
-            Cue* c = cl->cues->items[rowIndex];
-            if (!c->canBeReorderedInEditor) continue;
-            cuesToMove.add(c);
-        }
+        if (Cue* c = tableModel->rowToCue(sourceRows[i]))
+            if (c->canBeReorderedInEditor)
+                dragged.add(c);
     }
 
-    if (cuesToMove.isEmpty())
+    if (dragged.isEmpty())
     {
         insertIndex = -1;
         repaint();
         return;
     }
 
-    // Calculate the correct insert position
-    int targetIndex = insertIndex;
-
-    // Prevent inserting above a pinned cue at index 0
-    if (!cl->cues->items.isEmpty() && !cl->cues->items.getFirst()->canBeReorderedInEditor)
-        targetIndex = jmax(targetIndex, 1);
-
-    // Track the new indices for re-selection
-    SparseSet<int> newSelection;
-
-    // If we're moving a single item
-    if (cuesToMove.size() == 1)
+    // A dragged group carries its members: they move as one block and stay grouped.
+    Array<GroupCue*> movedGroups;
+    Array<Cue*> block;
+    for (Cue* c : dragged)
     {
-        Cue* cueToMove = cuesToMove[0];
-        int currentIndex = cl->cues->items.indexOf(cueToMove);
-
-        // Adjust target index if we're moving down (after the current position)
-        if (currentIndex < targetIndex)
-            targetIndex--;
-
-        // Ensure the target index is valid
-        targetIndex = jlimit(0, cl->cues->items.size() - 1, targetIndex);
-
-        // Move the cue using the BaseManager's setItemIndex method
-        if (currentIndex != targetIndex)
+        block.addIfNotAlreadyThere(c);
+        if (auto* g = dynamic_cast<GroupCue*>(c))
         {
-            cl->cues->setItemIndex(cueToMove, targetIndex, true);
+            movedGroups.add(g);
+            for (auto* m : g->getMembers())
+                block.addIfNotAlreadyThere(m);
         }
-
-        // Add to new selection
-        newSelection.addRange(Range<int>(targetIndex, targetIndex + 1));
-    }
-    else
-    {
-        // For multiple items, we need to move them carefully
-        // Sort the indices to maintain relative order
-        Array<int> sortedIndices;
-        for (int i = 0; i < sourceRows.size(); i++)
-        {
-            sortedIndices.add(sourceRows[i]);
-        }
-        sortedIndices.sort();
-
-        // Count how many items are before the target index
-        int numBefore = 0;
-        for (int idx : sortedIndices)
-        {
-            if (idx < targetIndex)
-                numBefore++;
-        }
-
-        // Adjust target index
-        int adjustedTarget = targetIndex - numBefore;
-
-        // Move items in reverse order to avoid index shifting issues
-        for (int i = sortedIndices.size() - 1; i >= 0; i--)
-        {
-            int currentIndex = sortedIndices[i];
-            Cue* cue = cl->cues->items[currentIndex];
-
-            int newIndex = adjustedTarget + i;
-            newIndex = jlimit(0, cl->cues->items.size() - 1, newIndex);
-
-            if (currentIndex != newIndex)
-            {
-                cl->cues->setItemIndex(cue, newIndex, true);
-            }
-        }
-
-        // Add the range to new selection
-        newSelection.addRange(Range<int>(adjustedTarget, adjustedTarget + cuesToMove.size()));
     }
 
-    // Refresh the table
+    auto& vc = tableModel->visibleCues;
+
+    // The cue the block should land in front of (nullptr = end of list).
+    Cue* anchor = (insertIndex >= 0 && insertIndex < vc.size()) ? vc[insertIndex] : nullptr;
+    while (anchor != nullptr && block.contains(anchor))  // don't anchor to a moving cue
+    {
+        int ai = vc.indexOf(anchor);
+        anchor = (ai + 1 < vc.size()) ? vc[ai + 1] : nullptr;
+    }
+
+    // Group membership was decided during the drag (indented line = nest into insertGroup).
+    // No nesting: a moving group is never dropped inside another group.
+    GroupCue* dropGroup = insertIntoGroup ? insertGroup : nullptr;
+    if (!movedGroups.isEmpty()) dropGroup = nullptr;
+
+    // Reorder the block in front of the anchor, preserving flat-list order.
+    Array<Cue*> ordered;
+    for (auto* c : cl->cues->items)
+        if (block.contains(c)) ordered.add(c);
+
+    for (Cue* c : ordered)
+    {
+        int anchorIdx = anchor != nullptr ? cl->cues->items.indexOf(anchor) : cl->cues->items.size();
+        int cur = cl->cues->items.indexOf(c);
+        int dest = (cur < anchorIdx) ? anchorIdx - 1 : anchorIdx;
+        dest = jlimit(0, cl->cues->items.size() - 1, dest);
+        if (cur != dest)
+            cl->cues->setItemIndex(c, dest, true);
+    }
+
+    // Apply grouping to the dropped cues (members that travel with their own group keep it).
+    for (Cue* c : ordered)
+    {
+        if (dynamic_cast<GroupCue*>(c) != nullptr) continue;
+        if (c->parentGroup != nullptr && movedGroups.contains(c->parentGroup)) continue;
+
+        // reposition=false: the drop already placed the cue contiguously at the right spot.
+        if (dropGroup != nullptr)        cl->cues->addToGroup(c, dropGroup, false);
+        else if (c->parentGroup != nullptr) cl->cues->removeFromGroup(c);
+    }
+
+    // Refresh and re-select the moved cues at their new visible rows.
     tableListBox.updateContent();
-
-    // Re-select the moved items at their new positions
+    tableModel->rebuildVisibleCues();
+    SparseSet<int> newSelection;
+    for (Cue* c : ordered)
+    {
+        int r = tableModel->visibleRowForCue(c);
+        if (r >= 0) newSelection.addRange(Range<int>(r, r + 1));
+    }
     tableListBox.setSelectedRows(newSelection, dontSendNotification);
-
     tableListBox.repaint();
 
     insertIndex = -1;
+    insertIntoGroup = false;
+    insertGroup = nullptr;
     repaint();
 }
 

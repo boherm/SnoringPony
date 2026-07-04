@@ -125,6 +125,9 @@ public:
     void retriggerStop() override;
     void panicInternal() override;
 
+    bool canSeekTo() const override;
+    void seekToTime(double t) override;
+
     void fade(double targetGain, double duration) override;
     void fadeIn(double duration);
     void fadeOut(double duration, bool stopAfterFade = true);

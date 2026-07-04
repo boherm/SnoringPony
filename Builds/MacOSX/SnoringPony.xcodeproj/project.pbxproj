@@ -103,6 +103,7 @@
 		81F1D29794489DACE36D9207 /* AudioSettings.cpp */ = {isa = PBXBuildFile; fileRef = 705E449F36FA04AE0A3E8E48; };
 		81FE5838DBC11A9078C405D2 /* AudioSlices.cpp */ = {isa = PBXBuildFile; fileRef = 9EEFB9110B3658EDE53F472D; };
 		8272C0A8DC4A2709F17B52BF /* SPAssetManager.cpp */ = {isa = PBXBuildFile; fileRef = E48700BF2954893CBBD80843; };
+		850319BACED74AE04768E5F8 /* GroupCue.cpp */ = {isa = PBXBuildFile; fileRef = 92D7002576A5AF5EFF670AA7; };
 		861C0D0614917BC594AEEB29 /* include_juce_graphics.mm */ = {isa = PBXBuildFile; fileRef = 98B6243B9688467B02657902; };
 		86A8CFE4DBFAB74C6641F07C /* ShowTimerManagerUI.cpp */ = {isa = PBXBuildFile; fileRef = D1E4BAC7BAF8AF2EA232C8FE; };
 		8736D6D0ADE3FDE437CBE84A /* wapi_mingw_shim.cpp */ = {isa = PBXBuildFile; fileRef = E21B427DB0AB7282CD09B282; };
@@ -419,6 +420,7 @@
 		924590FB9E7780A0337EF697 /* CharacterRef.cpp */ /* CharacterRef.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CharacterRef.cpp; path = ../../src/Cue/dca/CharacterRef.cpp; sourceTree = SOURCE_ROOT; };
 		9248B85C06F309D7BE7ED709 /* juce_simpleweb */ /* juce_simpleweb */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_simpleweb; path = ../../modules/juce_simpleweb; sourceTree = SOURCE_ROOT; };
 		928398450B885C3746B8A468 /* MappingAction.h */ /* MappingAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MappingAction.h; path = ../../src/Interface/action/MappingAction.h; sourceTree = SOURCE_ROOT; };
+		92D7002576A5AF5EFF670AA7 /* GroupCue.cpp */ /* GroupCue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = GroupCue.cpp; path = ../../src/Cue/group/GroupCue.cpp; sourceTree = SOURCE_ROOT; };
 		93096F7BED08CDB7C67A108E /* juce_osc */ /* juce_osc */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_osc; path = ../../modules/juce/modules/juce_osc; sourceTree = SOURCE_ROOT; };
 		94E393B1210ED7A39FFB0C6C /* OBSInterface.cpp */ /* OBSInterface.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OBSInterface.cpp; path = ../../src/Interface/obs/OBSInterface.cpp; sourceTree = SOURCE_ROOT; };
 		957910A90846B354E79DEA9E /* ShowTimerEditor.cpp */ /* ShowTimerEditor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ShowTimerEditor.cpp; path = ../../src/Timer/ui/ShowTimerEditor.cpp; sourceTree = SOURCE_ROOT; };
@@ -510,6 +512,7 @@
 		D28C1972D2EA868022FBD3F3 /* OBSCommand.cpp */ /* OBSCommand.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OBSCommand.cpp; path = ../../src/Interface/obs/OBSCommand.cpp; sourceTree = SOURCE_ROOT; };
 		D37E12E68D909D62B0012E1E /* MTCContainerEditor.cpp */ /* MTCContainerEditor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MTCContainerEditor.cpp; path = ../../src/Cue/audio/ui/MTCContainerEditor.cpp; sourceTree = SOURCE_ROOT; };
 		D3BF2199C88E73B77911EEAF /* Mark.cpp */ /* Mark.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Mark.cpp; path = ../../src/Timer/Mark.cpp; sourceTree = SOURCE_ROOT; };
+		D3FA7A2AFBE5C655366B157C /* GroupCue.h */ /* GroupCue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GroupCue.h; path = ../../src/Cue/group/GroupCue.h; sourceTree = SOURCE_ROOT; };
 		D458FD584C87F76038FF98A8 /* MIDIManager.h */ /* MIDIManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MIDIManager.h; path = ../../src/Interface/midi/MIDIManager.h; sourceTree = SOURCE_ROOT; };
 		D47AA32AD265731805BF8376 /* Clock.h */ /* Clock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Clock.h; path = ../../src/ui/panels/Clock.h; sourceTree = SOURCE_ROOT; };
 		D5974663D523854A78B2AB75 /* FadeCue.cpp */ /* FadeCue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FadeCue.cpp; path = ../../src/Cue/fade/FadeCue.cpp; sourceTree = SOURCE_ROOT; };
@@ -626,6 +629,15 @@
 				DFB0A06657D3334C9BD6F6A6,
 			);
 			name = ahcq;
+			sourceTree = "<group>";
+		};
+		07409D9A2C184FC0D99AC0F0 /* group */ = {
+			isa = PBXGroup;
+			children = (
+				92D7002576A5AF5EFF670AA7,
+				D3FA7A2AFBE5C655366B157C,
+			);
+			name = group;
 			sourceTree = "<group>";
 		};
 		0C403886922E2C6D3B015585 /* ui */ = {
@@ -1427,6 +1439,7 @@
 				86EECDCC764319F01661E4FE,
 				ABA5C402D739952296A2F01F,
 				B38886EDB4CA111118413EBD,
+				07409D9A2C184FC0D99AC0F0,
 				D98E9D94BC2399BAF3E0A98D,
 				8CA6BF4A86C940705D46425C,
 				523B61206AD0FA664AB028DE,
@@ -1567,6 +1580,7 @@
 				C5BA953BBA2207993A818BA2,
 				5020B01692FF82975AFA6BA4,
 				8963305DB6F73051102C1BEF,
+				850319BACED74AE04768E5F8,
 				C2375C6B63E2DA674DE0A7F4,
 				9AD5ADA5C2C0D2E4B847A19E,
 				24D3C95909E18C99ABFE56FE,

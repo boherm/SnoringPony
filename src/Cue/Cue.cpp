@@ -9,6 +9,7 @@
 */
 
 #include "Cue.h"
+#include "group/GroupCue.h"
 #include "ui/CueEditor.h"
 #include "ui/MultiCueEditor.h"
 #include "../Cuelist/Cuelist.h"
@@ -106,6 +107,12 @@ currentTime->hideInRemoteControl = true;
     notes->lockManualControlMode = true;
     notes->multiline = true;
 
+    // UID of the group this cue belongs to (empty = ungrouped). Persisted so membership
+    // survives save/load; the parentGroup pointer is resolved from it after load.
+    parentGroupUID = addStringParameter("Parent Group UID", "Internal: UID of the owning group cue", "");
+    parentGroupUID->hideInEditor = true;
+    parentGroupUID->hideInRemoteControl = true;
+
     previewBtn = addTrigger("Preview", "Preview this cue");
     previewBtn->hideInEditor = true;
 
@@ -193,6 +200,14 @@ void Cue::setGoNext()
     parentCuelist->nextCue->notifyValueChanged();
 }
 
+void Cue::applyGroupMembershipConstraints()
+{
+    const bool grouped = parentGroup != nullptr;
+    postWaitCC->hideInEditor = grouped;
+    if (grouped)
+        postWaitCC->enabled->setValue(false);
+}
+
 void Cue::parameterValueChanged(Parameter* p)
 {
     ControllableContainer::parameterValueChanged(p);
@@ -277,6 +292,7 @@ void Cue::play()
         return;
 
     isPlaying->setValue(true);
+    wasStoppedManually = false;
     autoFollowProcess(PostWaitType::IMMEDIATE);
     isPanicking = false;
 
@@ -300,8 +316,66 @@ void Cue::preview()
     previewInternal();
 }
 
+void Cue::playSkippingPreWait()
+{
+    // Currently waiting: cancel the pre-wait and begin the cue right now (isPlaying was
+    // already set when the wait started).
+    if (preWaitActive->boolValue())
+    {
+        preWaitTimer->stop();
+        preWaitCurrentTime->setValue(0.0f);
+        preWaitActive->setValue(false);
+        playInternal();
+        return;
+    }
+
+    if (isPlaying->boolValue())
+        return; // already playing the cue
+
+    if (!canBePlayed())
+        return;
+
+    isPlaying->setValue(true);
+    wasStoppedManually = false;
+    isPanicking = false;
+    playInternal();
+
+    if (!retriggerStopCC->enabled->boolValue() && !notSetNextCueAuto)
+        setNextCue();
+}
+
+void Cue::startPreWaitAt(double elapsed)
+{
+    if (!preWaitCC->enabled->boolValue())
+    {
+        playSkippingPreWait();
+        return;
+    }
+
+    // If the cue portion is running, stop it first so we can drop back into the wait.
+    if (isPlaying->boolValue() && !preWaitActive->boolValue())
+        stopInternal();
+
+    if (!isPlaying->boolValue())
+    {
+        if (!canBePlayed())
+            return;
+        isPlaying->setValue(true);
+        wasStoppedManually = false;
+        isPanicking = false;
+        if (!retriggerStopCC->enabled->boolValue() && !notSetNextCueAuto)
+            setNextCue();
+    }
+
+    // start() resets the timer to 0; set the elapsed afterwards so the wait resumes there.
+    preWaitActive->setValue(true);
+    preWaitTimer->start(preWaitDuration->floatValue(), preWaitCurrentTime);
+    preWaitCurrentTime->setValue((float) jlimit(0.0, (double) preWaitDuration->doubleValue(), elapsed));
+}
+
 void Cue::panic()
 {
+    wasStoppedManually = true;
     isPanicking = true;
 
     if ((preWaitActive->boolValue() || postWaitActive->boolValue()) && parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
@@ -334,6 +408,7 @@ void Cue::retriggerStop()
 
 void Cue::stop()
 {
+    wasStoppedManually = true;
     isPanicking = false;
     isPreviewing = false;
 
@@ -386,6 +461,10 @@ void Cue::endCue()
 
 void Cue::playNextCue()
 {
+    // A grouped sub-cue never advances the cuelist: its group owns sequencing.
+    if (isGroupMember())
+        return;
+
     auto idx = parentCuelist->cues->items.indexOf(this);
     // Auto-follow to the next playable cue, skipping notes (never auto-played).
     for (int i = idx + 1; i < parentCuelist->cues->items.size(); i++) {
@@ -404,10 +483,21 @@ void Cue::playNextCue()
 
 bool Cue::isAutoStartCue()
 {
+    // A grouped sub-cue is fired by its group, never auto-started by a post-wait chain.
+    if (isGroupMember())
+        return false;
+
     auto idx = parentCuelist->cues->items.indexOf(this);
     if (idx - 1 < 0)
         return false;
-    return parentCuelist->cues->items[idx - 1]->postWaitCC->enabled->boolValue();
+
+    Cue* pred = parentCuelist->cues->items[idx - 1];
+    // The auto-follow skips a group's members, so the cue that would auto-start `this` is
+    // the group itself (not its last member): check the group's post-wait, not the member's.
+    if (pred->isGroupMember())
+        pred = pred->parentGroup;
+
+    return pred != nullptr && pred->postWaitCC->enabled->boolValue();
 }
 
 void Cue::setNextCue()
@@ -436,6 +526,9 @@ void Cue::setNextCue()
 
 void Cue::autoFollowProcess(PostWaitType type)
 {
+    if (suppressAutoFollow)
+        return;
+
     if (!postWaitCC->enabled->boolValue())
         return;
 
