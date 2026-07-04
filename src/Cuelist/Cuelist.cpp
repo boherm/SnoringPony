@@ -17,6 +17,7 @@
 #include "../Cue/playlist/PlaylistCue.h"
 #include "../Cue/fade/FadeCue.h"
 #include "../Cue/go/GoCue.h"
+#include "../Cue/note/NoteCue.h"
 #include "../Cue/setmaincuelist/SetMainCuelistCue.h"
 #include "../Cue/timer/StartTimerCue.h"
 #include "../Cue/timer/PauseTimerCue.h"
@@ -127,8 +128,8 @@ void Cuelist::registerCueTypes(Factory<Cue>& f)
 {
     f.defs.add(Factory<Cue>::Definition::createDef("Audio", "Audio Cue", &AudioCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Audio")));
     f.defs.add(Factory<Cue>::Definition::createDef("Audio", "Playlist Cue", &PlaylistCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Playlist")));
-    f.defs.add(Factory<Cue>::Definition::createDef("Playback", "Fade Cue", &FadeCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Fade")));
     f.defs.add(Factory<Cue>::Definition::createDef("Playback", "Go Cue", &GoCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Go")));
+    f.defs.add(Factory<Cue>::Definition::createDef("Playback", "Fade Cue", &FadeCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Fade")));
     f.defs.add(Factory<Cue>::Definition::createDef("Playback", "Set Main Cuelist Cue", &SetMainCuelistCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("SetMainCuelist")));
     f.defs.add(Factory<Cue>::Definition::createDef("Timer", "Start Timer", &StartTimerCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("TimerStart")));
     f.defs.add(Factory<Cue>::Definition::createDef("Timer", "Pause Timer", &PauseTimerCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("TimerPause")));
@@ -136,6 +137,7 @@ void Cuelist::registerCueTypes(Factory<Cue>& f)
     f.defs.add(Factory<Cue>::Definition::createDef("Timer", "Mark Timer", &MarkTimerCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("TimerMark")));
     f.defs.add(Factory<Cue>::Definition::createDef("Network", "OSC Cue", &OSCCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("OSC")));
     f.defs.add(Factory<Cue>::Definition::createDef("Network", "OBS Cue", &OBSCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("OBS")));
+    f.defs.add(Factory<Cue>::Definition::createDef("Other", "Note Cue", &NoteCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Note")));
 }
 
 InspectableEditor* Cuelist::getEditorInternal(bool isRoot, Array<Inspectable*> inspectables)
@@ -162,11 +164,13 @@ void Cuelist::triggerTriggered(Trigger* t)
 
 void Cuelist::loadJSONDataInternal(var data)
 {
-    // Set first cue to next cue at load
-    Cue* firstCue = cues->items.getFirst();
-
-    if (firstCue)
-        firstCue->setGoNext();
+    // Set the first auto-selectable cue as next at load (notes are skipped).
+    for (auto* c : cues->items) {
+        if (c != nullptr && c->canBeNextCueAuto()) {
+            c->setGoNext();
+            break;
+        }
+    }
 }
 
 void Cuelist::newMessage(const ContainerAsyncEvent& e)

@@ -11,6 +11,7 @@
 #include "DCAMixingCuelist.h"
 #include "../../Cue/CueManager.h"
 #include "../../Cue/dca/DCACue.h"
+#include "../../Cue/note/NoteCue.h"
 #include "../../ui/SPAssetManager.h"
 #include "ui/DCAMixingCuelistEditor.h"
 
@@ -30,8 +31,10 @@ DCAMixingCuelist::~DCAMixingCuelist()
 
 void DCAMixingCuelist::registerCueTypes(Factory<Cue>& f)
 {
-    f.defs.add(Factory<Cue>::Definition::createDef("Mixer", "DCA Cue", &DCACue::create)
+    f.defs.add(Factory<Cue>::Definition::createDef("DCA", "DCA Cue", &DCACue::create)
         ->addIcon(SPAssetManager::getInstance()->getCueIcon("DCA")));
+    f.defs.add(Factory<Cue>::Definition::createDef("Other", "Note Cue", &NoteCue::create)
+        ->addIcon(SPAssetManager::getInstance()->getCueIcon("Note")));
 }
 
 InspectableEditor* DCAMixingCuelist::getEditorInternal(bool isRoot, Array<Inspectable*> /*inspectables*/)

@@ -100,6 +100,12 @@ public:
     virtual String getCueType() const { return "Cue"; }
     static Cue* create(var params) { return new Cue(params); }
 
+    // When false, automatic next-cue selection (post-play advance, auto-follow,
+    // keyboard next/prev, initial load) skips this cue as if it weren't GO-able.
+    // Note cues override this so they are never queued automatically; they can
+    // still be targeted manually (context menu / double-click).
+    virtual bool canBeNextCueAuto() const { return true; }
+
     // shortNames of controllables/containers this cue type wants hidden in the
     // multi-cue editor (e.g. per-file lists that make no sense to edit as a group).
     virtual juce::StringArray getMultiEditHiddenControllableNames() const { return {}; }

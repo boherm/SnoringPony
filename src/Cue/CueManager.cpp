@@ -49,8 +49,9 @@ void CueManager::addItemInternal(Cue* c, var data)
     }
 
     // if not loading file, we set the first cue automatically to next cue to be fire
+    // (unless it's a note, which is never auto-selected)
     if (!Engine::mainEngine->isLoadingFile) {
-        if (items.size() == 1) {
+        if (items.size() == 1 && c->canBeNextCueAuto()) {
             c->setGoNext();
         }
     }
@@ -117,9 +118,13 @@ void CueManager::askForRemoveBaseItem(BaseItem* item)
 
     if (nextCue == itemCue) {
         int idx = parentCuelist->cues->items.indexOf(itemCue);
-        if (idx + 1 < parentCuelist->cues->items.size()) {
-            Cue* c = parentCuelist->cues->items[idx + 1];
-            c->setGoNext();
+        Cue* replacement = nullptr;
+        for (int i = idx + 1; i < parentCuelist->cues->items.size(); i++) {
+            Cue* c = parentCuelist->cues->items[i];
+            if (c->canBeNextCueAuto()) { replacement = c; break; }
+        }
+        if (replacement != nullptr) {
+            replacement->setGoNext();
         } else {
             parentCuelist->nextCue->resetValue();
             parentCuelist->nextCue->notifyValueChanged();

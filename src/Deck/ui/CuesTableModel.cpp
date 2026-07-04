@@ -483,7 +483,12 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         if (cue->isAutoStartCue())
             g.setOpacity(0.4f);
 
-        if (!cue->userCanRemove || cue->getDescription().startsWith("--"))
+        // Note cues: always italic and slightly dimmed (purely informational).
+        const bool isNote = cue->getCueType() == "Note";
+        if (isNote)
+            g.setOpacity(0.6f);
+
+        if (isNote || !cue->userCanRemove || cue->getDescription().startsWith("--"))
             g.setFont(Font(14.0f, Font::italic));
 
         g.drawText(cue->getDescription(), r.reduced(10, 0), Justification::centredLeft);

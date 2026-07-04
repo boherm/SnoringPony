@@ -61,7 +61,7 @@ void Brain::selectNextCueOn(Cuelist* cl)
     for (int i = idx + 1; i < cl->cues->items.size(); ++i)
     {
         Cue* c = cl->cues->items[i];
-        if (!c->isAutoStartCue())
+        if (!c->isAutoStartCue() && c->canBeNextCueAuto())
         {
             c->setGoNext();
             return;
@@ -79,7 +79,7 @@ void Brain::selectPreviousCueOn(Cuelist* cl)
     for (int i = idx - 1; i >= 0; --i)
     {
         Cue* c = cl->cues->items[i];
-        if (!c->isAutoStartCue())
+        if (!c->isAutoStartCue() && c->canBeNextCueAuto())
         {
             c->setGoNext();
             return;

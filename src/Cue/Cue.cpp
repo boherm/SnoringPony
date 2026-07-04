@@ -387,13 +387,18 @@ void Cue::endCue()
 void Cue::playNextCue()
 {
     auto idx = parentCuelist->cues->items.indexOf(this);
-    if (idx + 1 < parentCuelist->cues->items.size()) {
-        Cue* nextCue = parentCuelist->cues->items[idx + 1];
+    // Auto-follow to the next playable cue, skipping notes (never auto-played).
+    for (int i = idx + 1; i < parentCuelist->cues->items.size(); i++) {
+        Cue* nextCue = parentCuelist->cues->items[i];
+        if (!nextCue->canBeNextCueAuto())
+            continue;
+
         nextCue->play();
 
         if (parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
             parentCuelist->currentCue->setValueFromTarget(nextCue);
         }
+        return;
     }
 }
 
@@ -416,7 +421,7 @@ void Cue::setNextCue()
 
     for (int i = idx + 1; i < parentCuelist->cues->items.size(); i++) {
         Cue* c = parentCuelist->cues->items[i];
-        if (!c->isAutoStartCue()) {
+        if (!c->isAutoStartCue() && c->canBeNextCueAuto()) {
             parentCuelist->nextCue->setTarget(c);
             parentCuelist->nextCue->notifyValueChanged();
             return;

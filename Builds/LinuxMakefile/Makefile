@@ -100,6 +100,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/SetMainCuelistCue_759e5540.o \
   $(JUCE_OBJDIR)/GoCue_f384cdc0.o \
   $(JUCE_OBJDIR)/TimerActionCue_b060c69e.o \
+  $(JUCE_OBJDIR)/NoteCue_105829c0.o \
   $(JUCE_OBJDIR)/CueEditor_6ade7941.o \
   $(JUCE_OBJDIR)/MultiCueEditor_c6dbbdf0.o \
   $(JUCE_OBJDIR)/Cue_4c4af201.o \
@@ -392,6 +393,11 @@ $(JUCE_OBJDIR)/GoCue_f384cdc0.o: ../../src/Cue/go/GoCue.cpp
 $(JUCE_OBJDIR)/TimerActionCue_b060c69e.o: ../../src/Cue/timer/TimerActionCue.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling TimerActionCue.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/NoteCue_105829c0.o: ../../src/Cue/note/NoteCue.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling NoteCue.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/CueEditor_6ade7941.o: ../../src/Cue/ui/CueEditor.cpp

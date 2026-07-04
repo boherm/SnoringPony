@@ -163,6 +163,10 @@
           <FILE id="Ndsxqe" name="TimerActionCue.h" compile="0" resource="0"
                 file="src/Cue/timer/TimerActionCue.h"/>
         </GROUP>
+        <GROUP id="{A7E2927F-3FD7-A776-CEB2-FF68D208C39B}" name="note">
+          <FILE id="QNx0C2" name="NoteCue.cpp" compile="1" resource="0" file="src/Cue/note/NoteCue.cpp"/>
+          <FILE id="onkuSf" name="NoteCue.h" compile="0" resource="0" file="src/Cue/note/NoteCue.h"/>
+        </GROUP>
         <GROUP id="{C9CAAE13-5938-AA3A-C591-71AA92FD3494}" name="ui">
           <FILE id="YOOYkS" name="CueEditor.cpp" compile="1" resource="0" file="src/Cue/ui/CueEditor.cpp"/>
           <FILE id="dgTzS1" name="MultiCueEditor.h" compile="0" resource="0"

@@ -118,6 +118,7 @@
 		92A944B5B37D6CAD15D2C9E6 /* OSCCueMessage.cpp */ = {isa = PBXBuildFile; fileRef = 0D3F0BABF7E52208D6B17BBE; };
 		978744C52A3F141F9CFB270A /* WingOscMixerSettings.cpp */ = {isa = PBXBuildFile; fileRef = C38857B06E0C64D9CD239DAB; };
 		97D89858E236B10E5033A379 /* WingOscProtocol.cpp */ = {isa = PBXBuildFile; fileRef = 8A6D309C788EF1CACD3EDB17; };
+		9AD5ADA5C2C0D2E4B847A19E /* NoteCue.cpp */ = {isa = PBXBuildFile; fileRef = 49F2227ABFD85118664307BB; };
 		9CD2C04B241754BCD268DD29 /* Brain.cpp */ = {isa = PBXBuildFile; fileRef = F8FEBF6B401CC0DAEEEC981D; };
 		9E07533E5CB8D8FE5856552B /* DCAAssignmentEditor.cpp */ = {isa = PBXBuildFile; fileRef = 5A0C8B3E862EAB745003F142; };
 		9E11EA0DA99F9C0CA4C48CCA /* MainMenuBarComponent.cpp */ = {isa = PBXBuildFile; fileRef = 3E888EF07515C960972FAD3A; };
@@ -309,6 +310,7 @@
 		489036D0F9E0BC2C39548EC9 /* MIDIFeedbackFactory.h */ /* MIDIFeedbackFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MIDIFeedbackFactory.h; path = ../../src/Interface/midi/MIDIFeedbackFactory.h; sourceTree = SOURCE_ROOT; };
 		48F1D1974FE3CCB72CCE848B /* OSCIsPlayingFeedback.cpp */ /* OSCIsPlayingFeedback.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OSCIsPlayingFeedback.cpp; path = ../../src/Interface/osc/OSCIsPlayingFeedback.cpp; sourceTree = SOURCE_ROOT; };
 		4936348895A92A1E35AEDC68 /* include_juce_simpleweb.cpp */ /* include_juce_simpleweb.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = include_juce_simpleweb.cpp; path = ../../JuceLibraryCode/include_juce_simpleweb.cpp; sourceTree = SOURCE_ROOT; };
+		49F2227ABFD85118664307BB /* NoteCue.cpp */ /* NoteCue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = NoteCue.cpp; path = ../../src/Cue/note/NoteCue.cpp; sourceTree = SOURCE_ROOT; };
 		4ACFD3B7EC52794A8DB296B2 /* AHCQMixerSettings.h */ /* AHCQMixerSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AHCQMixerSettings.h; path = ../../src/Interface/mixer/ahcq/AHCQMixerSettings.h; sourceTree = SOURCE_ROOT; };
 		4AF4705DCDCE8CF6A8A02D48 /* OSCCue.h */ /* OSCCue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OSCCue.h; path = ../../src/Cue/osc/OSCCue.h; sourceTree = SOURCE_ROOT; };
 		4BD0F30C0AA4FDC2F7E99154 /* ShowTimerManagerUI.h */ /* ShowTimerManagerUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ShowTimerManagerUI.h; path = ../../src/Timer/ui/ShowTimerManagerUI.h; sourceTree = SOURCE_ROOT; };
@@ -576,6 +578,7 @@
 		F8FEBF6B401CC0DAEEEC981D /* Brain.cpp */ /* Brain.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Brain.cpp; path = ../../src/Brain.cpp; sourceTree = SOURCE_ROOT; };
 		F918535A8C829440D1265235 /* Main.h */ /* Main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Main.h; path = ../../src/Main.h; sourceTree = SOURCE_ROOT; };
 		FB7B454AA3AECCB9E9803191 /* Character.h */ /* Character.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Character.h; path = ../../src/Interface/mixer/Character.h; sourceTree = SOURCE_ROOT; };
+		FC7FE1DC49E4EE66A9D52E61 /* NoteCue.h */ /* NoteCue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NoteCue.h; path = ../../src/Cue/note/NoteCue.h; sourceTree = SOURCE_ROOT; };
 		FE0F0C1C97655A010DFC3192 /* AudioFile.cpp */ /* AudioFile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AudioFile.cpp; path = ../../src/Cue/audio/AudioFile.cpp; sourceTree = SOURCE_ROOT; };
 		FE8317D0D76A2A5999B5E75E /* DeckViewUI.h */ /* DeckViewUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DeckViewUI.h; path = ../../src/Deck/ui/DeckViewUI.h; sourceTree = SOURCE_ROOT; };
 		FF2D5C22104F22D6072B13ED /* OSCMapping.h */ /* OSCMapping.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OSCMapping.h; path = ../../src/Interface/osc/OSCMapping.h; sourceTree = SOURCE_ROOT; };
@@ -957,6 +960,15 @@
 				67C83CB21E375CF0A1780D5F,
 			);
 			name = wingtcp;
+			sourceTree = "<group>";
+		};
+		8CA6BF4A86C940705D46425C /* note */ = {
+			isa = PBXGroup;
+			children = (
+				49F2227ABFD85118664307BB,
+				FC7FE1DC49E4EE66A9D52E61,
+			);
+			name = note;
 			sourceTree = "<group>";
 		};
 		8E1EB4ECB06EE1162F5F55F3 /* ui */ = {
@@ -1424,6 +1436,7 @@
 				ABA5C402D739952296A2F01F,
 				B38886EDB4CA111118413EBD,
 				D98E9D94BC2399BAF3E0A98D,
+				8CA6BF4A86C940705D46425C,
 				523B61206AD0FA664AB028DE,
 				407B500238CB39ACE3DD88AB,
 				3BC95215FB0975B46F09DFD8,
@@ -1563,6 +1576,7 @@
 				5020B01692FF82975AFA6BA4,
 				8963305DB6F73051102C1BEF,
 				C2375C6B63E2DA674DE0A7F4,
+				9AD5ADA5C2C0D2E4B847A19E,
 				24D3C95909E18C99ABFE56FE,
 				6727BA3CE2663572C689C43A,
 				31442203BD5BE74BEE7930A4,
