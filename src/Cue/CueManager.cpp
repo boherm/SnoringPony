@@ -56,6 +56,60 @@ void CueManager::addItemInternal(Cue* c, var data)
     }
 }
 
+Array<Cue*> CueManager::addItemsFromClipboard(bool showWarning)
+{
+    // Which cue of this manager (if any) the paste anchors to. Mirrors the base logic: with
+    // a selected cue the paste inserts right after it, otherwise it appends at the end.
+    Cue* anchor = nullptr;
+    if (auto* sm = InspectableSelectionManager::activeSelectionManager)
+        anchor = sm->getInspectableAs<Cue>();
+    if (anchor != nullptr && !items.contains(anchor)) anchor = nullptr;
+
+    Array<Cue*> pasted = BaseManager<Cue>::addItemsFromClipboard(showWarning);
+    if (pasted.isEmpty()) return pasted;
+
+    // Work in integer hundredths to avoid float drift when stepping by 0.01.
+    auto idHundredths = [](Cue* c) { return (int) std::lround(c->id->floatValue() * 100.0); };
+
+    // Is `candidate` (in hundredths) already used by a cue that isn't part of this paste?
+    auto isTaken = [&](int candidate)
+    {
+        for (auto* other : items)
+            if (other != nullptr && !pasted.contains(other) && idHundredths(other) == candidate) return true;
+        return false;
+    };
+
+    // Anchor present -> step by 0.01 after it. No selection (paste appended at end) -> step
+    // by whole IDs (+1) from the highest existing ID.
+    const int step = (anchor != nullptr) ? 1 : 100;
+
+    int candidate;
+    if (anchor != nullptr)
+    {
+        candidate = idHundredths(anchor);
+    }
+    else
+    {
+        int maxId = 0;
+        for (auto* other : items)
+            if (other != nullptr && !pasted.contains(other))
+                maxId = jmax(maxId, (int) std::floor(other->id->floatValue()));
+        candidate = maxId * 100;
+    }
+
+    for (auto* c : pasted)
+    {
+        candidate += step;
+        while (isTaken(candidate)) candidate += step;
+
+        c->id->setValue(candidate / 100.0f);
+        c->id->notifyValueChanged();
+    }
+
+    refreshDuplicateIdWarnings();
+    return pasted;
+}
+
 void CueManager::askForRemoveBaseItem(BaseItem* item)
 {
     Cue* itemCue = static_cast<Cue*>(item);

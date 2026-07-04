@@ -156,6 +156,22 @@ void CuesTableUI::paint(Graphics& g)
 {
 }
 
+bool CuesTableUI::keyPressed(const KeyPress& key)
+{
+    // Cmd/Ctrl+V: paste into this cuelist's CueManager. Works whether or not a cue is
+    // selected (CueManager::addItemsFromClipboard picks the anchor / append accordingly).
+    if (key == KeyPress('v', ModifierKeys::commandModifier, 0))
+    {
+        if (cl != nullptr && cl->cues != nullptr)
+        {
+            cl->cues->askForPaste();
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void CuesTableUI::paintOverChildren(Graphics& g)
 {
     // Draw insertion line during drag

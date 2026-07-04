@@ -40,6 +40,10 @@ public:
 
     void addItemInternal(Cue* c, var data);
 
+    // Pasted / duplicated cues keep everything but their ID: each gets the previous cue's
+    // ID plus 0.01 steps (skipping IDs already taken), instead of copying the source ID.
+    juce::Array<Cue*> addItemsFromClipboard(bool showWarning = true) override;
+
     void askForRemoveBaseItem(BaseItem* item) override;
 
     void loadJSONDataManagerInternal(var data) override;

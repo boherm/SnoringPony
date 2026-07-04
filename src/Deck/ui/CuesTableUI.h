@@ -41,6 +41,10 @@ public:
     void paintOverChildren (Graphics&) override;
     void resized() override;
 
+    // Handle paste on the deck itself so it works even with no cue selected (the global
+    // Paste command needs a selected item/manager as target, which we may not have).
+    bool keyPressed(const juce::KeyPress& key) override;
+
     void itemAdded(Cue* c)
     {
         c->addAsyncWarningTargetListener(this);
