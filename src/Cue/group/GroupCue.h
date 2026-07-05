@@ -23,6 +23,8 @@
 
 #include "../Cue.h"
 
+class GroupTimelineContainer;
+
 class GroupCue :
     public Cue,
     public ContainerAsyncListener,
@@ -51,9 +53,6 @@ public:
     String getTypeString() const override { return "Group Cue"; }
     String getCueType() const override { return "Group"; }
     static GroupCue* create(var params) { return new GroupCue(params); }
-
-    // Timeline mode gets a custom inspector editor (draggable timeline of the sub-cues).
-    InspectableEditor* getEditorInternal(bool isRoot, Array<Inspectable*> inspectables) override;
 
     // Every cue in the cuelist whose parentGroup == this, in cuelist order.
     Array<Cue*> getMembers() const;
@@ -98,6 +97,12 @@ private:
 
     void ensureListening();
     void stopListening();
+
+    // The collapsible "Timeline" container shown in the inspector (Timeline mode only).
+    // Owned here; added to / removed from this cue's child containers by
+    // updateTimelineContainer() as the fire mode changes.
+    std::unique_ptr<GroupTimelineContainer> timelineContainer;
+    void updateTimelineContainer();
 
     // Fire all members from the top (reset sequential state, fire per mode, restart the
     // progress clock). Shared by the initial GO and a loop restart.

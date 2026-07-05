@@ -5,10 +5,12 @@
     Created: 05 Jul 2026
     Author:  boherm
 
-    Inspector editor for a GroupCue. Adds, below the normal parameters, a timeline
-    view of the sub-cues (one lane each, positioned by its pre-wait offset and sized
-    by its duration). Dragging a sub-cue horizontally sets its pre-wait. The timeline
-    is only shown in Timeline fire mode.
+    Timeline view for a GroupCue: one lane per sub-cue, positioned by its pre-wait
+    offset and sized by its duration. Dragging a sub-cue horizontally sets its pre-wait.
+
+    It is hosted in its own collapsible "Timeline" container (GroupTimelineContainer),
+    added to the GroupCue only in Timeline fire mode, so it shows up as a proper titled
+    section in the inspector rather than floating below the parameters.
 
   ==============================================================================
 */
@@ -96,22 +98,32 @@ private:
 
 // ------------------------------------------------------------------------------
 
-class GroupCueEditor :
-    public CueEditor
+// A lightweight container whose sole purpose is to give the timeline a titled,
+// collapsible home in the inspector. Added to the GroupCue only in Timeline mode.
+class GroupTimelineContainer :
+    public ControllableContainer
 {
 public:
-    GroupCueEditor(juce::Array<Cue*> cues, bool isRoot);
-    ~GroupCueEditor() override;
+    GroupTimelineContainer(GroupCue* group);
+    ~GroupTimelineContainer() override;
 
     GroupCue* group;
+
+    InspectableEditor* getEditorInternal(bool isRoot, juce::Array<Inspectable*> inspectables) override;
+};
+
+// ------------------------------------------------------------------------------
+
+class GroupTimelineEditor :
+    public GenericControllableContainerEditor
+{
+public:
+    GroupTimelineEditor(juce::Array<ControllableContainer*> containers, bool isRoot);
+    ~GroupTimelineEditor() override;
+
+    GroupTimelineContainer* timelineContainer = nullptr;
     std::unique_ptr<GroupTimeline> timeline;
     juce::Viewport viewport; // hosts the timeline so it can zoom + scroll horizontally
 
     void resizedInternalContent(juce::Rectangle<int>& r) override;
-    void newMessage(const ContainerAsyncEvent& e) override; // toggle timeline on mode change
-
-private:
-    void updateTimelineVisibility();
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GroupCueEditor)
 };

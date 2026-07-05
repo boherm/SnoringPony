@@ -37,6 +37,10 @@ GroupCue::GroupCue(var params) :
     groupUID = addStringParameter("Group UID", "Internal: stable identity of this group", Uuid().toString());
     groupUID->hideInEditor = true;
     groupUID->hideInRemoteControl = true;
+
+    // The timeline lives in its own collapsible container, shown only in Timeline mode.
+    timelineContainer.reset(new GroupTimelineContainer(this));
+    updateTimelineContainer();
 }
 
 GroupCue::~GroupCue()
@@ -59,16 +63,18 @@ GroupCue::~GroupCue()
             }
 }
 
-InspectableEditor* GroupCue::getEditorInternal(bool isRoot, Array<Inspectable*> inspectables)
+void GroupCue::updateTimelineContainer()
 {
-    // Multi-selection keeps the standard (multi-cue) editor; a single group gets the
-    // timeline-aware editor.
-    if (inspectables.size() > 1)
-        return Cue::getEditorInternal(isRoot, inspectables);
+    if (timelineContainer == nullptr)
+        return;
 
-    Array<Cue*> cues;
-    cues.add(this);
-    return new GroupCueEditor(cues, isRoot);
+    const bool wantTimeline = fireMode->intValue() == TIMELINE;
+    const bool isChild = controllableContainers.contains(timelineContainer.get());
+
+    if (wantTimeline && !isChild)
+        addChildControllableContainer(timelineContainer.get());
+    else if (!wantTimeline && isChild)
+        removeChildControllableContainer(timelineContainer.get());
 }
 
 Array<Cue*> GroupCue::getMembers() const
@@ -472,7 +478,10 @@ void GroupCue::parameterValueChanged(Parameter* p)
     Cue::parameterValueChanged(p);
 
     if (p == fireMode)
+    {
         refreshDuration();
+        updateTimelineContainer(); // show/hide the timeline section with the mode
+    }
 }
 
 void GroupCue::stopInternal()

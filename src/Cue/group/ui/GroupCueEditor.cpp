@@ -338,13 +338,42 @@ void GroupTimeline::newMessage(const ContainerAsyncEvent& e)
 }
 
 //==============================================================================
-// GroupCueEditor
+// GroupTimelineContainer
 //==============================================================================
 
-GroupCueEditor::GroupCueEditor(juce::Array<Cue*> cues, bool isRoot) :
-    CueEditor(cues, isRoot)
+GroupTimelineContainer::GroupTimelineContainer(GroupCue* group) :
+    ControllableContainer("Timeline"),
+    group(group)
 {
-    group = dynamic_cast<GroupCue*>(cues.getFirst());
+    editorCanBeCollapsed = true;
+    editorIsCollapsed = false;
+    nameCanBeChangedByUser = false;
+    // Purely a UI host: never persisted (it's added/removed at runtime with the fire mode).
+    saveAndLoadRecursiveData = false;
+    includeInRecursiveSave = false;
+    includeInScriptObject = false;
+}
+
+GroupTimelineContainer::~GroupTimelineContainer()
+{
+}
+
+InspectableEditor* GroupTimelineContainer::getEditorInternal(bool isRoot, juce::Array<Inspectable*> inspectables)
+{
+    Array<ControllableContainer*> containers = Inspectable::getArrayAs<Inspectable, ControllableContainer>(inspectables);
+    return new GroupTimelineEditor(containers, isRoot);
+}
+
+//==============================================================================
+// GroupTimelineEditor
+//==============================================================================
+
+GroupTimelineEditor::GroupTimelineEditor(juce::Array<ControllableContainer*> containers, bool isRoot) :
+    GenericControllableContainerEditor(containers, isRoot)
+{
+    timelineContainer = dynamic_cast<GroupTimelineContainer*>(container.get());
+    GroupCue* group = timelineContainer != nullptr ? timelineContainer->group : nullptr;
+
     timeline.reset(new GroupTimeline(group));
     timeline->setViewport(&viewport);
     timeline->onMembersChanged = [this] { resized(); };
@@ -352,44 +381,22 @@ GroupCueEditor::GroupCueEditor(juce::Array<Cue*> cues, bool isRoot) :
     viewport.setViewedComponent(timeline.get(), false);
     viewport.setScrollBarsShown(false, false, false, true); // horizontal scrollbar only
     viewport.setScrollOnDragMode(juce::Viewport::ScrollOnDragMode::never);
-    addChildComponent(viewport);
+    addAndMakeVisible(viewport);
 
-    updateTimelineVisibility();
+    resized();
 }
 
-GroupCueEditor::~GroupCueEditor()
+GroupTimelineEditor::~GroupTimelineEditor()
 {
 }
 
-void GroupCueEditor::updateTimelineVisibility()
+void GroupTimelineEditor::resizedInternalContent(juce::Rectangle<int>& r)
 {
-    const bool show = group != nullptr && group->fireMode->intValue() == GroupCue::TIMELINE;
-    viewport.setVisible(show);
-}
+    const int scrollbar = 10;
+    const int h = timeline->preferredHeight() + scrollbar;
 
-void GroupCueEditor::resizedInternalContent(juce::Rectangle<int>& r)
-{
-    GenericControllableContainerEditor::resizedInternalContent(r); // the standard parameter rows
+    viewport.setBounds(r.withHeight(h));
+    timeline->layoutForViewport(viewport.getMaximumVisibleWidth());
 
-    if (viewport.isVisible())
-    {
-        r.removeFromTop(6);
-        const int scrollbar = 10;
-        auto tr = r.removeFromTop(timeline->preferredHeight() + scrollbar);
-        viewport.setBounds(tr.reduced(4, 0));
-        timeline->layoutForViewport(viewport.getMaximumVisibleWidth());
-    }
-}
-
-void GroupCueEditor::newMessage(const ContainerAsyncEvent& e)
-{
-    CueEditor::newMessage(e);
-
-    // Fire Mode toggled → show/hide the timeline and re-flow the editor height.
-    if (e.type == ContainerAsyncEvent::EventType::ControllableFeedbackUpdate
-        && group != nullptr && e.targetControllable == group->fireMode)
-    {
-        updateTimelineVisibility();
-        resized();
-    }
+    r.translate(0, h + 4);
 }
