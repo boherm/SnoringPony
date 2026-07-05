@@ -126,16 +126,18 @@ void CuesTableModel::paintRowBackground(Graphics& g, int rowNumber, int width, i
 
     if (rowIsSelected)
     {
-        g.fillAll(cue->itemColor->getColor().brighter(0.1f));
+        g.setColour(cue->itemColor->getColor().brighter(0.1f));
     }
     else if (rowNumber % 2 == 0)
     {
-        g.fillAll(cue->itemColor->getColor());
+        g.setColour(cue->itemColor->getColor());
     }
     else
     {
-        g.fillAll(cue->itemColor->getColor().darker(0.2f));
+        g.setColour(cue->itemColor->getColor().darker(0.2f));
     }
+
+    g.fillRect(1, 2, width - 7, height - 4);
 }
 
 void CuesTableModel::parameterValueChanged(Parameter* p)
