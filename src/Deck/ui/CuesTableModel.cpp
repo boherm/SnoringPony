@@ -220,7 +220,7 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         String text = CuesTableModel::valueToTimeString(jmax<double>(timeLeft, 0.0));
 
         Rectangle<float> r = Rectangle<float>(0, 0, width, height);
-        r.reduce(4, 5);
+        r.reduce(2, 5);
 
         Path myPath;
         myPath.addRectangle(r.getX(), r.getY(), r.getWidth(), r.getHeight());
@@ -266,7 +266,7 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
     if (TimeColumn == columnId) {
 
         Rectangle<float> r = Rectangle<float>(0, 0, width, height);
-        r.reduce(4, 5);
+        r.reduce(2, 5);
 
         double timeLeft = cue->duration->doubleValue() - cue->currentTime->doubleValue();
         double positionPercent = cue->duration->doubleValue() == 0 ? 0 : cue->currentTime->doubleValue() / cue->duration->doubleValue();
@@ -325,7 +325,7 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
             return;
 
         Rectangle<float> r = Rectangle<float>(0, 0, width, height);
-        r.reduce(4, 5);
+        r.reduce(2, 5);
 
         double timeLeft = cue->postWaitDuration->doubleValue() - cue->postWaitCurrentTime->doubleValue();
         double positionPercent = cue->postWaitDuration->doubleValue() == 0 ? 0 : cue->postWaitCurrentTime->doubleValue() / cue->postWaitDuration->doubleValue();

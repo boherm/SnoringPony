@@ -227,10 +227,14 @@ void CuesTableUI::paintOverChildren(Graphics& g)
 
             float yTop = (float) (tb.getY() + headerHeight + r * rowHeight - scrollY);
             float yBot = (float) (tb.getY() + headerHeight + (rEnd + 1) * rowHeight - scrollY);
+            // Keep the right edge clear of the vertical scrollbar (when shown) so the border
+            // isn't overlapped by it; leave a small gap too.
+            auto* vp = tableListBox.getViewport();
+            const float rightInset = 7.0f;
             // Inset the box so two consecutive groups leave a clean gap instead of merging
             // their touching borders into one thick band; rounded for a softer look.
             Rectangle<float> box((float) tb.getX() + 1.0f, yTop + 2.0f,
-                                 (float) tb.getWidth() - 2.0f, (yBot - yTop) - 4.0f);
+                                 (float) tb.getWidth() - 1.0f - rightInset, (yBot - yTop) - 4.0f);
             // Box colour by mode: sequential = orange, timeline = sky-blue, parallel = green.
             const int mode = grp->fireMode->intValue();
             const Colour boxColour = mode == GroupCue::SEQUENTIAL ? Colours::orange
