@@ -170,6 +170,28 @@ bool CuesTableUI::keyPressed(const KeyPress& key)
         }
     }
 
+    // Right/Left arrow on a selected group cue: unfold / fold it.
+    if (key == KeyPress::rightKey || key == KeyPress::leftKey)
+    {
+        const bool collapse = (key == KeyPress::leftKey);
+        auto rows = tableListBox.getSelectedRows();
+        bool acted = false;
+        for (int i = 0; i < rows.size(); i++)
+        {
+            if (auto* grp = dynamic_cast<GroupCue*>(tableModel->rowToCue(rows[i])))
+            {
+                grp->collapsed->setValue(collapse);
+                acted = true;
+            }
+        }
+        if (acted)
+        {
+            tableListBox.updateContent();
+            tableListBox.repaint();
+            return true;
+        }
+    }
+
     return false;
 }
 
