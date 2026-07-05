@@ -172,11 +172,6 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         return;
     Cue* nextCue = cl->nextCue->getTargetContainerAs<Cue>();
 
-    // Group cues get slightly shorter timer boxes (pre-wait / time / post-wait); normal
-    // cues keep the standard height.
-    const int timerBoxVInset = (dynamic_cast<GroupCue*>(cue) != nullptr) ? 7 : 4;
-
-
     // Status column
     if (StatusColumn == columnId) {
         bool isCuePlaying = cue->isPlaying->boolValue() || cue->preWaitActive->boolValue() || cue->postWaitActive->boolValue();
@@ -225,7 +220,7 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         String text = CuesTableModel::valueToTimeString(jmax<double>(timeLeft, 0.0));
 
         Rectangle<float> r = Rectangle<float>(0, 0, width, height);
-        r.reduce(4, timerBoxVInset);
+        r.reduce(4, 5);
 
         Path myPath;
         myPath.addRectangle(r.getX(), r.getY(), r.getWidth(), r.getHeight());
@@ -271,7 +266,7 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
     if (TimeColumn == columnId) {
 
         Rectangle<float> r = Rectangle<float>(0, 0, width, height);
-        r.reduce(4, timerBoxVInset);
+        r.reduce(4, 5);
 
         double timeLeft = cue->duration->doubleValue() - cue->currentTime->doubleValue();
         double positionPercent = cue->duration->doubleValue() == 0 ? 0 : cue->currentTime->doubleValue() / cue->duration->doubleValue();
@@ -330,7 +325,7 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
             return;
 
         Rectangle<float> r = Rectangle<float>(0, 0, width, height);
-        r.reduce(4, timerBoxVInset);
+        r.reduce(4, 5);
 
         double timeLeft = cue->postWaitDuration->doubleValue() - cue->postWaitCurrentTime->doubleValue();
         double positionPercent = cue->postWaitDuration->doubleValue() == 0 ? 0 : cue->postWaitCurrentTime->doubleValue() / cue->postWaitDuration->doubleValue();
@@ -633,12 +628,6 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
 
         PopupMenu p;
 
-        // Existing groups in this cuelist (targets of the "Add to group" submenu).
-        Array<GroupCue*> groups;
-        for (auto* c : cl->cues->items)
-            if (auto* g = dynamic_cast<GroupCue*>(c))
-                groups.add(g);
-
         bool canDelete = true;
         const bool singleSel = tlb->getSelectedRows().size() == 1;
         if (singleSel) {
@@ -663,12 +652,6 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
             if (singleSel) p.addItem(21, "Ungroup");
         } else {
             p.addItem(22, singleSel ? "Group this cue" : "Group selected cues");
-            if (!groups.isEmpty()) {
-                PopupMenu sub;
-                for (int i = 0; i < groups.size(); i++)
-                    sub.addItem(300 + i, "Group " + groups[i]->id->stringValue() + " - " + groups[i]->getDescription());
-                p.addSubMenu("Add to group", sub);
-            }
             if (singleSel && clicked->parentGroup != nullptr)
                 p.addItem(20, "Remove from group");
         }
@@ -680,7 +663,7 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
             p.addItem(8, "Add new cue after...");
         }
 
-        p.showMenuAsync(PopupMenu::Options(), [this, rowNumber, clicked, groups](int result) {
+        p.showMenuAsync(PopupMenu::Options(), [this, rowNumber, clicked](int result) {
             // if (result == 1){
             //     // Play action
             //     if (rowNumber < cl->cues.items.size()) {
@@ -811,15 +794,6 @@ void CuesTableModel::cellClicked(int rowNumber, int columnId, const MouseEvent& 
                 for (auto* c : members) cl->cues->addToGroup(c, group);
 
                 InspectableSelectionManager::mainSelectionManager->selectInspectable(group);
-                tlb->updateContent();
-                tlb->repaint();
-            } else if (result >= 300 && result < 300 + groups.size()) {
-                // Add the selected cues to an existing group.
-                GroupCue* group = groups[result - 300];
-                Array<Cue*> sel = currentSelectionOr(clicked);
-                for (auto* c : cl->cues->items)
-                    if (sel.contains(c) && dynamic_cast<GroupCue*>(c) == nullptr)
-                        cl->cues->addToGroup(c, group);
                 tlb->updateContent();
                 tlb->repaint();
             }
