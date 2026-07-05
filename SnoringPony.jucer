@@ -316,6 +316,8 @@
           <FILE id="jP6lR6" name="MIDIIsPlayingFeedback.h" compile="0" resource="0"
                 file="src/Interface/midi/MIDIIsPlayingFeedback.h"/>
           <FILE id="nCGfaZ" name="MTCEncoder.h" compile="0" resource="0" file="src/Interface/midi/MTCEncoder.h"/>
+          <FILE id="H0aDyH" name="MTCSender.h" compile="0" resource="0" file="src/Interface/midi/MTCSender.h"/>
+          <FILE id="OH70JM" name="MTCSender.cpp" compile="1" resource="0" file="src/Interface/midi/MTCSender.cpp"/>
           <FILE id="lEMkYk" name="MIDIMapping.h" compile="0" resource="0" file="src/Interface/midi/MIDIMapping.h"/>
         </GROUP>
         <GROUP id="{AF426437-FBAB-194E-56D2-9A20BD4CBD62}" name="mixer">

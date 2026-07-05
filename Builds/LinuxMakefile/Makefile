@@ -139,6 +139,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/MIDIFeedbackItem_e100d89b.o \
   $(JUCE_OBJDIR)/MIDIIsPanickingFeedback_c4b7d4f0.o \
   $(JUCE_OBJDIR)/MIDIIsPlayingFeedback_ae3f4490.o \
+  $(JUCE_OBJDIR)/MTCSender_7845f339.o \
   $(JUCE_OBJDIR)/AHCQMixerSettings_c6532099.o \
   $(JUCE_OBJDIR)/AHCQProtocol_b5d245b5.o \
   $(JUCE_OBJDIR)/WingOscMixerSettings_bbefb8f.o \
@@ -590,6 +591,11 @@ $(JUCE_OBJDIR)/MIDIIsPanickingFeedback_c4b7d4f0.o: ../../src/Interface/midi/MIDI
 $(JUCE_OBJDIR)/MIDIIsPlayingFeedback_ae3f4490.o: ../../src/Interface/midi/MIDIIsPlayingFeedback.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling MIDIIsPlayingFeedback.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/MTCSender_7845f339.o: ../../src/Interface/midi/MTCSender.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling MTCSender.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/AHCQMixerSettings_c6532099.o: ../../src/Interface/mixer/ahcq/AHCQMixerSettings.cpp

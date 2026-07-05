@@ -134,6 +134,7 @@
 		ADB9C7E73C3CFF61E71F6A8C /* include_juce_osc.cpp */ = {isa = PBXBuildFile; fileRef = 53343D770DBD12577372DAF7; };
 		AE034C5EEC39E5E547FA98F2 /* Character.cpp */ = {isa = PBXBuildFile; fileRef = 45C45C7EC8DCA96906A091E6; };
 		AF57946C7356F912F97833EF /* Clock.cpp */ = {isa = PBXBuildFile; fileRef = 8098638B66F1D014A5DB11C8; };
+		AFDC84B193AED6D80876C8E4 /* MTCSender.cpp */ = {isa = PBXBuildFile; fileRef = 2851229D6BB5CAEA647B505A; };
 		B077F90E2F9AD4210175AEBB /* OBSCommand.cpp */ = {isa = PBXBuildFile; fileRef = D28C1972D2EA868022FBD3F3; };
 		B4B843D1ED4D9B12887D05D0 /* OSCCue.cpp */ = {isa = PBXBuildFile; fileRef = 6A1EAAF908613EB930851E85; };
 		B55C7114B25E1571EB97DF2D /* include_juce_organicui3.cpp */ = {isa = PBXBuildFile; fileRef = 46054AF999DEAB776F7E46F2; };
@@ -245,6 +246,7 @@
 		2619D69AD9F2375D60AB0C5F /* AudioWaveformSlicerEditor.cpp */ /* AudioWaveformSlicerEditor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AudioWaveformSlicerEditor.cpp; path = ../../src/Cue/audio/ui/AudioWaveformSlicerEditor.cpp; sourceTree = SOURCE_ROOT; };
 		2782033BB4A875A4382F56B4 /* MixerFX.h */ /* MixerFX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MixerFX.h; path = ../../src/Interface/mixer/MixerFX.h; sourceTree = SOURCE_ROOT; };
 		2783BE420B9BA911A900D8C9 /* FrequencyPreset.h */ /* FrequencyPreset.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FrequencyPreset.h; path = ../../src/RF/FrequencyPreset.h; sourceTree = SOURCE_ROOT; };
+		2851229D6BB5CAEA647B505A /* MTCSender.cpp */ /* MTCSender.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MTCSender.cpp; path = ../../src/Interface/midi/MTCSender.cpp; sourceTree = SOURCE_ROOT; };
 		2A5D690A2FD887D863019240 /* OSCCommandEditor.cpp */ /* OSCCommandEditor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OSCCommandEditor.cpp; path = ../../src/Interface/osc/ui/OSCCommandEditor.cpp; sourceTree = SOURCE_ROOT; };
 		2C87AE6A3E840516AC8BF488 /* juce_graphics */ /* juce_graphics */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_graphics; path = ../../modules/juce/modules/juce_graphics; sourceTree = SOURCE_ROOT; };
 		2CE2481E39EEED3586D670CD /* ShowTimer.cpp */ /* ShowTimer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ShowTimer.cpp; path = ../../src/Timer/ShowTimer.cpp; sourceTree = SOURCE_ROOT; };
@@ -389,6 +391,7 @@
 		7EE3607D432AD93D396624DB /* DCAMixingCuelist.h */ /* DCAMixingCuelist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DCAMixingCuelist.h; path = ../../src/Cuelist/dca/DCAMixingCuelist.h; sourceTree = SOURCE_ROOT; };
 		7EFE6A65D7F0E79CFFB2E238 /* CuelistFactory.h */ /* CuelistFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CuelistFactory.h; path = ../../src/Cuelist/CuelistFactory.h; sourceTree = SOURCE_ROOT; };
 		7F757857DE563AB6C5A23996 /* MultiCueEditor.cpp */ /* MultiCueEditor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MultiCueEditor.cpp; path = ../../src/Cue/ui/MultiCueEditor.cpp; sourceTree = SOURCE_ROOT; };
+		8040BA720573086BCF944B6F /* MTCSender.h */ /* MTCSender.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MTCSender.h; path = ../../src/Interface/midi/MTCSender.h; sourceTree = SOURCE_ROOT; };
 		8098638B66F1D014A5DB11C8 /* Clock.cpp */ /* Clock.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Clock.cpp; path = ../../src/ui/panels/Clock.cpp; sourceTree = SOURCE_ROOT; };
 		80AF8262E61600DFEA64FF67 /* AudioSettings.h */ /* AudioSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AudioSettings.h; path = ../../src/ProjectSettings/AudioSettings.h; sourceTree = SOURCE_ROOT; };
 		812B96E8D61D86D7D5195BFD /* go_cue.png */ /* go_cue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = go_cue.png; path = ../../resources/go_cue.png; sourceTree = SOURCE_ROOT; };
@@ -759,6 +762,8 @@
 				3E81ED439004002A52901971,
 				8908CB2783F49EB0DE080CA1,
 				D6DEB1C621888ED4330BB464,
+				8040BA720573086BCF944B6F,
+				2851229D6BB5CAEA647B505A,
 				9F5981638AAFECDF6E03583B,
 			);
 			name = midi;
@@ -1633,6 +1638,7 @@
 				BDFD6B44DF94B3F26C7DCBDA,
 				50F4324093DC783F35D3D186,
 				2A59712EB5D39DE2674731FB,
+				AFDC84B193AED6D80876C8E4,
 				023B5F040ECA50975C898551,
 				D167A137DD3453EF85F2D539,
 				978744C52A3F141F9CFB270A,

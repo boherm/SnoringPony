@@ -12,8 +12,6 @@
 
 #include "../../../MainIncludes.h"
 
-class AudioCue;
-
 class MTCContainerEditor :
     public EnablingControllableContainerEditor
 {
@@ -21,7 +19,9 @@ public:
     MTCContainerEditor(Array<ControllableContainer*> cc, bool isRoot);
     ~MTCContainerEditor();
 
-    AudioCue* audioCue;
+    // The "Timecode" read-only display parameter of the MTC container being edited. Found by
+    // name so this editor works for any cue type that owns an MTC container (Audio, Group).
+    StringParameter* timecodeDisplay;
     Label timecodeLabel;
 
     void resizedInternalHeader(Rectangle<int>& r) override;

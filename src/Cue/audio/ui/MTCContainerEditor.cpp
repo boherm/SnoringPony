@@ -9,14 +9,13 @@
 */
 
 #include "MTCContainerEditor.h"
-#include "../AudioCue.h"
 
 MTCContainerEditor::MTCContainerEditor(Array<ControllableContainer*> cc, bool isRoot) :
     EnablingControllableContainerEditor(Inspectable::getArrayAs<ControllableContainer, EnablingControllableContainer>(cc), isRoot),
-    audioCue(nullptr)
+    timecodeDisplay(nullptr)
 {
     if (cc.size() > 0)
-        audioCue = dynamic_cast<AudioCue*>(cc[0]->parentContainer.get());
+        timecodeDisplay = dynamic_cast<StringParameter*>(cc[0]->getControllableByName("Timecode", true));
 
     timecodeLabel.setText("00:00:00:00", dontSendNotification);
     timecodeLabel.setColour(timecodeLabel.backgroundColourId, BG_COLOR.darker(.1f).withAlpha(.4f));
@@ -42,9 +41,9 @@ void MTCContainerEditor::resizedInternalHeader(Rectangle<int>& r)
 
 void MTCContainerEditor::controllableFeedbackUpdate(Controllable* c)
 {
-    if (audioCue != nullptr && c == audioCue->mtcTimecodeDisplay)
+    if (timecodeDisplay != nullptr && c == timecodeDisplay)
     {
-        String tc = audioCue->mtcTimecodeDisplay->stringValue();
+        String tc = timecodeDisplay->stringValue();
         bool isRunning = (tc != "00:00:00:00");
         timecodeLabel.setText(tc, dontSendNotification);
         timecodeLabel.setColour(timecodeLabel.textColourId, isRunning ? Colours::green.brighter(.1f) : Colours::white.withAlpha(.7f));

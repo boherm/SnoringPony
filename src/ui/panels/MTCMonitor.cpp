@@ -9,7 +9,8 @@
 */
 
 #include "MTCMonitor.h"
-#include "../../Cue/audio/AudioCue.h"
+#include "../../Cue/Cue.h"
+#include "../../Interface/midi/MTCSender.h"
 #include "../../Interface/midi/MIDIInterface.h"
 
 //==============================================================================
@@ -38,7 +39,7 @@ void MTCMonitor::paint(juce::Graphics& g)
 {
     g.fillAll(BG_COLOR);
 
-    auto& senders = AudioCue::activeMTCSenders;
+    auto& senders = MTCSender::activeSenders;
 
     if (senders.size() == 0)
     {
@@ -53,24 +54,24 @@ void MTCMonitor::paint(juce::Graphics& g)
     int rowH = jmin(70, getHeight() / count);
     int y = jmax(0, (getHeight() - rowH * count) / 2);
 
-    for (HashMap<MIDIInterface*, AudioCue*>::Iterator it(senders); it.next();)
+    for (HashMap<MIDIInterface*, MTCSender*>::Iterator it(senders); it.next();)
     {
         MIDIInterface* iface = it.getKey();
-        AudioCue* cue = it.getValue();
-        if (iface == nullptr || cue == nullptr) continue;
+        MTCSender* sender = it.getValue();
+        if (iface == nullptr || sender == nullptr || sender->owner == nullptr) continue;
 
         Rectangle<int> row = Rectangle<int>(0, y, getWidth(), rowH).reduced(8, 4);
 
         // Interface name, originating cue and frame rate on top, centered.
         g.setColour(Colours::white.withAlpha(.55f));
         g.setFont(12.0f);
-        g.drawText(iface->niceName + "  -  " + cue->niceName + "   (" + cue->mtcFrameRate->getValueKey() + ")",
+        g.drawText(iface->niceName + "  -  " + sender->owner->niceName + "   (" + sender->frameRate->getValueKey() + ")",
                    row.removeFromTop(16), Justification::centred, true);
 
         // Big live timecode below, centered.
         g.setColour(Colours::limegreen);
         g.setFont(Font(jmin((float)row.getHeight() - 2, 30.0f), Font::bold));
-        g.drawText(cue->mtcTimecodeDisplay->stringValue(), row, Justification::centred, true);
+        g.drawText(sender->timecodeDisplay->stringValue(), row, Justification::centred, true);
 
         y += rowH;
     }

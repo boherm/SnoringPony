@@ -12,7 +12,6 @@
 
 #include "../../MainIncludes.h"
 #include "../Cue.h"
-#include "../../Interface/midi/MTCEncoder.h"
 
 class AudioFilesManager;
 class AudioOutput;
@@ -20,6 +19,7 @@ class AudioSlicesManager;
 class AudioWaveformSlicer;
 class PluginChainManager;
 class MIDIInterface;
+class MTCSender;
 
 class AudioCue :
     public Cue,
@@ -45,12 +45,8 @@ public:
     BoolParameter* loop;
     FloatParameter* volume; // master volume, combined with each file's own volume
 
-    // MTC
-    EnablingControllableContainer* mtcCC;
-    TargetParameter* mtcMidiInterface;
-    FloatParameter* mtcOffset;
-    EnumParameter* mtcFrameRate;
-    StringParameter* mtcTimecodeDisplay;
+    // MTC (MIDI Time Code) — playback position emitted as SMPTE quarter frames.
+    std::unique_ptr<MTCSender> mtcSender;
 
     // --- Duck others ---
     // When enabled, launching this cue fades out every other playing audio/playlist cue,
@@ -88,26 +84,9 @@ public:
     void  setFaderVolume(float v) override;
     float getOutputLevel() override;
 
-    class MTCTimer : public juce::HighResolutionTimer
-    {
-    public:
-        MTCTimer(AudioCue& owner);
-        void hiResTimerCallback() override;
-
-        AudioCue& owner;
-        int currentPiece = 0;
-        double lastFrameTime = 0.0;
-    };
-    std::unique_ptr<MTCTimer> mtcTimer;
-
-    // The interface this cue is currently sending MTC on (may differ from the selected
-    // one right after an interface change), used to clean up the right entry on stop.
-    MIDIInterface* mtcActiveInterface = nullptr;
-
-    static HashMap<MIDIInterface*, AudioCue*> activeMTCSenders;
-
     String getTypeString() const override { return "Audio Cue"; }
     String getCueType() const override { return "Audio"; }
+    MTCSender* getMTCSender() override { return mtcSender.get(); }
     juce::StringArray getMultiEditHiddenControllableNames() const override;
     juce::Component* createMultiEditExtraEditor(const juce::Array<Cue*>& scopeCues) override;
     static AudioCue* create(var params) { return new AudioCue(params); }
@@ -137,10 +116,6 @@ public:
 
     void onControllableFeedbackUpdateInternal(ControllableContainer* cc, Controllable* c) override;
     void parameterValueChanged(Parameter* p) override;
-
-    void startMTC();
-    void stopMTC();
-    MIDIInterface* getMTCInterface();
 
     void createFromFiles(const StringArray& files);
 

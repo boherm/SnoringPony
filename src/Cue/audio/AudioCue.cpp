@@ -20,8 +20,8 @@
 #include "../../Audio/PluginSlot.h"
 #include "../../Interface/audio/AudioOutput.h"
 #include "../../Interface/midi/MIDIInterface.h"
+#include "../../Interface/midi/MTCSender.h"
 #include "../../Interface/InterfaceManager.h"
-#include "ui/MTCContainerEditor.h"
 #include "ui/AudioMultiFilesEditor.h"
 
 AudioCue::AudioCue(var params)
@@ -39,30 +39,9 @@ AudioCue::AudioCue(var params)
     initialDuration->hideInRemoteControl = true;
     initialDuration->hideInEditor = true;
 
-    // MTC
-    mtcCC = new EnablingControllableContainer("MTC");
-    mtcCC->enabled->setValue(false);
-    mtcCC->editorIsCollapsed = true;
-    addChildControllableContainer(mtcCC, true);
-
-    mtcMidiInterface = mtcCC->addTargetParameter("MIDI Interface", "MIDI interface to send MTC through", InterfaceManager::getInstance());
-    mtcMidiInterface->targetType = TargetParameter::CONTAINER;
-    mtcMidiInterface->customGetTargetContainerFunc = &InterfaceManager::showMenuForTargetMIDIInterface;
-
-    mtcOffset = mtcCC->addFloatParameter("Offset", "Time offset added to MTC timecode", 0.0);
-    mtcOffset->defaultUI = FloatParameter::TIME;
-
-    mtcFrameRate = mtcCC->addEnumParameter("Frame Rate", "MTC frame rate");
-    mtcFrameRate->addOption("24 fps", MTCEncoder::FPS_24);
-    mtcFrameRate->addOption("25 fps", MTCEncoder::FPS_25);
-    mtcFrameRate->addOption("29.97 df", MTCEncoder::FPS_30_DROP);
-    mtcFrameRate->addOption("30 fps", MTCEncoder::FPS_30);
-
-    mtcTimecodeDisplay = mtcCC->addStringParameter("Timecode", "Current MTC timecode being sent", "00:00:00:00");
-    mtcTimecodeDisplay->setEnabled(false);
-    mtcTimecodeDisplay->hideInEditor = true;
-
-    mtcCC->customGetEditorFunc = &MTCContainerEditor::create;
+    // MTC: emit this cue's audio transport position as SMPTE.
+    mtcSender.reset(new MTCSender(this, [this] { return filesManager->getCurrentTime(); }));
+    addChildControllableContainer(mtcSender->createContainer(), true);
 
     // --- Duck others ---
     duckPrePlayTimer = new Cue::CueTimer(this);
@@ -141,11 +120,9 @@ AudioCue::~AudioCue()
     delete duckPrePlayTimer;
     delete duckPostPlayTimer;
 
-    if (mtcTimer != nullptr)
-    {
-        mtcTimer->stopTimer();
-        mtcTimer.reset();
-    }
+    // Stop MTC before the rest of the teardown so its high-res timer can't fire mid-destruction.
+    if (mtcSender != nullptr)
+        mtcSender->stop();
 
     pluginChainManager->removeAsyncContainerListener(this);
     slicesManager->removeAsyncContainerListener(this);
@@ -251,7 +228,7 @@ void AudioCue::startAudioPlayback()
         filesManager->playAll();
     }
 
-    startMTC();
+    mtcSender->start();
 }
 
 Array<Cue*> AudioCue::getOtherPlayingAudioCues()
@@ -387,7 +364,7 @@ void AudioCue::stopInternal()
     // Duck others: abort the sequence and fade the ducked cues back in immediately.
     cancelDuckSequence(true);
 
-    stopMTC();
+    mtcSender->stop();
     filesManager->stopAll();
     for (auto& audioFile : filesManager->items)
         audioFile->player->mixer->setPluginChain(nullptr);
@@ -491,12 +468,7 @@ void AudioCue::timerCallback()
     double time = slicesManager->processTime(filesManager->getCurrentTime());
     currentTime->setValue(jmax(0.0, time));
 
-    if (mtcCC->enabled->boolValue() && mtcTimer != nullptr)
-    {
-        double playbackTime = filesManager->getCurrentTime() + mtcOffset->doubleValue();
-        MTCEncoder::FrameRate rate = (MTCEncoder::FrameRate)(int)mtcFrameRate->getValueData();
-        mtcTimecodeDisplay->setValue(MTCEncoder::secondsToSMPTEString(playbackTime, rate));
-    }
+    mtcSender->updateDisplay();
 
     bool isLooping = slicesManager->hasLoopingSlice();
 
@@ -535,7 +507,7 @@ void AudioCue::changeListenerCallback(ChangeBroadcaster* source)
         if (!transport->isPlaying() && !filesManager->haveOnePlaying()) {
             isPlaying->setValue(false);
             stopTimer();
-            stopMTC();
+            mtcSender->stop();
             currentTime->setValue(0.0);
             isPanicking = false;
             isPreviewing = false;
@@ -674,11 +646,6 @@ void AudioCue::createFromFiles(const StringArray& files)
 // MTC
 // -------------------------------------------------------
 
-MIDIInterface* AudioCue::getMTCInterface()
-{
-    return mtcMidiInterface->getTargetContainerAs<MIDIInterface>();
-}
-
 void AudioCue::onControllableFeedbackUpdateInternal(ControllableContainer* cc, Controllable* c)
 {
     Cue::onControllableFeedbackUpdateInternal(cc, c);
@@ -692,104 +659,5 @@ void AudioCue::onControllableFeedbackUpdateInternal(ControllableContainer* cc, C
 
     // Allow turning MTC on/off (or choosing its interface) while the cue is already
     // playing: start it at the cue's current position, or stop it.
-    if (c == mtcCC->enabled)
-    {
-        if (mtcCC->enabled->boolValue())
-        {
-            if (isPlaying->boolValue() && !isPreviewing)
-                startMTC();
-        }
-        else
-        {
-            stopMTC();
-        }
-    }
-    else if (c == mtcMidiInterface)
-    {
-        if (isPlaying->boolValue() && !isPreviewing)
-        {
-            // Release the previous interface, then re-arm on the newly chosen one
-            // (no-op if the interface was cleared).
-            stopMTC();
-            if (mtcCC->enabled->boolValue())
-                startMTC();
-        }
-    }
-}
-
-HashMap<MIDIInterface*, AudioCue*> AudioCue::activeMTCSenders;
-
-void AudioCue::startMTC()
-{
-    if (!mtcCC->enabled->boolValue()) return;
-
-    MIDIInterface* iface = getMTCInterface();
-    if (iface == nullptr) return;
-
-    // Stop any other AudioCue currently sending MTC on this interface
-    if (activeMTCSenders.contains(iface))
-    {
-        AudioCue* previous = activeMTCSenders[iface];
-        if (previous != this)
-            previous->stopMTC();
-    }
-
-    activeMTCSenders.set(iface, this);
-    mtcActiveInterface = iface;
-
-    MTCEncoder::FrameRate rate = (MTCEncoder::FrameRate)(int)mtcFrameRate->getValueData();
-    // Start from the cue's current playback position (not just the offset), so enabling
-    // MTC mid-playback sends the correct timecode for where the cue actually is.
-    double startTime = filesManager->getCurrentTime() + mtcOffset->doubleValue();
-
-    iface->sendMessage(MTCEncoder::createFullFrameMessage(startTime, rate));
-
-    mtcTimer.reset(new MTCTimer(*this));
-    int intervalMs = juce::jmax(1, (int)(MTCEncoder::getQuarterFrameInterval(rate) * 1000.0));
-    mtcTimer->startTimer(intervalMs);
-}
-
-void AudioCue::stopMTC()
-{
-    if (mtcTimer != nullptr)
-    {
-        mtcTimer->stopTimer();
-        mtcTimer.reset();
-    }
-
-    mtcTimecodeDisplay->setValue("00:00:00:00");
-
-    // Remove from active senders, using the interface we actually started on (the
-    // selected one may have just changed, which is exactly why we track it).
-    if (mtcActiveInterface != nullptr
-        && activeMTCSenders.contains(mtcActiveInterface)
-        && activeMTCSenders[mtcActiveInterface] == this)
-        activeMTCSenders.remove(mtcActiveInterface);
-
-    mtcActiveInterface = nullptr;
-}
-
-// -------------------------------------------------------
-// MTCTimer
-// -------------------------------------------------------
-
-AudioCue::MTCTimer::MTCTimer(AudioCue& o) : owner(o)
-{
-}
-
-void AudioCue::MTCTimer::hiResTimerCallback()
-{
-    MIDIInterface* iface = owner.getMTCInterface();
-    if (iface == nullptr) return;
-
-    double playbackTime = owner.filesManager->getCurrentTime() + owner.mtcOffset->doubleValue();
-    MTCEncoder::FrameRate rate = (MTCEncoder::FrameRate)(int)owner.mtcFrameRate->getValueData();
-
-    if (currentPiece == 0)
-        lastFrameTime = playbackTime;
-
-    auto msg = MTCEncoder::createQuarterFrameMessage(currentPiece, lastFrameTime, rate);
-    iface->sendMessage(msg);
-
-    currentPiece = (currentPiece + 1) % 8;
+    mtcSender->handleControllableUpdate(c, isPlaying->boolValue() && !isPreviewing);
 }

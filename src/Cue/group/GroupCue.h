@@ -24,6 +24,7 @@
 #include "../Cue.h"
 
 class GroupTimelineContainer;
+class MTCSender;
 
 class GroupCue :
     public Cue,
@@ -53,8 +54,13 @@ public:
     // Stable identity used by members (Cue::parentGroupUID) to re-attach after load.
     StringParameter* groupUID;
 
+    // MTC (MIDI Time Code) — the group's timeline position (currentTime) emitted as SMPTE,
+    // exactly like an Audio Cue but driven by the group's wall-clock progress clock.
+    std::unique_ptr<MTCSender> mtcSender;
+
     String getTypeString() const override { return "Group Cue"; }
     String getCueType() const override { return "Group"; }
+    MTCSender* getMTCSender() override { return mtcSender.get(); }
     static GroupCue* create(var params) { return new GroupCue(params); }
 
     // Every cue in the cuelist whose parentGroup == this, in cuelist order.
@@ -84,6 +90,7 @@ public:
     String autoDescriptionInternal() override;
 
     void parameterValueChanged(Parameter* p) override;
+    void onControllableFeedbackUpdateInternal(ControllableContainer* cc, Controllable* c) override;
     void newMessage(const ContainerAsyncEvent& e) override;
     void timerCallback() override; // advances currentTime while playing
 

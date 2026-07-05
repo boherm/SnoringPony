@@ -11,6 +11,7 @@
 #include "GroupCue.h"
 #include "../../Cuelist/Cuelist.h"
 #include "../CueManager.h"
+#include "../../Interface/midi/MTCSender.h"
 #include "ui/GroupCueEditor.h"
 
 GroupCue::GroupCue(var params) :
@@ -41,6 +42,10 @@ GroupCue::GroupCue(var params) :
     groupUID->hideInEditor = true;
     groupUID->hideInRemoteControl = true;
 
+    // MTC: emit the group's timeline position (currentTime) as SMPTE.
+    mtcSender.reset(new MTCSender(this, [this] { return currentTime->doubleValue(); }));
+    addChildControllableContainer(mtcSender->createContainer(), true);
+
     // The timeline lives in its own collapsible container, shown only in Timeline mode.
     timelineContainer.reset(new GroupTimelineContainer(this));
     updateTimelineContainer();
@@ -48,6 +53,10 @@ GroupCue::GroupCue(var params) :
 
 GroupCue::~GroupCue()
 {
+    // Stop MTC first so its high-res timer can't fire while the group is being torn down.
+    if (mtcSender != nullptr)
+        mtcSender->stop();
+
     stopListening();
 
     // Detach members before the base destructors run, so their parentGroup pointer can't
@@ -231,6 +240,9 @@ void GroupCue::launchMembers(bool freshShuffle)
     // Drive the group's currentTime (progress bar) from here.
     startProgressClock(0.0);
 
+    // Emit MTC from the top of the timeline (no-op unless MTC is enabled with an interface).
+    mtcSender->start();
+
     // Resolve any members that finished instantly (e.g. Note/Go sub-cues).
     tick();
 }
@@ -341,6 +353,7 @@ void GroupCue::finishGroup()
     seqIndex = -1;
     seqMembers.clearQuick();
     stopTimer();
+    mtcSender->stop();
     currentTime->setValue(0.0);
 
     // A group ended by a stop/panic must not fire its post-wait auto-follow (a stopped
@@ -439,6 +452,9 @@ void GroupCue::timerCallback()
 
     double elapsed = baseElapsed + ((juce::int64) Time::getMillisecondCounter() - playStartMs) / 1000.0;
     currentTime->setValue(jlimit(0.0, duration->doubleValue(), elapsed));
+
+    // Keep the MTC timecode readout in sync with the group's timeline (no-op unless running).
+    mtcSender->updateDisplay();
 
     // Re-evaluate completion here too, so a genuine finish is caught even if the only
     // member event fell inside the post-seek settle window (which tick() ignores).
@@ -553,6 +569,18 @@ void GroupCue::parameterValueChanged(Parameter* p)
 
     if (p == shuffle && shuffle->boolValue())
         reshuffle(); // give the deck badges an order to show right away
+}
+
+void GroupCue::onControllableFeedbackUpdateInternal(ControllableContainer* cc, Controllable* c)
+{
+    Cue::onControllableFeedbackUpdateInternal(cc, c);
+
+    if (Engine::mainEngine != nullptr && Engine::mainEngine->isLoadingFile)
+        return;
+
+    // Allow turning MTC on/off (or choosing its interface) while the group is already
+    // playing: start it at the current timeline position, or stop it.
+    mtcSender->handleControllableUpdate(c, isPlaying->boolValue() && !isPreviewing);
 }
 
 void GroupCue::stopInternal()

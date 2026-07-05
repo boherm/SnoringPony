@@ -22,6 +22,7 @@
 #include "../../ui/SPAssetManager.h"
 #include "../../Cue/audio/AudioCue.h"
 #include "../../Interface/midi/MIDIInterface.h"
+#include "../../Interface/midi/MTCSender.h"
 
 enum ColumnIds
 {
@@ -496,13 +497,13 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
         // random play order (0 = not applicable). Drawn as a small badge left of the text.
         const int shuffleOrd = (cue->parentGroup != nullptr) ? cue->parentGroup->getShuffleOrderIndex(cue) : 0;
 
-        AudioCue* audioCue = dynamic_cast<AudioCue*>(cue);
         if (cue->getControllableByName("Loop") != nullptr && dynamic_cast<BoolParameter*>(cue->getControllableByName("Loop"))->boolValue()) {
             g.setOpacity(0.5f);
             g.drawImage(SPAssetManager::getInstance()->getLoopIcon(), r.removeFromRight(22).reduced(3), RectanglePlacement::centred, false);
         }
 
-        if (audioCue != nullptr && audioCue->mtcCC->enabled->boolValue()) {
+        MTCSender* mtc = cue->getMTCSender();
+        if (mtc != nullptr && mtc->isEnabled()) {
             g.setOpacity(0.5f);
             g.setColour(Colours::red);
             g.setFont(Font(11.0f, Font::bold));
@@ -573,12 +574,13 @@ String CuesTableModel::getCellTooltip(int rowNumber, int columnId)
     {
         // Show the MTC interface when hovering the "TC" badge (right side of the cell,
         // just left of the loop icon when present).
-        AudioCue* audioCue = dynamic_cast<AudioCue*>(rowToCue(rowNumber));
-        if (audioCue == nullptr || !audioCue->mtcCC->enabled->boolValue())
+        Cue* cue = rowToCue(rowNumber);
+        MTCSender* mtc = cue != nullptr ? cue->getMTCSender() : nullptr;
+        if (mtc == nullptr || !mtc->isEnabled())
             return {};
 
         bool loopOn = false;
-        if (auto* loopP = dynamic_cast<BoolParameter*>(audioCue->getControllableByName("Loop")))
+        if (auto* loopP = dynamic_cast<BoolParameter*>(cue->getControllableByName("Loop")))
             loopOn = loopP->boolValue();
 
         Rectangle<int> cell = tlb->getCellPosition(columnId, rowNumber, true);
@@ -587,7 +589,7 @@ String CuesTableModel::getCellTooltip(int rowNumber, int columnId)
         if (mouseX < tcRight - 22 || mouseX > tcRight)
             return {};
 
-        MIDIInterface* iface = audioCue->getMTCInterface();
+        MIDIInterface* iface = mtc->getInterface();
         return "MTC interface: " + (iface != nullptr ? iface->niceName : String("(none selected)"));
     }
 

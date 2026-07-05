@@ -1330,6 +1330,9 @@
     <ClCompile Include="..\..\src\Interface\midi\MIDIIsPlayingFeedback.cpp">
       <Filter>SnoringPony\Source\Interface\midi</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Interface\midi\MTCSender.cpp">
+      <Filter>SnoringPony\Source\Interface\midi</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Interface\mixer\ahcq\AHCQMixerSettings.cpp">
       <Filter>SnoringPony\Source\Interface\mixer\ahcq</Filter>
     </ClCompile>
@@ -5134,6 +5137,9 @@
       <Filter>SnoringPony\Source\Interface\midi</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Interface\midi\MTCEncoder.h">
+      <Filter>SnoringPony\Source\Interface\midi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Interface\midi\MTCSender.h">
       <Filter>SnoringPony\Source\Interface\midi</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Interface\midi\MIDIMapping.h">

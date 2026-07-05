@@ -15,6 +15,7 @@
 class Cuelist;
 class MultiCueSync;
 class GroupCue;
+class MTCSender;
 
 class Cue:
     public BaseItem,
@@ -121,6 +122,11 @@ public:
     String getTypeString() const override { return "Cue"; }
     virtual String getCueType() const { return "Cue"; }
     static Cue* create(var params) { return new Cue(params); }
+
+    // The MTC (MIDI Time Code) sender this cue owns, or nullptr if the type can't emit MTC.
+    // Overridden by Audio and Group cues. Lets the deck / MTC monitor treat any MTC-capable
+    // cue uniformly without downcasting to a concrete type.
+    virtual MTCSender* getMTCSender() { return nullptr; }
 
     // When false, automatic next-cue selection (post-play advance, auto-follow,
     // keyboard next/prev, initial load) skips this cue as if it weren't GO-able.
