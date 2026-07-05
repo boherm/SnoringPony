@@ -31,6 +31,9 @@ GroupCue::GroupCue(var params) :
 
     loop = addBoolParameter("Loop", "If enabled, the group restarts from the top when it completes.", false);
 
+    shuffle = addBoolParameter("Shuffle", "Sequential mode: play the sub-cues in a new random order on each GO.", false);
+    shuffle->hideInEditor = fireMode->intValue() != SEQUENTIAL; // only shown in Sequential
+
     collapsed = addBoolParameter("Collapsed", "Whether the group is folded in the deck", false);
     collapsed->hideInEditor = true;
 
@@ -77,6 +80,20 @@ void GroupCue::updateTimelineContainer()
         removeChildControllableContainer(timelineContainer.get());
 }
 
+void GroupCue::updateShuffleVisibility()
+{
+    if (shuffle == nullptr)
+        return;
+
+    const bool wantHidden = fireMode->intValue() != SEQUENTIAL;
+    if (shuffle->hideInEditor == wantHidden)
+        return;
+
+    shuffle->hideInEditor = wantHidden;
+    // Rebuild the inspector so the row appears / disappears (not just a value refresh).
+    queuedNotifier.addMessage(new ContainerAsyncEvent(ContainerAsyncEvent::ControllableContainerNeedsRebuild, this));
+}
+
 Array<Cue*> GroupCue::getMembers() const
 {
     Array<Cue*> members;
@@ -88,6 +105,45 @@ Array<Cue*> GroupCue::getMembers() const
             members.add(c);
 
     return members;
+}
+
+void GroupCue::reshuffle()
+{
+    shuffleOrder = getMembers();
+    juce::Random& rnd = juce::Random::getSystemRandom();
+    for (int i = shuffleOrder.size() - 1; i > 0; i--) // Fisher-Yates
+        shuffleOrder.swap(i, rnd.nextInt(i + 1));
+}
+
+void GroupCue::ensureShuffleOrder()
+{
+    Array<Cue*> members = getMembers();
+
+    // Already the same set? keep the current (possibly shuffled) order.
+    bool sameSet = shuffleOrder.size() == members.size();
+    if (sameSet)
+        for (auto* m : members)
+            if (!shuffleOrder.contains(m)) { sameSet = false; break; }
+    if (sameSet)
+        return;
+
+    // Membership changed since the last shuffle: drop removed members, append added ones
+    // (keeping the existing random positions; a GO will re-shuffle the whole thing anyway).
+    for (int i = shuffleOrder.size(); --i >= 0;)
+        if (!members.contains(shuffleOrder[i]))
+            shuffleOrder.remove(i);
+    for (auto* m : members)
+        if (!shuffleOrder.contains(m))
+            shuffleOrder.add(m);
+}
+
+int GroupCue::getShuffleOrderIndex(const Cue* m)
+{
+    if (!shuffle->boolValue() || fireMode->intValue() != SEQUENTIAL)
+        return 0;
+
+    ensureShuffleOrder();
+    return shuffleOrder.indexOf(const_cast<Cue*>(m)) + 1; // 1-based; 0 if not a member
 }
 
 bool GroupCue::isMemberActive(const Cue* m)
@@ -121,10 +177,10 @@ void GroupCue::playInternal()
         return;
     }
 
-    launchMembers();
+    launchMembers(true); // a real GO: draw a fresh shuffle order
 }
 
-void GroupCue::launchMembers()
+void GroupCue::launchMembers(bool freshShuffle)
 {
     // Fresh start: clear any leftover sequential state from a previous (possibly aborted
     // by stop/panic, or a completed loop iteration) run, so it always begins at the first
@@ -149,7 +205,18 @@ void GroupCue::launchMembers()
 
     if (fireMode->intValue() == SEQUENTIAL)
     {
-        seqMembers = members;
+        if (shuffle->boolValue())
+        {
+            // A real GO re-shuffles; a loop restart keeps the order from the initial GO.
+            if (freshShuffle || shuffleOrder.isEmpty())
+                reshuffle();
+            else
+                ensureShuffleOrder(); // keep the order, just reconcile membership
+            seqMembers = shuffleOrder;
+        }
+        else
+            seqMembers = members;
+
         sequencing = true;
         seqIndex = 0;
         seqMembers[0]->play();
@@ -362,11 +429,11 @@ void GroupCue::timerCallback()
     }
 
     // A looping group finished its previous pass: restart it now (off the finishGroup call
-    // stack) and let this pass begin fresh.
+    // stack). Keep the same shuffle order — a loop restart is not a new GO.
     if (loopPending)
     {
         loopPending = false;
-        launchMembers();
+        launchMembers(false);
         return;
     }
 
@@ -481,7 +548,11 @@ void GroupCue::parameterValueChanged(Parameter* p)
     {
         refreshDuration();
         updateTimelineContainer(); // show/hide the timeline section with the mode
+        updateShuffleVisibility(); // Shuffle is Sequential-only
     }
+
+    if (p == shuffle && shuffle->boolValue())
+        reshuffle(); // give the deck badges an order to show right away
 }
 
 void GroupCue::stopInternal()

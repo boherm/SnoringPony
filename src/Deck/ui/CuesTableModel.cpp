@@ -490,6 +490,10 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
             g.setColour(Colours::white);
         }
 
+        // Shuffle order: position of a sub-cue in its sequential + shuffled group's current
+        // random play order (0 = not applicable). Drawn as a small badge left of the text.
+        const int shuffleOrd = (cue->parentGroup != nullptr) ? cue->parentGroup->getShuffleOrderIndex(cue) : 0;
+
         AudioCue* audioCue = dynamic_cast<AudioCue*>(cue);
         if (cue->getControllableByName("Loop") != nullptr && dynamic_cast<BoolParameter*>(cue->getControllableByName("Loop"))->boolValue()) {
             g.setOpacity(0.5f);
@@ -518,8 +522,28 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
             g.setFont(Font(14.0f, Font::italic));
 
         // Indent grouped sub-cues so the group nesting reads visually.
-        const int leftPad = (cue->parentGroup != nullptr) ? 26 : 10;
-        g.drawText(cue->getDescription(), r.reduced(10, 0).withTrimmedLeft(leftPad - 10), Justification::centredLeft);
+        const int leftPad = (cue->parentGroup != nullptr) ? 36 : 16;
+        auto textArea = r.reduced(10, 0).withTrimmedLeft(leftPad - 10);
+
+        // Shuffle order badge: drawn in the existing left margin, right up against the text —
+        // so the description stays at the same place whether or not a badge is shown.
+        if (shuffleOrd > 0)
+        {
+            const float d = 18.0f;
+            auto badge = juce::Rectangle<float>((float) leftPad - 6.0f - d, 0.0f, d, (float) height)
+                             .withSizeKeepingCentre(d, d);
+
+            g.saveState(); // don't disturb the text's font / colour / opacity set above
+            g.setOpacity(1.0f);
+            g.setColour(Colours::orange.withAlpha(0.9f));
+            g.fillEllipse(badge);
+            g.setColour(Colours::black);
+            g.setFont(Font(11.0f, Font::bold));
+            g.drawText(String(shuffleOrd), badge, Justification::centred);
+            g.restoreState();
+        }
+
+        g.drawText(cue->getDescription(), textArea, Justification::centredLeft);
         return;
     }
 }

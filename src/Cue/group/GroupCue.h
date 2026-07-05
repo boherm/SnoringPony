@@ -45,6 +45,9 @@ public:
     // When enabled, a group that completes naturally restarts from the top (like an
     // AudioCue's Loop). A stop/panic still ends it. Works in every fire mode.
     BoolParameter* loop;
+    // Sequential mode only: play the members in a fresh random order on each GO. The deck
+    // shows each member's position in the current order as a small badge.
+    BoolParameter* shuffle;
     // Folded state in the Deck (hides the members). Persisted, driven from the deck.
     BoolParameter* collapsed;
     // Stable identity used by members (Cue::parentGroupUID) to re-attach after load.
@@ -56,6 +59,10 @@ public:
 
     // Every cue in the cuelist whose parentGroup == this, in cuelist order.
     Array<Cue*> getMembers() const;
+
+    // 1-based position of `m` in the current shuffle order, or 0 when shuffle doesn't apply
+    // (not enabled, not sequential, or `m` isn't a member). Drives the deck order badge.
+    int getShuffleOrderIndex(const Cue* m);
 
     // Recompute the group's total duration from its members (mode + pre/post-waits) and
     // publish it to the duration parameter. Safe to call any time; also starts listening
@@ -98,15 +105,25 @@ private:
     void ensureListening();
     void stopListening();
 
+    // Current sequential play order when shuffle is on (live member pointers). reshuffle()
+    // draws a fresh random permutation (at each GO / when shuffle is enabled);
+    // ensureShuffleOrder() reconciles it with the member set after add/remove.
+    Array<Cue*> shuffleOrder;
+    void reshuffle();
+    void ensureShuffleOrder();
+
     // The collapsible "Timeline" container shown in the inspector (Timeline mode only).
     // Owned here; added to / removed from this cue's child containers by
     // updateTimelineContainer() as the fire mode changes.
     std::unique_ptr<GroupTimelineContainer> timelineContainer;
     void updateTimelineContainer();
+    // Show the Shuffle parameter only in Sequential mode (hidden in Parallel / Timeline).
+    void updateShuffleVisibility();
 
     // Fire all members from the top (reset sequential state, fire per mode, restart the
-    // progress clock). Shared by the initial GO and a loop restart.
-    void launchMembers();
+    // progress clock). Shared by the initial GO and a loop restart. freshShuffle draws a new
+    // random order (true on a real GO); a loop restart passes false to keep the same order.
+    void launchMembers(bool freshShuffle);
     // Set by finishGroup() when a looping group completes: the next timer tick restarts it.
     // Deferred (not a direct re-fire) so a group of instant sub-cues loops at timer rate
     // instead of recursing.
