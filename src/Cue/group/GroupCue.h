@@ -66,6 +66,9 @@ public:
     void playInternal() override;
     void stopInternal() override;
     void panicInternal() override;
+    // "Stop on retrigger": abort the group and fade every member over the group's fade time
+    // (rather than the base's synchronous hard stop, which skipped the fade).
+    void retriggerStop() override;
 
     // Seek the whole group timeline: hard-stop members and (re)start playback at the
     // sub-cue (and offset) matching t, so the Active Cues panel can scrub the group.
@@ -86,6 +89,9 @@ private:
     // Set while the group itself is being stopped/panicked: tick() then ends the group as
     // soon as every member has settled (faded out), ignoring the wall-clock timeline.
     bool aborting = false;
+    // Set while the abort is a "Stop on retrigger" (as opposed to a plain stop/panic): the
+    // group still fires its post-wait after-cue on completion, like a normal cue does.
+    bool retriggering = false;
 
     // Whether we're currently subscribed to the cue manager's feedback.
     bool listening = false;

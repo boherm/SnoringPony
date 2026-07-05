@@ -74,6 +74,7 @@ public:
     void playInternal() override;
     void stopInternal() override;
     void retriggerStop() override;
+    void fadeAndStop(double fadeTime) override;
     void panicInternal() override;
     void fade(double targetGain, double duration) override;
     void fadeOut(double duration, bool stopAfterFade = true);

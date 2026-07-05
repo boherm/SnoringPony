@@ -42,6 +42,21 @@ GroupCue::GroupCue(var params) :
 GroupCue::~GroupCue()
 {
     stopListening();
+
+    // Detach members before the base destructors run, so their parentGroup pointer can't
+    // dangle while this group is torn down. Undoing the creation of a group deletes the
+    // group but leaves its members in the cuelist; a selection-destroyed callback repaints
+    // the deck mid-destruction (rebuildVisibleCues reads members' parentGroup) and would
+    // otherwise touch this freed group. parentGroupUID is left intact so a redo re-links
+    // them via resolveGroupMemberships().
+    if (parentCuelist != nullptr && parentCuelist->cues != nullptr)
+        for (auto* c : parentCuelist->cues->items)
+            if (c != nullptr && c->parentGroup == this)
+            {
+                c->parentGroup = nullptr;
+                c->notSetNextCueAuto = false;
+                c->applyGroupMembershipConstraints(); // restore normal (post-wait) behaviour
+            }
 }
 
 InspectableEditor* GroupCue::getEditorInternal(bool isRoot, Array<Inspectable*> inspectables)
@@ -113,6 +128,7 @@ void GroupCue::launchMembers()
     seqMembers.clearQuick();
     settleUntilMs = 0;
     aborting = false;
+    retriggering = false;
     loopPending = false;
 
     Array<Cue*> members = getMembers();
@@ -231,6 +247,7 @@ void GroupCue::tick()
 void GroupCue::finishGroup()
 {
     const bool wasAborting = aborting;
+    const bool wasRetriggering = retriggering;
 
     // Loop: a group that completed on its own (not stopped/panicked) restarts from the top.
     // Deferred to the next timer tick so a group of instant sub-cues loops at timer rate
@@ -245,6 +262,7 @@ void GroupCue::finishGroup()
 
     sequencing = false;
     aborting = false;
+    retriggering = false;
     loopPending = false;
     isPanicking = false;
     seqIndex = -1;
@@ -253,8 +271,9 @@ void GroupCue::finishGroup()
     currentTime->setValue(0.0);
 
     // A group ended by a stop/panic must not fire its post-wait auto-follow (a stopped
-    // normal cue never reaches its auto-follow either). A natural completion still does.
-    suppressAutoFollow = wasAborting;
+    // normal cue never reaches its auto-follow either). A natural completion still does —
+    // and so does a "Stop on retrigger", which mirrors a normal cue's retrigger-stop.
+    suppressAutoFollow = wasAborting && !wasRetriggering;
     // Keep the subscription (cheap; newMessage early-outs while not playing) rather than
     // removing a listener from inside its own callback. It's dropped in the destructor.
     endCue();
@@ -464,6 +483,24 @@ void GroupCue::stopInternal()
         if (m->isPlaying->boolValue())
             m->stop();
     tick();
+}
+
+void GroupCue::retriggerStop()
+{
+    // Re-GO on a playing group with "Stop on retrigger": abort (no sequence advance, no
+    // post-wait follow) and fade every active member over the GROUP's fade time. The group
+    // ends once all members have settled (via tick()/finishGroup), exactly like a stop/panic.
+    const double fadeTime = retriggerStopFadeOut->doubleValue();
+
+    aborting = true;
+    retriggering = true; // keep the post-wait after-cue, unlike a plain stop/panic
+    isRetriggerStopping = true;
+    for (auto* m : getMembers())
+        if (isMemberActive(m))
+            m->fadeAndStop(fadeTime);
+    isRetriggerStopping = false;
+
+    tick(); // ends immediately if nothing was active or the fade time is 0
 }
 
 void GroupCue::panicInternal()

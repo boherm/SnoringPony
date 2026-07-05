@@ -441,6 +441,27 @@ void AudioCue::retriggerStop()
     }
 }
 
+void AudioCue::fadeAndStop(double fadeTime)
+{
+    // In a pre/post-wait, with no fade time, or with nothing actually sounding, a hard stop
+    // is right (it also cancels the waits). Otherwise fade the transports out then stop —
+    // same as retriggerStop but over the caller-supplied (group) fade time.
+    if (fadeTime <= 0.0 || preWaitActive->boolValue() || postWaitActive->boolValue()
+        || !filesManager->haveOnePlaying())
+    {
+        stop();
+        return;
+    }
+
+    cancelDuckSequence(true);
+    isRetriggerStopping = true;
+    askedToStop = true;
+    retriggerFadeStartTime = Time::getMillisecondCounterHiRes();
+    duration->setValue(fadeTime);
+    currentTime->setValue(0.0);
+    fadeOut(fadeTime, true);
+}
+
 void AudioCue::panicInternal()
 {
     bool wasAudioPlaying = filesManager->haveOnePlaying();

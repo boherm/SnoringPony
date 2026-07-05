@@ -443,6 +443,28 @@ void PlaylistCue::retriggerStop()
     }
 }
 
+void PlaylistCue::fadeAndStop(double fadeTime)
+{
+    bool anyPlaying = false;
+    for (auto& f : filesManager->items)
+        if (f->player->transport != nullptr && f->player->transport->isPlaying()) { anyPlaying = true; break; }
+
+    // In a pre/post-wait, with no fade time, or with nothing sounding: hard stop (also
+    // cancels the waits). Otherwise fade the current file out then stop.
+    if (fadeTime <= 0.0 || preWaitActive->boolValue() || postWaitActive->boolValue() || !anyPlaying)
+    {
+        stop();
+        return;
+    }
+
+    isRetriggerStopping = true;
+    askedToStop = true;
+    retriggerFadeStartTime = Time::getMillisecondCounterHiRes();
+    duration->setValue(fadeTime);
+    currentTime->setValue(0.0);
+    fadeOut(fadeTime, true);
+}
+
 void PlaylistCue::fadeOut(double duration, bool stopAfterFade)
 {
     for (auto& file : filesManager->items)

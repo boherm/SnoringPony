@@ -406,6 +406,12 @@ void Cue::retriggerStop()
     endCue();
 }
 
+void Cue::fadeAndStop(double)
+{
+    // Nothing to fade for a generic cue: stop right away. Audio-backed cues override this.
+    stop();
+}
+
 void Cue::stop()
 {
     wasStoppedManually = true;

@@ -123,6 +123,7 @@ public:
     bool canBePreviewed() override { return true; }
     void stopInternal() override;
     void retriggerStop() override;
+    void fadeAndStop(double fadeTime) override;
     void panicInternal() override;
 
     bool canSeekTo() const override;

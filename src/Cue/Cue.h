@@ -171,6 +171,11 @@ public:
     virtual void stopInternal() {}
     virtual void retriggerStop();
 
+    // Fade the cue out over `fadeTime` seconds and then stop it (used by GroupCue's
+    // "Stop on retrigger" to fade every member over the group's fade time). The base cue
+    // has nothing audible to fade, so it stops immediately; audio-backed cues override.
+    virtual void fadeAndStop(double fadeTime);
+
     // Seeking from the Active Cues panel. canSeekTo() reports whether this cue supports it
     // right now; seekToTime(t) jumps playback to time t (seconds) within [0, duration].
     virtual bool canSeekTo() const { return false; }
