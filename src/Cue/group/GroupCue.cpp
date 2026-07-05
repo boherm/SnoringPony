@@ -29,6 +29,8 @@ GroupCue::GroupCue(var params) :
     fireMode->addOption("Sequential", SEQUENTIAL);
     fireMode->addOption("Timeline", TIMELINE);
 
+    loop = addBoolParameter("Loop", "If enabled, the group restarts from the top when it completes.", false);
+
     collapsed = addBoolParameter("Collapsed", "Whether the group is folded in the deck", false);
     collapsed->hideInEditor = true;
 
@@ -91,20 +93,29 @@ void GroupCue::stopListening()
 
 void GroupCue::playInternal()
 {
-    // Fresh start: clear any leftover sequential state from a previous (possibly aborted
-    // by stop/panic) run, so a relaunch always begins at the first member.
-    sequencing = false;
-    seqIndex = -1;
-    seqMembers.clearQuick();
-    settleUntilMs = 0;
-    aborting = false;
-
     Array<Cue*> members = getMembers();
     if (members.isEmpty())
     {
         endCue();
         return;
     }
+
+    launchMembers();
+}
+
+void GroupCue::launchMembers()
+{
+    // Fresh start: clear any leftover sequential state from a previous (possibly aborted
+    // by stop/panic, or a completed loop iteration) run, so it always begins at the first
+    // member.
+    sequencing = false;
+    seqIndex = -1;
+    seqMembers.clearQuick();
+    settleUntilMs = 0;
+    aborting = false;
+    loopPending = false;
+
+    Array<Cue*> members = getMembers();
 
     // Watch member state so the group ends exactly when its cues do (incl. panic/stop).
     ensureListening();
@@ -221,8 +232,20 @@ void GroupCue::finishGroup()
 {
     const bool wasAborting = aborting;
 
+    // Loop: a group that completed on its own (not stopped/panicked) restarts from the top.
+    // Deferred to the next timer tick so a group of instant sub-cues loops at timer rate
+    // rather than recursing through launchMembers()/tick()/finishGroup().
+    if (!wasAborting && loop->boolValue() && !getMembers().isEmpty())
+    {
+        aborting = false;
+        loopPending = true;
+        startTimerHz(30); // ensure the timer is running to pick up the restart
+        return;
+    }
+
     sequencing = false;
     aborting = false;
+    loopPending = false;
     isPanicking = false;
     seqIndex = -1;
     seqMembers.clearQuick();
@@ -312,6 +335,16 @@ void GroupCue::timerCallback()
         stopTimer();
         return;
     }
+
+    // A looping group finished its previous pass: restart it now (off the finishGroup call
+    // stack) and let this pass begin fresh.
+    if (loopPending)
+    {
+        loopPending = false;
+        launchMembers();
+        return;
+    }
+
     double elapsed = baseElapsed + ((juce::int64) Time::getMillisecondCounter() - playStartMs) / 1000.0;
     currentTime->setValue(jlimit(0.0, duration->doubleValue(), elapsed));
 

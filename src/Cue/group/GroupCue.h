@@ -40,6 +40,9 @@ public:
     };
 
     EnumParameter* fireMode;
+    // When enabled, a group that completes naturally restarts from the top (like an
+    // AudioCue's Loop). A stop/panic still ends it. Works in every fire mode.
+    BoolParameter* loop;
     // Folded state in the Deck (hides the members). Persisted, driven from the deck.
     BoolParameter* collapsed;
     // Stable identity used by members (Cue::parentGroupUID) to re-attach after load.
@@ -89,6 +92,14 @@ private:
 
     void ensureListening();
     void stopListening();
+
+    // Fire all members from the top (reset sequential state, fire per mode, restart the
+    // progress clock). Shared by the initial GO and a loop restart.
+    void launchMembers();
+    // Set by finishGroup() when a looping group completes: the next timer tick restarts it.
+    // Deferred (not a direct re-fire) so a group of instant sub-cues loops at timer rate
+    // instead of recursing.
+    bool loopPending = false;
 
     // Total group duration from members: sum of spans (Sequential) or the longest span
     // (Parallel), each member's span accounting for its pre/post-waits.
