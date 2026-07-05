@@ -215,7 +215,7 @@ void CuesTableUI::paintOverChildren(Graphics& g)
                                    : mode == GroupCue::TIMELINE   ? Colours::skyblue
                                                                   : Colours::green;
             g.setColour(boxColour.brighter(0.1f));
-            g.drawRoundedRectangle(box, 5.0f, 2.0f);
+            g.drawRoundedRectangle(box, 3.0f, 1.0f);
 
             // Redraw the status cursor over the box so it isn't cut by the green border.
             for (int rr = r; rr <= rEnd; rr++)
