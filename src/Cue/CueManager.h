@@ -59,6 +59,11 @@ public:
 
     void askForRemoveBaseItem(BaseItem* item) override;
 
+    // Copy cues to the clipboard, expanding any group to include its sub-cues (so pasting a
+    // group re-creates its members too). Kept in cuelist order; same clipboard format as the
+    // app's global Copy so the regular paste path handles it.
+    void copyCues(juce::Array<Cue*> cues);
+
     // Remove several cues (expanding any group to its sub-cues) as ONE undoable action.
     void removeCues(juce::Array<Cue*> cues);
     // The selection expanded to include the members of any group in it (deduped).

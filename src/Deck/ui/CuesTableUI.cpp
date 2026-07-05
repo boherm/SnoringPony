@@ -170,6 +170,25 @@ bool CuesTableUI::keyPressed(const KeyPress& key)
         }
     }
 
+    // Cmd/Ctrl+C: copy the selected cues, expanding any group to include its sub-cues (the
+    // global Copy command would only take the group itself). Paste re-creates them all.
+    if (key == KeyPress('c', ModifierKeys::commandModifier, 0))
+    {
+        if (cl != nullptr && cl->cues != nullptr && tableModel != nullptr)
+        {
+            Array<Cue*> sel;
+            auto rows = tableListBox.getSelectedRows();
+            for (int i = 0; i < rows.size(); i++)
+                if (Cue* c = tableModel->rowToCue(rows[i])) sel.add(c);
+
+            if (!sel.isEmpty())
+            {
+                cl->cues->copyCues(sel);
+                return true;
+            }
+        }
+    }
+
     // Right/Left arrow on a selected group cue: unfold / fold it.
     if (key == KeyPress::rightKey || key == KeyPress::leftKey)
     {

@@ -220,6 +220,32 @@ void CueManager::askForRemoveBaseItem(BaseItem* item)
     removeCues({ static_cast<Cue*>(item) });
 }
 
+void CueManager::copyCues(Array<Cue*> cues)
+{
+    // Include the members of any selected group, then keep cuelist order so each group's
+    // sub-cues follow it in the pasted block.
+    Array<Cue*> expanded = expandWithGroupMembers(cues);
+    Array<Cue*> ordered;
+    for (auto* c : items)
+        if (c != nullptr && expanded.contains(c) && c->userCanDuplicate)
+            ordered.add(c);
+
+    if (ordered.isEmpty())
+        return;
+
+    // Same clipboard shape as the app's global Copy: { itemType, items: [...] }.
+    var data(new DynamicObject());
+    Cue* first = ordered.getFirst();
+    data.getDynamicObject()->setProperty("itemType", first->itemDataType.isNotEmpty() ? first->itemDataType : first->getTypeString());
+
+    var itemsData;
+    for (auto* c : ordered)
+        itemsData.append(c->getJSONData());
+    data.getDynamicObject()->setProperty("items", itemsData);
+
+    SystemClipboard::copyTextToClipboard(JSON::toString(data));
+}
+
 Array<Cue*> CueManager::expandWithGroupMembers(const Array<Cue*>& cues)
 {
     Array<Cue*> out;
