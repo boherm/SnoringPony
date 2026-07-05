@@ -27,7 +27,9 @@ OSCCue::OSCCue(var params) :
     addChildControllableContainer(messagesManager.get());
 
     if (messagesManager->items.isEmpty()) {
-        messagesManager->addItemFromData(var());
+        // addToUndo=false: default message is part of the cue, not a separate undo step
+        // (nested undo action corrupts multi-item undo/redo — see AudioCue).
+        messagesManager->addItemFromData(var(), false);
     }
 }
 

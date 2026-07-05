@@ -126,7 +126,9 @@ PlaylistCue::PlaylistCue(var params) :
     filesManager->addAsyncContainerListener(this);
 
     if (filesManager->items.isEmpty()) {
-        filesManager->addItemFromData(var());
+        // addToUndo=false: the default file belongs to the cue, not a separate undo step
+        // (a nested undo action corrupts multi-item undo/redo — see AudioCue).
+        filesManager->addItemFromData(var(), false);
     }
     addChildControllableContainer(filesManager.get());
     addChildControllableContainer(pluginChainManager);
@@ -500,7 +502,7 @@ void PlaylistCue::createFromFiles(const StringArray& files)
     filesManager->clear();
     for (auto& f : files)
     {
-        PlaylistFile* audioFile = filesManager->addItemFromData(var());
+        PlaylistFile* audioFile = filesManager->addItemFromData(var(), false);
         audioFile->audioFile->setValue(f);
     }
 }

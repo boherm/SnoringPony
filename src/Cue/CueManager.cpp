@@ -108,6 +108,27 @@ Array<Cue*> CueManager::addItemsFromClipboard(bool showWarning)
         c->id->notifyValueChanged();
     }
 
+    // A pasted copy of a group must get its own identity (avoid a UID collision with the
+    // original). If the paste also included that group's members, remap them to the new UID.
+    juce::StringPairArray remappedGroupUIDs;
+    for (auto* c : pasted)
+        if (auto* g = dynamic_cast<GroupCue*>(c))
+        {
+            String oldUID = g->groupUID->stringValue();
+            String newUID = Uuid().toString();
+            g->groupUID->setValue(newUID);
+            if (oldUID.isNotEmpty()) remappedGroupUIDs.set(oldUID, newUID);
+        }
+    for (auto* c : pasted)
+    {
+        String mapped = remappedGroupUIDs.getValue(c->parentGroupUID->stringValue(), {});
+        if (mapped.isNotEmpty()) c->parentGroupUID->setValue(mapped);
+    }
+
+    // A pasted sub-cue carries its group's UID but not the live parentGroup pointer; resolve
+    // it (and re-apply group constraints) so it stays a proper member of its group.
+    resolveGroupMemberships();
+
     refreshDuplicateIdWarnings();
     return pasted;
 }
@@ -195,32 +216,87 @@ void CueManager::resolveGroupMemberships()
 
 void CueManager::askForRemoveBaseItem(BaseItem* item)
 {
-    Cue* itemCue = static_cast<Cue*>(item);
+    // Removing a cue (a group takes its sub-cues with it) — always one undoable action.
+    removeCues({ static_cast<Cue*>(item) });
+}
 
-    // Deleting a group ungroups its members (they stay in the cuelist), rather than
-    // deleting them along with it.
-    if (auto* g = dynamic_cast<GroupCue*>(itemCue))
-        for (auto* m : g->getMembers())
-            removeFromGroup(m);
-
-    Cue* nextCue = parentCuelist->nextCue->getTargetContainerAs<Cue>();
-
-    if (nextCue == itemCue) {
-        int idx = parentCuelist->cues->items.indexOf(itemCue);
-        Cue* replacement = nullptr;
-        for (int i = idx + 1; i < parentCuelist->cues->items.size(); i++) {
-            Cue* c = parentCuelist->cues->items[i];
-            if (c->canBeNextCueAuto()) { replacement = c; break; }
-        }
-        if (replacement != nullptr) {
-            replacement->setGoNext();
-        } else {
-            parentCuelist->nextCue->resetValue();
-            parentCuelist->nextCue->notifyValueChanged();
-        }
+Array<Cue*> CueManager::expandWithGroupMembers(const Array<Cue*>& cues)
+{
+    Array<Cue*> out;
+    for (auto* c : cues)
+    {
+        if (c == nullptr) continue;
+        out.addIfNotAlreadyThere(c);
+        if (auto* g = dynamic_cast<GroupCue*>(c))
+            for (auto* m : g->getMembers())
+                out.addIfNotAlreadyThere(m);
     }
+    return out;
+}
 
-    BaseManager<Cue>::askForRemoveBaseItem(item);
+void CueManager::fixNextCueBeforeRemoval(const Array<Cue*>& toRemove)
+{
+    Cue* nextCue = parentCuelist->nextCue->getTargetContainerAs<Cue>();
+    if (nextCue == nullptr || !toRemove.contains(nextCue))
+        return;
+
+    // Advance to the first GO-able cue that survives, past the whole removed set.
+    int lastIdx = -1;
+    for (auto* c : toRemove) lastIdx = jmax(lastIdx, items.indexOf(c));
+    Cue* replacement = nullptr;
+    for (int i = lastIdx + 1; i < items.size(); i++)
+    {
+        Cue* c = items[i];
+        if (!toRemove.contains(c) && c->canBeNextCueAuto()) { replacement = c; break; }
+    }
+    if (replacement != nullptr) {
+        replacement->setGoNext();
+    } else {
+        parentCuelist->nextCue->resetValue();
+        parentCuelist->nextCue->notifyValueChanged();
+    }
+}
+
+void CueManager::removeCues(Array<Cue*> cues)
+{
+    Array<Cue*> toRemove = expandWithGroupMembers(cues);
+    if (toRemove.isEmpty())
+        return;
+
+    fixNextCueBeforeRemoval(toRemove);
+
+    // Compose one undo transaction from single-item remove actions (RemoveItemAction),
+    // which — unlike the batch RemoveItemsAction — refresh their item reference on undo, so
+    // redo finds and deletes the re-created cues instead of orphaning them (no leak).
+    // Remove highest-index first so each action's captured index stays valid; undo then
+    // re-inserts them low-to-high, restoring the original order.
+    std::sort(toRemove.begin(), toRemove.end(),
+              [this](Cue* a, Cue* b) { return items.indexOf(a) > items.indexOf(b); });
+
+    Array<juce::UndoableAction*> actions;
+    for (auto* c : toRemove)
+        actions.addArray(getRemoveItemUndoableAction(c));
+
+    if (actions.isEmpty())
+        return;
+
+    UndoMaster::getInstance()->performActions("Remove " + String(toRemove.size()) + " cues", actions);
+}
+
+Cue* CueManager::addItemFromData(var data, bool addToUndo)
+{
+    Cue* added = BaseManager<Cue>::addItemFromData(data, addToUndo);
+    // Single re-add (undo of a single/grouped removal): restore parentGroup from the UID.
+    resolveGroupMemberships();
+    return added;
+}
+
+Array<Cue*> CueManager::addItemsFromData(var data, bool addToUndo)
+{
+    Array<Cue*> added = BaseManager<Cue>::addItemsFromData(data, addToUndo);
+    // Batch adds (undo of a removal, etc.) restore parentGroupUID but not the live pointer.
+    resolveGroupMemberships();
+    return added;
 }
 
 void CueManager::loadJSONDataManagerInternal(var data)

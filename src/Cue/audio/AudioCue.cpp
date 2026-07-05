@@ -124,7 +124,10 @@ AudioCue::AudioCue(var params)
     isFadable = true;
 
     if (filesManager->items.isEmpty()) {
-        filesManager->addItemFromData(var());
+        // addToUndo=false: the default file is part of building the cue, not its own undo
+        // step. (With undo it fires a nested undo action, which corrupts a multi-item
+        // undo transaction during undo/redo — e.g. deleting several cues at once.)
+        filesManager->addItemFromData(var(), false);
     }
 
     duration->hideInRemoteControl = true;
@@ -640,7 +643,8 @@ void AudioCue::createFromFiles(const StringArray& files)
     filesManager->clear();
     for (auto& f : files)
     {
-        AudioFile* audioFile = filesManager->addItemFromData(var());
+        // addToUndo=false: these files belong to the cue being created, not separate undo steps.
+        AudioFile* audioFile = filesManager->addItemFromData(var(), false);
         audioFile->audioFile->setValue(f);
     }
 }

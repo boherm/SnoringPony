@@ -27,7 +27,9 @@ OBSCue::OBSCue(var params) :
     addChildControllableContainer(requestsManager.get());
 
     if (requestsManager->items.isEmpty()) {
-        requestsManager->addItemFromData(var());
+        // addToUndo=false: default request is part of the cue, not a separate undo step
+        // (nested undo action corrupts multi-item undo/redo — see AudioCue).
+        requestsManager->addItemFromData(var(), false);
     }
 }
 

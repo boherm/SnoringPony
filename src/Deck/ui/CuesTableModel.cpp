@@ -1113,16 +1113,16 @@ void CuesTableModel::askDeleteSelectedCues()
                 .withMessage(message)
                 .withButton("Delete")
                 .withButton("Cancel"),
-                [removable](int result)
+                [this, removable](int result)
                 {
                     if (result == 0) return;
-                    for (Cue* item : removable) item->remove();
+                    cl->cues->removeCues(removable); // one undo for the whole selection
                 }
         );
     }
     else
     {
-        for (Cue* item : removable) item->remove();
+        cl->cues->removeCues(removable);
     }
 }
 

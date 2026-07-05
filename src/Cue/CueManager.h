@@ -59,6 +59,17 @@ public:
 
     void askForRemoveBaseItem(BaseItem* item) override;
 
+    // Remove several cues (expanding any group to its sub-cues) as ONE undoable action.
+    void removeCues(juce::Array<Cue*> cues);
+    // The selection expanded to include the members of any group in it (deduped).
+    juce::Array<Cue*> expandWithGroupMembers(const juce::Array<Cue*>& cues);
+    // If the cuelist's next cue is in toRemove, advance it past the removed block.
+    void fixNextCueBeforeRemoval(const juce::Array<Cue*>& toRemove);
+
+    // Item creation from data (undo of a removal, load, ...): re-resolves group memberships.
+    Cue* addItemFromData(juce::var data, bool addToUndo = true) override;
+    juce::Array<Cue*> addItemsFromData(juce::var data, bool addToUndo = true) override;
+
     void loadJSONDataManagerInternal(var data) override;
 
     void createOneAudioCueFromFiles(const StringArray& files);
