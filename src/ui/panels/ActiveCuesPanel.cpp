@@ -444,7 +444,7 @@ ActiveCuesPanel::ActiveCuesPanel()
     viewport.setViewedComponent(&rows, false);
     viewport.setScrollBarsShown(true, false);
     addAndMakeVisible(viewport);
-    startTimerHz(10);
+    startTimerHz(100);
 }
 
 ActiveCuesPanel::~ActiveCuesPanel()
