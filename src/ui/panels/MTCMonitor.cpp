@@ -26,7 +26,7 @@ juce_ImplementSingleton(MTCMonitor);
 
 MTCMonitor::MTCMonitor()
 {
-    startTimerHz(20);
+    startTimerHz(1000);
 }
 
 MTCMonitor::~MTCMonitor()
