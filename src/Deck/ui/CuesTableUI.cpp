@@ -271,7 +271,7 @@ void CuesTableUI::paintOverChildren(Graphics& g)
                 if (playing || isNext)
                 {
                     float ry = (float) (tb.getY() + headerHeight + rr * rowHeight - scrollY);
-                    CuesTableModel::paintStatusArrow(g, (float) tb.getX(), ry + 1.0f, (float) rowHeight - 2.0f, playing, isNext);
+                    CuesTableModel::paintStatusArrow(g, (float) tb.getX(), ry + 1.5f, (float) rowHeight - 3.0f, playing, isNext);
                 }
             }
         }

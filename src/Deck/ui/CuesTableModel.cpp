@@ -179,9 +179,7 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
     if (StatusColumn == columnId) {
         bool isCuePlaying = cue->isPlaying->boolValue() || cue->preWaitActive->boolValue() || cue->postWaitActive->boolValue();
         bool isNextCue = (nextCue == cue);
-        // Inset the cursor a few px top/bottom; group cues get a bit more so it lines up with
-        // the top/bottom of their green box.
-        paintStatusArrow(g, 0.0f, 1.0f, (float)height - 2.0f, isCuePlaying, isNextCue);
+        paintStatusArrow(g, 0.0f, 2.0f, (float)height - 4.0f, isCuePlaying, isNextCue);
         return;
     }
 
