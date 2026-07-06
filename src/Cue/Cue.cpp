@@ -130,10 +130,12 @@ currentTime->hideInRemoteControl = true;
     preWaitCurrentTime = preWaitCC->addFloatParameter("Current time", "Current time of the pre-wait", 0.0, 0.0);
     preWaitCurrentTime->defaultUI = FloatParameter::TIME;
     preWaitCurrentTime->setEnabled(false);
+    preWaitCurrentTime->isSavable = false;
 
     preWaitActive = preWaitCC->addBoolParameter("Active", "Pre-wait currently active", false);
     preWaitActive->setEnabled(false);
     preWaitActive->hideInEditor = true;
+    preWaitActive->isSavable = false;
 
     // --- Post-Wait ----
     postWaitTimer = new Cue::CueTimer(this);
@@ -153,10 +155,12 @@ currentTime->hideInRemoteControl = true;
     postWaitCurrentTime = postWaitCC->addFloatParameter("Current time", "Current time of the auto-follow", 0.0);
     postWaitCurrentTime->setEnabled(false);
     postWaitCurrentTime->defaultUI = FloatParameter::TIME;
+    postWaitCurrentTime->isSavable = false;
 
     postWaitActive = postWaitCC->addBoolParameter("Active", "Auto-follow currently active", false);
     postWaitActive->setEnabled(false);
     postWaitActive->hideInEditor = true;
+    postWaitActive->isSavable = false;
 
     // --- Stop on retrigger ---
     retriggerStopCC = new EnablingControllableContainer("Stop on retrigger");
