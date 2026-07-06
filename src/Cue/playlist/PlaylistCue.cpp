@@ -9,6 +9,7 @@
 */
 
 #include "PlaylistCue.h"
+#include "../audio/AudioCue.h"
 #include "../../util/SPUnicode.h"
 #include "../../Audio/PluginSlot.h"
 #include "../../Cuelist/Cuelist.h"
@@ -182,6 +183,12 @@ void PlaylistCue::playInternal()
     refreshAudioOutput();
     nextFile->player->transport->addChangeListener(this);
     nextFile->player->play();
+
+    // If another cue is currently ducking the others, start already ducked to that volume so this
+    // playlist doesn't blast at full over the ducked mix (restored when the ducker ends).
+    double duckGain = AudioCue::getActiveDuckGain(this);
+    if (duckGain < 1.0)
+        fade(duckGain, 0.0);
 }
 
 void PlaylistCue::stopInternal()

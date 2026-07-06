@@ -76,6 +76,9 @@ public:
     void startFadeInPhase();         // fade the others back in, tracking the fade-in as a phase
     void cancelDuckSequence(bool fadeInImmediately); // stop/panic during the sequence
     Array<Cue*> getOtherPlayingAudioCues();          // playing audio/playlist cues except this
+    // Gain a cue starting now should adopt because another cue is currently ducking others
+    // (the lowest active duck volume), or 1.0 if none is ducking. `except` is the starting cue.
+    static double getActiveDuckGain(Cue* except);
 
     void onCueTimerFinished(Cue::CueTimer* timer) override;
 

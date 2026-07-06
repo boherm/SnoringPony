@@ -236,6 +236,12 @@ void AudioCue::startAudioPlayback()
     }
 
     mtcSender->start();
+
+    // If another cue is currently ducking the others, start already ducked to that volume so this
+    // cue doesn't blast at full over the ducked mix. It's restored with the rest when the ducker ends.
+    double duckGain = getActiveDuckGain(this);
+    if (duckGain < 1.0)
+        fade(duckGain, 0.0);
 }
 
 Array<Cue*> AudioCue::getOtherPlayingAudioCues()
@@ -253,6 +259,26 @@ Array<Cue*> AudioCue::getOtherPlayingAudioCues()
         }
     }
     return result;
+}
+
+double AudioCue::getActiveDuckGain(Cue* except)
+{
+    double gain = 1.0;
+    for (Cuelist* cl : CuelistManager::getInstance()->items)
+    {
+        if (cl == nullptr || cl->cues == nullptr) continue;
+        for (Cue* c : cl->cues->items)
+        {
+            auto* ac = dynamic_cast<AudioCue*>(c);
+            if (ac == nullptr || ac == except) continue;
+            // A cue that's actively ducking others (but not yet restoring them) holds them down.
+            if (ac->duckOthersCC->enabled->boolValue()
+                && ac->duckActive->boolValue()
+                && !ac->duckFadeInActive->boolValue())
+                gain = jmin(gain, ac->duckVolume->doubleValue());
+        }
+    }
+    return gain;
 }
 
 void AudioCue::startDuckSequence()
