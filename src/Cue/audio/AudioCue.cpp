@@ -46,6 +46,7 @@ AudioCue::AudioCue(var params)
     // --- Duck others ---
     duckPrePlayTimer = new Cue::CueTimer(this);
     duckPostPlayTimer = new Cue::CueTimer(this);
+    duckFadeInTimer = new Cue::CueTimer(this);
 
     duckOthersCC = new EnablingControllableContainer("Duck others");
     duckOthersCC->enabled->setValue(false);
@@ -64,19 +65,23 @@ AudioCue::AudioCue(var params)
 
     duckPrePlayCurrentTime = duckOthersCC->addFloatParameter("Pre-play current time", "Current time of the pre-play delay", 0.0, 0.0);
     duckPostPlayCurrentTime = duckOthersCC->addFloatParameter("Post-play current time", "Current time of the post-play delay", 0.0, 0.0);
-    for (auto* p : { duckPrePlayCurrentTime, duckPostPlayCurrentTime })
+    duckFadeInCurrentTime = duckOthersCC->addFloatParameter("Fade-in current time", "Current time of the fade-in (restore) phase", 0.0, 0.0);
+    for (auto* p : { duckPrePlayCurrentTime, duckPostPlayCurrentTime, duckFadeInCurrentTime })
     {
         p->defaultUI = FloatParameter::TIME;
         p->setEnabled(false);
+        p->isSavable = false;
     }
 
     duckActive = duckOthersCC->addBoolParameter("Active", "Duck sequence currently active", false);
     duckPrePlayActive = duckOthersCC->addBoolParameter("Pre-play active", "Pre-play delay currently running", false);
     duckPostPlayActive = duckOthersCC->addBoolParameter("Post-play active", "Post-play delay currently running", false);
-    for (auto* p : { duckActive, duckPrePlayActive, duckPostPlayActive })
+    duckFadeInActive = duckOthersCC->addBoolParameter("Fade-in active", "Fade-in (restore) phase currently running", false);
+    for (auto* p : { duckActive, duckPrePlayActive, duckPostPlayActive, duckFadeInActive })
     {
         p->setEnabled(false);
         p->hideInEditor = true;
+        p->isSavable = false;
     }
 
     audioSlicer.reset(new ControllableContainer("Audio Slicer"));
@@ -117,8 +122,10 @@ AudioCue::~AudioCue()
 {
     duckPrePlayTimer->stop();
     duckPostPlayTimer->stop();
+    duckFadeInTimer->stop();
     delete duckPrePlayTimer;
     delete duckPostPlayTimer;
+    delete duckFadeInTimer;
 
     // Stop MTC before the rest of the teardown so its high-res timer can't fire mid-destruction.
     if (mtcSender != nullptr)
@@ -280,8 +287,7 @@ void AudioCue::startDuckRestore()
     }
     else
     {
-        fadeOthersBackIn();
-        duckActive->setValue(false);
+        startFadeInPhase();
     }
 }
 
@@ -292,14 +298,35 @@ void AudioCue::fadeOthersBackIn()
         c->fade(1.0, fadeInTime);
 }
 
+void AudioCue::startFadeInPhase()
+{
+    // Fade the ducked cues back up, tracking the fade-in duration as its own phase so the Active
+    // Cues panel can show a "Restore ducked volume" progress bar. The duck ends once it completes.
+    fadeOthersBackIn();
+
+    double fadeIn = duckFadeInDuration->doubleValue();
+    if (fadeIn > 0.0)
+    {
+        duckFadeInActive->setValue(true);
+        duckFadeInTimer->start(fadeIn, duckFadeInCurrentTime);
+    }
+    else
+    {
+        duckActive->setValue(false);
+    }
+}
+
 void AudioCue::cancelDuckSequence(bool fadeInImmediately)
 {
     duckPrePlayTimer->stop();
     duckPostPlayTimer->stop();
+    duckFadeInTimer->stop();
     duckPrePlayActive->setValue(false);
     duckPostPlayActive->setValue(false);
+    duckFadeInActive->setValue(false);
     duckPrePlayCurrentTime->setValue(0.0f);
     duckPostPlayCurrentTime->setValue(0.0f);
+    duckFadeInCurrentTime->setValue(0.0f);
 
     if (duckActive->boolValue() && fadeInImmediately)
         fadeOthersBackIn();
@@ -320,7 +347,13 @@ void AudioCue::onCueTimerFinished(Cue::CueTimer* timer)
     {
         duckPostPlayActive->setValue(false);
         duckPostPlayCurrentTime->setValue(0.0f);
-        fadeOthersBackIn();
+        startFadeInPhase();
+        return;
+    }
+    if (timer == duckFadeInTimer)
+    {
+        duckFadeInActive->setValue(false);
+        duckFadeInCurrentTime->setValue(0.0f);
         duckActive->setValue(false);
         return;
     }

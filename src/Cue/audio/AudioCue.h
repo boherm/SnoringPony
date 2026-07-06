@@ -59,17 +59,21 @@ public:
     FloatParameter* duckFadeInDuration;      // fade in used to bring the others back
     FloatParameter* duckPrePlayCurrentTime;  // read-only, display
     FloatParameter* duckPostPlayCurrentTime; // read-only, display
+    FloatParameter* duckFadeInCurrentTime;   // read-only, display: fade-in (restore) progress
     BoolParameter*  duckActive;              // read-only, hidden
     BoolParameter*  duckPrePlayActive;       // read-only, hidden: pre-play delay running
     BoolParameter*  duckPostPlayActive;      // read-only, hidden: post-play delay running
+    BoolParameter*  duckFadeInActive;        // read-only, hidden: fade-in (restore) running
 
     Cue::CueTimer* duckPrePlayTimer = nullptr;
     Cue::CueTimer* duckPostPlayTimer = nullptr;
+    Cue::CueTimer* duckFadeInTimer = nullptr;
 
     void startAudioPlayback();       // the actual audio start (former playInternal body)
     void startDuckSequence();        // fade others out + start pre-play timer
     void startDuckRestore();         // start post-play timer after the audio ends naturally
     void fadeOthersBackIn();         // fade(1, fadeIn) on the other playing cues
+    void startFadeInPhase();         // fade the others back in, tracking the fade-in as a phase
     void cancelDuckSequence(bool fadeInImmediately); // stop/panic during the sequence
     Array<Cue*> getOtherPlayingAudioCues();          // playing audio/playlist cues except this
 
