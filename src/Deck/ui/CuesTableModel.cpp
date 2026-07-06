@@ -512,6 +512,18 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
             g.setFont(Font(14.0f));
         }
 
+        // "D" badge for audio cues with "Duck others" enabled (sky blue, like the duck phases).
+        if (auto* ac = dynamic_cast<AudioCue*>(cue)) {
+            if (ac->duckOthersCC->enabled->boolValue()) {
+                g.setOpacity(0.5f);
+                g.setColour(Colour::fromRGB(90, 160, 210));
+                g.setFont(Font(11.0f, Font::bold));
+                g.drawText("D", r.removeFromRight(22), Justification::centred);
+                g.setColour(Colours::white);
+                g.setFont(Font(14.0f));
+            }
+        }
+
         g.setOpacity(1.0f);
         if (cue->isAutoStartCue())
             g.setOpacity(0.4f);
