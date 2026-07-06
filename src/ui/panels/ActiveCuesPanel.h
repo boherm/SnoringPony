@@ -18,26 +18,56 @@
 
 class Cue;
 
-// Scrollable content holding one row per active cue.
-class ActiveCuesRows : public juce::Component,
-                       public juce::SettableTooltipClient
+// A single active-cue row: holds a (non-owning) pointer to the cue it renders and paints itself.
+// For now it just draws its box; the progress fill, text, STOP button and fader will be rebuilt
+// here point by point.
+class ActiveCuesRow : public juce::Component,
+                      public juce::SettableTooltipClient
 {
 public:
-    static constexpr int rowH = 66;
+    static constexpr int rowH = 71;      // base height
+    static constexpr int waitBarH = 14;  // extra height per pre/post-wait bar at the bottom
+    static constexpr int faderW = 10;    // width of the vertical volume fader on the right
+
+    void setCue(Cue* c) { cue = c; repaint(); }
+    Cue* getCue() const { return cue; }
+
+    // Height this row wants: base + one bar per active wait + the fader (when the cue has one).
+    int getDesiredHeight() const;
 
     void paint(juce::Graphics&) override;
+
+    // Volume fader interactions (audio / playlist cues): drag to set, double-click to type.
     void mouseDown(const juce::MouseEvent& e) override;
     void mouseDrag(const juce::MouseEvent& e) override;
     void mouseUp(const juce::MouseEvent& e) override;
-    void mouseDoubleClick(const juce::MouseEvent& e) override; // type a volume value
-    juce::String getTooltip() override; // volume value when hovering a fader
-
-    juce::Rectangle<int> getStopRect(int rowIndex) const;
-    juce::Rectangle<int> getProgressRect(int rowIndex) const; // clickable track area (for seeking)
-    juce::Rectangle<int> getFaderRect(int rowIndex) const;     // draggable volume fader (audio/playlist)
+    void mouseDoubleClick(const juce::MouseEvent& e) override;
+    juce::String getTooltip() override;
 
 private:
-    int dragFaderRow = -1; // row whose volume fader is being dragged, -1 if none
+    // The vertical volume fader strip on the right, or empty when the cue has no fader.
+    juce::Rectangle<int> getFaderRect() const;
+    // The cue playback progress area (content box, minus fader and wait bars) — clickable to seek.
+    juce::Rectangle<int> getProgressRect() const;
+    // The circular STOP button, top-right of the row (left of the fader).
+    juce::Rectangle<int> getStopRect() const;
+
+    Cue* cue = nullptr;
+    bool draggingFader = false;
+};
+
+// Scrollable content holding one ActiveCuesRow child per active cue.
+class ActiveCuesRows : public juce::Component
+{
+public:
+    // Sync the child rows to `cues` (create / remove as needed), lay them out at `width`, and
+    // resize to fit (at least `minHeight`). Called from the panel's timer.
+    void setCues(const juce::Array<Cue*>& cues, int width, int minHeight);
+
+    void paint(juce::Graphics&) override;
+
+private:
+    juce::OwnedArray<ActiveCuesRow> rowComps;
 };
 
 class ActiveCuesPanelUI : public ShapeShifterContent {

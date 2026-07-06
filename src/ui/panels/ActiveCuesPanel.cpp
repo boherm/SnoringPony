@@ -17,6 +17,7 @@
 #include "../../Cue/audio/AudioFile.h"
 #include "../../Cue/audio/AudioSlices.h"
 #include "../../Cue/group/GroupCue.h"
+#include "juce_organicui/ui/Style.h"
 
 namespace
 {
@@ -30,10 +31,11 @@ namespace
             {
                 if (c == nullptr) continue;
                 bool active = c->isPlaying->boolValue() || c->preWaitActive->boolValue() || c->postWaitActive->boolValue();
-                // A ducking audio cue in its post-play phase is no longer "playing" but must
-                // stay listed (pre-play is already covered by isPlaying).
+                // A ducking audio cue in its post-play or fade-in (restore) phase is no longer
+                // "playing" but must stay listed (pre-play is already covered by isPlaying).
                 if (auto* ac = dynamic_cast<AudioCue*>(c))
-                    active = active || ac->duckPrePlayActive->boolValue() || ac->duckPostPlayActive->boolValue();
+                    active = active || ac->duckPrePlayActive->boolValue() || ac->duckPostPlayActive->boolValue()
+                                    || ac->duckFadeInActive->boolValue();
                 if (active)
                     result.add(c);
             }
@@ -41,6 +43,14 @@ namespace
         return result;
     }
 
+    const Colour rowBaseColor = Colour::fromRGB(43, 43, 43);    // the item box
+    const Colour progressColor = Colour::fromRGB(82, 121, 63);  // cue playback progress fill (green)
+    const Colour timeColor = Colour::fromRGB(132, 214, 90);     // elapsed / remaining text (green)
+    const Colour preWaitColor = Colour::fromRGB(60, 100, 150); // pre-wait progress fill (blue)
+    const Colour waitColor = Colour::fromRGB(150, 112, 45);    // post-wait progress fill (amber)
+    const Colour duckColor = Colour::fromRGB(90, 160, 210);    // duck phases progress fill (sky blue)
+
+    // mm:ss.cc
     String fmtTime(double s)
     {
         if (s < 0) s = 0;
@@ -82,6 +92,35 @@ namespace
             g.setColour(Colours::white.withAlpha(alpha));
             g.drawLine(p1.x, p1.y, p2.x, p2.y, 1.8f);
         }
+    }
+
+    struct WaitPhase { double cur; double total; String label; Colour color; };
+
+    // The cue's active wait/duck phases, top-to-bottom in lifecycle order. Each is its own bar;
+    // several can run at once (e.g. duck pre-play during playback), so they stack. Only phases
+    // with a real duration are included. Duck phases (audio cues) are sky blue.
+    Array<WaitPhase> getWaitPhases(Cue* c)
+    {
+        Array<WaitPhase> phases;
+        auto* ac = dynamic_cast<AudioCue*>(c);
+
+        if (c->preWaitActive->boolValue() && c->preWaitDuration->doubleValue() > 0.0)
+            phases.add({ c->preWaitCurrentTime->doubleValue(), c->preWaitDuration->doubleValue(), "Pre-wait", preWaitColor });
+
+        // Duck: fade-out runs concurrently with the pre-play delay, so they share one bar.
+        if (ac != nullptr && ac->duckPrePlayActive->boolValue() && ac->duckPrePlayDuration->doubleValue() > 0.0)
+            phases.add({ ac->duckPrePlayCurrentTime->doubleValue(), ac->duckPrePlayDuration->doubleValue(), "Ducking & waiting", duckColor });
+
+        if (c->postWaitActive->boolValue() && c->postWaitDuration->doubleValue() > 0.0)
+            phases.add({ c->postWaitCurrentTime->doubleValue(), c->postWaitDuration->doubleValue(), "Post-wait", waitColor });
+
+        if (ac != nullptr && ac->duckPostPlayActive->boolValue() && ac->duckPostPlayDuration->doubleValue() > 0.0)
+            phases.add({ ac->duckPostPlayCurrentTime->doubleValue(), ac->duckPostPlayDuration->doubleValue(), "Wait after playing", duckColor });
+
+        if (ac != nullptr && ac->duckFadeInActive->boolValue() && ac->duckFadeInDuration->doubleValue() > 0.0)
+            phases.add({ ac->duckFadeInCurrentTime->doubleValue(), ac->duckFadeInDuration->doubleValue(), "Restore ducked volume", duckColor });
+
+        return phases;
     }
 
     // Small pop-up text editor, styled like the Deck's cell edit bubble, launched in a CallOutBox.
@@ -142,285 +181,293 @@ namespace
         }
         void textEditorFocusLost(TextEditor&) override { commitAndDismiss(); }
     };
-
-    const Colour rowBaseColor = Colour::fromRGB(43, 43, 43);   // unfilled part of the row
-    const Colour progressColor = Colour::fromRGB(82, 121, 63); // green progress fill (playing)
-    const Colour waitColor = Colour::fromRGB(150, 112, 45);    // amber fill (pre / post-wait)
-    const Colour duckColor = Colour::fromRGB(60, 100, 150);    // blue fill (duck pre / post-play)
-    const Colour timeColor = Colour::fromRGB(132, 214, 90);    // elapsed / remaining text
 }
 
 //==============================================================================
-// ActiveCuesRows (scrollable content)
+// ActiveCuesRow (a single row)
 //==============================================================================
 
-Rectangle<int> ActiveCuesRows::getStopRect(int rowIndex) const
+int ActiveCuesRow::getDesiredHeight() const
 {
-    const int s = 24; // small circle, vertically centered in the row
-    return Rectangle<int>(getWidth() - s - 14, rowIndex * rowH + (rowH - s) / 2, s, s);
+    if (cue == nullptr)
+        return rowH;
+
+    // The vertical fader sits on the right over the full height, so it doesn't add height.
+    return rowH + getWaitPhases(cue).size() * waitBarH;
 }
 
-// The whole row is the progress bar: clicking anywhere on it seeks. Returns the filled
-// track area (mirrors the green fill drawn in paint()).
-Rectangle<int> ActiveCuesRows::getProgressRect(int rowIndex) const
+Rectangle<int> ActiveCuesRow::getFaderRect() const
 {
-    return Rectangle<int>(0, rowIndex * rowH, getWidth(), rowH).reduced(2, 2);
+    if (cue == nullptr || !cue->hasVolumeFader())
+        return {};
+
+    // Vertical fader: a full-height strip on the far right of the item.
+    Rectangle<int> box = getLocalBounds().reduced(0, 4);
+    return box.removeFromRight(faderW);
 }
 
-// Full-width draggable volume fader glued to the bottom of the row.
-Rectangle<int> ActiveCuesRows::getFaderRect(int rowIndex) const
+Rectangle<int> ActiveCuesRow::getProgressRect() const
 {
-    const int h = 12;
-    int y = rowIndex * rowH + rowH - h;
-    return Rectangle<int>(0, y, getWidth(), h);
+    if (cue == nullptr)
+        return {};
+
+    // Same region the progress fill is drawn on: the box minus the fader (right) and wait bars.
+    Rectangle<int> box = getLocalBounds().reduced(0, 4);
+    if (cue->hasVolumeFader())
+        box.removeFromRight(faderW);
+    box.removeFromBottom(getWaitPhases(cue).size() * waitBarH);
+    return box;
+}
+
+Rectangle<int> ActiveCuesRow::getStopRect() const
+{
+    const int s = 22;
+    Rectangle<int> box = getLocalBounds().reduced(0, 4);
+    // Sit just left of the vertical fader (or the right edge when there's no fader).
+    int right = box.getRight() - ((cue != nullptr && cue->hasVolumeFader()) ? faderW : 0);
+    return Rectangle<int>(right - s - 8, box.getY() + 6, s, s);
+}
+
+void ActiveCuesRow::paint(juce::Graphics& g)
+{
+    if (cue == nullptr)
+        return;
+
+    Rectangle<int> box = getLocalBounds().reduced(0, 4);
+
+    g.setColour(rowBaseColor);
+    g.fillRect(box);
+
+    // Vertical volume fader on the far right (full height): track + fill from the bottom at the
+    // live output level + a thumb at the user-set volume. Reserved first so the text / wait bars
+    // don't run under it.
+    if (cue->hasVolumeFader())
+    {
+        Rectangle<int> f = box.removeFromRight(faderW);
+        g.setColour(Colours::black.withAlpha(.4f));
+        g.fillRect(f);
+
+        float maxV = jmax(0.0001f, cue->getMaxFaderVolume());
+        float lvl = jlimit(0.0f, 1.0f, cue->getOutputLevel() / maxV);
+        if (lvl > 0.0f)
+        {
+            int fillH = roundToInt(f.getHeight() * lvl);
+            g.setColour(timeColor.withAlpha(.85f));
+            g.fillRect(f.getX(), f.getBottom() - fillH, f.getWidth(), fillH);
+        }
+
+        float vol = jlimit(0.0f, 1.0f, cue->getFaderVolume() / maxV);
+        int ty = f.getBottom() - roundToInt(f.getHeight() * vol);
+        g.setColour(Colours::white);
+        g.fillRect(f.getX(), ty - 1, f.getWidth(), 2);
+    }
+
+    // Pre/post-wait bars, stacked top-to-bottom above the fader (the row grows by waitBarH per
+    // active phase). Both pre- and post-wait can run at once.
+    Array<WaitPhase> phases = getWaitPhases(cue);
+    if (!phases.isEmpty())
+    {
+        Rectangle<int> waitArea = box.removeFromBottom(phases.size() * waitBarH);
+        for (auto& ph : phases)
+        {
+            Rectangle<int> bar = waitArea.removeFromTop(waitBarH);
+
+            // Dark base + colored progress fill (elapsed / total of the wait).
+            g.setColour(rowBaseColor.darker(.35f));
+            g.fillRect(bar);
+            if (ph.total > 0.0)
+            {
+                float frac = (float)jlimit(0.0, 1.0, ph.cur / ph.total);
+                if (frac > 0.0f)
+                {
+                    g.setColour(ph.color.darker(0.4f)); // darker so the white text stays legible
+                    g.fillRect(bar.withWidth(roundToInt(bar.getWidth() * frac)));
+                }
+            }
+
+            Rectangle<int> wt = bar.reduced(8, 0);
+            g.setColour(Colours::white.withAlpha(.9f));
+            g.setFont(Font(11.0f, Font::bold));
+            g.drawText(fmtTime(ph.cur), wt, Justification::centredLeft);
+            g.drawText(ph.label, wt, Justification::centred);
+            g.drawText("-" + fmtTime(ph.total - ph.cur), wt, Justification::centredRight);
+        }
+    }
+
+    // Cue playback progress fill. `box` is now just the content area (the fader was removed from
+    // the right and the wait bars from the bottom), so the fill never overlaps them.
+    {
+        double total = cue->duration->doubleValue();
+        if (total > 0.0)
+        {
+            float frac = (float)jlimit(0.0, 1.0, cue->currentTime->doubleValue() / total);
+            if (frac > 0.0f)
+            {
+                g.setColour(progressColor);
+                g.fillRect(box.withWidth(roundToInt(box.getWidth() * frac)));
+            }
+        }
+    }
+
+    Rectangle<int> content = box.reduced(12, 6);
+
+    // Line 1 (top): cue number and name, small. Trimmed on the right so it doesn't run under the
+    // STOP button.
+    Rectangle<int> line1 = content.removeFromTop(22).withRight(getStopRect().getX() - 6);
+    g.setColour(Colours::white);
+    g.setFont(Font(13.0f, Font::bold));
+    g.drawText(cue->id->stringValue() + "  ·  " + cue->getDescription(),
+               line1, Justification::centredLeft, true);
+
+    // Line 2 (below): elapsed (left) / remaining (right), in green.
+    Rectangle<int> line2 = content.removeFromTop(28);
+    double cur = cue->currentTime->doubleValue();
+    double total = cue->duration->doubleValue();
+    g.setColour(timeColor);
+    g.setFont(Font(14.0f, Font::bold));
+    g.drawText(fmtTime(cur), line2.removeFromLeft(90), Justification::centredLeft);
+    if (total > 0.0)
+        g.drawText("-" + fmtTime(total - cur), line2, Justification::centredRight);
+
+    // STOP button, top-right (left of the fader). While fading out on panic, the circle blinks
+    // red and the icon becomes a rotating spinner; otherwise a white X.
+    {
+        Rectangle<int> stop = getStopRect();
+        const Colour stopBase = Colours::black.withAlpha(.45f);
+        if (cue->isPanicking)
+        {
+            bool blinkOn = (juce::Time::getMillisecondCounter() / 400) % 2 == 0;
+            drawStopCircle(g, stop, blinkOn ? RED_COLOR : stopBase);
+            drawSpinner(g, stop);
+        }
+        else
+        {
+            drawStopCircle(g, stop, stopBase);
+            drawXIcon(g, stop);
+        }
+    }
+
+    // Cue color strip on the far left (full height), drawn without consuming the layout box.
+    if (cue->itemColor->value != cue->itemColor->defaultValue) {
+        g.setColour(cue->itemColor->getColor());
+        g.fillRect(getLocalBounds().reduced(0, 4).withWidth(5));
+    }
+}
+
+void ActiveCuesRow::mouseDown(const juce::MouseEvent& e)
+{
+    // STOP button: first click fades out (panic), second click stops immediately.
+    if (cue != nullptr && getStopRect().contains(e.getPosition()))
+    {
+        cue->panic();
+        repaint();
+        return;
+    }
+
+    // Arm dragging the fader; the volume only changes once the mouse actually moves, so a plain
+    // click (or the first click of a double-click) never jumps it.
+    if (getFaderRect().contains(e.getPosition()))
+    {
+        draggingFader = true;
+        return;
+    }
+
+    // Click the progress bar to seek (audio, group, ... seekable cues), except during pre-wait.
+    if (cue != nullptr && cue->canSeekTo() && !cue->preWaitActive->boolValue())
+    {
+        Rectangle<int> track = getProgressRect();
+        double total = cue->duration->doubleValue();
+        if (track.getWidth() > 0 && total > 0.0 && track.contains(e.getPosition()))
+        {
+            double frac = jlimit(0.0, 1.0, (double)(e.getPosition().x - track.getX()) / (double)track.getWidth());
+            cue->seekToTime(frac * total);
+            repaint();
+        }
+    }
+}
+
+void ActiveCuesRow::mouseDrag(const juce::MouseEvent& e)
+{
+    if (!draggingFader || cue == nullptr)
+        return;
+
+    Rectangle<int> f = getFaderRect();
+    if (f.getHeight() <= 0)
+        return;
+
+    // Vertical: bottom = 0, top = max.
+    float frac = jlimit(0.0f, 1.0f, (float)(f.getBottom() - e.getPosition().y) / (float)f.getHeight());
+    cue->setFaderVolume(frac * cue->getMaxFaderVolume());
+    repaint();
+}
+
+void ActiveCuesRow::mouseUp(const juce::MouseEvent&)
+{
+    draggingFader = false;
+}
+
+void ActiveCuesRow::mouseDoubleClick(const juce::MouseEvent& e)
+{
+    if (cue == nullptr)
+        return;
+
+    Rectangle<int> f = getFaderRect();
+    if (f.getWidth() <= 0 || !f.contains(e.getPosition()))
+        return;
+
+    // Double-click the fader to type an exact volume, using the same bubble editor as the Deck.
+    Cue* c = cue;
+    String initial = String(c->getFaderVolume(), 2);
+    std::function<void(const String&)> onCommit = [c](const String& t)
+    {
+        c->setFaderVolume(jlimit(0.0f, 1.5f, t.getFloatValue()));
+    };
+
+    auto bubble = std::make_unique<VolumeEditBubble>(initial, std::move(onCommit));
+    CallOutBox::launchAsynchronously(std::move(bubble), localAreaToGlobal(f), nullptr);
+}
+
+juce::String ActiveCuesRow::getTooltip()
+{
+    if (cue != nullptr && getFaderRect().contains(getMouseXYRelative()))
+        return "Volume: " + String(cue->getFaderVolume(), 2);
+    return {};
+}
+
+//==============================================================================
+// ActiveCuesRows (scrollable content: one ActiveCuesRow child per active cue)
+//==============================================================================
+
+void ActiveCuesRows::setCues(const Array<Cue*>& cues, int width, int minHeight)
+{
+    // Match the number of child rows to the active cues.
+    while (rowComps.size() < cues.size())
+        addAndMakeVisible(rowComps.add(new ActiveCuesRow()));
+    while (rowComps.size() > cues.size())
+        rowComps.removeLast();
+
+    // Assign each row its cue and stack them, using each row's own (variable) height.
+    int y = 0;
+    for (int i = 0; i < cues.size(); i++)
+    {
+        rowComps[i]->setCue(cues[i]);
+        int h = rowComps[i]->getDesiredHeight();
+        rowComps[i]->setBounds(0, y, width, h);
+        y += h;
+    }
+
+    setSize(width, jmax(y, minHeight));
 }
 
 void ActiveCuesRows::paint(juce::Graphics& g)
 {
     g.fillAll(BG_COLOR);
 
-    Array<Cue*> cues = collectActiveCues();
-
-    if (cues.isEmpty())
+    if (rowComps.isEmpty())
     {
         g.setColour(Colours::white.withAlpha(.35f));
         g.setFont(16.0f);
         g.drawText("(no cue playing)", getLocalBounds(), Justification::centred);
-        return;
-    }
-
-    for (int i = 0; i < cues.size(); i++)
-    {
-        Cue* c = cues[i];
-
-        // Status drives the progress values and the fill color: pre/post-wait share an
-        // amber background (labeled below), playback is green.
-        double cur = 0.0, total = 0.0;
-        Colour fillColor = progressColor;
-        String waitLabel;
-        AudioCue* ac = dynamic_cast<AudioCue*>(c);
-        if (c->preWaitActive->boolValue())
-        {
-            cur = c->preWaitCurrentTime->doubleValue();
-            total = c->preWaitDuration->doubleValue();
-            fillColor = waitColor;
-            waitLabel = "Pre-wait";
-        }
-        else if (ac != nullptr && ac->duckPrePlayActive->boolValue())
-        {
-            cur = ac->duckPrePlayCurrentTime->doubleValue();
-            total = ac->duckPrePlayDuration->doubleValue();
-            fillColor = duckColor;
-            waitLabel = "Pre-play";
-        }
-        else if (ac != nullptr && ac->duckPostPlayActive->boolValue())
-        {
-            cur = ac->duckPostPlayCurrentTime->doubleValue();
-            total = ac->duckPostPlayDuration->doubleValue();
-            fillColor = duckColor;
-            waitLabel = "Post-play";
-        }
-        else if (c->postWaitActive->boolValue() && !c->isPlaying->boolValue())
-        {
-            cur = c->postWaitCurrentTime->doubleValue();
-            total = c->postWaitDuration->doubleValue();
-            fillColor = waitColor;
-            waitLabel = "Post-wait";
-        }
-        else
-        {
-            cur = c->currentTime->doubleValue();
-            total = c->duration->doubleValue();
-            fillColor = progressColor;
-        }
-
-        Rectangle<int> track = getProgressRect(i);
-
-        // Row background = dark base + full-height progress fill in the status color.
-        g.setColour(rowBaseColor);
-        g.fillRect(track);
-        if (total > 0.0)
-        {
-            float frac = (float)jlimit(0.0, 1.0, cur / total);
-            if (frac > 0.0f)
-            {
-                g.setColour(fillColor);
-                g.fillRect(track.withWidth(roundToInt(track.getWidth() * frac)));
-            }
-        }
-
-        // Cue color strip on the far left.
-        g.setColour(c->itemColor->getColor());
-        g.fillRect(track.withWidth(4));
-
-        // Text block (id + description, then elapsed / remaining times), vertically centered.
-        Rectangle<int> content = track.reduced(12, 8).withTrimmedRight(getStopRect(i).getWidth() + 16);
-
-        Rectangle<int> line1 = content.removeFromTop(24);
-        g.setColour(Colours::white);
-        g.setFont(Font(16.0f, Font::bold));
-        g.drawText(c->id->stringValue() + "  ·  " + c->getDescription(),
-                   line1, Justification::centredLeft, true);
-
-        content.removeFromTop(2);
-        Rectangle<int> line2 = content.removeFromTop(18);
-
-        // Pre/Post-wait label, centered at the bottom between the two times.
-        if (waitLabel.isNotEmpty())
-        {
-            g.setColour(Colours::white.withAlpha(.8f));
-            g.setFont(Font(12.0f, Font::bold));
-            g.drawText(waitLabel, line2, Justification::centred);
-        }
-
-        g.setColour(timeColor);
-        g.setFont(Font(15.0f, Font::bold));
-        g.drawText(fmtTime(cur), line2.removeFromLeft(90), Justification::centredLeft);
-        if (total > 0.0)
-            g.drawText("-" + fmtTime(total - cur), line2, Justification::centredRight);
-
-        // STOP button (circular). While fading after the first click, the background
-        // blinks base/red and the icon becomes a rotating spinner; otherwise a white X.
-        const Colour stopBase = Colours::black.withAlpha(.45f);
-        Rectangle<int> btn = getStopRect(i);
-        if (c->isPanicking)
-        {
-            bool blinkOn = (juce::Time::getMillisecondCounter() / 400) % 2 == 0;
-            drawStopCircle(g, btn, blinkOn ? Colours::red : stopBase);
-            drawSpinner(g, btn);
-        }
-        else
-        {
-            drawStopCircle(g, btn, stopBase);
-            drawXIcon(g, btn);
-        }
-
-        // Volume fader (audio / playlist cues): track + fill at the live output level + a thumb
-        // at the user-set volume. The fill drops and recovers while the cue is ducked.
-        if (c->hasVolumeFader())
-        {
-            Rectangle<int> f = getFaderRect(i);
-            if (f.getWidth() > 0)
-            {
-                g.setColour(Colours::black.withAlpha(.4f));
-                g.fillRect(f);
-
-                float maxV = jmax(0.0001f, c->getMaxFaderVolume());
-                float lvl = jlimit(0.0f, 1.0f, c->getOutputLevel() / maxV);
-                if (lvl > 0.0f)
-                {
-                    g.setColour(timeColor.withAlpha(.85f));
-                    g.fillRect(f.withWidth(roundToInt(f.getWidth() * lvl)));
-                }
-
-                float vol = jlimit(0.0f, 1.0f, c->getFaderVolume() / maxV);
-                int tx = f.getX() + roundToInt(f.getWidth() * vol);
-                g.setColour(Colours::white);
-                g.fillRect(tx - 1, f.getY(), 2, f.getHeight());
-            }
-        }
-    }
-}
-
-void ActiveCuesRows::mouseDown(const juce::MouseEvent& e)
-{
-    Array<Cue*> cues = collectActiveCues();
-    for (int i = 0; i < cues.size(); i++)
-    {
-        if (getStopRect(i).contains(e.getPosition()))
-        {
-            cues[i]->panic(); // first click: fade then stop; second click: stop now
-            repaint();
-            return;
-        }
-    }
-
-    // Arm dragging a volume fader (audio / playlist cues). The volume only changes once the
-    // mouse actually moves, so a plain click (or the first click of a double-click) never jumps it.
-    for (int i = 0; i < cues.size(); i++)
-    {
-        if (!cues[i]->hasVolumeFader()) continue;
-        Rectangle<int> f = getFaderRect(i);
-        if (f.getWidth() > 0 && f.contains(e.getPosition()))
-        {
-            dragFaderRow = i;
-            return;
-        }
-    }
-
-    // Click on the progress bar of a seekable cue (audio, group, ...) to seek it.
-    for (int i = 0; i < cues.size(); i++)
-    {
-        Cue* c = cues[i];
-        if (c->preWaitActive->boolValue()) continue; // the bar shows the pre-wait, not playback
-        if (!c->canSeekTo()) continue;
-
-        Rectangle<int> track = getProgressRect(i);
-        if (track.getWidth() <= 0 || !track.contains(e.getPosition())) continue;
-
-        double total = c->duration->doubleValue();
-        if (total <= 0.0) continue;
-
-        double frac = jlimit(0.0, 1.0, (double)(e.getPosition().x - track.getX()) / (double)track.getWidth());
-        c->seekToTime(frac * total);
-        repaint();
-        return;
-    }
-}
-
-void ActiveCuesRows::mouseDrag(const juce::MouseEvent& e)
-{
-    if (dragFaderRow < 0) return;
-
-    Array<Cue*> cues = collectActiveCues();
-    if (dragFaderRow >= cues.size()) { dragFaderRow = -1; return; }
-
-    Rectangle<int> f = getFaderRect(dragFaderRow);
-    if (f.getWidth() <= 0) return;
-
-    float frac = jlimit(0.0f, 1.0f, (float)(e.getPosition().x - f.getX()) / (float)f.getWidth());
-    cues[dragFaderRow]->setFaderVolume(frac * cues[dragFaderRow]->getMaxFaderVolume());
-    repaint();
-}
-
-void ActiveCuesRows::mouseUp(const juce::MouseEvent&)
-{
-    dragFaderRow = -1;
-}
-
-juce::String ActiveCuesRows::getTooltip()
-{
-    Point<int> p = getMouseXYRelative();
-    Array<Cue*> cues = collectActiveCues();
-    for (int i = 0; i < cues.size(); i++)
-    {
-        if (!cues[i]->hasVolumeFader()) continue;
-        if (getFaderRect(i).contains(p))
-            return "Volume: " + String(cues[i]->getFaderVolume(), 2);
-    }
-    return {};
-}
-
-void ActiveCuesRows::mouseDoubleClick(const juce::MouseEvent& e)
-{
-    // Double-click a fader to type an exact volume, using the same bubble editor as the Deck.
-    Array<Cue*> cues = collectActiveCues();
-    for (int i = 0; i < cues.size(); i++)
-    {
-        if (!cues[i]->hasVolumeFader()) continue;
-        Rectangle<int> f = getFaderRect(i);
-        if (f.getWidth() <= 0 || !f.contains(e.getPosition())) continue;
-
-        Cue* cue = cues[i];
-        String initial = String(cue->getFaderVolume(), 2);
-        std::function<void(const String&)> onCommit = [cue](const String& t)
-        {
-            cue->setFaderVolume(jlimit(0.0f, 1.5f, t.getFloatValue()));
-        };
-
-        auto bubble = std::make_unique<VolumeEditBubble>(initial, std::move(onCommit));
-        CallOutBox::launchAsynchronously(std::move(bubble), localAreaToGlobal(f), nullptr);
-        return;
     }
 }
 
@@ -499,13 +546,7 @@ void ActiveCuesPanel::mouseDown(const juce::MouseEvent& e)
 
 void ActiveCuesPanel::timerCallback()
 {
-    int count = collectActiveCues().size();
-    int w = jmax(0, viewport.getMaximumVisibleWidth());
-    int h = jmax(count * ActiveCuesRows::rowH, viewport.getHeight());
-
-    if (rows.getWidth() != w || rows.getHeight() != h)
-        rows.setSize(w, h);
-
-    rows.repaint();
+    // Sync the child rows to the currently active cues and lay them out.
+    rows.setCues(collectActiveCues(), jmax(0, viewport.getMaximumVisibleWidth()), viewport.getHeight());
     repaint(); // header count
 }
