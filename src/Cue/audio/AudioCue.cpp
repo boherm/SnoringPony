@@ -71,6 +71,7 @@ AudioCue::AudioCue(var params)
         p->defaultUI = FloatParameter::TIME;
         p->setEnabled(false);
         p->isSavable = false;
+        p->hideInEditor = true;
     }
 
     duckActive = duckOthersCC->addBoolParameter("Active", "Duck sequence currently active", false);

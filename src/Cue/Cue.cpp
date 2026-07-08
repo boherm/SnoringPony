@@ -82,6 +82,7 @@ Cue::Cue(var params) :
 
     isPlaying = addBoolParameter("Is Playing", "Indicates if this cue is currently playing", false, false);
     isPlaying->isSavable = false;
+    isPlaying->hideInEditor = true;
 
     setNextBtn = addTrigger("Set next", "Trigger this cue after next");
     setNextBtn->hideInEditor = true;
@@ -131,6 +132,7 @@ currentTime->hideInRemoteControl = true;
     preWaitCurrentTime->defaultUI = FloatParameter::TIME;
     preWaitCurrentTime->setEnabled(false);
     preWaitCurrentTime->isSavable = false;
+    preWaitCurrentTime->hideInEditor = true;
 
     preWaitActive = preWaitCC->addBoolParameter("Active", "Pre-wait currently active", false);
     preWaitActive->setEnabled(false);
@@ -156,6 +158,7 @@ currentTime->hideInRemoteControl = true;
     postWaitCurrentTime->setEnabled(false);
     postWaitCurrentTime->defaultUI = FloatParameter::TIME;
     postWaitCurrentTime->isSavable = false;
+    postWaitCurrentTime->hideInEditor = true;
 
     postWaitActive = postWaitCC->addBoolParameter("Active", "Auto-follow currently active", false);
     postWaitActive->setEnabled(false);
