@@ -279,6 +279,16 @@ void CuesTableUI::paintOverChildren(Graphics& g)
         g.restoreState();
     }
 
+    if (cl != nullptr && cl->cues != nullptr && cl->cues->items.isEmpty())
+    {
+        const int headerHeight = tableListBox.getHeader().getHeight();
+        const Rectangle<int> tb = tableListBox.getBounds();
+        Rectangle<int> body(tb.getX(), tb.getY() + headerHeight, tb.getWidth(), jmax(0, tb.getHeight() - headerHeight));
+
+        g.setColour(Colours::white.withAlpha(0.4f));
+        g.drawFittedText("Press the right mouse button to create a new cue to this cuelist.", body, Justification::centred, true);
+    }
+
     // Draw insertion line during drag
     if (insertIndex >= 0)
     {
