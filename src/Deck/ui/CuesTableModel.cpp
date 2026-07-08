@@ -23,6 +23,7 @@
 #include "../../Cue/audio/AudioCue.h"
 #include "../../Interface/midi/MIDIInterface.h"
 #include "../../Interface/midi/MTCSender.h"
+#include "juce_graphics/juce_graphics.h"
 
 enum ColumnIds
 {
@@ -506,6 +507,15 @@ void CuesTableModel::paintCell(Graphics& g, int rowNumber, int columnId, int wid
             g.setColour(Colours::red);
             g.setFont(Font(11.0f, Font::bold));
             g.drawText("TC", r.removeFromRight(22), Justification::centred);
+            g.setColour(Colours::white);
+            g.setFont(Font(14.0f));
+        }
+
+        if (!cue->retriggerStopCC->hideInEditor && cue->retriggerStopCC->enabled->boolValue()) {
+            g.setOpacity(0.5f);
+            g.setColour(Colours::orange);
+            g.setFont(Font(11.0f, Font::bold));
+            g.drawText("RS", r.removeFromRight(22), Justification::centred);
             g.setColour(Colours::white);
             g.setFont(Font(14.0f));
         }
