@@ -19,15 +19,15 @@
 #include "../../Audio/AudioPlayer.h"
 #include "../../Audio/PluginSlot.h"
 #include "../../Interface/audio/AudioOutput.h"
-#include "../../Interface/midi/MIDIInterface.h"
 #include "../../Interface/midi/MTCSender.h"
-#include "../../Interface/InterfaceManager.h"
 #include "ui/AudioMultiFilesEditor.h"
 
 AudioCue::AudioCue(var params)
 {
 	itemDataType = "Audio Cue";
     formatManager.registerBasicFormats();
+
+    retriggerStopCC->hideInEditor = false;
 
     loop = addBoolParameter("Loop", "If enabled, audio files will loop when they reach the end.", false);
 

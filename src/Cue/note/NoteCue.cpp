@@ -24,7 +24,6 @@ NoteCue::NoteCue(var params) :
 
     preWaitCC->hideInEditor = true;
     postWaitCC->hideInEditor = true;
-    retriggerStopCC->hideInEditor = true;
 }
 
 NoteCue::~NoteCue()

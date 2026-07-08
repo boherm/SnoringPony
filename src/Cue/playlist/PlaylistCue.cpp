@@ -106,6 +106,9 @@ PlaylistCue::PlaylistCue(var params) :
 {
 	itemDataType = "Playlist Cue";
     isFadable = true;
+
+    retriggerStopCC->hideInEditor = false;
+
     duration->isSavable = false;
     duration->setEnabled(false);
 

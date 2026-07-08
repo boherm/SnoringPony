@@ -25,6 +25,8 @@ GroupCue::GroupCue(var params) :
     duration->hideInRemoteControl = true;
     currentTime->hideInEditor = true;
 
+    retriggerStopCC->hideInEditor = false;
+
     fireMode = addEnumParameter("Fire Mode", "How the group triggers its sub-cues when GO'd");
     fireMode->addOption("Parallel (all at once)", PARALLEL);
     fireMode->addOption("Sequential", SEQUENTIAL);

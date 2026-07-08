@@ -166,6 +166,7 @@ currentTime->hideInRemoteControl = true;
     retriggerStopCC = new EnablingControllableContainer("Stop on retrigger");
     retriggerStopCC->enabled->setValue(false);
     retriggerStopCC->editorIsCollapsed = true;
+    retriggerStopCC->hideInEditor = true;
     addChildControllableContainer(retriggerStopCC, true);
 
     retriggerStopFadeOut = retriggerStopCC->addFloatParameter("Fade Out", "Fade out duration before stopping", 0.0, 0.0);

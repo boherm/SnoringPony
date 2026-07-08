@@ -25,7 +25,6 @@ DCACue::DCACue(var params) :
     duration->isSavable = false;
     duration->hideInEditor = true;
     duration->hideInRemoteControl = true;
-    retriggerStopCC->hideInEditor = true;
 
     // A DCA cue applies a persistent mixer state and ends instantly; keep it as the
     // cuelist's current cue so the Show Info panel reflects the last DCA cue fired.
