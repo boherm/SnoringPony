@@ -23,6 +23,7 @@
 #include "../../Cue/audio/AudioCue.h"
 #include "../../Interface/midi/MIDIInterface.h"
 #include "../../Interface/midi/MTCSender.h"
+#include "juce_core/juce_core.h"
 #include "juce_graphics/juce_graphics.h"
 
 enum ColumnIds
@@ -625,10 +626,10 @@ void CuesTableModel::syncSelectionToInspector()
 {
     SparseSet<int> rows = tlb->getSelectedRows();
     if (rows.size() == 0) {
-        // No row selected: also clear the inspectable selection, otherwise the previously
+        // No row selected: also clear the inspectable selection (if it's a cue in inspector!), otherwise the previously
         // selected cue lingers (e.g. paste would still anchor to it instead of appending).
         if (auto* sm = InspectableSelectionManager::mainSelectionManager)
-            if (!sm->isEmpty()) sm->clearSelection();
+            if (!sm->isEmpty() && sm->getInspectableAs<Cue>() != nullptr) sm->clearSelection();
     } else if (rows.size() == 1) {
         inspectCue(rows[0]);
     } else if (rows.size() > 1) {
