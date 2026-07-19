@@ -176,6 +176,9 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/ShowProperties_a8318b43.o \
   $(JUCE_OBJDIR)/MeteringSettings_7c2c4caf.o \
   $(JUCE_OBJDIR)/VolumePresets_e2087271.o \
+  $(JUCE_OBJDIR)/RedundancyLink_dc75e393.o \
+  $(JUCE_OBJDIR)/RedundancyManager_e9580b7e.o \
+  $(JUCE_OBJDIR)/RedundancyStateSync_17a0801d.o \
   $(JUCE_OBJDIR)/RFDeviceManagerItemUI_be546394.o \
   $(JUCE_OBJDIR)/FrequencyPresetsImportDialog_36f85c25.o \
   $(JUCE_OBJDIR)/FrequencyPresetsManagerEditor_9cbc46ec.o \
@@ -776,6 +779,21 @@ $(JUCE_OBJDIR)/MeteringSettings_7c2c4caf.o: ../../src/ProjectSettings/MeteringSe
 $(JUCE_OBJDIR)/VolumePresets_e2087271.o: ../../src/ProjectSettings/VolumePresets.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling VolumePresets.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/RedundancyLink_dc75e393.o: ../../src/Redundancy/RedundancyLink.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling RedundancyLink.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/RedundancyManager_e9580b7e.o: ../../src/Redundancy/RedundancyManager.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling RedundancyManager.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/RedundancyStateSync_17a0801d.o: ../../src/Redundancy/RedundancyStateSync.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling RedundancyStateSync.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/RFDeviceManagerItemUI_be546394.o: ../../src/RF/ui/RFDeviceManagerItemUI.cpp

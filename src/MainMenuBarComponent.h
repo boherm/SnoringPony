@@ -30,6 +30,10 @@ public:
 
     ShowProperties* showProperties;
 
+    // Clickable bounds of the redundancy badge (updated in paintOverChildren); clicking it opens
+    // the redundancy system in the inspector.
+    juce::Rectangle<int> redundancyBadgeBounds;
+
 	void parameterValueChanged(Parameter* parameter) override;
 	void paint(Graphics& g) override;
 	void paintOverChildren(Graphics& g) override;

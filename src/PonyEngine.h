@@ -56,7 +56,13 @@ public:
 
 	String getMinimumRequiredFileVersion() override;
 
+	// Hash of the currently-open show (the `hashVersion` stamped in the file at save time). Two
+	// instances that opened the same file share this value — used by the redundancy feature to
+	// detect when the Main and Backup have different shows open. 0 for a new/unsaved show.
+	juce::int64 getCurrentShowHash() const { return loadedShowHash; }
+
 private:
+	juce::int64 loadedShowHash = 0;
 	juce::Array<FileParameter*> collectAudioFileParameters();
 	void choosePackageDestination(bool compress, bool openAfter);
 	void runPackageExport(const juce::File& destinationDir, bool compress, bool openAfter);

@@ -115,6 +115,8 @@ public:
     bool canSeekTo() const override;
     void seekToTime(double t) override;
 
+    void refreshDuration() override;
+
     void fade(double targetGain, double duration) override;
     void fadeIn(double duration);
     void fadeOut(double duration, bool stopAfterFade = true);

@@ -36,8 +36,19 @@ InterfaceManager::~InterfaceManager()
 {
 }
 
+void InterfaceManager::setRedundancyStandby(bool standby)
+{
+    redundancyStandby = standby;
+    for (auto* i : items)
+        if (i != nullptr) i->setRedundancyStandby(standby);
+}
+
 void InterfaceManager::addItemInternal(Interface* i, var data)
 {
+    // A newly created interface must inherit the current standby state immediately (even while
+    // loading a file), so a Backup never briefly emits before standby is applied.
+    if (i != nullptr) i->setRedundancyStandby(redundancyStandby);
+
     if (Engine::mainEngine != nullptr && Engine::mainEngine->isLoadingFile) return;
 
     AudioInterface* audioInterface = dynamic_cast<AudioInterface*>(i);

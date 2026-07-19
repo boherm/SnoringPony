@@ -34,6 +34,7 @@
 #include "RF/RFDeviceManager.h"
 #include "RF/RFProfileManager.h"
 #include "Interface/InterfaceManager.h"
+#include "Redundancy/RedundancyManager.h"
 #include "Timer/ShowTimerManager.h"
 
 ControllableContainer* getAppSettings();
@@ -66,6 +67,10 @@ PonyEngine::PonyEngine() :
 	GlobalSettings::getInstance()->getControllableContainerByName("launchArguments")->editorIsCollapsed = true;
     GlobalSettings::getInstance()->askBeforeRemovingItems->setValue(true);
 	GlobalSettings::getInstance()->addChildControllableContainer(PluginScanner::getInstance());
+
+	// Per-machine redundancy (Main/Backup) settings, persisted with the global settings, not the show.
+	GlobalSettings::getInstance()->addChildControllableContainer(RedundancyManager::getInstance());
+	RedundancyManager::getInstance()->applyStandbyToInterfaces();
 
 	OSCRemoteControl::getInstance()->addRemoteControlListener(UserInputManager::getInstance());
 
@@ -114,6 +119,7 @@ PonyEngine::~PonyEngine()
 
     InterfaceManager::deleteInstance();
     MIDIManager::deleteInstance();
+    RedundancyManager::deleteInstance();
     Brain::deleteInstance();
 }
 
@@ -152,6 +158,9 @@ void PonyEngine::afterLoadFileInternal()
 
     // Open/close the metering input to match the loaded "Active" state.
     meteringSettings.reconfigure();
+
+    // Interfaces were (re)created during load; make sure they inherit the current standby state.
+    RedundancyManager::getInstance()->applyStandbyToInterfaces();
 }
 
 void PonyEngine::clearInternal()
@@ -196,12 +205,19 @@ var PonyEngine::getJSONData(bool includeNonOverriden)
 
 void PonyEngine::createNewGraphInternal()
 {
+	loadedShowHash = 0; // new/unsaved show
+
 	// Every new show starts with one timer.
 	ShowTimerManager::getInstance()->addItem();
 }
 
 void PonyEngine::loadJSONDataInternalEngine(var data, ProgressTask* loadingTask)
 {
+	// Remember the show's stored hash (for the redundancy same-show check).
+	var md = data.getProperty("metaData", var());
+	loadedShowHash = md.isObject() ? (juce::int64)md.getProperty("hashVersion", 0) : 0;
+
+
 	ProgressTask* inTask = loadingTask->addTask("Interfaces");
 	inTask->start();
 	var inData = data.getProperty(InterfaceManager::getInstance()->shortName, var());

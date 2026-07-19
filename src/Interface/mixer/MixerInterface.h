@@ -63,6 +63,8 @@ public:
     void itemsAdded(Array<MixerChannel*> items) override;
     void itemAdded(MixerFX* fx) override;
 
+    void onRedundancyStandbyChanged() override;
+
     void onContainerParameterChangedInternal(Parameter* p) override;
     void onControllableFeedbackUpdateInternal(ControllableContainer* cc, Controllable* c) override;
 

@@ -141,6 +141,9 @@ void MIDIInterface::setOutputDevice(MIDIOutputDevice* device)
 
 void MIDIInterface::sendMessage(const juce::MidiMessage& msg)
 {
+    // Backup in standby: no MIDI out (covers feedbacks AND MTC, which routes through here).
+    if (redundancyStandby) return;
+
     if (currentOutputDevice != nullptr)
     {
         currentOutputDevice->sendMessage(msg);

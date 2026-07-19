@@ -131,6 +131,9 @@
     <Filter Include="SnoringPony\Source\ProjectSettings">
       <UniqueIdentifier>{65B4B78B-00AF-0E10-CF06-79E1CA443041}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SnoringPony\Source\Redundancy">
+      <UniqueIdentifier>{15CCD49B-B346-C7C4-CC4F-DC292E1E3C74}</UniqueIdentifier>
+    </Filter>
     <Filter Include="SnoringPony\Source\RF\ui">
       <UniqueIdentifier>{717C5FDA-F071-093A-E0A4-83AC72EFA65F}</UniqueIdentifier>
     </Filter>
@@ -1440,6 +1443,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src\ProjectSettings\VolumePresets.cpp">
       <Filter>SnoringPony\Source\ProjectSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Redundancy\RedundancyLink.cpp">
+      <Filter>SnoringPony\Source\Redundancy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Redundancy\RedundancyManager.cpp">
+      <Filter>SnoringPony\Source\Redundancy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Redundancy\RedundancyStateSync.cpp">
+      <Filter>SnoringPony\Source\Redundancy</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\RF\ui\RFDeviceManagerItemUI.cpp">
       <Filter>SnoringPony\Source\RF\ui</Filter>
@@ -5258,6 +5270,15 @@
     </ClInclude>
     <ClInclude Include="..\..\src\ProjectSettings\VolumePresets.h">
       <Filter>SnoringPony\Source\ProjectSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Redundancy\RedundancyLink.h">
+      <Filter>SnoringPony\Source\Redundancy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Redundancy\RedundancyManager.h">
+      <Filter>SnoringPony\Source\Redundancy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Redundancy\RedundancyStateSync.h">
+      <Filter>SnoringPony\Source\Redundancy</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\RF\ui\FrequencyPresetsImportDialog.h">
       <Filter>SnoringPony\Source\RF\ui</Filter>

@@ -177,6 +177,11 @@ public:
     virtual void stopInternal() {}
     virtual void retriggerStop();
 
+    // Recompute the cue's natural duration from its content. Used to restore `duration` after a
+    // "Stop on retrigger" fade (which temporarily overrides it) — notably on a redundancy Backup
+    // when a mirrored cue goes inactive. Base cue has no content-derived duration.
+    virtual void refreshDuration() {}
+
     // Fade the cue out over `fadeTime` seconds and then stop it (used by GroupCue's
     // "Stop on retrigger" to fade every member over the group's fade time). The base cue
     // has nothing audible to fade, so it stops immediately; audio-backed cues override.

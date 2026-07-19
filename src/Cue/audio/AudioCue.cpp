@@ -459,6 +459,11 @@ void AudioCue::seekToTime(double t)
     filesManager->setCurrentTime(target);
 }
 
+void AudioCue::refreshDuration()
+{
+    duration->setValue(slicesManager->getTotalDuration());
+}
+
 void AudioCue::retriggerStop()
 {
     cancelDuckSequence(true);

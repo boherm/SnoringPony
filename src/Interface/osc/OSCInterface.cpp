@@ -286,6 +286,8 @@ void OSCInterface::sendOSC(const OSCMessage& msg)
 {
 	if (isClearing || outputManager == nullptr) return;
 	if (!enabled->boolValue()) return;
+	// Backup in standby: stay silent so we don't drive the same OSC devices as the Main.
+	if (redundancyStandby) return;
 
 	if (logOutgoingData->boolValue())
 	{

@@ -17,10 +17,19 @@
 #include "../../Cue/audio/AudioFile.h"
 #include "../../Cue/audio/AudioSlices.h"
 #include "../../Cue/group/GroupCue.h"
+#include "../../Redundancy/RedundancyManager.h"
 #include "juce_organicui/ui/Style.h"
 
 namespace
 {
+    // A Backup in standby only mirrors the Main's state; it must not let the user drive playback
+    // (panic/stop) or change cue volumes from the Active Cues panel.
+    bool redundancyBlocksControl()
+    {
+        auto* rm = RedundancyManager::getInstanceWithoutCreating();
+        return rm != nullptr && rm->isStandby();
+    }
+
     Array<Cue*> collectActiveCues()
     {
         Array<Cue*> result;
@@ -356,6 +365,9 @@ void ActiveCuesRow::paint(juce::Graphics& g)
 
 void ActiveCuesRow::mouseDown(const juce::MouseEvent& e)
 {
+    // In Backup standby, the row is display-only (no panic, no fader, no seek).
+    if (redundancyBlocksControl()) return;
+
     // STOP button: first click fades out (panic), second click stops immediately.
     if (cue != nullptr && getStopRect().contains(e.getPosition()))
     {
@@ -388,7 +400,7 @@ void ActiveCuesRow::mouseDown(const juce::MouseEvent& e)
 
 void ActiveCuesRow::mouseDrag(const juce::MouseEvent& e)
 {
-    if (!draggingFader || cue == nullptr)
+    if (redundancyBlocksControl() || !draggingFader || cue == nullptr)
         return;
 
     Rectangle<int> f = getFaderRect();
@@ -408,7 +420,7 @@ void ActiveCuesRow::mouseUp(const juce::MouseEvent&)
 
 void ActiveCuesRow::mouseDoubleClick(const juce::MouseEvent& e)
 {
-    if (cue == nullptr)
+    if (redundancyBlocksControl() || cue == nullptr)
         return;
 
     Rectangle<int> f = getFaderRect();
@@ -533,6 +545,8 @@ void ActiveCuesPanel::paint(juce::Graphics& g)
 
 void ActiveCuesPanel::mouseDown(const juce::MouseEvent& e)
 {
+    if (redundancyBlocksControl()) return; // Backup standby: no STOP ALL
+
     if (getStopAllRect().contains(e.getPosition()))
     {
         // A sub-cue whose group is playing is panicked by that group (single fade); skip it

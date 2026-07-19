@@ -14,12 +14,25 @@
 #include "Cue/CueManager.h"
 #include "Cuelist/Cuelist.h"
 #include "Cuelist/CuelistManager.h"
+#include "Redundancy/RedundancyManager.h"
 #include "ui/panels/ShowControl.h"
 
 juce_ImplementSingleton(Brain);
 
+// While this instance is a Backup in standby, it is not the playback authority: every local trigger
+// (GO / panic / cue selection, from OSC, MIDI or keyboard) must be ignored so it doesn't drive the
+// show in parallel with the Main. The Backup only mirrors state (applied out-of-band, not via Brain).
+static bool redundancySuppressesTriggers()
+{
+    if (auto* rm = RedundancyManager::getInstanceWithoutCreating())
+        return rm->isTriggeringSuppressed();
+    return false;
+}
+
 void Brain::go()
 {
+    if (redundancySuppressesTriggers()) return;
+
     const MessageManagerLock mmLock;
     Cuelist* cl = dynamic_cast<PonyEngine*>(Engine::mainEngine)->showProperties.mainCuelist->getTargetContainerAs<Cuelist>();
     if (cl != nullptr)
@@ -28,6 +41,8 @@ void Brain::go()
 
 void Brain::panic()
 {
+    if (redundancySuppressesTriggers()) return;
+
     const MessageManagerLock mmLock;
 
     // Emergency stop applies to EVERY cuelist, not just the main one.
@@ -39,6 +54,8 @@ void Brain::panic()
 
 void Brain::selectNextCue()
 {
+    if (redundancySuppressesTriggers()) return;
+
     const MessageManagerLock mmLock;
     Cuelist* cl = dynamic_cast<PonyEngine*>(Engine::mainEngine)->showProperties.mainCuelist->getTargetContainerAs<Cuelist>();
     if (cl != nullptr) selectNextCueOn(cl);
@@ -46,6 +63,8 @@ void Brain::selectNextCue()
 
 void Brain::selectPreviousCue()
 {
+    if (redundancySuppressesTriggers()) return;
+
     const MessageManagerLock mmLock;
     Cuelist* cl = dynamic_cast<PonyEngine*>(Engine::mainEngine)->showProperties.mainCuelist->getTargetContainerAs<Cuelist>();
     if (cl != nullptr) selectPreviousCueOn(cl);

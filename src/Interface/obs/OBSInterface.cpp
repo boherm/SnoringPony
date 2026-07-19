@@ -41,8 +41,19 @@ OBSInterface::~OBSInterface()
     disconnectOBS();
 }
 
+void OBSInterface::onRedundancyStandbyChanged()
+{
+    // Only active when this instance is the playback authority. In Backup standby, drop the OBS
+    // connection so we never send requests to OBS; on activation, reconnect if auto-connect is on.
+    if (redundancyStandby) disconnectOBS();
+    else if (autoConnect->boolValue()) connectOBS();
+}
+
 void OBSInterface::connectOBS()
 {
+    // Never connect while a Backup is in standby (also blocks the auto-reconnect timer).
+    if (redundancyStandby) return;
+
     disconnectOBS();
 
     String serverPath = host->stringValue() + ":" + String(port->intValue());

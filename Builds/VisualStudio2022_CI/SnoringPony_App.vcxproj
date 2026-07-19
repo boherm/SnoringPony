@@ -261,6 +261,9 @@
     <ClCompile Include="..\..\src\ProjectSettings\ShowProperties.cpp"/>
     <ClCompile Include="..\..\src\ProjectSettings\MeteringSettings.cpp"/>
     <ClCompile Include="..\..\src\ProjectSettings\VolumePresets.cpp"/>
+    <ClCompile Include="..\..\src\Redundancy\RedundancyLink.cpp"/>
+    <ClCompile Include="..\..\src\Redundancy\RedundancyManager.cpp"/>
+    <ClCompile Include="..\..\src\Redundancy\RedundancyStateSync.cpp"/>
     <ClCompile Include="..\..\src\RF\ui\RFDeviceManagerItemUI.cpp"/>
     <ClCompile Include="..\..\src\RF\ui\FrequencyPresetsImportDialog.cpp"/>
     <ClCompile Include="..\..\src\RF\ui\FrequencyPresetsManagerEditor.cpp"/>
@@ -3533,6 +3536,9 @@
     <ClInclude Include="..\..\src\ProjectSettings\ShowProperties.h"/>
     <ClInclude Include="..\..\src\ProjectSettings\MeteringSettings.h"/>
     <ClInclude Include="..\..\src\ProjectSettings\VolumePresets.h"/>
+    <ClInclude Include="..\..\src\Redundancy\RedundancyLink.h"/>
+    <ClInclude Include="..\..\src\Redundancy\RedundancyManager.h"/>
+    <ClInclude Include="..\..\src\Redundancy\RedundancyStateSync.h"/>
     <ClInclude Include="..\..\src\RF\ui\FrequencyPresetsImportDialog.h"/>
     <ClInclude Include="..\..\src\RF\ui\FrequencyPresetsManagerEditor.h"/>
     <ClInclude Include="..\..\src\RF\ui\RFDeviceManagerItemUI.h"/>

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		002C4741B010638CD572FE72 /* ShowTimerManagerItemUI.cpp */ = {isa = PBXBuildFile; fileRef = 1DA67014280F5141603E2253; };
 		007292BED6521FA02F1907D3 /* Cocoa.framework */ = {isa = PBXBuildFile; fileRef = A128082A556EBF6237DF2234; };
+		01075EE2EF8BEAA3D83F68CF /* RedundancyLink.cpp */ = {isa = PBXBuildFile; fileRef = 3796CF8E99D620EA61AFA911; };
 		014993105B0195ABA4ABA0A0 /* IOKit.framework */ = {isa = PBXBuildFile; fileRef = 8A837C2CA24E36B83D0747D7; };
 		015EB3829272967F5BA7FAF4 /* InterfaceManagerUI.cpp */ = {isa = PBXBuildFile; fileRef = 5CA0B57692A6CB7C5E32805E; };
 		01B377BE82EB05C4A7AD488E /* OSCCommandArgumentsEditor.cpp */ = {isa = PBXBuildFile; fileRef = CB8B523172DF3CA0B58BCB68; };
@@ -64,6 +65,7 @@
 		49AA0CDD14B435A2320681EB /* QuartzCore.framework */ = {isa = PBXBuildFile; fileRef = 1AC850E793B1ADE9326E09C9; };
 		49F42971DA251A8C805A46F0 /* RFProfileManager.cpp */ = {isa = PBXBuildFile; fileRef = B7439303B17E8F7672F139C0; };
 		4B1A2D76C9537464C18BC36E /* Interface.cpp */ = {isa = PBXBuildFile; fileRef = A626C29C79FB02FD8A0E48E6; };
+		4D1B3EA6D6168312FC4557DF /* RedundancyStateSync.cpp */ = {isa = PBXBuildFile; fileRef = 47D3126C96CC42DA053CCEE7; };
 		4DA9667206704870349E5252 /* ColorPresets.cpp */ = {isa = PBXBuildFile; fileRef = 0DE611E76438A1E07302A9B2; };
 		4FBD35C98A9275CE3E0948D1 /* CuesTableModel.cpp */ = {isa = PBXBuildFile; fileRef = 5D29EEEDC890B444EDE1F128; };
 		5020B01692FF82975AFA6BA4 /* SetMainCuelistCue.cpp */ = {isa = PBXBuildFile; fileRef = CD5B3DC47836B324297E74FB; };
@@ -157,6 +159,7 @@
 		C5BA953BBA2207993A818BA2 /* DCACue.cpp */ = {isa = PBXBuildFile; fileRef = D64698CE8C7A2246827BB905; };
 		C727F0EDBA227906A00EB01D /* AudioWaveformSlicerEditor.cpp */ = {isa = PBXBuildFile; fileRef = 2619D69AD9F2375D60AB0C5F; };
 		CAA9EA5837AAA5B4C3266E63 /* PluginScanner.cpp */ = {isa = PBXBuildFile; fileRef = DFDFCCBD5D767210C2C7AB90; };
+		CE534FC629130BBD44DC3830 /* RedundancyManager.cpp */ = {isa = PBXBuildFile; fileRef = 7FB76FEEA4BFC141672D4C29; };
 		CE74F3166954BB2024784337 /* AudioPlayer.cpp */ = {isa = PBXBuildFile; fileRef = 6684AECAA95242E961D9B528; };
 		CFF4F88CCE80595A4EB2B38B /* OSCCueMessageEditor.cpp */ = {isa = PBXBuildFile; fileRef = 439E7D11E98A9DF464D4C92C; };
 		D15D95E461318E0E04514738 /* ShowTimerManager.cpp */ = {isa = PBXBuildFile; fileRef = 768514C61DAD3DEB02DE8A9D; };
@@ -272,6 +275,7 @@
 		363B269A64FC20CD5CF2C571 /* PauseTimerCue.h */ /* PauseTimerCue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PauseTimerCue.h; path = ../../src/Cue/timer/PauseTimerCue.h; sourceTree = SOURCE_ROOT; };
 		36E7454C02A4CA4C709F9C89 /* MIDIIsPanickingFeedback.h */ /* MIDIIsPanickingFeedback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MIDIIsPanickingFeedback.h; path = ../../src/Interface/midi/MIDIIsPanickingFeedback.h; sourceTree = SOURCE_ROOT; };
 		36E757BD5881546F0DD03C23 /* AudioSlices.h */ /* AudioSlices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AudioSlices.h; path = ../../src/Cue/audio/AudioSlices.h; sourceTree = SOURCE_ROOT; };
+		3796CF8E99D620EA61AFA911 /* RedundancyLink.cpp */ /* RedundancyLink.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RedundancyLink.cpp; path = ../../src/Redundancy/RedundancyLink.cpp; sourceTree = SOURCE_ROOT; };
 		385C19D268B6A709D27F5023 /* RFDevice.cpp */ /* RFDevice.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RFDevice.cpp; path = ../../src/RF/RFDevice.cpp; sourceTree = SOURCE_ROOT; };
 		38B8FFFB72BF1EBC34685F89 /* PluginScanner.h */ /* PluginScanner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PluginScanner.h; path = ../../src/Audio/PluginScanner.h; sourceTree = SOURCE_ROOT; };
 		38E9D7A9DE9FE669DD76D23F /* TimerActionCue.cpp */ /* TimerActionCue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TimerActionCue.cpp; path = ../../src/Cue/timer/TimerActionCue.cpp; sourceTree = SOURCE_ROOT; };
@@ -308,6 +312,7 @@
 		45F3181A91D3DD08E6241230 /* MeteringSettings.h */ /* MeteringSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MeteringSettings.h; path = ../../src/ProjectSettings/MeteringSettings.h; sourceTree = SOURCE_ROOT; };
 		46054AF999DEAB776F7E46F2 /* include_juce_organicui3.cpp */ /* include_juce_organicui3.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = include_juce_organicui3.cpp; path = ../../JuceLibraryCode/include_juce_organicui3.cpp; sourceTree = SOURCE_ROOT; };
 		467B9F602C1EC911FB49C01D /* SetMainCuelistCue.h */ /* SetMainCuelistCue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SetMainCuelistCue.h; path = ../../src/Cue/setmaincuelist/SetMainCuelistCue.h; sourceTree = SOURCE_ROOT; };
+		47D3126C96CC42DA053CCEE7 /* RedundancyStateSync.cpp */ /* RedundancyStateSync.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RedundancyStateSync.cpp; path = ../../src/Redundancy/RedundancyStateSync.cpp; sourceTree = SOURCE_ROOT; };
 		47F05F3C712CE4880B06CED2 /* include_juce_gui_basics.mm */ /* include_juce_gui_basics.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_gui_basics.mm; path = ../../JuceLibraryCode/include_juce_gui_basics.mm; sourceTree = SOURCE_ROOT; };
 		482E1C90DCF444FE77D7C0C0 /* include_juce_audio_devices.mm */ /* include_juce_audio_devices.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_audio_devices.mm; path = ../../JuceLibraryCode/include_juce_audio_devices.mm; sourceTree = SOURCE_ROOT; };
 		4876E738433D8D795D785059 /* WebKit.framework */ /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
@@ -335,6 +340,7 @@
 		590A6609FC79A35B7B2E60F5 /* PanicAction.cpp */ /* PanicAction.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PanicAction.cpp; path = ../../src/Interface/action/PanicAction.cpp; sourceTree = SOURCE_ROOT; };
 		5A0C8B3E862EAB745003F142 /* DCAAssignmentEditor.cpp */ /* DCAAssignmentEditor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DCAAssignmentEditor.cpp; path = ../../src/Cue/dca/ui/DCAAssignmentEditor.cpp; sourceTree = SOURCE_ROOT; };
 		5A4E6C54D2A0DBAE466E6D01 /* CuelistManagerUI.h */ /* CuelistManagerUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CuelistManagerUI.h; path = ../../src/Cuelist/ui/CuelistManagerUI.h; sourceTree = SOURCE_ROOT; };
+		5BB1E98106881A9EBD9DFC2D /* RedundancyStateSync.h */ /* RedundancyStateSync.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RedundancyStateSync.h; path = ../../src/Redundancy/RedundancyStateSync.h; sourceTree = SOURCE_ROOT; };
 		5C530C942D4B109A911AA7DD /* DCACue.h */ /* DCACue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DCACue.h; path = ../../src/Cue/dca/DCACue.h; sourceTree = SOURCE_ROOT; };
 		5CA0B57692A6CB7C5E32805E /* InterfaceManagerUI.cpp */ /* InterfaceManagerUI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = InterfaceManagerUI.cpp; path = ../../src/Interface/ui/InterfaceManagerUI.cpp; sourceTree = SOURCE_ROOT; };
 		5CA100BE242286C00897C039 /* FrequencyPresetsImportDialog.cpp */ /* FrequencyPresetsImportDialog.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FrequencyPresetsImportDialog.cpp; path = ../../src/RF/ui/FrequencyPresetsImportDialog.cpp; sourceTree = SOURCE_ROOT; };
@@ -393,6 +399,7 @@
 		7EE3607D432AD93D396624DB /* DCAMixingCuelist.h */ /* DCAMixingCuelist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DCAMixingCuelist.h; path = ../../src/Cuelist/dca/DCAMixingCuelist.h; sourceTree = SOURCE_ROOT; };
 		7EFE6A65D7F0E79CFFB2E238 /* CuelistFactory.h */ /* CuelistFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CuelistFactory.h; path = ../../src/Cuelist/CuelistFactory.h; sourceTree = SOURCE_ROOT; };
 		7F757857DE563AB6C5A23996 /* MultiCueEditor.cpp */ /* MultiCueEditor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MultiCueEditor.cpp; path = ../../src/Cue/ui/MultiCueEditor.cpp; sourceTree = SOURCE_ROOT; };
+		7FB76FEEA4BFC141672D4C29 /* RedundancyManager.cpp */ /* RedundancyManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RedundancyManager.cpp; path = ../../src/Redundancy/RedundancyManager.cpp; sourceTree = SOURCE_ROOT; };
 		8040BA720573086BCF944B6F /* MTCSender.h */ /* MTCSender.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MTCSender.h; path = ../../src/Interface/midi/MTCSender.h; sourceTree = SOURCE_ROOT; };
 		8098638B66F1D014A5DB11C8 /* Clock.cpp */ /* Clock.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Clock.cpp; path = ../../src/ui/panels/Clock.cpp; sourceTree = SOURCE_ROOT; };
 		80AF8262E61600DFEA64FF67 /* AudioSettings.h */ /* AudioSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AudioSettings.h; path = ../../src/ProjectSettings/AudioSettings.h; sourceTree = SOURCE_ROOT; };
@@ -448,6 +455,7 @@
 		9F5981638AAFECDF6E03583B /* MIDIMapping.h */ /* MIDIMapping.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MIDIMapping.h; path = ../../src/Interface/midi/MIDIMapping.h; sourceTree = SOURCE_ROOT; };
 		9F82B53FD5EF5F75381A1EEF /* AudioCue.cpp */ /* AudioCue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AudioCue.cpp; path = ../../src/Cue/audio/AudioCue.cpp; sourceTree = SOURCE_ROOT; };
 		A128082A556EBF6237DF2234 /* Cocoa.framework */ /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		A383172DE9873805A198264C /* RedundancyLink.h */ /* RedundancyLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RedundancyLink.h; path = ../../src/Redundancy/RedundancyLink.h; sourceTree = SOURCE_ROOT; };
 		A3D8CB28E4C99C7BE7FAFE1A /* AboutWindow.cpp */ /* AboutWindow.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AboutWindow.cpp; path = ../../src/ui/AboutWindow.cpp; sourceTree = SOURCE_ROOT; };
 		A626C29C79FB02FD8A0E48E6 /* Interface.cpp */ /* Interface.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Interface.cpp; path = ../../src/Interface/Interface.cpp; sourceTree = SOURCE_ROOT; };
 		A68CB7238E7B977C00B0A7FE /* MainComponent.cpp */ /* MainComponent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MainComponent.cpp; path = ../../src/MainComponent.cpp; sourceTree = SOURCE_ROOT; };
@@ -498,6 +506,7 @@
 		BF891A338540C26A9BF8DF07 /* MainComponent.h */ /* MainComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MainComponent.h; path = ../../src/MainComponent.h; sourceTree = SOURCE_ROOT; };
 		C1420CDEEC814DFE7743F24F /* Interface.h */ /* Interface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Interface.h; path = ../../src/Interface/Interface.h; sourceTree = SOURCE_ROOT; };
 		C1684CBAECBD01D4B4876A75 /* DeckViewHeaderUI.cpp */ /* DeckViewHeaderUI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DeckViewHeaderUI.cpp; path = ../../src/Deck/ui/DeckViewHeaderUI.cpp; sourceTree = SOURCE_ROOT; };
+		C1B224C9691B08557061C716 /* RedundancyManager.h */ /* RedundancyManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RedundancyManager.h; path = ../../src/Redundancy/RedundancyManager.h; sourceTree = SOURCE_ROOT; };
 		C2C9A35BFD9B29A4488257D9 /* crash.png */ /* crash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = crash.png; path = ../../resources/crash.png; sourceTree = SOURCE_ROOT; };
 		C38857B06E0C64D9CD239DAB /* WingOscMixerSettings.cpp */ /* WingOscMixerSettings.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WingOscMixerSettings.cpp; path = ../../src/Interface/mixer/wingosc/WingOscMixerSettings.cpp; sourceTree = SOURCE_ROOT; };
 		C53BC4064BE7C7553002A5C5 /* include_juce_dsp.mm */ /* include_juce_dsp.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_dsp.mm; path = ../../JuceLibraryCode/include_juce_dsp.mm; sourceTree = SOURCE_ROOT; };
@@ -694,6 +703,19 @@
 				14254149BBB8AFFA3959E572,
 			);
 			name = osc;
+			sourceTree = "<group>";
+		};
+		0FD4C2E84BC38884E74C1412 /* Redundancy */ = {
+			isa = PBXGroup;
+			children = (
+				3796CF8E99D620EA61AFA911,
+				A383172DE9873805A198264C,
+				7FB76FEEA4BFC141672D4C29,
+				C1B224C9691B08557061C716,
+				47D3126C96CC42DA053CCEE7,
+				5BB1E98106881A9EBD9DFC2D,
+			);
+			name = Redundancy;
 			sourceTree = "<group>";
 		};
 		10646E2A505DEB2DB08665B8 /* Source */ = {
@@ -1254,6 +1276,7 @@
 				355971E304EE7A5D3ED59C26,
 				13D525556052DEEC97EE1ECE,
 				2588E66C9BA2174B1A8739CD,
+				0FD4C2E84BC38884E74C1412,
 				C024289C981DD78A99FAB67E,
 				B919EFF7C4A1F07CB170FF2A,
 				9CCF1A77BAA56B4619CCEA03,
@@ -1683,6 +1706,9 @@
 				9EA6F167B8DB4A1863FCAFED,
 				F8039D2A1EA4854CAF33631C,
 				50B3C60EF69F3BD21D824148,
+				01075EE2EF8BEAA3D83F68CF,
+				CE534FC629130BBD44DC3830,
+				4D1B3EA6D6168312FC4557DF,
 				5A0936BEA9CF3260E31F2CBC,
 				60AEA3A7906628C68AB65417,
 				7ADE394F99A66533B415415D,

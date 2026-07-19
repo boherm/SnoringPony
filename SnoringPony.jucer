@@ -465,6 +465,20 @@
               file="src/ProjectSettings/VolumePresets.cpp"/>
         <FILE id="XOPaAx" name="VolumePresets.h" compile="0" resource="0" file="src/ProjectSettings/VolumePresets.h"/>
       </GROUP>
+      <GROUP id="{650FA43E-6FB6-7A50-2A7B-C7CE9EAB0635}" name="Redundancy">
+        <FILE id="avOOox" name="RedundancyLink.cpp" compile="1" resource="0"
+              file="src/Redundancy/RedundancyLink.cpp"/>
+        <FILE id="PnfIU7" name="RedundancyLink.h" compile="0" resource="0"
+              file="src/Redundancy/RedundancyLink.h"/>
+        <FILE id="Z1kG9o" name="RedundancyManager.cpp" compile="1" resource="0"
+              file="src/Redundancy/RedundancyManager.cpp"/>
+        <FILE id="GEJ5Vk" name="RedundancyManager.h" compile="0" resource="0"
+              file="src/Redundancy/RedundancyManager.h"/>
+        <FILE id="iRBmwZ" name="RedundancyStateSync.cpp" compile="1" resource="0"
+              file="src/Redundancy/RedundancyStateSync.cpp"/>
+        <FILE id="ijz2HV" name="RedundancyStateSync.h" compile="0" resource="0"
+              file="src/Redundancy/RedundancyStateSync.h"/>
+      </GROUP>
       <GROUP id="{E091BB17-94ED-073E-4252-A2267FB7FB65}" name="RF">
         <GROUP id="{A7807ABC-56D6-050E-6473-68CF22884064}" name="ui">
           <FILE id="TSH5Ah" name="RFDeviceManagerItemUI.cpp" compile="1" resource="0"

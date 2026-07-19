@@ -72,6 +72,8 @@ public:
     void itemAdded(OBSCommand* command) override;
     void itemsAdded(Array<OBSCommand*> commands) override;
 
+    void onRedundancyStandbyChanged() override;
+
     void onContainerParameterChangedInternal(Parameter* p) override;
     void onContainerTriggerTriggered(Trigger* t) override;
     void loadJSONDataInternal(var data) override;

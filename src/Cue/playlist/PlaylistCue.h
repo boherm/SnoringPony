@@ -86,6 +86,7 @@ public:
     void  setFaderVolume(float v) override;
     float getOutputLevel() override;
     void refreshGlobalDuration();
+    void refreshDuration() override { refreshGlobalDuration(); }
     void refreshAudioOutput();
     void refreshVolume();
     void generatePlaylistOrder();

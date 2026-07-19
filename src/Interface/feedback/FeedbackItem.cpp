@@ -13,6 +13,7 @@
 #include "../../Cuelist/Cuelist.h"
 #include "../../Brain.h"
 #include "../../PonyEngine.h"
+#include "../../Redundancy/RedundancyManager.h"
 
 FeedbackItem::FeedbackItem(const String& name) :
     BaseItem(name)
@@ -85,6 +86,10 @@ void FeedbackItem::onContainerParameterChangedInternal(Parameter* p)
 void FeedbackItem::newMessage(const ContainerAsyncEvent& e)
 {
     if (resolvedCuelist == nullptr || !enabled->boolValue()) return;
+
+    // Backup in standby: never emit feedback (it would mirror the Main's output to the same devices).
+    if (auto* rm = RedundancyManager::getInstanceWithoutCreating())
+        if (rm->isStandby()) return;
 
     if (e.type == ContainerAsyncEvent::ControllableFeedbackUpdate)
     {

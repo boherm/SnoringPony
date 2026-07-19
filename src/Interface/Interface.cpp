@@ -32,6 +32,15 @@ InterfaceUI* Interface::createUI()
     return new InterfaceUI(this);
 }
 
+void Interface::setRedundancyStandby(bool standby)
+{
+    if (redundancyStandby == standby) return;
+    redundancyStandby = standby;
+    onRedundancyStandbyChanged();
+    // Let the UI repaint with the STANDBY tint.
+    queuedNotifier.addMessage(new ContainerAsyncEvent(ContainerAsyncEvent::ControllableContainerNeedsRebuild, this));
+}
+
 bool Interface::isMidiInterface(Interface* i)
 {
     return false;

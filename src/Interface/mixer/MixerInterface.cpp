@@ -78,8 +78,17 @@ void MixerInterface::rebuildMixerSettings()
     }
 }
 
+void MixerInterface::onRedundancyStandbyChanged()
+{
+    // Only active when this instance is the playback authority. In Backup standby, drop the mixer
+    // connection so we never push to the console; on activation, reconnect.
+    if (redundancyStandby) attemptDisconnect();
+    else attemptConnect();
+}
+
 void MixerInterface::attemptConnect()
 {
+    if (redundancyStandby) return; // never connect while a Backup is in standby
     if (mixerSettings == nullptr) return;
 
     mixerSettings->onConnectionResult = [this](bool success)
@@ -106,6 +115,7 @@ void MixerInterface::attemptDisconnect()
 
 void MixerInterface::pushChannel(MixerChannel* c)
 {
+    if (redundancyStandby) return;
     if (mixerSettings == nullptr || !mixerSettings->isConnected()) return;
     if (c == nullptr) return;
     mixerSettings->sendChannelName(c->channelNumber->intValue(), c->getEffectiveName());
