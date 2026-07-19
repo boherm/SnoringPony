@@ -44,6 +44,9 @@ public:
     void stop();
     void panic();
 
+    void clearCurrentCue();
+    void clearNextCue();
+
     juce::String getTypeString() const override { return "Playback Cuelist"; }
     static Cuelist *create(var params) { return new Cuelist(params); }
 

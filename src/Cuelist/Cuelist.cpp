@@ -134,6 +134,16 @@ void Cuelist::panic()
     checkIfPanickingNeeded();
 }
 
+void Cuelist::clearCurrentCue()
+{
+    currentCue->setValueFromTarget((Controllable*)nullptr, false);
+}
+
+void Cuelist::clearNextCue()
+{
+    nextCue->setValueFromTarget((Controllable*)nullptr, false);
+}
+
 void Cuelist::registerCueTypes(Factory<Cue>& f)
 {
     f.defs.add(Factory<Cue>::Definition::createDef("Audio", "Audio Cue", &AudioCue::create)->addIcon(SPAssetManager::getInstance()->getCueIcon("Audio")));
