@@ -435,7 +435,7 @@ void AudioCue::stopInternal()
     {
         isPlaying->setValue(false);
         if (parentCuelist != nullptr && parentCuelist->currentCue->getTargetContainerAs<Cue>() == this)
-            parentCuelist->currentCue->resetValue();
+            parentCuelist->clearCurrentCue();
     }
 }
 
@@ -512,7 +512,7 @@ void AudioCue::panicInternal()
     {
         isPlaying->setValue(false);
         if (parentCuelist != nullptr && parentCuelist->currentCue->getTargetContainerAs<Cue>() == this)
-            parentCuelist->currentCue->resetValue();
+            parentCuelist->clearCurrentCue();
     }
 }
 
@@ -592,7 +592,7 @@ void AudioCue::changeListenerCallback(ChangeBroadcaster* source)
                     duration->setValue(slicesManager->getTotalDuration());
                     endCue();
                 } else if (parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
-                    parentCuelist->currentCue->resetValue();
+                    parentCuelist->clearCurrentCue();
                 }
             }
         }

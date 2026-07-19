@@ -387,7 +387,7 @@ void Cue::panic()
     isPanicking = true;
 
     if ((preWaitActive->boolValue() || postWaitActive->boolValue()) && parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
-        parentCuelist->currentCue->resetValue();
+        parentCuelist->clearCurrentCue();
     }
 
     if (preWaitActive->boolValue()) {
@@ -427,7 +427,7 @@ void Cue::stop()
     isPreviewing = false;
 
     if ((preWaitActive->boolValue() || postWaitActive->boolValue()) && parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
-        parentCuelist->currentCue->resetValue();
+        parentCuelist->clearCurrentCue();
     }
 
     if (preWaitActive->boolValue()) {
@@ -463,7 +463,7 @@ void Cue::endCue()
 
     if (!postWaitCC->enabled->boolValue() && !keepCurrentCueOnEnd) {
         if (parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
-            parentCuelist->currentCue->resetValue();
+            parentCuelist->clearCurrentCue();
         }
     }
 
@@ -518,7 +518,7 @@ void Cue::setNextCue()
 {
     auto idx = parentCuelist->cues->items.indexOf(this);
     if (idx + 1 >= parentCuelist->cues->items.size()) {
-        parentCuelist->nextCue->resetValue();
+        parentCuelist->clearNextCue();
         parentCuelist->nextCue->notifyValueChanged();
         return;
     }
@@ -534,7 +534,7 @@ void Cue::setNextCue()
 
     // Every following cue auto-starts (post-wait chain to the end): there is no cue left
     // to GO manually, so clear the next cue instead of leaving a stale one.
-    parentCuelist->nextCue->resetValue();
+    parentCuelist->clearNextCue();
     parentCuelist->nextCue->notifyValueChanged();
 }
 

@@ -278,7 +278,7 @@ void CueManager::fixNextCueBeforeRemoval(const Array<Cue*>& toRemove)
     if (replacement != nullptr) {
         replacement->setGoNext();
     } else {
-        parentCuelist->nextCue->resetValue();
+        parentCuelist->clearNextCue();
         parentCuelist->nextCue->notifyValueChanged();
     }
 }

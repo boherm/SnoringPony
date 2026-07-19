@@ -414,7 +414,7 @@ void PlaylistCue::changeListenerCallback(ChangeBroadcaster* source)
                     refreshGlobalDuration();
                     endCue();
                 } else if (parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
-                    parentCuelist->currentCue->resetValue();
+                    parentCuelist->clearCurrentCue();
                 }
 
                 return;
