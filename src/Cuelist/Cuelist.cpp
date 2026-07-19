@@ -71,6 +71,8 @@ Cuelist::Cuelist(var params) :
 
     nextCue = addTargetParameter("Next cue", "Target the next cue to play", cues);
     nextCue->targetType = TargetParameter::CONTAINER;
+    nextCue->isSavable = false;
+    nextCue->alwaysNotify = true;
     nextCue->maxDefaultSearchLevel = 0;
 
     addChildControllableContainer(cues);
