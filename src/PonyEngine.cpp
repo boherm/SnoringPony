@@ -188,6 +188,9 @@ var PonyEngine::getJSONData(bool includeNonOverriden)
 	var tData = ShowTimerManager::getInstance()->getJSONData(includeNonOverriden);
 	if (!tData.isVoid() && tData.getDynamicObject()->getProperties().size() > 0) data.getDynamicObject()->setProperty(ShowTimerManager::getInstance()->shortName, tData);
 
+    var metaData = data.getDynamicObject()->getProperty("metaData");
+    metaData.getDynamicObject()->setProperty("hashVersion", data.toString().hashCode64());
+
 	return data;
 }
 
