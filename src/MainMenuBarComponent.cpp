@@ -78,3 +78,8 @@ void MainMenuBarComponent::parameterValueChanged(Parameter* parameter)
 {
     repaint();
 }
+
+void MainMenuBarComponent::mouseDown(const MouseEvent& event)
+{
+    this->showProperties->selectThis();
+}
