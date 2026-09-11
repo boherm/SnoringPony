@@ -410,8 +410,7 @@ void Cue::retriggerStop()
 {
     isRetriggerStopping = true;
     stop();
-    isRetriggerStopping = false;
-    endCue();
+    endCue(); // consumes isRetriggerStopping (so it doesn't re-advance the next cue)
 }
 
 void Cue::fadeAndStop(double)
@@ -456,7 +455,10 @@ void Cue::endCue()
         return;
     }
 
+    // Consumed here, not by the callers: the retrigger-stop can end asynchronously (fade out),
+    // so every path keeps the flag set until this point and endCue() clears it.
     bool wasRetriggerStop = isRetriggerStopping;
+    isRetriggerStopping = false;
 
     isPlaying->setValue(false);
     autoFollowProcess(PostWaitType::AFTER_CUE);

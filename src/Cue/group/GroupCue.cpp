@@ -202,6 +202,7 @@ void GroupCue::launchMembers(bool freshShuffle)
     settleUntilMs = 0;
     aborting = false;
     retriggering = false;
+    isRetriggerStopping = false; // a fresh GO clears any leftover retrigger-stop state
     loopPending = false;
 
     Array<Cue*> members = getMembers();
@@ -608,8 +609,9 @@ void GroupCue::retriggerStop()
     for (auto* m : getMembers())
         if (isMemberActive(m))
             m->fadeAndStop(fadeTime);
-    isRetriggerStopping = false;
 
+    // isRetriggerStopping stays set until finishGroup()'s endCue() consumes it, so the group
+    // doesn't re-advance the next cue that play() already moved on the retrigger.
     tick(); // ends immediately if nothing was active or the fade time is 0
 }
 

@@ -162,6 +162,7 @@ void PlaylistCue::loadJSONDataItemInternal(juce::var data)
 void PlaylistCue::playInternal()
 {
     askedToStop = false;
+    isRetriggerStopping = false; // a fresh GO clears any leftover retrigger-stop state
 
     // reset playlistfile
     for (auto& playlistFile : filesManager->items)
@@ -410,9 +411,8 @@ void PlaylistCue::changeListenerCallback(ChangeBroadcaster* source)
                 queuedNotifier.addMessage(new ContainerAsyncEvent(ContainerAsyncEvent::ControllableContainerNeedsRebuild, this));
 
                 if (isRetriggerStopping) {
-                    isRetriggerStopping = false;
                     refreshGlobalDuration();
-                    endCue();
+                    endCue(); // consumes isRetriggerStopping
                 } else if (parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
                     parentCuelist->clearCurrentCue();
                 }

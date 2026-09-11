@@ -51,8 +51,6 @@ AudioCue::AudioCue(var params)
     duckOthersCC = new EnablingControllableContainer("Duck others");
     duckOthersCC->enabled->setValue(false);
     duckOthersCC->editorIsCollapsed = true;
-    // Place it right below "Post-wait" (added by the base Cue constructor) rather than at the
-    // bottom of the container list.
     addChildControllableContainer(duckOthersCC, true, controllableContainers.indexOf(postWaitCC) + 1);
 
     duckVolume = duckOthersCC->addFloatParameter("Volume", "Gain the other cues are ducked down to (1 = unchanged, 0 = silent)", 0.1, 0.0, 1.0);
@@ -219,6 +217,7 @@ void AudioCue::startAudioPlayback()
     }
 
     askedToStop = false;
+    isRetriggerStopping = false; // a fresh GO clears any leftover retrigger-stop state
     slicesManager->resetSlices();
 
     for (auto& audioFile : filesManager->items)
@@ -593,9 +592,8 @@ void AudioCue::changeListenerCallback(ChangeBroadcaster* source)
 
             if (askedToStop) {
                 if (isRetriggerStopping) {
-                    isRetriggerStopping = false;
                     duration->setValue(slicesManager->getTotalDuration());
-                    endCue();
+                    endCue(); // consumes isRetriggerStopping
                 } else if (parentCuelist->currentCue->getTargetContainerAs<Cue>() == this) {
                     parentCuelist->clearCurrentCue();
                 }
