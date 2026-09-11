@@ -178,6 +178,14 @@
           <FILE id="onkuSf" name="NoteCue.h" compile="0" resource="0" file="src/Cue/note/NoteCue.h"/>
         </GROUP>
         <GROUP id="{C9CAAE13-5938-AA3A-C591-71AA92FD3494}" name="ui">
+          <FILE id="USg1Ho" name="CueMultiBulkEditor.cpp" compile="1" resource="0"
+                file="src/Cue/ui/CueMultiBulkEditor.cpp"/>
+          <FILE id="QNBoOx" name="CueMultiBulkEditor.h" compile="0" resource="0"
+                file="src/Cue/ui/CueMultiBulkEditor.h"/>
+          <FILE id="EI93GR" name="CueUnsetValueEditor.cpp" compile="1" resource="0"
+                file="src/Cue/ui/CueUnsetValueEditor.cpp"/>
+          <FILE id="Nf8NGU" name="CueUnsetValueEditor.h" compile="0" resource="0"
+                file="src/Cue/ui/CueUnsetValueEditor.h"/>
           <FILE id="YOOYkS" name="CueEditor.cpp" compile="1" resource="0" file="src/Cue/ui/CueEditor.cpp"/>
           <FILE id="dgTzS1" name="MultiCueEditor.h" compile="0" resource="0"
                 file="src/Cue/ui/MultiCueEditor.h"/>

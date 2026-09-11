@@ -13,81 +13,55 @@
 #include "../AudioFile.h"
 #include "../../../Interface/InterfaceManager.h"
 
-AudioMultiFilesEditor::AudioMultiFilesEditor(const juce::Array<Cue*>& audioCues)
+namespace
 {
-    for (auto* c : audioCues)
-        if (c != nullptr) cues.add(c);
+    // The block stands in for the file list of the cue the section renders.
+    Inspectable* getFilesAnchor(const Array<Cue*>& audioCues)
+    {
+        if (audioCues.isEmpty()) return nullptr;
+        auto* ac = dynamic_cast<AudioCue*>(audioCues.getFirst());
+        if (ac != nullptr && ac->filesManager != nullptr) return ac->filesManager;
+        return audioCues.getFirst();
+    }
+}
 
-    proxy.reset(new ControllableContainer("Files (all)"));
-
+AudioMultiFilesEditor::AudioMultiFilesEditor(const Array<Cue*>& audioCues) :
+    CueMultiBulkEditor(getFilesAnchor(audioCues), audioCues, "Audio Files (all)", true)
+{
     proxyOutput = proxy->addTargetParameter("Audio Output", "Set the audio output of every file of the selected cues", InterfaceManager::getInstance());
     proxyOutput->targetType = TargetParameter::CONTAINER;
     proxyOutput->customGetTargetContainerFunc = &InterfaceManager::showMenuForTargetAudioOutput;
 
-    proxyVolume = proxy->addFloatParameter("Volume", "Set the volume of every file of the selected cues", 1.0, 0.0, 1.5, 0.01);
+    // Left at its minimum this volume changes nothing: it is only applied once moved, so a
+    // group edit never silently overwrites each file's own level.
+    proxyVolume = proxy->addFloatParameter("Files Volume", "Move to apply this volume to every file of the selected cues; left at minimum, each file keeps its own value", 0.0, 0.0, 1.5, 0.01);
 
-    // Seed the controls with the first file's values, for a representative display.
+    // Seed the output with the first file's value, for a representative display.
     for (auto& w : cues)
     {
         auto* ac = dynamic_cast<AudioCue*>(w.get());
         if (ac != nullptr && ac->filesManager != nullptr && ac->filesManager->items.size() > 0)
         {
             AudioFile* f = ac->filesManager->items.getFirst();
-            if (f != nullptr)
-            {
-                proxyVolume->setValue(f->volume->floatValue());
-                proxyOutput->setValue(f->targetAudioInterface->getValue());
-            }
+            if (f != nullptr) proxyOutput->setValue(f->targetAudioInterface->getValue());
             break;
         }
     }
 
-    proxyEditor.reset(new GenericControllableContainerEditor(juce::Array<ControllableContainer*>({ proxy.get() }), false));
-    addAndMakeVisible(proxyEditor.get());
-
-    proxy->addAsyncContainerListener(this);
-
-    setSize(100, 10);
+    buildProxyEditor();
 }
 
 AudioMultiFilesEditor::~AudioMultiFilesEditor()
 {
-    if (proxy != nullptr) proxy->removeAsyncContainerListener(this);
-    proxyEditor.reset();
-    proxy.reset();
 }
 
-void AudioMultiFilesEditor::resized()
+void AudioMultiFilesEditor::applyProxyChange(Parameter* changedProxyParam)
 {
-    if (getWidth() == 0 || proxyEditor == nullptr) return;
-
-    proxyEditor->setSize(getWidth(), proxyEditor->getHeight());
-    proxyEditor->setTopLeftPosition(0, 0);
-
-    int h = jmax(proxyEditor->getHeight(), 10);
-    if (getHeight() != h) setSize(getWidth(), h);
-}
-
-void AudioMultiFilesEditor::childBoundsChanged(juce::Component* c)
-{
-    if (proxyEditor != nullptr && getWidth() != 0) setSize(getWidth(), jmax(proxyEditor->getHeight(), 10));
-}
-
-void AudioMultiFilesEditor::newMessage(const ContainerAsyncEvent& e)
-{
-    if (isApplying) return;
-    if (e.type != ContainerAsyncEvent::ControllableFeedbackUpdate) return;
-
-    Controllable* c = e.targetControllable;
-    if (c == nullptr || e.targetControllable.wasObjectDeleted()) return;
-
-    const bool isOutput = (c == proxyOutput);
-    const bool isVolume = (c == proxyVolume);
+    const bool isOutput = (changedProxyParam == proxyOutput);
+    const bool isVolume = (changedProxyParam == proxyVolume);
     if (!isOutput && !isVolume) return;
 
-    const var newVal = isOutput ? proxyOutput->getValue() : proxyVolume->getValue();
-
-    Array<UndoableAction*> actions;
+    Array<Parameter*> targets;
     for (auto& w : cues)
     {
         auto* ac = dynamic_cast<AudioCue*>(w.get());
@@ -96,16 +70,10 @@ void AudioMultiFilesEditor::newMessage(const ContainerAsyncEvent& e)
         for (auto& file : ac->filesManager->items)
         {
             if (file == nullptr) continue;
-            Parameter* target = isOutput ? (Parameter*)file->targetAudioInterface : (Parameter*)file->volume;
-            if (target->getValue() == newVal) continue;
-            if (UndoableAction* a = target->setUndoableValue(target->getValue(), newVal, true))
-                actions.add(a);
+            targets.add(isOutput ? (Parameter*)file->targetAudioInterface : (Parameter*)file->volume);
         }
     }
 
-    if (actions.isEmpty()) return;
-
-    isApplying = true;
-    UndoMaster::getInstance()->performActions("Edit audio files", actions);
-    isApplying = false;
+    applyToParameters(targets, changedProxyParam->getValue(),
+                      isOutput ? "Edit audio files output" : "Edit audio files volume");
 }

@@ -669,14 +669,25 @@ float AudioCue::getOutputLevel()
 StringArray AudioCue::getMultiEditHiddenControllableNames() const
 {
     StringArray names;
-    if (filesManager != nullptr) names.add(filesManager->shortName);
+    // filesManager is not hidden but substituted: see getMultiEditExtraEditorAnchorName().
     if (audioSlicer != nullptr) names.add(audioSlicer->shortName);
     return names;
 }
 
-Component* AudioCue::createMultiEditExtraEditor(const Array<Cue*>& scopeCues)
+String AudioCue::getMultiEditExtraEditorAnchorName() const
+{
+    return filesManager != nullptr ? filesManager->shortName : String();
+}
+
+InspectableEditor* AudioCue::createMultiEditExtraEditor(const Array<Cue*>& scopeCues)
 {
     return new AudioMultiFilesEditor(scopeCues);
+}
+
+StringArray AudioCue::getMultiEditUnsetProxyNames() const
+{
+    // Editing several cues at once, a shared Volume would show one arbitrary cue's level.
+    return StringArray(volume->shortName);
 }
 
 String AudioCue::autoDescriptionInternal()

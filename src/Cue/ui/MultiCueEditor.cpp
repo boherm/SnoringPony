@@ -11,19 +11,23 @@
 #include "MultiCueEditor.h"
 #include "../Cue.h"
 #include "../../Cuelist/Cuelist.h"
+#include "CueUnsetValueEditor.h"
 
 // ============================ FilteredCueContainerEditor ============================
 
 FilteredCueContainerEditor::FilteredCueContainerEditor(ControllableContainer* container, bool isTopLevel,
                                                        std::shared_ptr<MultiEditFilter> filter,
                                                        std::function<bool(const String&)> topNameFilter,
-                                                       const String& headerText) :
-    // buildAtCreation = false so filtering (virtual overrides) is in place before we build.
+                                                       const String& headerText,
+                                                       MultiEditSubstitutions substitutions) :
+    // buildAtCreation = false so filtering and substitutions (virtual overrides) are in
+    // place before we build.
     GenericControllableContainerEditor(Array<ControllableContainer*>({ container }), false, false),
     isTopLevel(isTopLevel),
     filter(filter),
     topNameFilter(topNameFilter),
-    headerText(headerText)
+    headerText(headerText),
+    substitutions(substitutions)
 {
     containerLabel.setEditable(false, false);
     if (headerText.isNotEmpty()) containerLabel.setText(headerText, dontSendNotification);
@@ -60,6 +64,7 @@ bool FilteredCueContainerEditor::shouldShowControllable(Controllable* c)
 {
     if (!GenericControllableContainerEditor::shouldShowControllable(c)) return false;
     if (isTopLevel && topNameFilter != nullptr && !topNameFilter(c->shortName)) return false;
+    if (isTopLevel && substitutions.names.contains(c->shortName)) return true;
     if (filter != nullptr)
     {
         if (filter->hiddenNames.contains(c->shortName)) return false;
@@ -72,12 +77,24 @@ bool FilteredCueContainerEditor::shouldShowContainer(ControllableContainer* cc)
 {
     if (!GenericControllableContainerEditor::shouldShowContainer(cc)) return false;
     if (isTopLevel && topNameFilter != nullptr && !topNameFilter(cc->shortName)) return false;
+    if (isTopLevel && substitutions.names.contains(cc->shortName)) return true;
     if (filter != nullptr && filter->hiddenNames.contains(cc->shortName)) return false;
     return true;
 }
 
+InspectableEditor* FilteredCueContainerEditor::getEditorUIForControllable(Controllable* c)
+{
+    if (isTopLevel && substitutions.forControllable != nullptr && substitutions.names.contains(c->shortName))
+        if (InspectableEditor* ed = substitutions.forControllable(c)) return ed;
+
+    return GenericControllableContainerEditor::getEditorUIForControllable(c);
+}
+
 InspectableEditor* FilteredCueContainerEditor::getEditorUIForContainer(ControllableContainer* cc)
 {
+    if (isTopLevel && substitutions.forContainer != nullptr && substitutions.names.contains(cc->shortName))
+        if (InspectableEditor* ed = substitutions.forContainer(cc)) return ed;
+
     // Recurse the filter only into plain setting groups (pre/post-wait, duck, MTC...) to
     // hide their runtime/current-time leaves. Managers (also EnablingControllableContainer,
     // but BaseItemListener) and other containers keep their natural editor so their own UI
@@ -217,15 +234,42 @@ Array<Cue*> MultiCueEditor::cuesOfType(const String& type) const
     return result;
 }
 
-void MultiCueEditor::addExtraFor(Cue* rep, const Array<Cue*>& scopeCues)
+MultiEditSubstitutions MultiCueEditor::makeSubstitutions(Cue* rep, const Array<Cue*>& scopeCues)
 {
-    if (rep == nullptr) return;
-    Component* extra = rep->createMultiEditExtraEditor(scopeCues);
-    if (extra == nullptr) return;
+    MultiEditSubstitutions subs;
+    if (rep == nullptr) return subs;
 
-    extras.add(extra);
-    addAndMakeVisible(extra);
-    layoutItems.add(extra);
+    // The type's bulk block, rendered where the container it stands in for would be (the
+    // audio file list, so the block lands right before the plugin chain).
+    const String anchorName = rep->getMultiEditExtraEditorAnchorName();
+    if (anchorName.isNotEmpty())
+    {
+        subs.names.add(anchorName);
+        Array<Cue*> scope = scopeCues;
+        subs.forContainer = [rep, scope](ControllableContainer*) { return rep->createMultiEditExtraEditor(scope); };
+    }
+
+    // Parameters whose shared value would be misleading: replaced by an unset proxy.
+    StringArray unsetNames;
+    for (auto& name : rep->getMultiEditUnsetProxyNames())
+    {
+        Controllable* c = rep->getControllableByName(name, false);
+        if (c != nullptr && CueUnsetValueEditor::canSubstitute(c)) unsetNames.add(name);
+    }
+
+    if (!unsetNames.isEmpty())
+    {
+        subs.names.addArray(unsetNames);
+        Array<Cue*> scope = scopeCues;
+        subs.forControllable = [scope](Controllable* c) -> InspectableEditor*
+        {
+            Parameter* p = dynamic_cast<Parameter*>(c);
+            return p != nullptr ? new CueUnsetValueEditor(p, scope) : nullptr;
+        };
+    }
+
+    mirrorExcludedTopNames.addArray(subs.names);
+    return subs;
 }
 
 void MultiCueEditor::addSyncFor(Cue* rep, const Array<Cue*>& scopeCues)
@@ -238,7 +282,6 @@ void MultiCueEditor::buildSections()
 {
     isRebuilding = true;
     sections.clear();
-    extras.clear();
     syncs.clear();
     layoutItems.clear();
 
@@ -291,19 +334,19 @@ void MultiCueEditor::buildSections()
         ? pluralizeCues(cues.size(), firstCue->getCueType())
         : "Common (" + String(cues.size()) + " cues)";
 
-    auto* commonSection = new FilteredCueContainerEditor(firstCue, true, makeFilter(firstCue), commonFilter, commonTitle);
+    // The common section is shared by every selected cue, so its substitutions apply to all
+    // of them; when all cues share a type it IS that type's section, so its bulk block and
+    // sync (audio files, DCA assignments) belong right here too.
+    Array<Cue*> commonScope;
+    for (auto& c : cues) if (Cue* cue = asCue(c)) commonScope.add(cue);
+
+    auto* commonSection = new FilteredCueContainerEditor(firstCue, true, makeFilter(firstCue), commonFilter, commonTitle,
+                                                         makeSubstitutions(firstCue, commonScope));
     sections.add(commonSection);
     addAndMakeVisible(commonSection);
     layoutItems.add(commonSection);
 
-    // When all cues share a type, the common section IS that type's section, so its
-    // bulk extra / sync (e.g. audio files, DCA assignments) belongs right here.
-    if (allSameType)
-    {
-        Array<Cue*> typeCues = cuesOfType(firstCue->getCueType());
-        addExtraFor(firstCue, typeCues);
-        addSyncFor(firstCue, typeCues);
-    }
+    if (allSameType) addSyncFor(firstCue, cuesOfType(firstCue->getCueType()));
 
     // --- Per-type sections with the type-specific parameters ---
     if (!allSameType)
@@ -325,7 +368,8 @@ void MultiCueEditor::buildSections()
                 topFilter = [this](const String& name) { return name == "duration" || !commonNames.contains(name); };
             }
 
-            auto* section = new FilteredCueContainerEditor(rep, true, sectionFilter, topFilter, pluralizeCues(typeCues.size(), type));
+            auto* section = new FilteredCueContainerEditor(rep, true, sectionFilter, topFilter, pluralizeCues(typeCues.size(), type),
+                                                           makeSubstitutions(rep, typeCues));
             if (section->getVisibleItemCount() == 0)
             {
                 delete section; // no type-specific params to show
@@ -337,7 +381,6 @@ void MultiCueEditor::buildSections()
                 layoutItems.add(section);
             }
 
-            addExtraFor(rep, typeCues);
             addSyncFor(rep, typeCues);
         }
     }

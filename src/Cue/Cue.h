@@ -138,10 +138,23 @@ public:
     // multi-cue editor (e.g. per-file lists that make no sense to edit as a group).
     virtual juce::StringArray getMultiEditHiddenControllableNames() const { return {}; }
 
-    // Optional extra component shown in the multi-cue editor for this cue type, driving
-    // bulk edits across `scopeCues` (e.g. set output/volume of all files at once).
-    // Ownership passes to the caller. Default: none.
-    virtual juce::Component* createMultiEditExtraEditor(const juce::Array<Cue*>& scopeCues) { return nullptr; }
+    // shortName of the child container that createMultiEditExtraEditor() stands in for: the
+    // bulk editor is rendered at that container's own position inside the section (e.g. the
+    // per-cue audio file list -> the "Audio Files (all)" block). Empty = no bulk editor.
+    virtual juce::String getMultiEditExtraEditorAnchorName() const { return {}; }
+
+    // Optional bulk editor shown in the multi-cue editor for this cue type, driving bulk
+    // edits across `scopeCues` (e.g. set output/volume of all files at once). Rendered in
+    // place of getMultiEditExtraEditorAnchorName(). Ownership passes to the caller.
+    // MUST be an InspectableEditor: the Inspector's visibility culling
+    // (InspectableEditor::updateVisibility) only recurses into InspectableEditor children,
+    // so a plain Component would break the chain and leave the block blank. Default: none.
+    virtual InspectableEditor* createMultiEditExtraEditor(const juce::Array<Cue*>& scopeCues) { return nullptr; }
+
+    // Top-level parameter shortNames edited through an "unset until you touch it" proxy in
+    // multi-edit: the section would otherwise show one arbitrary cue's value. The proxy sits
+    // at the parameter's own position, starts at its minimum and writes nothing until moved.
+    virtual juce::StringArray getMultiEditUnsetProxyNames() const { return {}; }
 
     // Optional structural sync for this cue type in multi-edit (mirrors state the generic
     // value mirror can't, e.g. DCA assignments). Ownership passes to the caller. Default: none.

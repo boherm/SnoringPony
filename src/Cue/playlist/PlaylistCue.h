@@ -64,6 +64,7 @@ public:
     String getTypeString() const override { return "Playlist Cue"; }
     String getCueType() const override { return "Playlist"; }
     juce::StringArray getMultiEditHiddenControllableNames() const override;
+    juce::StringArray getMultiEditUnsetProxyNames() const override;
     static PlaylistCue* create(var params) { return new PlaylistCue(params); }
 
     void loadJSONDataItemInternal(juce::var data) override;

@@ -522,6 +522,12 @@ StringArray PlaylistCue::getMultiEditHiddenControllableNames() const
     return names;
 }
 
+StringArray PlaylistCue::getMultiEditUnsetProxyNames() const
+{
+    // Editing several cues at once, a shared Volume would show one arbitrary cue's level.
+    return StringArray(volume->shortName);
+}
+
 String PlaylistCue::autoDescriptionInternal()
 {
     String desc = "Playlist: ";

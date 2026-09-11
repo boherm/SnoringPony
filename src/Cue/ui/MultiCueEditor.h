@@ -38,6 +38,17 @@ struct MultiEditFilter
     bool hideDisabledLeaves = true;   // hide enabled==false leaves (runtime displays, e.g. current time)
 };
 
+// In-place replacements for the top level of a multi-edit section: a bulk block is rendered
+// at the very position of the item it stands in for (the audio files list becomes the
+// "Audio Files (all)" block, a volume becomes an unset-until-touched proxy...), so the
+// section keeps its natural order and the framework keeps driving the block's visibility.
+struct MultiEditSubstitutions
+{
+    juce::StringArray names;  // substituted shortNames: shown even when otherwise hidden
+    std::function<InspectableEditor* (ControllableContainer*)> forContainer;
+    std::function<InspectableEditor* (Controllable*)> forControllable;
+};
+
 // A GenericControllableContainerEditor that renders a container while hiding items per a
 // shared MultiEditFilter (recursively into sub-containers). At the section root it also
 // applies a top-level name filter (common vs type-specific split) and shows a custom title.
@@ -48,13 +59,15 @@ public:
     FilteredCueContainerEditor(ControllableContainer* container, bool isTopLevel,
                                std::shared_ptr<MultiEditFilter> filter,
                                std::function<bool(const juce::String&)> topNameFilter,
-                               const juce::String& headerText);
+                               const juce::String& headerText,
+                               MultiEditSubstitutions substitutions = MultiEditSubstitutions());
     ~FilteredCueContainerEditor() override;
 
     bool isTopLevel;
     std::shared_ptr<MultiEditFilter> filter;
     std::function<bool(const juce::String&)> topNameFilter;
     juce::String headerText;
+    MultiEditSubstitutions substitutions;
 
     // Enable toggle for EnablingControllableContainers (pre/post-wait, duck, retrigger,
     // MTC...): normally drawn by EnablingControllableContainerEditor, which our recursive
@@ -64,6 +77,7 @@ public:
     bool shouldShowControllable(Controllable* c) override;
     bool shouldShowContainer(ControllableContainer* cc) override;
     InspectableEditor* getEditorUIForContainer(ControllableContainer* cc) override;
+    InspectableEditor* getEditorUIForControllable(Controllable* c) override;
     void resizedInternalHeader(juce::Rectangle<int>& r) override;
     void controllableFeedbackUpdate(Controllable* c) override;
 
@@ -93,9 +107,10 @@ public:
     // Top-level shortNames present in every selected cue (the "common" set).
     juce::StringArray commonNames;
 
-    // Top-level shortNames hidden in multi-edit: the generic value mirror ignores changes
-    // under these (they are not user-editable here, or handled by a dedicated extra
-    // editor, e.g. audio files), so programmatic changes don't get cross-written.
+    // Top-level shortNames hidden or substituted in multi-edit: the generic value mirror
+    // ignores changes under these (they are not user-editable here, or handled by a
+    // dedicated bulk editor, e.g. audio files), so programmatic changes don't get
+    // cross-written.
     juce::StringArray mirrorExcludedTopNames;
 
     // Representative cue of each type group; these are the cues we listen to for
@@ -103,11 +118,10 @@ public:
     juce::Array<juce::WeakReference<Inspectable>> repCues;
 
     juce::OwnedArray<FilteredCueContainerEditor> sections;
-    // Optional per-type extra editors (e.g. audio bulk output/volume).
-    juce::OwnedArray<juce::Component> extras;
     // Optional per-type structural syncs (e.g. DCA assignments).
     juce::OwnedArray<MultiCueSync> syncs;
-    // Sections + extras in vertical display order.
+    // Sections in vertical display order. Bulk editors are not listed here: they live
+    // inside their section, at the position of the item they replace.
     juce::Array<juce::Component*> layoutItems;
 
     // True when every selected cue is a Fade cue (duration is then a shared editable field).
@@ -128,8 +142,9 @@ public:
 
 private:
     void buildSections();
-    // Append rep's optional bulk-edit extra component (applied to scopeCues) after its section.
-    void addExtraFor(Cue* rep, const juce::Array<Cue*>& scopeCues);
+    // Build the in-place bulk editors of rep's section (applied to scopeCues), and register
+    // the substituted names so the generic mirror leaves them alone.
+    MultiEditSubstitutions makeSubstitutions(Cue* rep, const juce::Array<Cue*>& scopeCues);
     // Install rep's optional structural sync (e.g. DCA assignments) across scopeCues.
     void addSyncFor(Cue* rep, const juce::Array<Cue*>& scopeCues);
     juce::Array<Cue*> cuesOfType(const juce::String& type) const;

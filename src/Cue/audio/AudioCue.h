@@ -95,7 +95,9 @@ public:
     String getCueType() const override { return "Audio"; }
     MTCSender* getMTCSender() override { return mtcSender.get(); }
     juce::StringArray getMultiEditHiddenControllableNames() const override;
-    juce::Component* createMultiEditExtraEditor(const juce::Array<Cue*>& scopeCues) override;
+    juce::String getMultiEditExtraEditorAnchorName() const override;
+    InspectableEditor* createMultiEditExtraEditor(const juce::Array<Cue*>& scopeCues) override;
+    juce::StringArray getMultiEditUnsetProxyNames() const override;
     static AudioCue* create(var params) { return new AudioCue(params); }
 
     void newMessage(const ContainerAsyncEvent& e) override;
