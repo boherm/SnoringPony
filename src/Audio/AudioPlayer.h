@@ -45,7 +45,7 @@ public:
     void panicFade();
     void resetPanicFade();
     void fade(double targetGain, double duration);
-    void fadeIn(double duration);
+    void fadeIn(double duration, float targetGain = 1.0f);
     void fadeOut(double duration, bool stopAfterFade = true);
     void resetFade();
 
@@ -79,7 +79,7 @@ public:
     void stopAndClean();
 
     void fade(double targetGain, double duration);
-    void fadeIn(double duration);
+    void fadeIn(double duration, float targetGain = 1.0f);
     void fadeOut(double duration, bool stopAfterFade = true);
 
     // Current fade/panic multiplier (0..1), i.e. the transient gain applied on top of the

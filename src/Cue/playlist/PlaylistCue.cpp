@@ -122,6 +122,14 @@ PlaylistCue::PlaylistCue(var params) :
 
     shuffle = addBoolParameter("Shuffle", "If enabled, the playlist will play items in random order.", false);
 
+    crossfadeCC = new EnablingControllableContainer("Crossfade");
+    crossfadeCC->enabled->setValue(false);
+    crossfadeCC->editorIsCollapsed = true;
+    addChildControllableContainer(crossfadeCC, true);
+
+    crossfadeDuration = crossfadeCC->addFloatParameter("Duration", "Overlap duration between two consecutive tracks", 3.0, 0.0);
+    crossfadeDuration->defaultUI = FloatParameter::TIME;
+
     pluginChainManager = new PluginChainManager();
     pluginChainManager->editorIsCollapsed = true;
     pluginChainManager->addAsyncContainerListener(this);
@@ -180,10 +188,14 @@ void PlaylistCue::playInternal()
         playlistFile->player->mixer->setPluginChain(pluginChainManager);
 
     currentOrderIndex = -1;
+    currentFile = nullptr;
+    elapsedBeforeCurrentFile = 0.0;
+    crossfadeStarted = false;
     generatePlaylistOrder();
     PlaylistFile* nextFile = getNextFileToPlay();
     if (nextFile == nullptr)
         return;
+    currentFile = nextFile;
     refreshAudioOutput();
     nextFile->player->transport->addChangeListener(this);
     nextFile->player->play();
@@ -198,6 +210,8 @@ void PlaylistCue::playInternal()
 void PlaylistCue::stopInternal()
 {
     askedToStop = true;
+    currentFile = nullptr;
+    crossfadeStarted = false;
     stopTimer();
     for (auto& playlistFile : filesManager->items)
     {
@@ -219,13 +233,29 @@ void PlaylistCue::refreshGlobalDuration()
 {
     if (!isPlaying->boolValue()) {
         double dur = 0.0;
+        int enabledCount = 0;
         for (PlaylistFile* playlistFile : filesManager->items) {
             if (playlistFile->isEnabled()) {
                 dur += playlistFile->duration->doubleValue();
+                enabledCount++;
             }
         }
+
+        // Each crossfade makes two tracks overlap, so the playlist is that much shorter.
+        const double crossfadeTime = getCrossfadeTime();
+        if (crossfadeTime > 0.0 && enabledCount > 1)
+            dur = jmax(0.0, dur - crossfadeTime * (enabledCount - 1));
+
         duration->setValue(dur);
     }
+}
+
+double PlaylistCue::getCrossfadeTime() const
+{
+    if (crossfadeCC == nullptr || !crossfadeCC->enabled->boolValue())
+        return 0.0;
+
+    return jmax(0.0, crossfadeDuration->doubleValue());
 }
 
 void PlaylistCue::refreshAudioOutput()
@@ -267,28 +297,89 @@ void PlaylistCue::generatePlaylistOrder()
     }
 }
 
-PlaylistFile* PlaylistCue::getNextFileToPlay()
+PlaylistFile* PlaylistCue::peekNextFileToPlay(int* nextOrderIndex) const
 {
     if (playlistOrder.size() == 0)
         return nullptr;
 
+    int nextIndex;
     if (currentOrderIndex + 1 < playlistOrder.size()) {
-        currentOrderIndex++;
+        nextIndex = currentOrderIndex + 1;
     } else {
         if (!loop->boolValue())
             return nullptr;
-        currentOrderIndex = 0;
+        nextIndex = 0;
+    }
 
-        // reset all positions
+    if (nextOrderIndex != nullptr)
+        *nextOrderIndex = nextIndex;
+
+    return filesManager->items[playlistOrder[nextIndex]];
+}
+
+PlaylistFile* PlaylistCue::getNextFileToPlay(int* nextOrderIndex)
+{
+    int nextIndex = 0;
+    PlaylistFile* nextFile = peekNextFileToPlay(&nextIndex);
+    if (nextFile == nullptr)
+        return nullptr;
+
+    const bool wrapped = nextIndex == 0 && currentOrderIndex >= 0;
+    currentOrderIndex = nextIndex;
+
+    if (wrapped)
+    {
+        // Looping back to the top: rewind every track, except one still sounding (the
+        // outgoing side of a crossfade over the wrap).
         for (auto& playlistFile : filesManager->items)
         {
-            playlistFile->player->transport->setPosition(0.0f);
+            if (!playlistFile->player->transport->isPlaying())
+                playlistFile->player->transport->setPosition(0.0f);
         }
     }
 
-    int fileIndex = playlistOrder[currentOrderIndex];
-    return filesManager->items[fileIndex];
+    if (nextOrderIndex != nullptr)
+        *nextOrderIndex = nextIndex;
 
+    return nextFile;
+}
+
+void PlaylistCue::startCrossfadeToNext()
+{
+    crossfadeStarted = true; // one attempt per track, whatever the outcome
+
+    PlaylistFile* outgoing = currentFile;
+    PlaylistFile* next = peekNextFileToPlay();
+
+    // End of the playlist, or a single track looping onto itself (one transport per track,
+    // so it can't overlap with itself): let the natural end drive the advance instead.
+    if (outgoing == nullptr || next == nullptr || next == outgoing)
+        return;
+
+    // Bound the overlap by both tracks so a crossfade longer than a track doesn't fire at t=0.
+    const double crossfadeTime = jmin(getCrossfadeTime(),
+                                      outgoing->duration->doubleValue(),
+                                      next->duration->doubleValue());
+    if (crossfadeTime <= 0.0)
+        return;
+
+    int nextOrderIndex = 0;
+    getNextFileToPlay(&nextOrderIndex);
+
+    elapsedBeforeCurrentFile = nextOrderIndex == 0
+        ? 0.0
+        : elapsedBeforeCurrentFile + jmax(0.0, outgoing->duration->doubleValue() - crossfadeTime);
+    currentFile = next;
+    crossfadeStarted = false; // armed again for the incoming track
+
+    // Outgoing: stop driving the cue, then fade out and stop by itself.
+    outgoing->player->transport->removeChangeListener(this);
+    outgoing->player->fadeOut(crossfadeTime, true);
+
+    // Incoming: start silent and ramp up to the current global gain (ducking-aware).
+    // AudioPlayer::fadeIn starts the transport itself.
+    next->player->transport->addChangeListener(this);
+    next->player->fadeIn(crossfadeTime, (float)jmin(1.0, AudioCue::getActiveDuckGain(this)));
 }
 
 void PlaylistCue::parameterValueChanged(Parameter* p)
@@ -308,6 +399,22 @@ void PlaylistCue::parameterValueChanged(Parameter* p)
     {
         refreshVolume();
     }
+}
+
+void PlaylistCue::onControllableFeedbackUpdateInternal(ControllableContainer* cc, Controllable* c)
+{
+    Cue::onControllableFeedbackUpdateInternal(cc, c);
+
+    if (Engine::mainEngine != nullptr && Engine::mainEngine->isLoadingFile)
+    {
+        if (crossfadeCC == cc && c == crossfadeCC->enabled)
+            crossfadeCC->editorIsCollapsed = !crossfadeCC->enabled->boolValue();
+        return;
+    }
+
+    // Both the toggle and the duration change how much the tracks overlap.
+    if (crossfadeCC == cc)
+        refreshGlobalDuration();
 }
 
 void PlaylistCue::parameterControlModeChanged(Parameter* p)
@@ -370,15 +477,20 @@ void PlaylistCue::timerCallback()
         return;
     }
 
-    double maxCurrentTime = 0.0;
-    for (auto& audioFile : filesManager->items)
+    if (currentFile == nullptr || currentFile->player->transport == nullptr)
+        return;
+
+    const double position = currentFile->player->transport->getCurrentPosition();
+    currentTime->setValue(elapsedBeforeCurrentFile + position);
+
+    // Start the next track while this one still has a crossfade worth of audio left.
+    const double crossfadeTime = getCrossfadeTime();
+    if (crossfadeTime > 0.0 && !crossfadeStarted && !askedToStop
+        && currentFile->player->transport->isPlaying()
+        && currentFile->duration->doubleValue() - position <= crossfadeTime)
     {
-        if (audioFile->player->transport != nullptr)
-        {
-            maxCurrentTime += audioFile->player->transport->getCurrentPosition();
-        }
+        startCrossfadeToNext();
     }
-    currentTime->setValue(maxCurrentTime);
 }
 
 void PlaylistCue::changeListenerCallback(ChangeBroadcaster* source)
@@ -388,16 +500,21 @@ void PlaylistCue::changeListenerCallback(ChangeBroadcaster* source)
         AudioTransportSource* transport = dynamic_cast<AudioTransportSource*>(source);
         if (transport->isPlaying()) {
             isPlaying->setValue(true);
-            startTimerHz(10);
+            startTimerHz(20);
         }
 
         if (!transport->isPlaying()) {
+            // The outgoing side of a crossfade: it faded out on its own and drives nothing.
+            if (currentFile != nullptr && transport != currentFile->player->transport)
+                return;
+
             transport->removeChangeListener(this);
 
             if (askedToStop) {
                 stopTimer();
                 isPlaying->setValue(false);
                 currentTime->setValue(0.0);
+                currentFile = nullptr;
                 refreshGlobalDuration();
                 isPanicking = false;
 
@@ -420,15 +537,26 @@ void PlaylistCue::changeListenerCallback(ChangeBroadcaster* source)
                 return;
             }
 
-            PlaylistFile* nextFile = getNextFileToPlay();
+            int nextOrderIndex = 0;
+            PlaylistFile* nextFile = getNextFileToPlay(&nextOrderIndex);
             if (nextFile == nullptr) {
                 stopTimer();
                 isPlaying->setValue(false);
                 currentTime->setValue(0.0);
+                currentFile = nullptr;
                 refreshGlobalDuration();
                 endCue();
                 return;
             }
+
+            // Straight chaining (no crossfade, or one that couldn't run): the whole outgoing
+            // track has been played.
+            elapsedBeforeCurrentFile = nextOrderIndex == 0
+                ? 0.0
+                : elapsedBeforeCurrentFile + (currentFile != nullptr ? currentFile->duration->doubleValue() : 0.0);
+            currentFile = nextFile;
+            crossfadeStarted = false;
+
             nextFile->player->play(false);
             nextFile->player->transport->addChangeListener(this);
         }
@@ -504,12 +632,21 @@ float PlaylistCue::getOutputLevel()
     // Live output level = the volume scaled by the current fade/panic multiplier of the file
     // currently playing, so the fader fill reflects ducking.
     float mult = 1.0f;
-    for (auto& file : filesManager->items)
+    if (currentFile != nullptr && currentFile->player->transport->isPlaying())
     {
-        if (file->player != nullptr && file->player->transport->isPlaying())
+        // During a crossfade, the incoming track (currentFile) is the one to report:
+        // the outgoing one is on its way to silence.
+        mult = (float)currentFile->player->getFadeMultiplier();
+    }
+    else
+    {
+        for (auto& file : filesManager->items)
         {
-            mult = (float)file->player->getFadeMultiplier();
-            break;
+            if (file->player != nullptr && file->player->transport->isPlaying())
+            {
+                mult = (float)file->player->getFadeMultiplier();
+                break;
+            }
         }
     }
     return jlimit(0.0f, 1.5f, getFaderVolume() * mult);

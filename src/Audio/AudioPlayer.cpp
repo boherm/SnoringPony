@@ -40,12 +40,12 @@ void AudioPlayerMixer::fade(double targetGain, double duration)
     isFading = true;
 }
 
-void AudioPlayerMixer::fadeIn(double duration)
+void AudioPlayerMixer::fadeIn(double duration, float targetGain)
 {
     fadingGain.reset(sampleRate, 0.0);
     fadingGain.setTargetValue(0.0f);
     fadingGain.reset(sampleRate, duration);
-    fadingGain.setTargetValue(1.0f);
+    fadingGain.setTargetValue(targetGain);
     isFading = true;
     fadeStopAfterComplete = false;
 }
@@ -299,9 +299,9 @@ void AudioPlayer::fade(double targetGain, double duration)
     mixer->fade(targetGain, duration);
 }
 
-void AudioPlayer::fadeIn(double duration)
+void AudioPlayer::fadeIn(double duration, float targetGain)
 {
-    mixer->fadeIn(duration);
+    mixer->fadeIn(duration, targetGain);
     play(false);
 }
 

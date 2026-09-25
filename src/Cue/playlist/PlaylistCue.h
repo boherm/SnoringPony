@@ -53,10 +53,21 @@ public:
     int currentOrderIndex = -1;
     Array<int> playlistOrder = Array<int>();
 
+    // Runtime playback state (not saved). currentFile is the track that owns the cue's
+    // timeline: during a crossfade the outgoing track still sounds but no longer drives
+    // anything. elapsedBeforeCurrentFile is the playlist time consumed before it started,
+    // so currentTime stays monotonic even while two tracks overlap.
+    PlaylistFile* currentFile = nullptr;
+    double elapsedBeforeCurrentFile = 0.0;
+    bool crossfadeStarted = false;
+
     TargetParameter* outputTarget;
     FloatParameter* volume;
     BoolParameter* loop;
     BoolParameter* shuffle;
+
+    EnablingControllableContainer* crossfadeCC;
+    FloatParameter* crossfadeDuration;
 
     std::unique_ptr<BaseManager<PlaylistFile>> filesManager;
     PluginChainManager* pluginChainManager;
@@ -91,10 +102,16 @@ public:
     void refreshAudioOutput();
     void refreshVolume();
     void generatePlaylistOrder();
-    PlaylistFile* getNextFileToPlay();
+    PlaylistFile* getNextFileToPlay(int* nextOrderIndex = nullptr);
+    PlaylistFile* peekNextFileToPlay(int* nextOrderIndex = nullptr) const;
+
+    // Overlap duration between two consecutive tracks, 0 when the Crossfade section is off.
+    double getCrossfadeTime() const;
+    void startCrossfadeToNext();
 
     void parameterValueChanged(Parameter* p) override;
     void parameterControlModeChanged(Parameter* p) override;
+    void onControllableFeedbackUpdateInternal(ControllableContainer* cc, Controllable* c) override;
     void newMessage(const ContainerAsyncEvent& e) override;
     void changeListenerCallback(ChangeBroadcaster* source) override;
 
