@@ -311,7 +311,7 @@ void SkipRegionsAudioSource::getNextAudioBlock(const AudioSourceChannelInfo& inf
             }
         }
         if (crossfadeRemaining > 0)
-            chunk = jmin<int64>(chunk, crossfadeRemaining, tailBuffer.getNumSamples());
+            chunk = jmin(chunk, (int64)crossfadeRemaining, (int64)tailBuffer.getNumSamples());
 
         const int n = (int)chunk;
         readFromInput(*info.buffer, info.startSample + offset, n);
@@ -349,7 +349,7 @@ void SkipRegionsAudioSource::getNextAudioBlock(const AudioSourceChannelInfo& inf
         {
             // reached a region: splice to its end and crossfade with the cut part
             crossfadeTailPos = regions[regionIndex].getStart();
-            crossfadeRemaining = (int)jmin<int64>(crossfadeLength, regions[regionIndex].getLength());
+            crossfadeRemaining = (int)jmin((int64)crossfadeLength, regions[regionIndex].getLength());
             crossfadeTotal = jmax(1, crossfadeRemaining);
             input->setNextReadPosition(regions[regionIndex].getEnd());
         }
