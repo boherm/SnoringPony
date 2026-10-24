@@ -33,7 +33,7 @@ AudioSlice::AudioSlice(var params, AudioCue* audioCue) :
     duration->defaultUI = FloatParameter::TIME;
     duration->setEnabled(false);
 
-    repetitions = addIntParameter("Repetitions", "Number of times to repeat the slice.", 1, 1, 999);
+    repetitions = addIntParameter("Repetitions", "Number of times to play the slice. 0 cuts the slice out (playback jumps over it).", 1, 0, 999);
     loopSlice = addBoolParameter("Loop Slice", "If enabled, the slice will loop when it reaches the end.", false);
 }
 
@@ -118,9 +118,10 @@ double AudioSlicesManager::getTotalDuration()
     {
         AudioSlice* slice = items.getUnchecked(i);
 
-        if (!slice->isEnabled() || slice->loopSlice->boolValue() || slice->repetitions->intValue() <= 1)
-            break;
+        if (!slice->isEnabled() || slice->loopSlice->boolValue() || slice->repetitions->intValue() == 1)
+            continue;
 
+        // 0 repetitions removes the slice from the total (skipped slice)
         totalDuration += slice->duration->doubleValue() * (slice->repetitions->intValue() - 1);
     }
 
@@ -129,6 +130,11 @@ double AudioSlicesManager::getTotalDuration()
 
 double AudioSlicesManager::processTime(double realCurrentTime)
 {
+    // Keep the file position and the displayed time offset apart, so each slice is
+    // compared against the real file position, not against a time shifted by a previous slice.
+    double filePos = realCurrentTime;
+    double offset = 0.0;
+
     for (int i = 0; i < items.size(); i++)
     {
         AudioSlice* slice = items.getUnchecked(i);
@@ -136,22 +142,36 @@ double AudioSlicesManager::processTime(double realCurrentTime)
         if (!slice->isEnabled())
             continue;
 
-        if (realCurrentTime >= slice->endTime->doubleValue())
+        const double sliceStart = slice->startTime->doubleValue();
+        const double sliceEnd = slice->endTime->doubleValue();
+
+        // 0 repetitions: the slice is cut out. The jump itself happens in the audio
+        // stream (SkipRegionsAudioSource), here we only remove it from the displayed time.
+        if (!slice->loopSlice->boolValue() && slice->repetitions->intValue() == 0)
+        {
+            if (filePos >= sliceStart && filePos < sliceEnd)
+                filePos = sliceEnd;
+
+            if (filePos >= sliceEnd)
+                offset -= slice->duration->doubleValue();
+            continue;
+        }
+
+        if (filePos >= sliceEnd)
         {
             bool shouldLoop = slice->loopSlice->boolValue() || slice->playedRepetitions < slice->repetitions->intValue() - 1;
             if (shouldLoop) {
-                audioCue->filesManager->setCurrentTime(slice->startTime->doubleValue());
+                audioCue->filesManager->setCurrentTime(sliceStart);
                 slice->playedRepetitions += 1;
-                realCurrentTime = slice->startTime->doubleValue();
+                filePos = sliceStart;
             }
         }
 
         if (!slice->loopSlice->boolValue())
-            realCurrentTime += slice->playedRepetitions * slice->duration->doubleValue();
+            offset += slice->playedRepetitions * slice->duration->doubleValue();
     }
 
-    realCurrentTime -= startTime->doubleValue();
-    return realCurrentTime;
+    return filePos + offset - startTime->doubleValue();
 }
 
 bool AudioSlicesManager::hasLoopingSlice()
@@ -163,6 +183,18 @@ bool AudioSlicesManager::hasLoopingSlice()
             return true;
     }
     return false;
+}
+
+Array<Range<double>> AudioSlicesManager::getSkipRegions()
+{
+    Array<Range<double>> regions;
+    for (int i = 0; i < items.size(); i++)
+    {
+        AudioSlice* slice = items.getUnchecked(i);
+        if (slice->isEnabled() && !slice->loopSlice->boolValue() && slice->repetitions->intValue() == 0)
+            regions.add(Range<double>(slice->startTime->doubleValue(), slice->endTime->doubleValue()));
+    }
+    return regions;
 }
 
 void AudioSlicesManager::resetSlices()

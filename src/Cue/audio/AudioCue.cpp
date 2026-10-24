@@ -190,6 +190,7 @@ void AudioCue::newMessage(const ContainerAsyncEvent& e)
 
     if (e.source == slicesManager.get()) {
         duration->setValue(slicesManager->getTotalDuration());
+        filesManager->updateSkipRegions();
     }
 
     if (e.source == filesManager || e.source == pluginChainManager)

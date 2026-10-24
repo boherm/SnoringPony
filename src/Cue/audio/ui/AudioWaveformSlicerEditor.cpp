@@ -129,7 +129,9 @@ void AudioWaveform::drawSlices(Graphics& g)
 
         g.drawText(
             slice->niceName + " - " +
-            (slice->loopSlice->boolValue() ? "looped" : slice->repetitions->stringValue() + " times"),
+            (slice->loopSlice->boolValue() ? String("looped")
+                : slice->repetitions->intValue() == 0 ? String("skipped")
+                : slice->repetitions->stringValue() + " times"),
             areaText.toType<int>(),
             Justification::centred,
             true

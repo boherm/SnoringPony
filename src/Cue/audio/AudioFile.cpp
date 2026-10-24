@@ -41,6 +41,7 @@ void AudioFilesManager::playAll(bool resetFade)
 
         AudioOutput* audioOutput = audioFile->targetAudioInterface->getTargetContainerAs<AudioOutput>();
         audioFile->player->setOutput(audioOutput);
+        audioFile->player->setSkipRegions(this->audioCue->slicesManager->getSkipRegions());
         audioFile->player->play(resetFade);
         audioFile->player->transport->setPosition(this->audioCue->slicesManager->startTime->doubleValue());
         audioFile->updateGain(); // disabled files start muted but in sync
@@ -56,6 +57,7 @@ void AudioFilesManager::previewAll(bool resetFade)
         AudioSettings* audioProperties = dynamic_cast<AudioSettings*>(ProjectSettings::getInstance()->getControllableContainerByName("audioSettings"));
         AudioOutput* previewOutput = audioProperties->previewOutput->getTargetContainerAs<AudioOutput>();
         audioFile->player->setOutput(previewOutput);
+        audioFile->player->setSkipRegions(this->audioCue->slicesManager->getSkipRegions());
         audioFile->player->play(resetFade);
         audioFile->player->transport->setPosition(this->audioCue->slicesManager->startTime->doubleValue());
         audioFile->updateGain(); // disabled files start muted but in sync
@@ -123,6 +125,13 @@ void AudioFilesManager::setCurrentTime(double time)
         audioFile->player->transport->setPosition(time);
         audioFile->player->transport->start();
     }
+}
+
+void AudioFilesManager::updateSkipRegions()
+{
+    Array<Range<double>> regions = audioCue->slicesManager->getSkipRegions();
+    for (auto& audioFile : items)
+        audioFile->player->setSkipRegions(regions);
 }
 
 //==============================================================================

@@ -63,6 +63,7 @@ public:
 
     void resetCurrentTime();
     void setCurrentTime(double time);
+    void updateSkipRegions();
 
     bool haveOnePlaying();
 

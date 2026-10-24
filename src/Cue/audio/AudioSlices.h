@@ -63,6 +63,7 @@ public:
     double getTotalDuration();
     double processTime(double realCurrentTime);
     bool hasLoopingSlice();
+    Array<Range<double>> getSkipRegions(); // slices set to 0 repetitions, cut out of playback
     void resetSlices();
 
     AudioSlice* createItem() override;
