@@ -39,13 +39,13 @@ ifeq ($(CONFIG),Debug)
     TARGET_ARCH := -m64
   endif
 
-  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DDEBUG=1" "-D_DEBUG=1" "-DVST_LOGGING=0" "-DLINK_PLATFORM_LINUX=1" "-DGDK_BACKEND=x11" "-DSP_HAS_RTLSDR=1" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0b20" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags alsa freetype2 gl libcurl webkit2gtk-4.0 gtk+-x11-3.0) -pthread -I../../modules/juce/modules/juce_audio_processors/format_types/VST3_SDK -I../../JuceLibraryCode -I../../modules/juce/modules -I../../modules -I../../src -I../../external/asio -I../../external/asiodriver -I../../external/servus/include -I../../external/rtlsdr/include $(CPPFLAGS)
+  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DDEBUG=1" "-D_DEBUG=1" "-DVST_LOGGING=0" "-DLINK_PLATFORM_LINUX=1" "-DGDK_BACKEND=x11" "-DSP_HAS_RTLSDR=1" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0b20" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags alsa freetype2 gl webkit2gtk-4.0 gtk+-x11-3.0) -pthread -I../../modules/juce/modules/juce_audio_processors/format_types/VST3_SDK -I../../JuceLibraryCode -I../../modules/juce/modules -I../../modules -I../../src -I../../external/asio -I../../external/asiodriver -I../../external/servus/include -I../../external/rtlsdr/include $(CPPFLAGS)
   JUCE_CPPFLAGS_APP :=  "-DJucePlugin_Build_VST=0" "-DJucePlugin_Build_VST3=0" "-DJucePlugin_Build_AU=0" "-DJucePlugin_Build_AUv3=0" "-DJucePlugin_Build_AAX=0" "-DJucePlugin_Build_Standalone=0" "-DJucePlugin_Build_Unity=0" "-DJucePlugin_Build_LV2=0"
   JUCE_TARGET_APP := SnoringPony
 
   JUCE_CFLAGS += $(JUCE_CPPFLAGS) $(TARGET_ARCH) -g -ggdb -O3 -Wno-multichar $(CFLAGS)
   JUCE_CXXFLAGS += $(JUCE_CFLAGS) -std=c++17 $(CXXFLAGS)
-  JUCE_LDFLAGS += $(TARGET_ARCH) -L$(JUCE_BINDIR) -L$(JUCE_LIBDIR) -L../../external/servus/lib/linux -L/usr/lib/x86_64-linux-gnu/ -L../../external/wapi/linux -L../../external/rtlsdr/lib/linux -L../../modules/juce_simpleweb/libs/Linux/x86_64 $(shell $(PKG_CONFIG) --libs alsa freetype2 gl libcurl) -fvisibility=hidden -Wl,-rpath,"lib" -Wl,--as-needed -Wl,--export-dynamic -fvisibility=default -lrt -ldl -lpthread -lssl -lcrypto -lServus -lcurl -lwapi -lrtlsdr -lusb-1.0 $(LDFLAGS)
+  JUCE_LDFLAGS += $(TARGET_ARCH) -L$(JUCE_BINDIR) -L$(JUCE_LIBDIR) -L../../external/servus/lib/linux -L/usr/lib/x86_64-linux-gnu/ -L../../external/wapi/linux -L../../external/rtlsdr/lib/linux -L../../modules/juce_simpleweb/libs/Linux/x86_64 $(shell $(PKG_CONFIG) --libs alsa freetype2 gl) -fvisibility=hidden -Wl,-rpath,"lib" -Wl,--as-needed -Wl,--export-dynamic -fvisibility=default -lrt -ldl -lpthread -lssl -lcrypto -lServus -lwapi -lrtlsdr -lusb-1.0 $(LDFLAGS)
 
   CLEANCMD = rm -rf $(JUCE_OUTDIR)/$(JUCE_TARGET_APP) $(JUCE_OBJDIR)
 endif
@@ -60,13 +60,13 @@ ifeq ($(CONFIG),Release)
     TARGET_ARCH := -m64
   endif
 
-  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DNDEBUG=1" "-DVST_LOGGING=0" "-DLINK_PLATFORM_LINUX=1" "-DGDK_BACKEND=x11" "-DSP_HAS_RTLSDR=1" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0b20" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags alsa freetype2 gl libcurl webkit2gtk-4.0 gtk+-x11-3.0) -pthread -I../../modules/juce/modules/juce_audio_processors/format_types/VST3_SDK -I../../JuceLibraryCode -I../../modules/juce/modules -I../../modules -I../../src -I../../external/asio -I../../external/asiodriver -I../../external/servus/include -I../../external/rtlsdr/include $(CPPFLAGS)
+  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DNDEBUG=1" "-DVST_LOGGING=0" "-DLINK_PLATFORM_LINUX=1" "-DGDK_BACKEND=x11" "-DSP_HAS_RTLSDR=1" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0b20" "-DJUCE_APP_VERSION_HEX=0x10000" $(shell $(PKG_CONFIG) --cflags alsa freetype2 gl webkit2gtk-4.0 gtk+-x11-3.0) -pthread -I../../modules/juce/modules/juce_audio_processors/format_types/VST3_SDK -I../../JuceLibraryCode -I../../modules/juce/modules -I../../modules -I../../src -I../../external/asio -I../../external/asiodriver -I../../external/servus/include -I../../external/rtlsdr/include $(CPPFLAGS)
   JUCE_CPPFLAGS_APP :=  "-DJucePlugin_Build_VST=0" "-DJucePlugin_Build_VST3=0" "-DJucePlugin_Build_AU=0" "-DJucePlugin_Build_AUv3=0" "-DJucePlugin_Build_AAX=0" "-DJucePlugin_Build_Standalone=0" "-DJucePlugin_Build_Unity=0" "-DJucePlugin_Build_LV2=0"
   JUCE_TARGET_APP := SnoringPony
 
   JUCE_CFLAGS += $(JUCE_CPPFLAGS) $(TARGET_ARCH) -O3 -Wno-multichar $(CFLAGS)
   JUCE_CXXFLAGS += $(JUCE_CFLAGS) -std=c++17 $(CXXFLAGS)
-  JUCE_LDFLAGS += $(TARGET_ARCH) -L$(JUCE_BINDIR) -L$(JUCE_LIBDIR) -L../../external/servus/lib/linux -L/usr/lib/x86_64-linux-gnu/ -L../../external/wapi/linux -L../../external/rtlsdr/lib/linux -L../../modules/juce_simpleweb/libs/Linux/x86_64 $(shell $(PKG_CONFIG) --libs alsa freetype2 gl libcurl) -fvisibility=hidden -Wl,-rpath,"lib" -Wl,--as-needed -Wl,--export-dynamic -fvisibility=default -lrt -ldl -lpthread -lssl -lcrypto -lServus -lcurl -lwapi -lrtlsdr -lusb-1.0 $(LDFLAGS)
+  JUCE_LDFLAGS += $(TARGET_ARCH) -L$(JUCE_BINDIR) -L$(JUCE_LIBDIR) -L../../external/servus/lib/linux -L/usr/lib/x86_64-linux-gnu/ -L../../external/wapi/linux -L../../external/rtlsdr/lib/linux -L../../modules/juce_simpleweb/libs/Linux/x86_64 $(shell $(PKG_CONFIG) --libs alsa freetype2 gl) -fvisibility=hidden -Wl,-rpath,"lib" -Wl,--as-needed -Wl,--export-dynamic -fvisibility=default -lrt -ldl -lpthread -lssl -lcrypto -lServus -lwapi -lrtlsdr -lusb-1.0 $(LDFLAGS)
 
   CLEANCMD = rm -rf $(JUCE_OUTDIR)/$(JUCE_TARGET_APP) $(JUCE_OBJDIR)
 endif
@@ -256,7 +256,7 @@ all : $(JUCE_OUTDIR)/$(JUCE_TARGET_APP)
 
 $(JUCE_OUTDIR)/$(JUCE_TARGET_APP) : $(OBJECTS_APP) $(JUCE_OBJDIR)/execinfo.cmd $(RESOURCES)
 	@command -v $(PKG_CONFIG) >/dev/null 2>&1 || { echo >&2 "pkg-config not installed. Please, install it."; exit 1; }
-	@$(PKG_CONFIG) --print-errors alsa freetype2 gl libcurl
+	@$(PKG_CONFIG) --print-errors alsa freetype2 gl
 	@echo Linking "SnoringPony - App"
 	-$(V_AT)mkdir -p $(JUCE_BINDIR)
 	-$(V_AT)mkdir -p $(JUCE_LIBDIR)
